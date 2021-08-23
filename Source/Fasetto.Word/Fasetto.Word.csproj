@@ -97,6 +97,10 @@
     <Compile Include="Controls\Chat\ChatMessage\ChatMessageListItemControl.xaml.cs">
       <DependentUpon>ChatMessageListItemControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Finance\FinanceMenuControl.xaml.cs">
+      <DependentUpon>FinanceMenuControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Finance\HierarchyManagementControl.cs" />
     <Compile Include="Controls\Input\PasswordEntryControl.xaml.cs">
       <DependentUpon>PasswordEntryControl.xaml</DependentUpon>
     </Compile>
@@ -152,6 +156,10 @@
     <Compile Include="ValueConverters\TimeToDisplayTimeConverter.cs" />
     <Compile Include="ValueConverters\HorizontalAlignmentConverter.cs" />
     <Compile Include="ValueConverters\TimeToReadTimeConverter.cs" />
+    <Compile Include="ViewModel\Finance\Expenditure\HierarchyManagementDesignViewModel.cs" />
+    <Compile Include="ViewModel\Finance\Expenditure\HierarchyManagementTreeViewModel.cs" />
+    <Compile Include="ViewModel\Finance\Expenditure\HierarchyManagementViewModel.cs" />
+    <Compile Include="ViewModel\Finance\Expenditure\HierarchyManagementViewModel1.cs" />
     <Compile Include="WebRequests\WebRequestResultExtensions.cs" />
     <Compile Include="WPFViewModels\DialogWindowViewModel.cs" />
     <Compile Include="WPFViewModels\ViewModelLocator.cs" />
@@ -208,6 +216,14 @@
     <Page Include="Controls\Chat\ChatMessage\ChatMessageListItemControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Finance\FinanceMenuControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Finance\HierarchyManagementControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Input\PasswordEntryControl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -376,6 +392,9 @@
     <PackageReference Include="PropertyChanged.Fody">
       <Version>2.6.0</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModel\Finance\Investment\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
