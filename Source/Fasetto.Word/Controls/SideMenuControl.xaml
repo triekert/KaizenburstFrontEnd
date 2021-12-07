@@ -10,7 +10,7 @@
 
     <UserControl.Template>
         <ControlTemplate TargetType="UserControl">
-            
+
             <!-- Main background -->
             <Border>
 
@@ -38,18 +38,29 @@
                                 Content="{StaticResource FontAwesomeChatIcon}"
                                 Command="{Binding OpenChatCommand}"
                                 />
-                            
+
                             <Button
                                 Style="{StaticResource IconButton}"
                                 Content="{StaticResource FontAwesomeUserIcon}" 
                                 Command="{Binding OpenContactsCommand}"
                                 />
-                            
+
+                            <Button 
+                                Style="{StaticResource IconButton}" 
+                                Content="{StaticResource FontAwesomeFinanceIcon}" 
+                                Command="{Binding OpenFinanceCommand}"
+                                />
+                            <Button 
+                                Style="{StaticResource IconButton}" 
+                                Content="{StaticResource FontAwesomeProjectIcon}" 
+                                Command="{Binding OpenProjectCommand}"
+                                />
                             <Button 
                                 Style="{StaticResource IconButton}" 
                                 Content="{StaticResource FontAwesomePictureIcon}" 
-                                Command="{Binding OpenMediaCommand}"
+                                Command="{Binding OpenServicesCommand}"
                                 />
+
                         </StackPanel>
 
                         <!-- Settings button -->
@@ -74,5 +85,5 @@
 
         </ControlTemplate>
     </UserControl.Template>
-    
+
 </UserControl>
