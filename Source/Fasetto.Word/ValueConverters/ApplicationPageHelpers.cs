@@ -1,7 +1,5 @@
 ﻿using Fasetto.Word.Core;
-using System;
 using System.Diagnostics;
-using System.Globalization;
 
 namespace Fasetto.Word
 {
@@ -30,6 +28,9 @@ namespace Fasetto.Word
                 case ApplicationPage.Chat:
                     return new ChatPage(viewModel as ChatMessageListViewModel);
 
+                case ApplicationPage.Finance:
+                    return new ChatPage(viewModel as ChatMessageListViewModel);
+
                 default:
                     Debugger.Break();
                     return null;
@@ -53,9 +54,12 @@ namespace Fasetto.Word
             if (page is RegisterPage)
                 return ApplicationPage.Register;
 
+            if (page is FinancePage)
+                return ApplicationPage.Finance;
+
             // Alert developer of issue
             Debugger.Break();
-            return default(ApplicationPage);
+            return default;
         }
     }
 }

@@ -1,12 +1,11 @@
 ﻿using Dna;
 using Fasetto.Word.Core;
 using System;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using static Fasetto.Word.DI;
 using static Dna.FrameworkDI;
-using System.Linq.Expressions;
-using System.Diagnostics;
+using static Fasetto.Word.DI;
 
 namespace Fasetto.Word
 {
@@ -286,10 +285,13 @@ namespace Fasetto.Word
                     // Then do nothing more
                     return;
 
-                // Load user profile details form server
+                // Load user profile details from server
+                //var path = RouteHelpers.GetAbsoluteRoute(WebRoutes.Private);
                 var result = await WebRequests.PostAsync<ApiResponse<UserProfileDetailsApiModel>>(
                     // Set URL
                     RouteHelpers.GetAbsoluteRoute(ApiRoutes.GetUserProfile),
+                    //RouteHelpers.GetAbsoluteRoute(WebRoutes.Private),
+
                     // Pass in user Token
                     bearerToken: token);
 

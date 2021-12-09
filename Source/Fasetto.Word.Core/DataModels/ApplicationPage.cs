@@ -19,5 +19,12 @@
         /// The register page
         /// </summary>
         Register = 2,
+
+        /// <summary>
+        /// The Finance Menu page
+        /// </summary>
+        Finance = 3,
+
+
     }
 }

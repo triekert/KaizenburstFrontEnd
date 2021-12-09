@@ -2,8 +2,14 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
+using System.Data.SqlClient;
+using System.Data;
+using System.Data.SqlTypes;
 using System.Threading.Tasks;
+using static Dna.FrameworkDI;
+using System.Security.Cryptography.X509Certificates;
+using System;
+using System.Linq;
 
 namespace Fasetto.Word.Web.Server
 {
@@ -120,5 +126,125 @@ namespace Fasetto.Word.Web.Server
 
             return Content("Failed to login", "text/html");
         }
+        [AuthorizeToken]
+        [Route(WebRoutes.Private)]
+        public async Task<IActionResult> PrivateAsync()
+        {
+            var test = HttpContext.User.Identity.Name;
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+            return Content($"testing of cookie translation. Welcome {HttpContext.User.Identity.Name}", "text/html");
+        }
+
+
+        [Route(WebRoutes.Hierarchy)]
+        public async Task<IActionResult> HierarchyAsync()
+        
+        
+        
+        {
+
+
+            var SqlString = "SELECT  [ShortName],coalesce([Description],'') Description,coalesce([Card],'')Card,coalesce([Frequency],'')Frequency,coalesce(convert(nvarchar(50),[KCategoryID]),'') KCategoryID,coalesce(convert(nvarchar(50),[ParentCategoryID]),'') ParentCategoryID,coalesce(convert(nvarchar(50),[fIconID]),'') Icon FROM [Kaizen].[Finance].[vwFinHierarchy]";
+
+            var dataset = await GetDataSetAsync(SqlString);
+            var dt = dataset.Tables[0];
+            var hierarchyResultListApiModel = new HierarchyResultListApiModel();
+            var results = hierarchyResultListApiModel;
+
+
+
+            foreach (DataRow row in dt.Rows)
+            {
+                var u = new HierarchyResultApiModel
+                {
+                    ShortName = (string)(row[0]),
+                    Description = (string)row[1],
+                    Card = (string)row[2],
+                    Frequency = (int)row[3],
+                    KCategoryID = (string)row[4],
+                    ParentCategoryID = (string)row[5],
+                    FIconID = (string)row[6]
+                };
+
+                results.Add(u);
+
+            }
+
+
+
+            //  pass the root item through for extracting the hierarchy
+            var mHDML = new HierarchyListDataModel();
+            mHDML.Clear();
+            mHDML.AddRange(ExpandHierarchyData(results, ""));
+
+
+            var hierarchyListDataModel = ExpandHierarchyData(results, "");
+
+
+            return Content($"testing of Hieararch extract", "text/html");
+        }
+
+        /// <summary>
+        /// This funtion builds a hierarchy of elements based on a
+        /// a Hierarchy result returned when querying a database structure
+        /// on which the hierarchy structures are persisted
+        /// </summary>
+        /// <param name="results"></param>
+        /// This is a class of <HierarchyResultListApiModel></HierarchyResultListApiModel>
+        /// <param name="KCategoryID"></param>
+        /// the ID of the parent for finding descendants is passsed through as a string
+        /// <returns></returns>
+        private HierarchyListDataModel ExpandHierarchyData(HierarchyResultListApiModel results, string KCategoryID)
+        {
+
+            // Find all children
+            var children = results.Where(x => x.ParentCategoryID == KCategoryID).ToList();
+
+            // Hierarchy cannot be expanded
+            if (children.Count() == 0)
+                return null;
+            //...otherwise, return all descendants recursively
+            var elements = new HierarchyListDataModel();
+            foreach (var item in children)
+            { 
+                var ud1 = new HierarchyDataModel
+                {
+                    //var u = hierarchyDataModel;
+                    ShortName = item.ShortName,
+                    Description = item.Description,
+                    Card = item.Card,
+                    Frequency = item.Frequency,
+                    KCategoryID = item.KCategoryID,
+                    ParentCategoryID = item.ParentCategoryID,
+                    FIconID = item.FIconID
+                };
+                    ud1.Children = ExpandHierarchyData(results, ud1.KCategoryID);
+                    elements.Add(ud1);
+                }
+
+            return elements;
+        }
+
+        // RETURN DATASET
+        public Task<DataSet> GetDataSetAsync(string sSQL, params SqlParameter[] parameters)
+        {
+            return Task.Run(() =>
+            {
+                using (var newConnection = new SqlConnection(Configuration["ConnectionStrings:DefaultConnection"]))
+                using (var mySQLAdapter = new SqlDataAdapter(sSQL, newConnection))
+                {
+                    mySQLAdapter.SelectCommand.CommandType = CommandType.Text;
+                    if (parameters != null) mySQLAdapter.SelectCommand.Parameters.AddRange(parameters);
+
+                    var myDataSet = new DataSet();
+                    var ctr = mySQLAdapter.Fill(myDataSet);
+
+
+                    
+                    return myDataSet;
+                }
+            });
+        }
+
     }
 }

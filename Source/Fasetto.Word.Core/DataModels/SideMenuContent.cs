@@ -18,6 +18,11 @@
         /// <summary>
         /// A list of media from all chat messages
         /// </summary>
-        Media = 3
+        Media = 3,
+
+        /// <summary>
+        /// A list of finance menu options for KaizenBurst
+        /// </summary>
+       Finance = 4
     }
 }

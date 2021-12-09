@@ -1,16 +1,21 @@
-﻿using Fasetto.Word.Core;
+﻿using Dna;
+using Fasetto.Word.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using static Dna.FrameworkDI;
+using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
 namespace Fasetto.Word.Web.Server
 {
@@ -36,6 +41,8 @@ namespace Fasetto.Word.Web.Server
         /// The manager for handling signing in and out for our users
         /// </summary>
         protected SignInManager<ApplicationUser> mSignInManager;
+
+
 
         #endregion
 
@@ -570,6 +577,84 @@ namespace Fasetto.Word.Web.Server
 
         #endregion
 
+
+        #region Finance
+
+        #region Hiearachy
+
+        /// <summary>
+        /// Returns Hierarchy for Navigation
+        /// </summary>
+        /// <param name="model">The search credentials</param>
+        /// <returns>
+        ///     Returns a list of hiearchy items if successful, 
+        ///     otherwise returns the error reasons for the failure
+        /// </returns>
+
+
+        [Route(ApiRoutes.ReturnHierarchy)]
+
+        public async Task<ApiResponse<HierarchyResultListApiModel>> ReturnHierarchyAsync()
+        {
+            #region Get User
+
+            // Get the current user
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            // If we have no user...
+            if (user == null)
+                return new ApiResponse<HierarchyResultListApiModel>
+                {
+                    // TODO: Localization
+                    ErrorMessage = "User not found"
+                };
+
+            #endregion
+
+            #region sql query
+            var SqlString = "SELECT  [ShortName],coalesce([Description],'') Description,coalesce([Card],'')Card,coalesce([Frequency],'')Frequency,coalesce(convert(nvarchar(50),[KCategoryID]),'') KCategoryID,coalesce(convert(nvarchar(50),[ParentCategoryID]),'') ParentCategoryID,coalesce(convert(nvarchar(50),[fIconID]),'') Icon FROM [Kaizen].[Finance].[vwFinHierarchy]";
+
+            var dataset = await GetDataSetAsync(SqlString);
+            var dt = dataset.Tables[0];
+            var hierarchyResultListApiModel = new HierarchyResultListApiModel();
+            var results = hierarchyResultListApiModel;
+
+
+            foreach(DataRow row in dt.Rows)
+            {
+                var u = new HierarchyResultApiModel
+                {
+                    ShortName = (string)(row[0]),
+                    Description = (string)row[1],
+                    Card = (string)row[2],
+                    Frequency = (int)row[3],
+                    KCategoryID = (string)row[4],
+                    ParentCategoryID = (string)row[5],
+                    FIconID = (string)row[6]
+                };
+
+                results.Add(u);
+
+            }
+            return new ApiResponse<HierarchyResultListApiModel>
+            {
+                Response = results
+            };
+            #endregion
+
+            #region Find Users
+
+
+            #endregion
+        }
+
+
+        #endregion
+
+
+        #endregion
+
+
         #region Private Helpers
 
         /// <summary>
@@ -591,6 +676,98 @@ namespace Fasetto.Word.Web.Server
             // Email the user the verification code
             await FasettoEmailSender.SendUserVerificationEmailAsync(user.UserName, userIdentity.Email, confirmationUrl);
         }
+
+        //public class CDatabase
+        //{
+        //    // USE CUSTOM CLASS TO RETURN DATA
+        //    public class CDatabaseResult
+        //    {
+        //        public bool mSuccess;
+        //        public string mResult;
+        //        public object mData;
+        //    }
+        //public  Task<CDatabaseResult> GetTextDataToCustomClassAsync(string sSQL, params SqlParameter[] parameters)
+        //{
+        //    //Return task based on datatype
+        //    return Task.Run(async () =>
+        //    {
+        //        try
+        //        {
+        //            //GET DATA
+        //            var sData = string.Empty;
+        //            using (var newConnection = new SqlConnection(Configuration["ConnectionStrings:DefaultConnection"]))
+        //            {
+        //                newConnection.Open();
+        //                var command = new SqlCommand(sSQL, newConnection);
+        //                var reader = await command.ExecuteReaderAsync();
+        //                while (reader.Read())
+        //                {
+        //                    var sLine = string.Empty;
+        //                    for (var i = 0; i < reader.FieldCount; i++)
+        //                    {
+        //                        if (sLine.Length == 0) { sLine += reader[i]; } else { sLine += "\t" + reader[i]; }
+        //                    }
+        //                    if (sData.Length == 0) { sData += sLine; } else { sData += "\r\n" + sLine; }
+        //                }
+        //                newConnection.Close();
+        //            }
+
+        //            var result = new CDatabaseResult()
+        //            {
+        //                mData = sData,
+        //                mSuccess = true
+        //            };
+
+        //            return result;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            //Catch exception and return as error in class object
+        //            var result = new CDatabaseResult()
+        //            {
+        //                mResult = "GetData Error: " + ex.Message,
+        //                mSuccess = false
+        //            };
+        //            return result;
+        //        }
+        //    });
+        //}
+
+        //EXECUTE ASYNC
+        public Task<int> ExecuteAsync(string sSQL, params SqlParameter[] parameters)
+            {
+                return Task.Run(() =>
+                {
+                    using (var newConnection = new SqlConnection(Configuration["ConnectionStrings:DefaultConnection"]))
+                    using (var newCommand = new SqlCommand(sSQL, newConnection))
+                    {
+                        newCommand.CommandType = CommandType.Text;
+                        if (parameters != null) newCommand.Parameters.AddRange(parameters);
+
+                        newConnection.Open();
+                        return newCommand.ExecuteNonQueryAsync();
+                    }
+                });
+            }
+
+            // RETURN DATASET
+            public Task<DataSet> GetDataSetAsync(string sSQL, params SqlParameter[] parameters)
+            {
+                return Task.Run(() =>
+                {
+                    using (var newConnection = new SqlConnection(Configuration["ConnectionStrings:DefaultConnection"]))
+                    using (var mySQLAdapter = new SqlDataAdapter(sSQL, newConnection))
+                    {
+                        mySQLAdapter.SelectCommand.CommandType = CommandType.Text;
+                        if (parameters != null) mySQLAdapter.SelectCommand.Parameters.AddRange(parameters);
+
+                        var myDataSet = new DataSet();
+                        mySQLAdapter.Fill(myDataSet);
+                        return myDataSet;
+                    }
+                });
+            }
+        //}
 
         #endregion
     }

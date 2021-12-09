@@ -1,6 +1,14 @@
 ﻿using System.ComponentModel;
 using System.Windows.Controls;
 using static Fasetto.Word.DI;
+using System.Windows;
+using System;
+
+using System.Windows.Input;
+using System.Windows.Media;
+using Fasetto.Word.Core;
+using System.Threading.Tasks;
+using Dna;
 
 namespace Fasetto.Word
 {

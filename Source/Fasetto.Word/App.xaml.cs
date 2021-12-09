@@ -81,6 +81,7 @@ namespace Fasetto.Word
                 Configuration["FasettoWordServer:HostUrl"],
                 // Every 20 seconds
                 interval: 20000,
+                //interval: 2000000,
                 // Pass in the DI logger
                 logger: Framework.Provider.GetService<ILogger>(),
                 // On change...

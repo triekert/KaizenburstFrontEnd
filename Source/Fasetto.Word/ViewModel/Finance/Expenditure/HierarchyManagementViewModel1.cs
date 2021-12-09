@@ -53,17 +53,17 @@ namespace Fasetto.Word
         //sstring representation of GUID for the Parent category of a Category element
         //the parent of all root elements will be NULL... any hierarchy will have at least one root element
         /// </summary>
-        public string ParentCategoryId { get; set; }
+        public string ParentCategoryID { get; set; }
 
         /// <summary>
         //the link to tthe ICON used to depict this category
         /// </summary>
-        public string FIconId { get; set; }
+        public string FIconID { get; set; }
 
         /// <summary>
         //sub categories, each of which is also a category itself
         /// </summary>
-        public List<HierarchyManagementViewModel> Children { get; set; }
+        public List<HierarchyViewModel> Children { get; set; }
 
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The command to login
         /// </summary>
-        public ICommand RetrieveExpenseHierarchy{ get; set; }
+        public ICommand RetrieveHierarchy{ get; set; }
 
         /// <summary>
         /// The command for when the user clicks the send button
@@ -94,7 +94,7 @@ namespace Fasetto.Word
         {
             // Create commands
 
-            RetrieveExpenseHierarchy = new RelayCommand(async () => await ExpenseHierarchyAsync());
+            RetrieveHierarchy = new RelayCommand(async () => await HierarchyAsync());
         }
 
         #endregion
@@ -104,7 +104,7 @@ namespace Fasetto.Word
         /// </summary>
         /// <param name="parameter">The <see cref="SecureString"/> passed in from the view for the users password</param>
         /// <returns></returns>
-        public async Task ExpenseHierarchyAsync()
+        public async Task HierarchyAsync()
         {
             await RunCommandAsync(() => HiearachyBuildIsRunning, async () =>
             {
@@ -120,9 +120,9 @@ namespace Fasetto.Word
                 if (string.IsNullOrEmpty(token))
                     // Then do nothing more
                     return;
-                var result = await WebRequests.PostAsync<ApiResponse<ExpenseHierarchyResultsApiModel>>(
+                var result = await WebRequests.PostAsync<ApiResponse<HierarchyResultListApiModel>>(
                 // Set URL
-                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.ReturnExpenseHierarchy),
+                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.ReturnHierarchy),
                     bearerToken: token);
 
                 // If the response has an error...

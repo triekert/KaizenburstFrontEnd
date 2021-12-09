@@ -19,5 +19,16 @@
         /// The route to the Login method
         /// </summary>
         public const string Login = "/login";
+
+        /// <summary>
+        /// The route to the test the Private area
+        /// </summary>
+        public const string Private = "/private";
+
+
+        /// <summary>
+        /// The route to the test the Hiearchy
+        /// </summary>
+        public const string Hierarchy = "/hierarchy";
     }
 }

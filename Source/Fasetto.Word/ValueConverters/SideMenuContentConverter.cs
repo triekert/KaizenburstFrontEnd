@@ -15,7 +15,13 @@ namespace Fasetto.Word
         /// <summary>
         /// An instance of the current chat list control
         /// </summary>
-        protected ChatListControl mChatListControl = new ChatListControl();
+        //protected ChatListControl mChatListControl = new ChatListControl();
+
+
+        /// <summary>
+        /// An instance of the current Hiearchy control
+        /// </summary>
+ 
 
         #endregion
 
@@ -29,7 +35,20 @@ namespace Fasetto.Word
             {
                 // Chat 
                 case SideMenuContent.Chat:
+                    /// <summary>
+                    /// An instance of the current chat list control
+                    /// </summary>
+
+                    var mChatListControl = new ChatListControl();
                     return mChatListControl;
+
+                // Finance
+                case SideMenuContent.Finance:
+                    /// <summary>
+                    /// An instance of the current Hiearchy control
+                    /// </summary>
+                    var mFinanceMenuControl = new HierarchyControl();
+                    return mFinanceMenuControl;//mChatListControl;
 
                 // Unknown
                 default:

@@ -88,9 +88,15 @@ namespace Fasetto.Word
         public ICommand OpenContactsCommand { get; set; }
 
         /// <summary>
+        /// The command to change the side menu to the Finance Menu selection
+        /// </summary>
+        public ICommand OpenFinanceCommand { get; set; }
+
+        /// <summary>
         /// The command to change the side menu to Media
         /// </summary>
         public ICommand OpenMediaCommand { get; set; }
+
 
         #endregion
 
@@ -105,6 +111,7 @@ namespace Fasetto.Word
             OpenChatCommand = new RelayCommand(OpenChat);
             OpenContactsCommand = new RelayCommand(OpenContacts);
             OpenMediaCommand = new RelayCommand(OpenMedia);
+            OpenFinanceCommand = new RelayCommand(OpenFinance);
         }
 
         #endregion
@@ -134,8 +141,17 @@ namespace Fasetto.Word
         /// </summary>
         public void OpenMedia()
         {
-            // Set the current side menu to Chat
+            // Set the current side menu to Media
             CurrentSideMenuContent = SideMenuContent.Media;
+        }
+
+        /// <summary>
+        /// Changes the current side menu to Finance
+        /// </summary>
+        public void OpenFinance()
+        {
+            // Set the current side menu to Finance
+            CurrentSideMenuContent = SideMenuContent.Finance;
         }
 
         #endregion
@@ -167,7 +183,7 @@ namespace Fasetto.Word
                 OnPropertyChanged(nameof(CurrentPage));
 
             // Show side menu or not?
-            SideMenuVisible = page == ApplicationPage.Chat;
+            SideMenuVisible = page == ApplicationPage.Chat || page == ApplicationPage.Finance;
 
         }
 

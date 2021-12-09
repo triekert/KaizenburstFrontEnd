@@ -10,7 +10,7 @@
         AllowsTransparency="True"
         WindowStartupLocation="CenterScreen"
         x:Name="AppWindow"
-        Icon="Images/Logo/logo-small.png"
+        Icon="Images/Logo/KaizenPNG.PNG"
         MinWidth="{Binding WindowMinimumWidth}"
         MinHeight="{Binding WindowMinimumHeight}"
         Deactivated="AppWindow_Deactivated"
@@ -83,19 +83,26 @@
 
                                         <!-- Icon -->
                                         <Button Style="{StaticResource SystemIconButton}" Command="{Binding MenuCommand}">
-                                            <Image Source="/Images/Logo/logo-small.png" />
+                                            <Image Source="/Images/Logo/KaizenPNG.PNG" />
                                         </Button>
 
                                         <!-- Title -->
                                         <Viewbox Grid.Column="0" Grid.ColumnSpan="3" Margin="5">
                                             <StackPanel>
                                                 <TextBlock FontFamily="{StaticResource LatoBold}" FontSize="{StaticResource FontSizeLarge}" Margin="0,0,0,-5">
-                                                    <Run Text="W" Foreground="{StaticResource WordOrangeBrush}" /><!--
-                                                    --><Run Text="O" Foreground="{StaticResource WordBlueBrush}" /><!--
-                                                    --><Run Text="R" Foreground="{StaticResource WordRedBrush}" /><!--
-                                                    --><Run Text="D" Foreground="{StaticResource WordGreenBrush}" />
+                                                    <Run Text="K" Foreground="{StaticResource WordOrangeBrush}" /><!--
+                                                    --><Run Text="a" Foreground="{StaticResource WordBlueBrush}" /><!--
+                                                    --><Run Text="i" Foreground="{StaticResource WordRedBrush}" /><!--
+                                                    --><Run Text="z" Foreground="{StaticResource WordGreenBrush}" /><!--
+                                                    --><Run Text="e" Foreground="{StaticResource ForegroundVeryDarkBrush}" /><!--
+                                                    --><Run Text="n" Foreground="{StaticResource WordLightBlueBrush}" /><!--
+                                                    --><Run Text="B" Foreground="{StaticResource WordRedBrush}" /><!--
+                                                    --><Run Text="u" Foreground="{StaticResource WordGreenBrush}" /><!--  
+                                                    --><Run Text="r" Foreground="{StaticResource WordBlueBrush}" /><!--
+                                                    --><Run Text="s" Foreground="{StaticResource WordRedBrush}" /><!--
+                                                    --><Run Text="t" Foreground="{StaticResource WordGreenBrush}" />
                                                 </TextBlock>
-                                                <TextBlock Text="by fasetto" Foreground="{StaticResource ForegroundDarkBrush}" TextAlignment="Center" />
+                                                <TextBlock Text="improving in bursts" Foreground="{StaticResource ForegroundDarkBrush}" TextAlignment="Center" />
                                             </StackPanel>
                                         </Viewbox>
 

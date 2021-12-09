@@ -57,6 +57,16 @@
                                 />
                             <Button 
                                 Style="{StaticResource IconButton}" 
+                                Content="{StaticResource FontAwesomeFinanceIcon}" 
+                                Command="{Binding OpenFinanceCommand}"
+                                />
+                            <Button 
+                                Style="{StaticResource IconButton}" 
+                                Content="{StaticResource FontAwesomeProjectIcon}" 
+                                Command="{Binding OpenProjectCommand}"
+                                />
+                            <Button 
+                                Style="{StaticResource IconButton}" 
                                 Content="{StaticResource FontAwesomePictureIcon}" 
                                 Command="{Binding OpenServicesCommand}"
                                 />

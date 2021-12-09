@@ -3,9 +3,9 @@
 namespace Fasetto.Word
 {
     /// <summary>
-    /// The design-time data for a <see cref="SettingsViewModel"/>
+    /// The design-time data for a <see cref="SettingsDesignModel"/>
     /// </summary>
-    public class SettingsDesignModel : SettingsViewModel
+    public class SettingsDesignModel : SettingsViewModel 
     {
         #region Singleton
 

@@ -55,5 +55,14 @@
         public const string SearchUsers = "api/users/search";
 
         #endregion
+
+        #region Finance
+
+        /// <summary>
+        /// The route to the ReturnHierarchy Api method
+        /// </summary>
+        public const string ReturnHierarchy = "api/finance/hierarchy";
+
+        #endregion
     }
 }
