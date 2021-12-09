@@ -46,8 +46,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>
-    </StartupObject>
+    <StartupObject>Fasetto.Word.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Data" />
@@ -137,9 +136,6 @@
     </Compile>
     <Compile Include="Controls\SideMenuControl.xaml.cs">
       <DependentUpon>SideMenuControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\HierarchyControl.xaml.cs">
-      <DependentUpon>HierarchyControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\BaseDialogUserControl.cs" />
     <Compile Include="Dialogs\DialogMessageBox.xaml.cs">
@@ -276,10 +272,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\SideMenuControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\HierarchyControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
