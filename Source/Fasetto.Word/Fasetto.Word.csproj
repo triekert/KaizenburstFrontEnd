@@ -49,6 +49,7 @@
     <StartupObject>Fasetto.Word.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.IO.Log" />
     <Reference Include="System.Net" />
@@ -147,6 +148,11 @@
     <Compile Include="DI\UI\UIManager.cs" />
     <Compile Include="DialogWindow.xaml.cs">
       <DependentUpon>DialogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\Finance\Expenditure\Design\HierarchyElementDesignModel.cs" />
     <Compile Include="Pages\BasePage.cs" />
@@ -372,6 +378,7 @@
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
