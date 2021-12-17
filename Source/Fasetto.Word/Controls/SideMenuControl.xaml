@@ -55,8 +55,8 @@
                                 Content="{StaticResource FontAwesomeProjectIcon}" 
                                 Command="{Binding OpenProjectCommand}"
                                 />
-                            <Button 
-                                Style="{StaticResource IconButton}" 
+                            <!--<Button--> 
+                                <!--Style="{StaticResource IconButton}" 
                                 Content="{StaticResource FontAwesomeFinanceIcon}" 
                                 Command="{Binding OpenFinanceCommand}"
                                 />
@@ -69,7 +69,7 @@
                                 Style="{StaticResource IconButton}" 
                                 Content="{StaticResource FontAwesomePictureIcon}" 
                                 Command="{Binding OpenServicesCommand}"
-                                />
+                                />-->
 
                         </StackPanel>
 

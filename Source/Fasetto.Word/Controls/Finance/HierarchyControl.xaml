@@ -66,7 +66,7 @@
                         <EventSetter Event="Drop" Handler="TreeView_Drop"/>
                         <EventSetter Event= "MouseDown" Handler="TreeView_MouseDown"/>
                         <EventSetter Event="PreviewMouseLeftButtonDown" Handler="TreeView_PreviewMouseLeftButtonDown" />
-
+                        <EventSetter Event="KeyDown" Handler="TreeView_KeyBoard"/>
                         <EventSetter Event="MouseMove" Handler="TreeView_MouseMove"/>
                         <Style.Triggers>
                             <Trigger Property="IsSelected" Value="True">

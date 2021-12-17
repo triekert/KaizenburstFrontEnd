@@ -212,11 +212,11 @@ namespace Fasetto.Word
         #region Command Methods
 
         /// <summary>
-        /// Open the settings menu
+        /// Opens the settings menu
         /// </summary>
         public void Open()
         {
-            // Close settings menu
+            // Open settings menu
             ViewModelApplication.SettingsMenuVisible = true;
         }
 

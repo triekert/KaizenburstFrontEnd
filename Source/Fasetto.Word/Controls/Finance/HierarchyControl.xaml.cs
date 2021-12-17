@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using static Fasetto.Word.DI;
 
 namespace Fasetto.Word
 {
@@ -84,6 +85,7 @@ namespace Fasetto.Word
             if ((HierarchyViewModel)tvParameters.SelectedItem == null)
                 return;
 
+
             mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
             mSourceCategoryName = mDraggedItem.ShortName;
 
@@ -125,6 +127,21 @@ namespace Fasetto.Word
             }
 
         }
+        /// <summary>
+        /// Monitor keyboard for use of Insert key
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TreeView_KeyBoard(object sender, KeyboardEventArgs e)
+        {
+            //check to determine whether user would like to add an item to the hierarchy
+            var isInsert = Keyboard.IsKeyDown(Key.Insert);
+            if (isInsert == true)
+            {
+                ViewModelApplication.SettingsMenuVisible = true;
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>

@@ -102,7 +102,7 @@
                                                     --><Run Text="s" Foreground="{StaticResource WordRedBrush}" /><!--
                                                     --><Run Text="t" Foreground="{StaticResource WordGreenBrush}" />
                                                 </TextBlock>
-                                                <TextBlock Text="improving in bursts" Foreground="{StaticResource ForegroundDarkBrush}" TextAlignment="Center" />
+                                                <TextBlock Text="always better, sometimes in bursts" Foreground="{StaticResource ForegroundDarkBrush}" TextAlignment="Center" />
                                             </StackPanel>
                                         </Viewbox>
 
