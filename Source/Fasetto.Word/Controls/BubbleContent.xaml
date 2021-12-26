@@ -28,7 +28,7 @@
             </Border.Effect>
 
             <!-- Message text -->
-            <ContentControl Content="{Binding Converter={local:PopupContentConverter}}" />
+            <ContentControl Content="{Binding Converter={local:PopupMenuContentConverter}}" />
 
         </Border>
 

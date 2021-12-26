@@ -178,7 +178,13 @@
                                    Panel.ZIndex="9"
                                    local:AnimateSlideInFromBottomMarginProperty.Value="{Binding ApplicationViewModel.SettingsMenuVisible, Source={x:Static local:ViewModelLocator.Instance}}"
                                    />
-
+            <!-- Popup page -->
+            <local:PopupControl Grid.ColumnSpan="2"
+                                   Panel.ZIndex="9"
+                DataContext="{Binding ApplicationViewModel, Source={x:Static local:ViewModelLocator.Instance}}"
+                local:AnimateSlideInFromBottomMarginProperty.Value="{Binding PopupVisible}"
+                Content="{Binding CurrentPopupContent, Converter={local:PopupContentConverter}}"
+                />
             <!-- Dimmed overlay -->
             <Border Grid.ColumnSpan="2"
                     Panel.ZIndex="10"

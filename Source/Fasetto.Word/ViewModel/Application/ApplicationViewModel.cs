@@ -28,6 +28,12 @@ namespace Fasetto.Word
         public ApplicationPage CurrentPage { get; private set; } = ApplicationPage.Login;
 
         /// <summary>
+        /// The view model to use for the current Hierarchy Element
+        /// when the PopupControl is called to add a new Hierarchy Element
+        /// </summary>
+        public HierarchyElementViewModel AddElementViewModel { get; set; }
+
+        /// <summary>
         /// The view model to use for the current page when the CurrentPage changes
         /// NOTE: This is not a live up-to-date view model of the current page
         ///       it is simply used to set the view model of the current page 
@@ -39,6 +45,11 @@ namespace Fasetto.Word
         /// True if the side menu should be shown
         /// </summary>
         public bool SideMenuVisible { get; set; } = false;
+
+        /// <summary>
+        /// True if the PopupScreen should be shown
+        /// </summary>
+        public bool PopupVisible { get; set; } = false;
 
         /// <summary>
         /// True if the settings menu should be shown
@@ -69,9 +80,15 @@ namespace Fasetto.Word
         public SideMenuContent CurrentSideMenuContent { get; set; } = SideMenuContent.Chat;
 
         /// <summary>
+        /// Determines the currently visible popup content
+        /// </summary>
+        public PopupContent CurrentPopupContent { get; set; } = PopupContent.AddElement;
+
+        /// <summary>
         /// Determines if the application has network access to the fasetto server
         /// </summary>
         public bool ServerReachable { get; set; } = true;
+
 
         #endregion
 

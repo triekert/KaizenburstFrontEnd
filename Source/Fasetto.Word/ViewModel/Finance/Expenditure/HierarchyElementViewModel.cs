@@ -221,7 +221,7 @@ namespace Fasetto.Word {
         public void Close()
         {
             // Close settings menu
-            ViewModelApplication.SettingsMenuVisible = false;
+            ViewModelApplication.PopupVisible = false;
         }
 
         /// <summary>

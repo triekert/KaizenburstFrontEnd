@@ -37,16 +37,7 @@ namespace Fasetto.Word
             var root = "[Finance].[FinancialHierarchy]";
             mHierarchyTree = new HierarchyTreeViewModel(root);
             DataContext = mHierarchyTree;
-            // Get raw family tree data from a database.
-            //Person rootPerson = Database.GetFamilyTree();
 
-            // Create UI-friendly wrappers around the 
-            // raw data objects (i.e. the view-model).
-            //_familyTree = new FamilyTreeViewModel(rootPerson);
-
-            // Let the UI bind to the view-model.
-            //base.DataContext = _familyTree;
-            //DataContext = mHierarchy;
         }
 
         public HierarchyControl(string destinationCategoryId)
@@ -138,7 +129,9 @@ namespace Fasetto.Word
             var isInsert = Keyboard.IsKeyDown(Key.Insert);
             if (isInsert == true)
             {
-                ViewModelApplication.SettingsMenuVisible = true;
+                ViewModelApplication.PopupVisible = true;
+                //ViewModelApplication.SettingsMenuVisible = true;
+                e.Handled= true;
             }
         }
 
