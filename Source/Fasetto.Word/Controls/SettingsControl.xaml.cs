@@ -30,5 +30,10 @@ namespace Fasetto.Word
             else
                 DataContext = ViewModelSettings;
         }
+
+        private void TextEntryControl_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

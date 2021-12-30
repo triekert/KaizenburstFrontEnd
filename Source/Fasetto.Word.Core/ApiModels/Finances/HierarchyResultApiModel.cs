@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 
 namespace Fasetto.Word.Core
@@ -29,7 +30,16 @@ namespace Fasetto.Word.Core
         //the link to tthe ICON used to depict this category
         public string FIconID { get; set; }
         //sub categories that are also categories in themself
-        //public List<ExpenseHierarchyResultApiModel> Children { get; set; }
+
+        /// <summary>
+        /// Calendar date from which Element is seen as active
+        /// </summary>
+        public DateTime DateEffective { get; set; }
+
+        /// <summary>
+        /// Calendar date from which Element is deactivated
+        /// </summary>
+        public DateTime DateDiscontinued { get; set; }
 
         #endregion       
     }

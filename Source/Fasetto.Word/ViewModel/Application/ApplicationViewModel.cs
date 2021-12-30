@@ -31,7 +31,7 @@ namespace Fasetto.Word
         /// The view model to use for the current Hierarchy Element
         /// when the PopupControl is called to add a new Hierarchy Element
         /// </summary>
-        public HierarchyElementViewModel AddElementViewModel { get; set; }
+        public HierarchyElementViewModel AddElementViewModel { get; set; } = new HierarchyElementViewModel();
 
         /// <summary>
         /// The view model to use for the current page when the CurrentPage changes
@@ -84,6 +84,16 @@ namespace Fasetto.Word
         /// </summary>
         public PopupContent CurrentPopupContent { get; set; } = PopupContent.AddElement;
 
+        /// <summary>
+        /// Points to the currently visible popup content view model
+        /// </summary>
+        public object CurrentPopupViewModel { get; set; }
+
+
+        /// <summary>
+        /// Points to the currently visible side menu content view model
+        /// </summary>
+        public object CurrentSideMenuViewModel { get; set; }
         /// <summary>
         /// Determines if the application has network access to the fasetto server
         /// </summary>

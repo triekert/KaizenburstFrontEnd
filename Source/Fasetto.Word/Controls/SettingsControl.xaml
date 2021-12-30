@@ -85,7 +85,7 @@
                             local:TextEntryWidthMatcherProperty.Value="True"
                             >
 
-                    <local:TextEntryControl DataContext="{Binding FirstName}" />
+                    <local:TextEntryControl DataContext="{Binding FirstName}" Loaded="TextEntryControl_Loaded" />
                     <local:TextEntryControl DataContext="{Binding LastName}" />
                     <local:TextEntryControl DataContext="{Binding Username}" />
                     <local:PasswordEntryControl DataContext="{Binding Password}" />

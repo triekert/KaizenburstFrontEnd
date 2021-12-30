@@ -8,34 +8,30 @@ namespace Fasetto.Word
     /// Interaction logic for SettingsControl.xaml
     /// </summary>
     public partial class HierarchyElementControl : UserControl
-    {
+    {/// <summary>
+    /// This User Control is always linked to the popup component of the ApplicationViewModel
+    /// </summary>
         public HierarchyElementControl()
         {
             InitializeComponent();
 
             // Set data context to settings view model
+            ViewModelApplication.CurrentPopupViewModel= new HierarchyElementViewModel();
+            //if (ViewModelApplication.AddElementViewModel == null)
+            //    DataContext = new HierarchyElementViewModel();
+            //else
+            DataContext = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
 
-            // If we are in design mode...
-            if (DesignerProperties.GetIsInDesignMode(this))
-                // Create new instance of settings view model
-                DataContext = new HierarchyElementViewModel();
-            else
-                DataContext = new HierarchyElementViewModel();
+
+
         }
-        public HierarchyElementControl(HierarchyElementViewModel NewElement)
-        {
-            InitializeComponent();
 
-            // Set data context to settings view model
-
-            // If we are in design mode...
-            if (DesignerProperties.GetIsInDesignMode(this))
-                // Create new instance of settings view model
-                DataContext = new HierarchyElementViewModel();
-            else
-                DataContext = NewElement;
-        }
         private void PasswordEntryControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+
+        }
+
+        private void TextEntryControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
 
         }

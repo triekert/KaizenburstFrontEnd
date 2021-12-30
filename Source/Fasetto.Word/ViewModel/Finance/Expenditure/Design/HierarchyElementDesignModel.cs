@@ -23,11 +23,11 @@ namespace Fasetto.Word
         /// </summary>
         public HierarchyElementDesignModel()
         {
-            FirstName = new TextEntryViewModel { Label = "Fist Name", OriginalText = "Luke" };
-            LastName = new TextEntryViewModel { Label = "Last Name", OriginalText = "Malpass" };
-            Username = new TextEntryViewModel { Label = "Username", OriginalText = "luke" };
-            Password = new PasswordEntryViewModel { Label = "Password", FakePassword = "********" };
-            Email = new TextEntryViewModel { Label = "Email", OriginalText = "contact@angelsix.com" };
+            ShortName = new TextEntryViewModel { Label = "Node Name", OriginalText = "New Node" };
+            Description = new TextEntryViewModel { Label = "Node Description", OriginalText = "New Node Description" };
+            KCategoryID = "132AB-AF1245-941QW" ;
+            ParentCategoryID = "132AB-AF1245-941QW" ;
+            ParentShortName = "Parent Node";
         }
 
         #endregion

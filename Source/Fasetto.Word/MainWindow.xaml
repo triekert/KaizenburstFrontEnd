@@ -89,20 +89,21 @@
                                         <!-- Title -->
                                         <Viewbox Grid.Column="0" Grid.ColumnSpan="3" Margin="5">
                                             <StackPanel>
-                                                <TextBlock FontFamily="{StaticResource LatoBold}" FontSize="{StaticResource FontSizeLarge}" Margin="0,0,0,-5">
-                                                    <Run Text="K" Foreground="{StaticResource WordOrangeBrush}" /><!--
-                                                    --><Run Text="a" Foreground="{StaticResource WordBlueBrush}" /><!--
-                                                    --><Run Text="i" Foreground="{StaticResource WordRedBrush}" /><!--
-                                                    --><Run Text="z" Foreground="{StaticResource WordGreenBrush}" /><!--
-                                                    --><Run Text="e" Foreground="{StaticResource ForegroundVeryDarkBrush}" /><!--
-                                                    --><Run Text="n" Foreground="{StaticResource WordLightBlueBrush}" /><!--
-                                                    --><Run Text="B" Foreground="{StaticResource WordRedBrush}" /><!--
-                                                    --><Run Text="u" Foreground="{StaticResource WordGreenBrush}" /><!--  
-                                                    --><Run Text="r" Foreground="{StaticResource WordBlueBrush}" /><!--
-                                                    --><Run Text="s" Foreground="{StaticResource WordRedBrush}" /><!--
-                                                    --><Run Text="t" Foreground="{StaticResource WordGreenBrush}" />
+                                                <TextBlock FontFamily="{StaticResource LatoBold}" FontSize="{StaticResource FontSizeLarge}" Margin="0,0,0,-5" TextAlignment="Center">
+                                                    <Run Text="K" Foreground="{StaticResource WordOrangeBrush}" />
+                                                    <Run Text="a" Foreground="{StaticResource WordBlueBrush}" />
+                                                    <Run Text="i" Foreground="{StaticResource WordRedBrush}" />
+                                                    <Run Text="z" Foreground="{StaticResource WordGreenBrush}" />
+                                                    <Run Text="e" Foreground="{StaticResource ForegroundVeryDarkBrush}" />
+                                                    <Run Text="n" Foreground="{StaticResource WordLightBlueBrush}" />
+                                                    <Run Text="B" Foreground="{StaticResource WordRedBrush}" />
+                                                    <Run Text="u" Foreground="{StaticResource WordGreenBrush}" />  
+                                                    <Run Text="r" Foreground="{StaticResource WordBlueBrush}" />
+                                                    <Run Text="s" Foreground="{StaticResource WordRedBrush}" />
+                                                    <Run Text="t" Foreground="{StaticResource WordGreenBrush}" />
+                                                    <!--TextAlignment="Center"-->
                                                 </TextBlock>
-                                                <TextBlock Text="always better, sometimes in bursts" Foreground="{StaticResource ForegroundDarkBrush}" TextAlignment="Center" />
+                                                <TextBlock Text="always better, sometimes more so" Foreground="{DynamicResource ForegroundVeryDarkBrush}" TextAlignment="Center" />
                                             </StackPanel>
                                         </Viewbox>
 

@@ -129,6 +129,17 @@ namespace Fasetto.Word
             var isInsert = Keyboard.IsKeyDown(Key.Insert);
             if (isInsert == true)
             {
+                //Prepopulate
+                mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
+                var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
+                mAddElementViewModel.ShortName.OriginalText = "New Element Name";
+                mAddElementViewModel.Description.OriginalText = "Description of New Element";
+                mAddElementViewModel.ParentShortName = mDraggedItem.ShortName;
+                mAddElementViewModel.ParentCategoryID = mDraggedItem.KCategoryID;
+                mAddElementViewModel.KCategoryID = Guid.NewGuid().ToString().ToUpper();
+                mAddElementViewModel.DateEffective = DateTime.Now;
+                ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
+                //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
                 ViewModelApplication.PopupVisible = true;
                 //ViewModelApplication.SettingsMenuVisible = true;
                 e.Handled= true;

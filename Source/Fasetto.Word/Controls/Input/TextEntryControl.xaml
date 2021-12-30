@@ -68,7 +68,7 @@
                      local:FocusAndSelectProperty.Value="{Binding Editing}"
                      FontSize="{StaticResource FontSizeRegular}"
                      Padding="2"
-                     Margin="10 10 15 8"
+                     Margin="10 10 15 8" FontFamily="Lato Heavy"
                      />
 
             <!-- Content -->

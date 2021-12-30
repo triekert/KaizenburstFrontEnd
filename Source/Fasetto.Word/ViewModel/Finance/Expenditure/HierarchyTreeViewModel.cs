@@ -427,8 +427,11 @@ namespace Fasetto.Word
         }
 
         #endregion //Search Logic //KCategoryID
+        #region Tree Manipulation
         /// <summary>
-        /// Move 
+        /// Move element from one parent to another
+        /// The calling programme is to ensure that no loops 
+        /// are present where an element becomes its owndescendent
         /// </summary>
         /// <param name="mCategoryKId"></param>
         /// <param name="mParentKId"></param>
@@ -452,7 +455,13 @@ namespace Fasetto.Word
             PerformKIdSearch();
 
         }
-
+        /// <summary>
+        /// Copy Hierarchy Element from one location to another (allocate to a different parent Element)
+        /// Simultaneously, copies must be made of all descendents and these 2 must be inserted as descendents
+        /// of the newly copied apex element
+        /// </summary>
+        /// <param name="mCategoryKId"></param>
+        /// <param name="mParentKId"></param>
         public void CopyElement(string mCategoryKId, string mParentKId)
         {
             try
@@ -460,6 +469,7 @@ namespace Fasetto.Word
             //mSearchText = mCategoryKId;
             mParentCategoryID = mParentKId;
                 mPersistTmp = new HierarchyResultListApiModel();
+
                 //var sourceElement = from HierarchyDataModel in this
                 //                    where KCategoryID
                 var matches = from category in mPersist
@@ -478,7 +488,8 @@ namespace Fasetto.Word
                         Frequency = category.Frequency,
                         FinHierarchyID = category.FinHierarchyID,
                         ParentCategoryID = mParentKId,
-                        KCategoryID = Guid.NewGuid().ToString()
+                        DateEffective = DateTime.Now,
+                        KCategoryID = Guid.NewGuid().ToString().ToUpper()
                     };
                     mPersistTmp.Add(mPersistElement);
                     CopyElement1(mCategoryKId, mPersistElement.KCategoryID);
@@ -522,7 +533,8 @@ namespace Fasetto.Word
                         Frequency = category.Frequency,
                         FinHierarchyID = category.FinHierarchyID,
                         ParentCategoryID = mParentKId,
-                        KCategoryID = Guid.NewGuid().ToString()
+                        DateEffective = DateTime.Now,
+                        KCategoryID = Guid.NewGuid().ToString().ToUpper()
                     };
                     mPersistTmp.Add(mPersistElement);
                 CopyElement1(category.KCategoryID, mPersistElement.KCategoryID);
@@ -535,6 +547,31 @@ namespace Fasetto.Word
 
 
         }
+
+        /// <summary>
+        /// Add a new element to the Hierarchy Tree
+        /// The calling programme is to generate a GUID for the new element
+        /// </summary>
+        /// <param name="mNewElement"></param>
+        public void AddElement(HierarchyElementViewModel mNewElement)
+        {
+            mSearchText = mNewElement.KCategoryID;
+            var mPersistElement = new HierarchyResultApiModel
+            {
+                ShortName = mNewElement.ShortName.EditedText,
+                Description = mNewElement.Description.EditedText,
+                ParentCategoryID = mNewElement.ParentCategoryID,
+                KCategoryID = mNewElement.KCategoryID
+            };
+            mPersist.Add(mPersistElement);
+
+
+            RefreshHierarchy();
+            PerformKIdSearch();
+
+        }
+
+        #endregion //Tree Manipulation
 
 
 

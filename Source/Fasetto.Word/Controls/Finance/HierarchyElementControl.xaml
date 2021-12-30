@@ -40,7 +40,7 @@
                      Text="{StaticResource FontAwesomeCogIcon}"
                      Foreground="{StaticResource WordOrangeBrush}" />
                 <!-- Settings text -->
-                <Run Text="Hierarchy Item"
+                <Run Text="Add Node to Hierarchy"
                      FontFamily="{StaticResource LatoRegular}" />
                 </TextBlock>
 
@@ -48,7 +48,7 @@
 
             <!-- Main Content -->
             <Grid Grid.Row="1"
-                  Width="600"
+                  Width="800"
                   VerticalAlignment="Top"
                   >
 
@@ -82,40 +82,88 @@
                 
                 <!-- Profile details -->
                 <StackPanel Grid.Column="1"
+                            local:TextEntryWidthMatcherProperty.Value="True">
+                    <local:TextEntryControl DataContext="{Binding ShortName}" />
+                    <local:TextEntryControl DataContext="{Binding Description}" />
+                    
+                    <!--Display hierarchy element GUID of new element -->
+                    
+                    <StackPanel Orientation="Horizontal" Grid.Column="1"
                             local:TextEntryWidthMatcherProperty.Value="True"
                             >
+                        <TextBlock Text="Guid for New Node"
+                                   Padding="8 10 10 10"/>
+                        <TextBlock Text="{Binding KCategoryID}"
+                                                Padding="8 10 8 10"
+                                                Foreground="{StaticResource WordBlueBrush}"
+                                                TextTrimming="CharacterEllipsis"
+                                                FontFamily="{StaticResource LatoRegular}"
+                                                />
+                    </StackPanel>
 
-                    <local:TextEntryControl DataContext="{Binding FirstName}" />
-                    <local:TextEntryControl DataContext="{Binding LastName}" />
-                    <!--Parent hierarchy element name -->
-                    <TextBlock Text="{Binding FirstName}"
-                                                Padding="0 0 0 2"
-                                                Foreground="{StaticResource WordBlueBrush}"
-                                                TextTrimming="CharacterEllipsis"
-                                                FontFamily="{StaticResource LatoRegular}"
-                                                />
-                    <!--Unique code  -->
-                    <TextBlock Text="{Binding FirstName}"
-                                                Padding="0 0 0 2"
-                                                Foreground="{StaticResource WordBlueBrush}"
-                                                TextTrimming="CharacterEllipsis"
-                                                FontFamily="{StaticResource LatoRegular}"
-                                                />
-                    <!--<local:TextEntryControl DataContext="{Binding Email}" />-->
-                    <TextBlock Text="{Binding FirstName}"
-                                                Padding="0 0 0 2"
-                                                Foreground="{StaticResource WordBlueBrush}"
-                                                TextTrimming="CharacterEllipsis"
-                                                FontFamily="{StaticResource LatoRegular}"
-                                                />
+                    <StackPanel Orientation="Horizontal" Grid.Column="1"
+                                local:TextEntryWidthMatcherProperty.Value="True">
+                        <TextBlock  Text ="Date Implemented "
+                                       Padding="10 10 10 10"/>
+                        <DatePicker x:Name="dateEffective"  SelectedDate="{Binding DateEffective, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="20 10 20 10"
+                                        SelectedDateFormat="Short"/>
+                                 
+                    </StackPanel>
 
-                    <Button Content="{Binding LogoutButtonText}"
-                            Command="{Binding LogoutCommand}"
+                    <StackPanel Orientation="Horizontal" Grid.Column="1"
+                                    local:TextEntryWidthMatcherProperty.Value="True" RenderTransformOrigin="0.525,0.565">
+                        <TextBlock  Text ="Date Discontinued"
+                                           Padding="10 10 13 10"/>
+                        <DatePicker x:Name="dateDiscontinued"  SelectedDate="{Binding DateDiscontinued, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="20 10 20 10"
+                                            SelectedDateFormat="Short"  />
+                                    
+                    </StackPanel>
+                    <TextBlock FontSize="{StaticResource FontSizeLarge}" Padding="20 20 20 10" 
+                           Foreground="{StaticResource ForegroundVeryDarkBrush}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center">
+
+                        <!-- Settings text -->
+                        <Run Text="Parent Node"
+                             FontFamily="{StaticResource LatoRegular}" FontWeight="Bold" />
+                    </TextBlock>
+                    <StackPanel Orientation="Horizontal" Grid.Column="1"
+                            local:TextEntryWidthMatcherProperty.Value="True"
+                            >
+                        <TextBlock Text="Parent Node Name"
+                                   Padding="8 10 10 10"/>
+                        <TextBlock Text="{Binding ParentShortName}"
+                                                Padding="8 10 8 10"
+                                                Foreground="{StaticResource WordBlueBrush}"
+                                                TextTrimming="CharacterEllipsis"
+                                                FontFamily="{StaticResource LatoRegular}"/>
+                                                
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Column="1"
+                            local:TextEntryWidthMatcherProperty.Value="True"
+                            >
+                        <TextBlock Text="Parent Node GUID"
+                                   Padding="8 10 10 10"/>
+                        <TextBlock Text="{Binding ParentCategoryID}"
+                                                Padding="8 10 8 10"
+                                                Foreground="{StaticResource WordBlueBrush}"
+                                                TextTrimming="CharacterEllipsis"
+                                                FontFamily="{StaticResource LatoRegular}"
+                                                />
+                    </StackPanel>                    
+                    <!--Display Parent name  -->
+
+
+
+                    
+                    <Button Content="{Binding AddNodeButtonText}"
+                            Command="{Binding AddNodeCommand}"
                             FontSize="{StaticResource FontSizeRegular}"
                             
                             />
 
-                </StackPanel>
+
+                    </StackPanel>
 
 
             </Grid>
