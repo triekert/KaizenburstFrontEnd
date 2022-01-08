@@ -28,6 +28,10 @@ namespace Fasetto.Word
             KCategoryID = "132AB-AF1245-941QW" ;
             ParentCategoryID = "132AB-AF1245-941QW" ;
             ParentShortName = "Parent Node";
+            HeadingText = "Add Node to Hierarchy";
+            AddNodeButtonText = null;
+            EditNodeButtonText = "Delete Selected node";
+
         }
 
         #endregion

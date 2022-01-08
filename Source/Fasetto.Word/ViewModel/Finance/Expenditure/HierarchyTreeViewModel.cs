@@ -44,6 +44,7 @@ namespace Fasetto.Word
         public HierarchyResultListApiModel mPersist,mPersistTmp;
         public HierarchyDataModel mHDM;
         public string mTableName;
+        public HierarchyElementViewModel mElement;
 
         //IEnumerator<HierarchyManagementViewModel> mMatchingCategoryEnumerator;
 
@@ -113,18 +114,6 @@ namespace Fasetto.Word
         }
 
 
-
-        //private void UpdateHierarchyDataModel(HierarchyResultListApiModel result)
-        //{
-        //    var rootElement = from element in mHDML
-        //                      where element.ParentCategoryID == ""
-        //                      select (element.ShortName, element.Description, element.KCategoryID, element.ParentCategoryID);
-        //    mRootCategory = new HierarchyViewModel(rootElement.First().ShortName, rootElement.First().Description, rootElement.First().KCategoryID, mHDML);
-
-        //    // Create the view models from the data
-        //    FirstGeneration = new ObservableCollection<HierarchyViewModel>(
-        //        rootElement.Select(root => new HierarchyViewModel(root.ShortName, root.Description, root.KCategoryID, mHDML)));
-        //}
 
         #endregion // Constructor
 
@@ -217,49 +206,31 @@ namespace Fasetto.Word
 
                 // OK successfully registered (and logged in)... now get users data
                 var expenseHierarchy = result.ServerResponse.Response;
+                mPersist = expenseHierarchy;
                 //convert response into HierarchyListDataModel
-                mHDML.Clear();
-                mHDML.AddRange(ExpandHierarchyData(expenseHierarchy, ""));
-                //Update the viewModel with the returned values
+                //mHDML.Clear();
+                //mHDML.AddRange(ExpandHierarchyData(expenseHierarchy, "","Root"));
+                ////Update the viewModel with the returned values
 
-                UpdateTreeViewElements();
+                //UpdateTreeViewElements();
+                RefreshHierarchy();
 
 
             });
         }
 
+        /// <summary>
+        /// Method to refresh element Hierarchy 
+        /// </summary>
         public void RefreshHierarchy()
         {
-            //await RunCommandAsync(() => HierarchyBuildIsRunning, async () =>
-            //{
 
-                //Store single transcient instance of client data store
-                //var scopedClientDataStore = ClientDataStore;
+            mHDML.Clear();
+            mHDML.AddRange(ExpandHierarchyData(mPersist, "", "Root"));
 
-                // Update values from local cache
-                // Get the user token
-                //var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
-                //// Call the server and attempt to register with the provided credentials
-                //// If we don't have a token (then not logged in...)
-                //if (string.IsNullOrEmpty(token))
-                //    // Then do nothing more
-                //    return;
-                //var result = await WebRequests.PostAsync<ApiResponse<HierarchyResultListApiModel>>(
-                //// Set URL
-                //    RouteHelpers.GetAbsoluteRoute(ApiRoutes.ReturnHierarchy),
-                //    mTableName,
-                //    bearerToken: token);
-
-                // If the response has an error...
-                //if (await result.HandleErrorIfFailedAsync("Hierarchy retrieval Failed"))
-                //    // We are done
-                //    return;
-
-                // OK successfully registered (and logged in)... now get users data
-                //var expenseHierarchy = result.ServerResponse.Response;
-                //convert response into HierarchyListDataModel
-                mHDML.Clear();
-                mHDML.AddRange(ExpandHierarchyData(mPersist, ""));
+            var matches = mPersist.OrderBy(x => x.DateEffective).ToList();
+            foreach (var category in matches)
+            { category.ParentShortName = matches.First(x => x.ParentCategoryID == category.ParentCategoryID).ShortName; }
                 //Update the viewModel with the returned values
 
                 UpdateTreeViewElements();
@@ -280,11 +251,11 @@ namespace Fasetto.Word
         /// <param name="KCategoryID"></param>
         /// the ID of the parent for finding descendants is passsed through as a string
         /// <returns></returns>
-        private HierarchyListDataModel ExpandHierarchyData(HierarchyResultListApiModel results, string KCategoryID)
+        private HierarchyListDataModel ExpandHierarchyData(HierarchyResultListApiModel results, string KCategoryID, string mParentShortName)
         {
             mPersist = results;
             // Find all children
-            var children = results.Where(x => x.ParentCategoryID == KCategoryID).ToList();
+            var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateDiscontinued == new DateTime() && x.DateEffective <= DateTime.Today).ToList();
 
             // Hierarchy cannot be expanded
             if (children.Count() == 0)
@@ -298,16 +269,23 @@ namespace Fasetto.Word
                     //var u = hierarchyDataModel;
                     ShortName = item.ShortName,
                     Description = item.Description,
-                    Card = item.Card,
-                    Frequency = item.Frequency,
+                    //Card = item.Card,
+                    //Frequency = item.Frequency,
                     KCategoryID = item.KCategoryID,
                     ParentCategoryID = item.ParentCategoryID,
-                    FIconID = item.FIconID,
+                    ParentShortName  = mParentShortName,
+                    DateEffective = item.DateEffective,
+                    DateDiscontinued = item.DateDiscontinued,
+                    KChangeID = item.KChangeID,
+                    //FIconID = item.FIconID,
                     Children = new HierarchyListDataModel()
                 };
-                ud1.Children = ExpandHierarchyData(results, ud1.KCategoryID);
+                ud1.Children = ExpandHierarchyData(results, ud1.KCategoryID,ud1.ShortName);
                 elements.Add(ud1);
             }
+            //var matches = elements.OrderBy(x => x.DateEffective).ToList();
+            //foreach(var category in matches)
+            //    { category.ParentShortName = matches.First(x=>x.ParentCategoryID == category.ParentCategoryID).ShortName; }
 
             return elements;
         }
@@ -435,26 +413,67 @@ namespace Fasetto.Word
         /// </summary>
         /// <param name="mCategoryKId"></param>
         /// <param name="mParentKId"></param>
-        public void MoveElement(string mCategoryKId, string mParentKId)
+        public void MoveElement(HierarchyElementViewModel element)
         {
-            mSearchText = mCategoryKId;
-            mParentCategoryID = mParentKId;
+            mSearchText = element.KCategoryID;
+            mParentCategoryID = element.ParentCategoryID;
+            mPersistTmp = new HierarchyResultListApiModel();
             //var sourceElement = from HierarchyDataModel in this
             //                    where KCategoryID
-            var matches = from category in mPersist
-                          where category.KCategoryID == mCategoryKId
-                          select category;
-            foreach (var category in matches)
+            var matches = mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective <= element.DateDiscontinued).OrderByDescending(x => x.DateEffective).ToList();
+            var category = matches.FirstOrDefault();
 
-            { category.ParentCategoryID = mParentCategoryID;
-                mSearchText = category.KCategoryID;
+            //
+
+            if (category != null)
+            //Ensure that selected element is the 'current' one
+            {
+                if (category.DateEffective == element.DateEffective)
+                //move to new parent
+                {
+                    category.ParentCategoryID = element.ParentCategoryID;
+                    mSearchText = element.KCategoryID;
+                }
+                else
+                {
+                    //Create a copy of the previous element with different parent
+                    var mPersistElement = new HierarchyResultApiModel
+                    {
+                        ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
+                        Description = (element.Description.EditedText ?? element.Description.OriginalText),
+                        FIconID = category.FIconID,
+                        Frequency = category.Frequency,
+                        FinHierarchyID = category.FinHierarchyID,
+                        ParentCategoryID = mParentCategoryID,
+                        DateEffective = element.DateDiscontinued,
+                        KCategoryID = Guid.NewGuid().ToString().ToUpper(),
+                        KChangeID = element.KChangeID
+                    };
+                    mPersist.Add(mPersistElement);
+                    //terminate the previous position of the element, and link to the change control
+                    category.DateDiscontinued = element.DateDiscontinued;
+                    category.KChangeID = element.KChangeID;
+
+                }
+                RefreshHierarchy();
+                PerformKIdSearch();
+
+                return;
+
             }
 
 
-            RefreshHierarchy();
-            PerformKIdSearch();
-
+            return;
         }
+           
+
+
+
+
+
+
+
+
         /// <summary>
         /// Copy Hierarchy Element from one location to another (allocate to a different parent Element)
         /// Simultaneously, copies must be made of all descendents and these 2 must be inserted as descendents
@@ -462,43 +481,50 @@ namespace Fasetto.Word
         /// </summary>
         /// <param name="mCategoryKId"></param>
         /// <param name="mParentKId"></param>
-        public void CopyElement(string mCategoryKId, string mParentKId)
+        public void CopyElement(HierarchyElementViewModel element)
         {
             try
             { 
             //mSearchText = mCategoryKId;
-            mParentCategoryID = mParentKId;
+            mParentCategoryID = element.ParentCategoryID;
                 mPersistTmp = new HierarchyResultListApiModel();
+                mElement = element;
+                //mSearchText = element.KCategoryID;
 
                 //var sourceElement = from HierarchyDataModel in this
                 //                    where KCategoryID
                 var matches = from category in mPersist
-                          where category.KCategoryID == mCategoryKId
-                          select category;
+                              where category.KCategoryID == element.KCategoryID && category.DateDiscontinued == new DateTime() && category.DateEffective <= DateTime.Today
+
+                              select category;
             foreach (var category in matches)
 
 
             {
-                    mSearchText = category.ShortName;
+                    //mSearchText = category.ShortName;
                     var mPersistElement = new HierarchyResultApiModel
                     {
-                        ShortName = category.ShortName,
+                        ShortName = "Copy Of " + category.ShortName,
                         Description = category.Description,
                         FIconID = category.FIconID,
                         Frequency = category.Frequency,
                         FinHierarchyID = category.FinHierarchyID,
-                        ParentCategoryID = mParentKId,
-                        DateEffective = DateTime.Now,
-                        KCategoryID = Guid.NewGuid().ToString().ToUpper()
+                        ParentCategoryID = mParentCategoryID,
+                        DateEffective = mElement.DateDiscontinued,
+                        KCategoryID = Guid.NewGuid().ToString().ToUpper(),
+                        KChangeID = mElement.KChangeID
                     };
                     mPersistTmp.Add(mPersistElement);
-                    CopyElement1(mCategoryKId, mPersistElement.KCategoryID);
+                    //category.DateDiscontinued = mElement.DateDiscontinued;
+                    //category.KChangeID = mElement.KChangeID;
+                    mSearchText = mPersistElement.KCategoryID;
+                    CopyElement1(element.KCategoryID, mPersistElement.KCategoryID);
             }
 
             mPersist.AddRange(mPersistTmp);
-            RefreshHierarchy();
-            PerformSearch();
-           }
+                RefreshHierarchy();
+            PerformKIdSearch();
+            }
             catch (Exception)
             {
             }
@@ -514,32 +540,112 @@ namespace Fasetto.Word
         public void CopyElement1(string mCategoryKId, string mParentKId)
         {
             try
-            { 
-
-            //var sourceElement = from HierarchyDataModel in this
-            //                    where KCategoryID
-            var matches = from category in mPersist
-                          where category.ParentCategoryID == mCategoryKId
-                          select category;
-            foreach (var category in matches)
-
-
             {
+
+                //var sourceElement = from HierarchyDataModel in this
+                //                    where KCategoryID
+                var matches = from category in mPersist
+                              where category.ParentCategoryID == mCategoryKId && category.DateDiscontinued == new DateTime() && category.DateEffective <= (DateTime.Today)
+                              select category;
+                foreach (var category in matches)
+
+
+                {
                     var mPersistElement = new HierarchyResultApiModel
                     {
-                        ShortName = category.ShortName,
-                        Description = category.Description,
                         FIconID = category.FIconID,
                         Frequency = category.Frequency,
                         FinHierarchyID = category.FinHierarchyID,
                         ParentCategoryID = mParentKId,
-                        DateEffective = DateTime.Now,
-                        KCategoryID = Guid.NewGuid().ToString().ToUpper()
+                        KCategoryID = Guid.NewGuid().ToString().ToUpper(),
+                        ShortName = "Copy Of " + category.ShortName,
+                        Description = category.Description,
+                        DateEffective = mElement.DateDiscontinued,
+                        KChangeID = mElement.KChangeID
                     };
                     mPersistTmp.Add(mPersistElement);
-                CopyElement1(category.KCategoryID, mPersistElement.KCategoryID);
+                    //category.DateDiscontinued = mElement.DateDiscontinued;
+                    //category.KChangeID = mElement.KChangeID;
+                    CopyElement1(category.KCategoryID, mPersistElement.KCategoryID);
 
+                }
             }
+            catch (Exception)
+            {
+            }
+
+
+        }
+
+        /// <summary>
+        /// Discontinue the selected element with all its descendants
+
+        /// </summary>
+        /// <param name="mCategoryKId"></param>
+        /// <param name="mParentKId"></param>
+        public void DeleteElement(HierarchyElementViewModel element)
+        {
+            try
+            {
+                //mSearchText = mCategoryKId;
+                var mElement = element as HierarchyElementViewModel;
+
+                //mSearchText = element.KCategoryID;
+
+                //var sourceElement = from HierarchyDataModel in this
+                //                    where KCategoryID
+                var matches = from category in mPersist
+                              where category.KCategoryID == element.KCategoryID
+                              select category;
+                foreach (var category in matches)
+
+
+                {
+                    //mSearchText = category.ShortName;
+
+                    category.DateDiscontinued = mElement.DateDiscontinued;
+                    mSearchText = mElement.KCategoryID;
+                    DeleteElement1(mElement.KCategoryID);
+                }
+
+
+                RefreshHierarchy();
+                PerformKIdSearch();
+            }
+            catch (Exception)
+            {
+            }
+
+
+        }
+        /// <summary>
+        /// Iterate through all descendants of the primary element being copied
+        /// and copy and move them to the new Parent structure
+        /// </summary>
+        /// <param name="mCategoryKId"></param>
+        /// <param name="mParentKId"></param>
+        public void DeleteElement1(string mCategoryKId)
+        {
+            try
+            {
+
+                //var sourceElement = from HierarchyDataModel in this
+                //                    where KCategoryID
+                var matches = from category in mPersist
+                              where category.ParentCategoryID == mCategoryKId
+                              select category;
+                foreach (var category in matches)
+
+
+                {
+ 
+                    {
+                        category.DateDiscontinued = mElement.DateDiscontinued;
+                    };
+
+                    DeleteElement1(category.KCategoryID );
+
+                }
             }
             catch (Exception)
             {
@@ -553,21 +659,57 @@ namespace Fasetto.Word
         /// The calling programme is to generate a GUID for the new element
         /// </summary>
         /// <param name="mNewElement"></param>
-        public void AddElement(HierarchyElementViewModel mNewElement)
+        public void AddElement(HierarchyElementViewModel element)
         {
-            mSearchText = mNewElement.KCategoryID;
+            mSearchText = element.KCategoryID;
             var mPersistElement = new HierarchyResultApiModel
             {
-                ShortName = mNewElement.ShortName.EditedText,
-                Description = mNewElement.Description.EditedText,
-                ParentCategoryID = mNewElement.ParentCategoryID,
-                KCategoryID = mNewElement.KCategoryID
+                ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
+                Description = (element.Description.EditedText ?? element.Description.OriginalText),
+                ParentCategoryID = element.ParentCategoryID,
+                KCategoryID = element.KCategoryID,
+                KChangeID = element.KChangeID
             };
             mPersist.Add(mPersistElement);
 
 
             RefreshHierarchy();
             PerformKIdSearch();
+
+        }
+
+        /// <summary>
+        /// Edit element in hiearchy tree
+
+        /// </summary>
+        /// <param name="element"></param>
+        public void EditElement(HierarchyElementViewModel element)
+        {
+            mSearchText = element.KCategoryID;
+
+            var matches = from category in mPersist
+                          where category.ParentCategoryID == element.KCategoryID && category.DateDiscontinued == new DateTime() && category.DateEffective < element.DateDiscontinued
+                          select category;
+            foreach (var category in matches)
+                if (category.ShortName != (element.ShortName.EditedText ?? element.ShortName.OriginalText) || category.ShortName != (element.Description.EditedText ?? element.Description.OriginalText)
+                        || category.DateEffective == element.DateEffective )
+                {
+                    category.DateDiscontinued = element.DateDiscontinued;
+                    category.KChangeID = element.KChangeID;
+
+                    var mPersistElement = new HierarchyResultApiModel
+                {
+                    ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
+                    Description = (element.Description.EditedText ?? element.Description.OriginalText),
+                    ParentCategoryID = element.ParentCategoryID,
+                    KCategoryID = element.KCategoryID,
+                    KChangeID = element.KChangeID
+                };
+                    mPersist.Add(mPersistElement);
+
+                    RefreshHierarchy();
+                    PerformKIdSearch();
+                }
 
         }
 

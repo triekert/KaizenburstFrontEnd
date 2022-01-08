@@ -7,9 +7,14 @@
              xmlns:core="clr-namespace:Fasetto.Word.Core;assembly=Fasetto.Word.Core"
              d:DataContext="{x:Static local:HierarchyElementDesignModel.Instance}"
              mc:Ignorable="d" >
+
     <Border Background="{StaticResource ForegroundLightBrush}" 
             Padding="15">
-        <Grid>
+
+
+
+        <Grid >
+            
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -27,7 +32,7 @@
                     Foreground="{StaticResource ForegroundDarkBrush}"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Command="{Binding CloseCommand}"
+                    Command="{Binding CloseCommand}" IsCancel="True" IsDefault="True"
                     />
 
                 <!-- Settings header -->
@@ -40,8 +45,10 @@
                      Text="{StaticResource FontAwesomeCogIcon}"
                      Foreground="{StaticResource WordOrangeBrush}" />
                 <!-- Settings text -->
-                <Run Text="Add Node to Hierarchy"
-                     FontFamily="{StaticResource LatoRegular}" />
+                <Run Text="{Binding HeadingText}" 
+                     FontFamily="{StaticResource LatoRegular}" 
+                     FontWeight="Bold"
+                     />
                 </TextBlock>
 
             </Grid>
@@ -62,7 +69,7 @@
                 <Grid Margin="0 0 30 0"
                       VerticalAlignment="Top"
                       Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}}">
-                    
+
                     <!-- Mask for rounded corners-->
                     <Border CornerRadius="8"
                             Name="Mask"
@@ -74,24 +81,24 @@
                         <Grid.OpacityMask>
                             <VisualBrush Visual="{Binding ElementName=Mask}" />
                         </Grid.OpacityMask>
-                        
+
                         <Image Source="/Images/Samples/rusty.jpg" Stretch="UniformToFill" />
                     </Grid>
 
                 </Grid>
-                
+
                 <!-- Profile details -->
                 <StackPanel Grid.Column="1"
                             local:TextEntryWidthMatcherProperty.Value="True">
                     <local:TextEntryControl DataContext="{Binding ShortName}" />
                     <local:TextEntryControl DataContext="{Binding Description}" />
-                    
+
                     <!--Display hierarchy element GUID of new element -->
-                    
+
                     <StackPanel Orientation="Horizontal" Grid.Column="1"
                             local:TextEntryWidthMatcherProperty.Value="True"
                             >
-                        <TextBlock Text="Guid for New Node"
+                        <TextBlock Text="Guid for Node"
                                    Padding="8 10 10 10"/>
                         <TextBlock Text="{Binding KCategoryID}"
                                                 Padding="8 10 8 10"
@@ -101,13 +108,14 @@
                                                 />
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Grid.Column="1"
+                    <StackPanel Orientation="Horizontal" Grid.Column="1" 
                                 local:TextEntryWidthMatcherProperty.Value="True">
                         <TextBlock  Text ="Date Implemented "
                                        Padding="10 10 10 10"/>
                         <DatePicker x:Name="dateEffective"  SelectedDate="{Binding DateEffective, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="20 10 20 10"
                                         SelectedDateFormat="Short"/>
-                                 
+
+
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Grid.Column="1"
@@ -116,14 +124,14 @@
                                            Padding="10 10 13 10"/>
                         <DatePicker x:Name="dateDiscontinued"  SelectedDate="{Binding DateDiscontinued, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="20 10 20 10"
                                             SelectedDateFormat="Short"  />
-                                    
+
                     </StackPanel>
                     <TextBlock FontSize="{StaticResource FontSizeLarge}" Padding="20 20 20 10" 
                            Foreground="{StaticResource ForegroundVeryDarkBrush}"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center">
 
-                        <!-- Settings text -->
+                        <!-- Parent node information -->
                         <Run Text="Parent Node"
                              FontFamily="{StaticResource LatoRegular}" FontWeight="Bold" />
                     </TextBlock>
@@ -137,7 +145,7 @@
                                                 Foreground="{StaticResource WordBlueBrush}"
                                                 TextTrimming="CharacterEllipsis"
                                                 FontFamily="{StaticResource LatoRegular}"/>
-                                                
+
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Grid.Column="1"
                             local:TextEntryWidthMatcherProperty.Value="True"
@@ -150,25 +158,51 @@
                                                 TextTrimming="CharacterEllipsis"
                                                 FontFamily="{StaticResource LatoRegular}"
                                                 />
-                    </StackPanel>                    
+                    </StackPanel>
                     <!--Display Parent name  -->
 
 
 
-                    
-                    <Button Content="{Binding AddNodeButtonText}"
-                            Command="{Binding AddNodeCommand}"
+                    <StackPanel    Grid.Column="0"
+                        Orientation="Horizontal">
+
+                        <Button Content="{Binding EditNodeButtonText}"
+                            Command="{Binding EditNodeCommand}"
                             FontSize="{StaticResource FontSizeRegular}"
-                            
+                            Visibility="{Binding EditNodeButtonText, ConverterParameter=True, Converter={local:TextToVisiblityConverter}}" Margin="-50,10,0,10" 
                             />
 
+                        <Button Content="{Binding AddNodeButtonText}"
+                            Command="{Binding AddNodeCommand}"
+                            FontSize="{StaticResource FontSizeRegular}"
+                            Visibility="{Binding AddNodeButtonText, ConverterParameter=True, Converter={local:TextToVisiblityConverter}}" 
+                            />
+                        <Button Content="{Binding DeleteNodeButtonText}"
+                            Command="{Binding DeleteNodeCommand}"
+                            FontSize="{StaticResource FontSizeRegular}"
+                            Visibility="{Binding DeleteNodeButtonText, ConverterParameter=True, Converter={local:TextToVisiblityConverter}}" Margin="-100,10,0,10" 
 
+                                
+                            />
+                        <Button Content="{Binding CopyNodeButtonText}"
+                            Command="{Binding CopyNodeCommand}"
+                            FontSize="{StaticResource FontSizeRegular}"
+                            Visibility="{Binding CopyNodeButtonText, ConverterParameter=True, Converter={local:TextToVisiblityConverter}}" Margin="-150,10,0,10" 
+
+                            />
+                        <Button Content="{Binding MoveNodeButtonText}"
+                            Command="{Binding MoveNodeCommand}"
+                            FontSize="{StaticResource FontSizeRegular}"
+                            Visibility="{Binding MoveNodeButtonText, ConverterParameter=True, Converter={local:TextToVisiblityConverter}}" Margin="-150,10,0,10" 
+
+                            />
                     </StackPanel>
+                </StackPanel>
 
 
             </Grid>
-            
-            
+
+
         </Grid>
     </Border>
 </UserControl>

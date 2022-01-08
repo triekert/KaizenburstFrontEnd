@@ -110,6 +110,7 @@
                 <Border Padding="0 0 5 0">
                     <TextBlock Style="{StaticResource SpinningText}" />
                 </Border>
+                
 
             </Grid>
 

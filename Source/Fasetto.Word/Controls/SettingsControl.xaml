@@ -27,7 +27,7 @@
                     Foreground="{StaticResource ForegroundDarkBrush}"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Command="{Binding CloseCommand}"
+                    Command="{Binding CloseCommand}" IsCancel="True"
                     />
 
                 <!-- Settings header -->

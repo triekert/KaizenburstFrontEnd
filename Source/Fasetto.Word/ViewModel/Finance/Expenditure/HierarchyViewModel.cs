@@ -45,7 +45,27 @@ namespace Fasetto.Word
         /// Parent ID  of hiearchy item
         /// </summary>
         public string ParentCategoryID =>mElement.ParentCategoryID;
- 
+
+        /// <summary>
+        /// Parent ShortName of hiearchy item
+        /// </summary>
+        public string ParentShortName => mElement.ParentShortName;
+
+        /// <summary>
+        /// Calendar date from which Element is seen as active
+        /// </summary>
+        public DateTime DateEffective => mElement.DateEffective;
+
+        /// <summary>
+        /// Calendar date from which Element is deactivated
+        /// </summary>
+        public DateTime DateDiscontinued => mElement.DateDiscontinued;
+
+        /// <summary>
+        /// Attach the current activity to a Change object
+        /// </summary>
+        public string KChangeID   => mElement.KChangeID;
+
         /// <summary>
         /// A list of all children containd inside this item
         /// </summary>
@@ -66,23 +86,6 @@ namespace Fasetto.Word
         public bool CanExpand => Children?.Count(f => f != null) > 0;
 
 
-        /// <summary>
-        /// Indicates if the current item is expanded or not
-        /// </summary>
-        //public bool IsExpanded
-        //{
-        //    get => Children?.Count(f => f != null) > 0;
-        //    set
-        //    {
-        //        // If the ui tells us to expand...
-        //        if (value)
-        //            // Find all children
-        //            Expand();
-        //        // if the ui tells us to close
-        //        else
-        //            ClearChildren();
-        //    }
-        //}
 
         #endregion
         #region Data
@@ -130,48 +133,10 @@ namespace Fasetto.Word
 
         }
 
-        //public HierarchyViewModel(string parent,HierarchyListDataModel HDML)
 
-        //{
-        //    // Create commands
-        //    //ExpandCommand = new RelayCommand(Expand);
-
-        //    // Set path and type
-        //    //ShortName = shortName;
-        //    //Description = description;
-        //    //KCategoryID = kCategoryID;
-        //    //mHDML = HDML;
-
-
-        //    // Setup the children as needed
-        //    ClearChildren();
-        //    //Expand();
-        //}
-
-        //private HierarchyViewModel(HierarchyTreeDataModel category, HierarchyViewModel parent)
-        //{
-        //    mCategory = category;
-        //    mParent = parent;
-
-        //    Children = new ReadOnlyCollection<HierarchyViewModel>(
-        //           //Order mCategory children alphabetically
-        //           (from child in mCategory.Children.OrderBy(x => x.ShortName)
-        //            select new HierarchyViewModel(child, this))
-        //             .ToList());
-
-        //}
 
         #endregion // Constructors
 
-        #region HierarchyManagementTreeDataModel Properties
-
-        //public ReadOnlyCollection<HierarchyViewModel> Children { get; }
-
-
-        //public string ShortName => mCategory.ShortName;
-        //public string KCategoryID => mCategory.KCategoryID;
-
-        #endregion // HierarchyManagementTreeDataModel Properties
 
         #region Presentation Members
 

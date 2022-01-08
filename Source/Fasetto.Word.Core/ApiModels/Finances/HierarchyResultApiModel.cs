@@ -27,9 +27,15 @@ namespace Fasetto.Word.Core
         //sstring representation of GUID for the Parent category of a Category element
         //the parent of all root elements will be NULL... any hierarchy will have at least one root element
         public string ParentCategoryID { get; set; }
+        /// <summary>
+        /// Parent ShortName of hiearchy item
+        /// </summary>
+        public string ParentShortName { get; set; }
+
+        /// <summary>
         //the link to tthe ICON used to depict this category
+        /// </summary>
         public string FIconID { get; set; }
-        //sub categories that are also categories in themself
 
         /// <summary>
         /// Calendar date from which Element is seen as active
@@ -40,6 +46,12 @@ namespace Fasetto.Word.Core
         /// Calendar date from which Element is deactivated
         /// </summary>
         public DateTime DateDiscontinued { get; set; }
+
+        /// <summary>
+        /// Attach the current activity to a Change object
+        /// </summary>
+        public string KChangeID { get; set; }
+
 
         #endregion       
     }

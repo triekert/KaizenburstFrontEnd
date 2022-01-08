@@ -10,10 +10,10 @@
     <DockPanel>
         <!-- SEARCH AREA -->
         <Border 
-      DockPanel.Dock="Bottom" 
-      BorderBrush="#FF734444" 
-      BorderThickness="1,0,1,1"
-      >
+         DockPanel.Dock="Bottom" 
+         BorderBrush="#FF734444" 
+         BorderThickness="1,0,1,1">
+          
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                     <GradientStop Color="#33000000" Offset="0" />
@@ -68,6 +68,7 @@
                         <EventSetter Event="PreviewMouseLeftButtonDown" Handler="TreeView_PreviewMouseLeftButtonDown" />
                         <EventSetter Event="KeyDown" Handler="TreeView_KeyBoard"/>
                         <EventSetter Event="MouseMove" Handler="TreeView_MouseMove"/>
+                        <EventSetter Event="MouseDoubleClick" Handler="TreeView_MouseDoubleClick"/>                        
                         <Style.Triggers>
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter Property="FontWeight" Value="UltraBold" />
@@ -82,12 +83,7 @@
                     <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"  Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}">
                             <TextBlock Text="{Binding ShortName}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                            <!--<TextBlock Text="-"/>-->
-                            <!--<TextBlock Text="{Binding KCategoryID}"/>-->
-
-
                         </StackPanel>
-                        <!--<TextBlock Text="{Binding KCategoryId}" />-->
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
             </TreeView>

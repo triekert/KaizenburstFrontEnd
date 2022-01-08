@@ -95,28 +95,42 @@ namespace Fasetto.Word
         {
             if (e.ChangedButton == MouseButton.Right)
             {
-                mDraggedItem= (HierarchyViewModel)tvParameters.SelectedItem;
-                //myCatPropertyInfo = res.GetType().GetProperties();
-                //mSourceCategoryId = (string)((res.GetType().GetProperties()).Single(c => c.Name == "KCategoryId")).GetValue(res);
-                mSourceCategoryName = mDraggedItem.ShortName;
-                _ = Mouse.SetCursor(Cursors.Wait);
-                var result = MessageBox.Show("Would you like to edit " + mSourceCategoryName + ",(Press 'Yes') or Add a Child item Press No", "Modifying selected Category - Add Child or Edit Category", MessageBoxButton.YesNoCancel);
-                switch (result)
-                {
-                    case MessageBoxResult.Yes:
-                        //Edit the selected Category
-                        MessageBox.Show("Editing selected Category", "Category Hierarchy");
-                        break;
-                    case MessageBoxResult.No:
-                        //Edit the selected Category
-                        MessageBox.Show("Adding Child to selected Category", "Category Hierarchy");
-                        break;
-                    default:
-                        break;
-                }
+                //mDraggedItem= (HierarchyViewModel)tvParameters.SelectedItem;
+                ////myCatPropertyInfo = res.GetType().GetProperties();
+                ////mSourceCategoryId = (string)((res.GetType().GetProperties()).Single(c => c.Name == "KCategoryId")).GetValue(res);
+                //mSourceCategoryName = mDraggedItem.ShortName;
+                //_ = Mouse.SetCursor(Cursors.Wait);
+                //var result = MessageBox.Show("Would you like to edit " + mSourceCategoryName + ",(Press 'Yes') or Add a Child item Press No", "Modifying selected Category - Add Child or Edit Category", MessageBoxButton.YesNoCancel);
+                //switch (result)
+                //{
+                //    case MessageBoxResult.Yes:
+                //        //Edit the selected Category
+                //        MessageBox.Show("Editing selected Category", "Category Hierarchy");
+                //        break;
+                //    case MessageBoxResult.No:
+                //        //Edit the selected Category
+                //        MessageBox.Show("Adding Child to selected Category", "Category Hierarchy");
+                //        break;
+                //    default:
+                //        break;
+                //}
                 e.Handled = true;
             }
 
+        }
+        private void TreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        { if (e.ChangedButton == MouseButton.Right)
+            {
+                EditHierarchyElement();
+                             
+            }
+        else
+                if (e.ChangedButton == MouseButton.Left)
+                    {
+                        AddHierarchyElement();
+                             
+                    }
+            e.Handled = true;
         }
         /// <summary>
         /// Monitor keyboard for use of Insert key
@@ -126,22 +140,31 @@ namespace Fasetto.Word
         private void TreeView_KeyBoard(object sender, KeyboardEventArgs e)
         {
             //check to determine whether user would like to add an item to the hierarchy
-            var isInsert = Keyboard.IsKeyDown(Key.Insert);
-            if (isInsert == true)
-            {
-                //Prepopulate
-                mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
-                var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-                mAddElementViewModel.ShortName.OriginalText = "New Element Name";
-                mAddElementViewModel.Description.OriginalText = "Description of New Element";
-                mAddElementViewModel.ParentShortName = mDraggedItem.ShortName;
-                mAddElementViewModel.ParentCategoryID = mDraggedItem.KCategoryID;
-                mAddElementViewModel.KCategoryID = Guid.NewGuid().ToString().ToUpper();
-                mAddElementViewModel.DateEffective = DateTime.Now;
-                ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
-                //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-                ViewModelApplication.PopupVisible = true;
-                //ViewModelApplication.SettingsMenuVisible = true;
+            if (ViewModelApplication.PopupVisible == false)
+            { 
+
+                if (Keyboard.IsKeyDown(Key.Insert))
+                {
+                    AddHierarchyElement();
+                }
+                else
+                    if (Keyboard.IsKeyDown(Key.Enter))
+                {
+                    EditHierarchyElement();
+
+                }
+                else
+                    if (Keyboard.IsKeyDown(Key.Delete))
+                    {
+                        DeleteHierarchyElement();
+
+                    }
+                //else
+                //    if (Keyboard.IsKeyDown(Key.Escape))
+                //{
+                //    DeleteHierarchyElement();
+
+                //}
                 e.Handled= true;
             }
         }
@@ -183,7 +206,7 @@ namespace Fasetto.Word
                                     // A Move drop was accepted
                                     //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
                                     //{
-                                        MoveItem();
+                                    MoveHierarchyElement();// MoveItem();
                                         mTargetT = null;
                                         mSource= null;
                                     //}
@@ -199,7 +222,7 @@ namespace Fasetto.Word
                                     // A Copy drop was accepted
                                     //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
                                     //{
-                                    CopyItem();
+                                    CopyHierarchyElement();// CopyItem();
                                     mTargetT = null;
                                     mSource = null;
                                     //}
@@ -259,65 +282,13 @@ namespace Fasetto.Word
         }
         private void TreeView_Drop(object sender, DragEventArgs e)
         {
-            try
-            {
+            //try
+            //{
 
                 Mouse.SetCursor(Cursors.Wait);
-                //e.Effects = DragDropEffects.Move;
-                if (mTargetT == null)
-                {
                     e.Handled = true;
-                    e.Effects = DragDropEffects.None;
                     return;
-                }
-                if (mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
-                {
-                    var res = ((sender.GetType().GetProperties()).Single(c => c.Name == "DataContext")).GetValue(sender);
-                    mDestinationCategoryName = (string)((res.GetType().GetProperties()).Single(c => c.Name == "ShortName")).GetValue(res);
 
-                    mDraggedItem = mDraggedItem;
-                    //Ask user for confirmation on the move/copy instruction
-                    if (e.Effects == DragDropEffects.Move)
-                    {
-                     if (MessageBox.Show("Would you like to move " + mSourceCategoryName + " into " + mDestinationCategoryName + "", "Moving Hierarchy Element", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                        {
-                            try
-                            {
-                                e.Handled = true;
-                                return;
-                            }
-                            catch (Exception)
-                            {
-                
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (MessageBox.Show("Would you like to copy" + mSourceCategoryName + " into " + mDestinationCategoryName + "", "Copying Hierarchy Element", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                        {
-                            try
-                            {
-                                e.Handled = true;
-                                return;
-                            }
-                            catch (Exception)
-                            {
-
-                            }
-                        }
-                    }
-
-                }
-                e.Handled = true;
-                mSource = null;
-                mDestinationID = null;
-                e.Effects = DragDropEffects.None;
-                mIsSourceObtained = false;
-            }
-            catch (Exception)
-            {
-            }
         }
 
         /// <summary>
@@ -359,42 +330,7 @@ namespace Fasetto.Word
 
         }
 
-       /// <summary>
-       /// Move a HierarchyView item from one parent to another (all descendants move
-       /// with at the same time)
-       /// </summary>
-        private void MoveItem()
-        {
 
-            //copy the item
-
-            try
-            {
-                mHierarchyTree.MoveElement(mSourceID, mDestinationID);
-            }
-            catch
-            {
-
-            }
-        }
-        /// <summary>
-        /// Copy HierarchyView item and link copy to different parent (all descendants move
-        /// with at the same time)
-        /// </summary>
-        private void CopyItem()
-        {
-
-            //copy the item
-
-            try
-            {
-                mHierarchyTree.CopyElement(mSourceID, mDestinationID);
-            }
-            catch
-            {
-
-            }
-        }
 
 
         public void AddChild(TreeViewItem _sourceItem, TreeViewItem _targetItem)
@@ -505,6 +441,130 @@ namespace Fasetto.Word
         }
 
         #endregion // Search Logic
+        #region Element manipulation
+        /// <summary>
+        /// Use Popup View to add a Hierarchy Element
+        /// </summary>
+        private void AddHierarchyElement()
+        {
+            //Prepopulate
+            mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
+            var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
+            mAddElementViewModel.ShortName.OriginalText = "New Element Name";
+            mAddElementViewModel.Description.OriginalText = "Description of New Element";
+            mAddElementViewModel.ParentShortName = mDraggedItem.ShortName;
+            mAddElementViewModel.ParentCategoryID = mDraggedItem.KCategoryID;
+            mAddElementViewModel.KCategoryID = Guid.NewGuid().ToString().ToUpper();
+            mAddElementViewModel.DateEffective = DateTime.Today;
+            mAddElementViewModel.DateDiscontinued = new DateTime();
+            mAddElementViewModel.AddNodeButtonText = "Add new Hierarchy Element";
+            mAddElementViewModel.EditNodeButtonText = null;
+            mAddElementViewModel.DeleteNodeButtonText = null;
+            mAddElementViewModel.HeadingText= "Add new Hierarchy Element";
+            ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
+            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            ViewModelApplication.PopupVisible = true;
+            //ViewModelApplication.SettingsMenuVisible = true;
+        }
+        /// <summary>
+        /// Use Popup view to edit existing Hiearchy Element
+        /// </summary>
+        private void EditHierarchyElement()
+        {
+            //Prepopulate
+            mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
+            var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
+            mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
+            mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
+            mAddElementViewModel.ParentShortName = mDraggedItem.ParentShortName;
+            mAddElementViewModel.ParentCategoryID = mDraggedItem.ParentCategoryID;
+            mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
+            mAddElementViewModel.DateEffective = mDraggedItem.DateEffective;
+            mAddElementViewModel.DateDiscontinued = mDraggedItem.DateDiscontinued;
+            mAddElementViewModel.AddNodeButtonText = null;
+            mAddElementViewModel.EditNodeButtonText = "Update Selected Element";
+            mAddElementViewModel.DeleteNodeButtonText = null;
+            mAddElementViewModel.CopyNodeButtonText = null;
+            mAddElementViewModel.MoveNodeButtonText = null;
+            mAddElementViewModel.HeadingText = "Update Selected Element";
+            ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
+            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            ViewModelApplication.PopupVisible = true;
+            //ViewModelApplication.SettingsMenuVisible = true;
+        }
+        private void DeleteHierarchyElement()
+        {
+            //Prepopulate
+            mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
+            var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
+            mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
+            mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
+            mAddElementViewModel.ParentShortName = mDraggedItem.ParentShortName;
+            mAddElementViewModel.ParentCategoryID = mDraggedItem.ParentCategoryID;
+            mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
+            mAddElementViewModel.DateEffective = mDraggedItem.DateEffective;
+            mAddElementViewModel.DateDiscontinued = DateTime.Today; 
+            mAddElementViewModel.AddNodeButtonText = null;
+            mAddElementViewModel.EditNodeButtonText = null;
+            mAddElementViewModel.CopyNodeButtonText = null;
+            mAddElementViewModel.MoveNodeButtonText = null;
+            mAddElementViewModel.DeleteNodeButtonText = "Delete Selected Element";
+            mAddElementViewModel.HeadingText = "Delete Selected Element";
+            ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
+            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            ViewModelApplication.PopupVisible = true;
+            //ViewModelApplication.SettingsMenuVisible = true;
+        }
+        /// <summary>
+        /// Use Popup view to edit existing Hiearchy Element
+        /// </summary>
+        private void MoveHierarchyElement()
+        {
+            //Prepopulate
+            mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
+            var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
+            mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
+            mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
+            mAddElementViewModel.ParentShortName = mTarget.ShortName;
+            mAddElementViewModel.ParentCategoryID = mTarget.KCategoryID;
+            mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
+            mAddElementViewModel.DateEffective = mDraggedItem.DateEffective;
+            mAddElementViewModel.DateDiscontinued = DateTime.Today;
+            mAddElementViewModel.AddNodeButtonText = null;
+            mAddElementViewModel.MoveNodeButtonText = "Move Selected Element";
+            mAddElementViewModel.DeleteNodeButtonText = null;
+            mAddElementViewModel.CopyNodeButtonText = null;
+            mAddElementViewModel.EditNodeButtonText = null;
+            mAddElementViewModel.HeadingText = "Move Selected Element (with descendants)";
+            ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
+            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            ViewModelApplication.PopupVisible = true;
+            //ViewModelApplication.SettingsMenuVisible = true;
+        }
+        private void CopyHierarchyElement()
+        {
+            //Prepopulate
+            mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
+            var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
+            mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
+            mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
+            mAddElementViewModel.ParentShortName = mTarget.ShortName;
+            mAddElementViewModel.ParentCategoryID = mTarget.KCategoryID;
+            mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
+            mAddElementViewModel.DateEffective = mDraggedItem.DateEffective;
+            mAddElementViewModel.DateDiscontinued = DateTime.Today;
+            mAddElementViewModel.AddNodeButtonText = null;
+            mAddElementViewModel.EditNodeButtonText = null;
+            mAddElementViewModel.MoveNodeButtonText = null;
+            mAddElementViewModel.CopyNodeButtonText = "Copy Selected Element";
+            mAddElementViewModel.DeleteNodeButtonText = null;
+            mAddElementViewModel.HeadingText = "Copy Selected Element (with descendants)";
+            ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
+            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            ViewModelApplication.PopupVisible = true;
+            //ViewModelApplication.SettingsMenuVisible = true;
+        }
+        #endregion
 
 
 
