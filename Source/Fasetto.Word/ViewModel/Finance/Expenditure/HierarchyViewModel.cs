@@ -67,9 +67,22 @@ namespace Fasetto.Word
         public string KChangeID   => mElement.KChangeID;
 
         /// <summary>
+        /// Property to indicate whether element is being evaluated by a change request
+        /// and whether it should be excluded from current operations
+        /// </summary>
+        public bool IsUnderReview => mElement.IsUnderReview;
+
+        /// <summary>
         /// A list of all children containd inside this item
         /// </summary>
         public ObservableCollection<HierarchyViewModel> Children => mChildren;
+
+
+        /// <summary>
+        /// Title of Control
+        /// </summary>
+        public string Title { get; set; } = "Tree View of Finance";
+
 
         /// <summary>
         /// TO DO: Determine the color of the text to be displayed depending

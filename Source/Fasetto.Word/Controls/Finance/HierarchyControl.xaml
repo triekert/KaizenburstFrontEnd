@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Fasetto.Word.HierarchyControl"
+﻿<UserControl x:Class="Fasetto.Word.HierarchyControl" 
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -11,17 +11,17 @@
         <!-- SEARCH AREA -->
         <Border 
          DockPanel.Dock="Bottom" 
-         BorderBrush="#FF734444" 
-         BorderThickness="1,0,1,1">
-          
+         BorderBrush="#FFE22626" 
+         BorderThickness="2,0,2,2">
+
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                     <GradientStop Color="#33000000" Offset="0" />
-                    <GradientStop Color="#11000000" Offset="1" />
+                    <GradientStop Color="#11A49090" Offset="1" />
                 </LinearGradientBrush>
             </Border.Background>
 
-            <StackPanel 
+            <!--<StackPanel 
                 HorizontalAlignment="Right" 
                 Margin="0,0,10,0" 
                 Orientation="Horizontal"
@@ -30,22 +30,93 @@
                       x:Name="searchTextBox"
                       KeyDown="SearchTextBox_KeyDown"
                       Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                      Width="150" FontSize="18" TextWrapping="Wrap" RenderTransformOrigin="0.1,0.616"
-                  />
-                <Button 
-                      Command="{Binding SearchCommand}" 
-                      Content="Find" 
-                      HorizontalAlignment="Left"
-                      Padding="4,4" Background="{DynamicResource WordOrangeBrush}" Height="35" Width="120" RenderTransformOrigin="1.221,0.593" 
+                      Width="200" FontSize="18" TextWrapping="Wrap" RenderTransformOrigin="0.1,0.616" AutomationProperties.HelpText="Begin entering name...."
+                    >
+                    <TextBox.InputBindings>
+                        --><!-- Clear text on Esc --><!--
+                        <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc" />
+                        --><!-- Search on enter --><!--
+                        <KeyBinding Command="{Binding SearchCommand}" Key="Return" />
+                        </TextBox.InputBindings>
+                </TextBox>
+
+                <Button Style="{StaticResource IconGrowButton}" 
+                        Content="{StaticResource FontAwesomeSearchIcon}"
+                        Command="{Binding SearchCommand}"
+                        Padding="4" Background="{DynamicResource WordOrangeBrush}" Height="40" Width="60" RenderTransformOrigin="1.221,0.593" AutomationProperties.HelpText="Search for items in the hierarchy" 
                       >
                     <Button.Foreground>
                         <SolidColorBrush Color="{DynamicResource ForegroundLight}"/>
                     </Button.Foreground>
-                </Button>
-            </StackPanel>
-        </Border>
+                    <Button.ToolTip>
+                        <ToolTip Placement="Mouse"
 
-        <!-- FAMILY TREE -->
+                             Opened="ToolTip_Opened"
+
+                             Closed="ToolTip_Closed">Login with the entered credentials</ToolTip>
+                    </Button.ToolTip>
+                </Button>
+            </StackPanel>-->
+        </Border>
+        <Border 
+         DockPanel.Dock="Top" 
+         BorderBrush="#FF734444" 
+         BorderThickness="1,0,1,1">
+
+            <Grid>
+
+                <!--<Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>-->
+
+
+                <!--Settings Title-->
+
+                <Grid Height="20" Margin="0 0 0 2">
+
+
+                    <!--Back button-->
+
+                    <Button Style="{StaticResource IconGrowButton}"
+                    Height="40"
+                    Content="{StaticResource FontAwesomeArrowLeftIcon}"
+                    FontFamily="{StaticResource FontAwesome}"
+                    Foreground="{StaticResource ForegroundDarkBrush}"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Command="{Binding CloseCommand}" IsCancel="True"
+                    />
+
+
+                    <!--Settings header-->
+
+                    <TextBlock FontSize="{StaticResource FontSizeLarge}"
+
+                       Foreground="{StaticResource ForegroundVeryDarkBrush}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center">
+                
+             <!--Tree icon--> 
+            
+                <Run FontFamily="{StaticResource FontAwesome}"
+                     Text="{StaticResource FontAwesomeProjectIcon}"                     
+                     Foreground="{StaticResource WordOrangeBrush}" />
+                
+             <!--Settings text--> 
+            
+                <Run Text="{Binding ControlTitle}"
+                     Foreground="{DynamicResource WordDarkBlueBrush}"
+                     FontFamily="{DynamicResource LatoBold}" Background="{DynamicResource BackgroundVeryLightBrush}" />
+                    </TextBlock>
+
+
+                    <!--FAMILY TREE-->
+
+                </Grid>
+            </Grid>
+        </Border>
+        
         <ScrollViewer x:Name="scrollViewer" Focusable="False" FocusManager.IsFocusScope="False">
             <TreeView 
               ItemsSource="{Binding FirstGeneration}" 
@@ -68,11 +139,11 @@
                         <EventSetter Event="PreviewMouseLeftButtonDown" Handler="TreeView_PreviewMouseLeftButtonDown" />
                         <EventSetter Event="KeyDown" Handler="TreeView_KeyBoard"/>
                         <EventSetter Event="MouseMove" Handler="TreeView_MouseMove"/>
-                        <EventSetter Event="MouseDoubleClick" Handler="TreeView_MouseDoubleClick"/>                        
+                        <EventSetter Event="MouseDoubleClick" Handler="TreeView_MouseDoubleClick"/>
                         <Style.Triggers>
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter Property="FontWeight" Value="UltraBold" />
-                                 <Setter Property="Foreground" Value="Darkred"/>
+                                <Setter Property="Foreground" Value="Darkred"/>
                                 <!--<Setter Property="Cursor" Value="Hand"/>-->
                             </Trigger>
                         </Style.Triggers>

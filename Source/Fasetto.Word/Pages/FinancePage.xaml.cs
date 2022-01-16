@@ -6,9 +6,9 @@ using System.Windows.Media.Animation;
 namespace Fasetto.Word
 {
     /// <summary>
-    /// Interaction logic for ChatPage.xaml
+    /// Interaction logic for FinancePage.xaml
     /// </summary>
-    public partial class FinancePage : BasePage<ChatMessageListViewModel>
+    public partial class FinancePage : BasePage<FinancePageViewModel>
     {
         #region Constructor
 
@@ -24,7 +24,7 @@ namespace Fasetto.Word
         /// Constructor with specific view model
         /// </summary>
         /// <param name="specificViewModel">The specific view model to use for this page</param>
-        public FinancePage(ChatMessageListViewModel specificViewModel) : base(specificViewModel)
+        public FinancePage(FinancePageViewModel specificViewModel) : base(specificViewModel)
         {
             InitializeComponent();
         }
@@ -39,13 +39,13 @@ namespace Fasetto.Word
         protected override void OnViewModelChanged()
         {
             // Make sure UI exists first
-            if (ChatMessageList == null)
+            if (Hierarchy == null)
                 return;
 
             // Fade in chat message list
             var storyboard = new Storyboard();
             storyboard.AddFadeIn(1, from: true);
-            storyboard.Begin(ChatMessageList);
+            storyboard.Begin(Hierarchy);
 
             // Make the message box focused
             MessageText.Focus();
@@ -83,7 +83,7 @@ namespace Fasetto.Word
                 }
                 else
                     // Send the message
-                    ViewModel.Send();
+                    //ViewModel.Send();
 
                 // Mark the key as handled
                 e.Handled = true;

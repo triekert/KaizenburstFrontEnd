@@ -46,7 +46,7 @@ namespace Fasetto.Word
             if (Keyboard.IsKeyDown(Key.Escape))
             {
                 ((HierarchyElementViewModel)DataContext).Close();
-            e.Handled = true;
+                e.Handled = true;
             }
 
         }

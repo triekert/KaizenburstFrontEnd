@@ -72,6 +72,13 @@ namespace Fasetto.Word.Core
         /// </summary>
         public string KChangeID { get; set; }
 
+
+        /// <summary>
+        /// Property to indicate whether element is being evaluated by a change request
+        /// and whether it should be excluded from current operations
+        /// </summary>
+        public bool IsUnderReview { get; set; }
+
         /// <summary>
         //sub categories that are also categories in themself
         /// </summary>

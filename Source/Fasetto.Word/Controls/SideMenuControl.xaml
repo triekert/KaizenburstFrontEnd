@@ -36,13 +36,13 @@
                             <Button 
                                 Style="{StaticResource IconButton}" 
                                 Content="{StaticResource FontAwesomeChatIcon}"
-                                Command="{Binding OpenChatCommand}"
+                                Command="{Binding OpenChatCommand}" AutomationProperties.HelpText="Chat"
                                 />
 
                             <Button
                                 Style="{StaticResource IconButton}"
                                 Content="{StaticResource FontAwesomeUserIcon}" 
-                                Command="{Binding OpenContactsCommand}"
+                                Command="{Binding OpenContactsCommand}" AutomationProperties.HelpText="People Posts &amp; Structure"
                                 />
 
                             <Button 

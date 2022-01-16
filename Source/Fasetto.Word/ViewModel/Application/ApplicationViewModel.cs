@@ -91,14 +91,32 @@ namespace Fasetto.Word
 
 
         /// <summary>
-        /// Points to the currently visible side menu content view model
+        /// Points to the currently visible side menu content (or page if control deployed to page) view model
         /// </summary>
         public object CurrentSideMenuViewModel { get; set; }
+
+        /// <summary>
+        /// Points to the currently visible page content view model
+        /// </summary>
+        //public object CurrentPageViewModel { get; set; }
+
         /// <summary>
         /// Determines if the application has network access to the fasetto server
         /// </summary>
         public bool ServerReachable { get; set; } = true;
 
+        /// <summary>
+        /// Make provision for a stage parameter that could be passed through to adjust a page
+        /// </summary>
+        public string PageParameter { get; set; }
+        /// <summary>
+        /// Make provision for a popup parameter that could be passed through to adjust a popup
+        /// </summary>
+        public string PopupParameter { get; set; }
+        /// <summary>
+        /// Make provision for a control parameter that could be passed through to adjust a control
+        /// </summary>
+        public string ControlParameter { get; set; }
 
         #endregion
 
@@ -151,6 +169,7 @@ namespace Fasetto.Word
         public void OpenChat()
         {
             // Set the current side menu to Chat
+            ViewModelApplication.GoToPage(ApplicationPage.Chat);
             CurrentSideMenuContent = SideMenuContent.Chat;
         }
 
@@ -160,6 +179,7 @@ namespace Fasetto.Word
         public void OpenContacts()
         {
             // Set the current side menu to Chat
+            ViewModelApplication.GoToPage(ApplicationPage.Chat);
             CurrentSideMenuContent = SideMenuContent.Contacts;
         }
 
@@ -178,7 +198,9 @@ namespace Fasetto.Word
         public void OpenFinance()
         {
             // Set the current side menu to Finance
-            CurrentSideMenuContent = SideMenuContent.Finance;
+            ViewModelApplication.GoToPage(ApplicationPage.Finance);
+            //CurrentSideMenuContent = SideMenuContent.Finance;
+            SideMenuVisible = false;
         }
 
         #endregion

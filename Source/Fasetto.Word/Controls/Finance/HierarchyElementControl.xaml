@@ -13,7 +13,7 @@
 
 
 
-        <Grid >
+        <Grid                      Keyboard.PreviewKeyDown="TreeView_KeyBoard" ForceCursor="True">
             
 
             <Grid.RowDefinitions>
@@ -25,15 +25,17 @@
             <Grid Height="40" Margin="0 0 0 20">
 
                 <!-- Back button -->
-                <Button Style="{StaticResource IconGrowButton}"
+                <Button  
+
+                    Style="{StaticResource IconGrowButton}"
                     Height="40"
                     Content="{StaticResource FontAwesomeArrowLeftIcon}"
                     FontFamily="{StaticResource FontAwesome}"
                     Foreground="{StaticResource ForegroundDarkBrush}"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Command="{Binding CloseCommand}" IsCancel="True" IsDefault="True"
-                    />
+                    Command="{Binding CloseCommand}" IsCancel="True" IsDefault="True"/>
+                     <!--Keyboard.KeyDown="TreeView_KeyBoard"-->                   
 
                 <!-- Settings header -->
                 <TextBlock FontSize="{StaticResource FontSizeLarge}"

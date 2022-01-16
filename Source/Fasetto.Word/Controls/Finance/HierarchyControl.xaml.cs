@@ -16,6 +16,21 @@ namespace Fasetto.Word
     /// </summary>
     public partial class HierarchyControl : UserControl
     {
+
+        #region Public Properties
+
+        //public string ControlTitle { get; set; } = "Title of Control";
+
+        #endregion//Public Properties
+
+        #region Public Commands
+        /// <summary>
+        /// The command to close the settings menu
+        /// </summary>
+        //public ICommand CloseCommand { get; set; }
+        #endregion//Public Commands
+
+
         private readonly HierarchyTreeViewModel mHierarchyTree;
         private string mSourceCategory;
         private string mSourceCategoryName;
@@ -27,16 +42,21 @@ namespace Fasetto.Word
         private HierarchyViewModel mDraggedItemTest,mDraggedItem,mTarget;
         //private readonly object mFamilyTree;
         private readonly HierarchyViewModel mTargetTest;
+        //public string mControlTitle = "testing";
 
         //[Obsolete]
         //public HierarchyManagementControl(HierarchyManagementTreeDataModel hierarchyManagementTreeDataModel)
         public HierarchyControl()
         {
-            InitializeComponent();
+ 
 
             var root = "[Finance].[FinancialHierarchy]";
-            mHierarchyTree = new HierarchyTreeViewModel(root);
+            mHierarchyTree = new HierarchyTreeViewModel(root);//root);
+
             DataContext = mHierarchyTree;
+            InitializeComponent();
+            ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
+            //CloseCommand = new RelayCommand(Close);
 
         }
 
@@ -48,8 +68,8 @@ namespace Fasetto.Word
         private void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
-                mHierarchyTree.SearchCommand.Execute(null);
-        }
+             mHierarchyTree.SearchCommand.Execute(null) ;
+                   }
 
         private static List<HierarchyTreeDataModel> FillRecursive(List<HierarchyDataModel> flatObjects, string parentId)
         {
@@ -95,25 +115,6 @@ namespace Fasetto.Word
         {
             if (e.ChangedButton == MouseButton.Right)
             {
-                //mDraggedItem= (HierarchyViewModel)tvParameters.SelectedItem;
-                ////myCatPropertyInfo = res.GetType().GetProperties();
-                ////mSourceCategoryId = (string)((res.GetType().GetProperties()).Single(c => c.Name == "KCategoryId")).GetValue(res);
-                //mSourceCategoryName = mDraggedItem.ShortName;
-                //_ = Mouse.SetCursor(Cursors.Wait);
-                //var result = MessageBox.Show("Would you like to edit " + mSourceCategoryName + ",(Press 'Yes') or Add a Child item Press No", "Modifying selected Category - Add Child or Edit Category", MessageBoxButton.YesNoCancel);
-                //switch (result)
-                //{
-                //    case MessageBoxResult.Yes:
-                //        //Edit the selected Category
-                //        MessageBox.Show("Editing selected Category", "Category Hierarchy");
-                //        break;
-                //    case MessageBoxResult.No:
-                //        //Edit the selected Category
-                //        MessageBox.Show("Adding Child to selected Category", "Category Hierarchy");
-                //        break;
-                //    default:
-                //        break;
-                //}
                 e.Handled = true;
             }
 
@@ -145,27 +146,25 @@ namespace Fasetto.Word
 
                 if (Keyboard.IsKeyDown(Key.Insert))
                 {
-                    AddHierarchyElement();
+                    AddHierarchyElement();                    
+                    e.Handled= true;
                 }
                 else
                     if (Keyboard.IsKeyDown(Key.Enter))
                 {
                     EditHierarchyElement();
+                    e.Handled = true;
 
                 }
                 else
                     if (Keyboard.IsKeyDown(Key.Delete))
                     {
                         DeleteHierarchyElement();
+                    e.Handled = true;
 
-                    }
-                //else
-                //    if (Keyboard.IsKeyDown(Key.Escape))
-                //{
-                //    DeleteHierarchyElement();
+                }
 
-                //}
-                e.Handled= true;
+
             }
         }
 
@@ -399,6 +398,13 @@ namespace Fasetto.Word
             element.BringIntoView();
             scrollViewer.ScrollToVerticalOffset(relativePosition.Y);
         }
+
+        public void Close()
+        {
+            // Close settings menu
+            ViewModelApplication.PopupVisible = false;
+
+        }
         #region Search Logic //KCategoryID
         public IEnumerator<HierarchyViewModel> MatchingKCategoryEnumerator { get; private set; }
 
@@ -461,7 +467,7 @@ namespace Fasetto.Word
             mAddElementViewModel.EditNodeButtonText = null;
             mAddElementViewModel.DeleteNodeButtonText = null;
             mAddElementViewModel.HeadingText= "Add new Hierarchy Element";
-            ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
+            
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
@@ -476,6 +482,7 @@ namespace Fasetto.Word
             var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
             mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
+            mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
             mAddElementViewModel.ParentShortName = mDraggedItem.ParentShortName;
             mAddElementViewModel.ParentCategoryID = mDraggedItem.ParentCategoryID;
             mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
@@ -487,7 +494,7 @@ namespace Fasetto.Word
             mAddElementViewModel.CopyNodeButtonText = null;
             mAddElementViewModel.MoveNodeButtonText = null;
             mAddElementViewModel.HeadingText = "Update Selected Element";
-            ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
+            
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
@@ -510,18 +517,19 @@ namespace Fasetto.Word
             mAddElementViewModel.MoveNodeButtonText = null;
             mAddElementViewModel.DeleteNodeButtonText = "Delete Selected Element";
             mAddElementViewModel.HeadingText = "Delete Selected Element";
-            ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
+            
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
         }
         /// <summary>
-        /// Use Popup view to edit existing Hiearchy Element
+        /// Use Popup view to move existing Hiearchy Element
         /// </summary>
         private void MoveHierarchyElement()
         {
             //Prepopulate
             mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
+
             var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
             mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
@@ -536,11 +544,15 @@ namespace Fasetto.Word
             mAddElementViewModel.CopyNodeButtonText = null;
             mAddElementViewModel.EditNodeButtonText = null;
             mAddElementViewModel.HeadingText = "Move Selected Element (with descendants)";
-            ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
+            
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
         }
+        /// <summary>
+        /// Copy the selected hierarchy (with all descendants) to the element selected as the destination
+        /// "Copy Of " is used as a prefix for all elements in the element family being copied
+        /// </summary>
         private void CopyHierarchyElement()
         {
             //Prepopulate
@@ -559,12 +571,13 @@ namespace Fasetto.Word
             mAddElementViewModel.CopyNodeButtonText = "Copy Selected Element";
             mAddElementViewModel.DeleteNodeButtonText = null;
             mAddElementViewModel.HeadingText = "Copy Selected Element (with descendants)";
-            ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
+            
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
         }
         #endregion
+
 
 
 

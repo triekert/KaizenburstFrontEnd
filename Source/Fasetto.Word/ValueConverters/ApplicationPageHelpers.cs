@@ -29,7 +29,7 @@ namespace Fasetto.Word
                     return new ChatPage(viewModel as ChatMessageListViewModel);
 
                 case ApplicationPage.Finance:
-                    return new ChatPage(viewModel as ChatMessageListViewModel);
+                    return new FinancePage(viewModel as FinancePageViewModel);
 
                 default:
                     Debugger.Break();
