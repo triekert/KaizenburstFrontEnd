@@ -289,6 +289,27 @@ namespace Fasetto.Word
                     return;
 
         }
+        //private void TreeView_MouseEnter(object sender, MouseEventArgs e)
+        //{
+        //    //try
+        //    //{
+   
+        //    ((HierarchyViewModel)((TreeViewItem)sender).DataContext).IsSelected = true;
+
+        //    e.Handled = true;
+        //    return;
+        //}
+        //private void TreeView_MouseLeave(object sender, MouseEventArgs e)
+        //{
+        //    //try
+        //    //{
+        //    ((HierarchyViewModel)((TreeViewItem)sender).DataContext).IsSelected = false;
+
+
+        //    e.Handled = true;
+        //    return;
+
+        //}
 
         /// <summary>
         /// Check whether it is possible to allow drop into the current
@@ -455,14 +476,18 @@ namespace Fasetto.Word
         {
             //Prepopulate
             mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
+            if (mDraggedItem == null)
+                return;
             var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mAddElementViewModel.ShortName.OriginalText = "New Element Name";
             mAddElementViewModel.Description.OriginalText = "Description of New Element";
+            mAddElementViewModel.ShortName.EditedText = "New Element Name";
+            mAddElementViewModel.Description.EditedText = "Description of New Element";
             mAddElementViewModel.ParentShortName = mDraggedItem.ShortName;
             mAddElementViewModel.ParentCategoryID = mDraggedItem.KCategoryID;
             mAddElementViewModel.KCategoryID = Guid.NewGuid().ToString().ToUpper();
             mAddElementViewModel.DateEffective = DateTime.Today;
-            mAddElementViewModel.DateDiscontinued = new DateTime();
+            mAddElementViewModel.DateDiscontinued = new DateTime(9999,12,31);
             mAddElementViewModel.AddNodeButtonText = "Add new Hierarchy Element";
             mAddElementViewModel.EditNodeButtonText = null;
             mAddElementViewModel.DeleteNodeButtonText = null;
@@ -479,8 +504,11 @@ namespace Fasetto.Word
         {
             //Prepopulate
             mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
+            if (mDraggedItem == null)
+                return;
             var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
+            mAddElementViewModel.ShortName.EditedText = mDraggedItem.ShortName;
             mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
             mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
             mAddElementViewModel.ParentShortName = mDraggedItem.ParentShortName;
@@ -503,6 +531,8 @@ namespace Fasetto.Word
         {
             //Prepopulate
             mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
+            if (mDraggedItem == null)
+                return;
             var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
             mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
@@ -510,7 +540,7 @@ namespace Fasetto.Word
             mAddElementViewModel.ParentCategoryID = mDraggedItem.ParentCategoryID;
             mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
             mAddElementViewModel.DateEffective = mDraggedItem.DateEffective;
-            mAddElementViewModel.DateDiscontinued = DateTime.Today; 
+            mAddElementViewModel.DateDiscontinued = mDraggedItem.DateDiscontinued;
             mAddElementViewModel.AddNodeButtonText = null;
             mAddElementViewModel.EditNodeButtonText = null;
             mAddElementViewModel.CopyNodeButtonText = null;
@@ -532,12 +562,14 @@ namespace Fasetto.Word
 
             var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
-            mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
+            mAddElementViewModel.Description.OriginalText = mDraggedItem.Description; 
+            mAddElementViewModel.ShortName.EditedText = mDraggedItem.ShortName;
+            mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
             mAddElementViewModel.ParentShortName = mTarget.ShortName;
             mAddElementViewModel.ParentCategoryID = mTarget.KCategoryID;
             mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
             mAddElementViewModel.DateEffective = mDraggedItem.DateEffective;
-            mAddElementViewModel.DateDiscontinued = DateTime.Today;
+            mAddElementViewModel.DateDiscontinued = new DateTime(9999, 12, 31);
             mAddElementViewModel.AddNodeButtonText = null;
             mAddElementViewModel.MoveNodeButtonText = "Move Selected Element";
             mAddElementViewModel.DeleteNodeButtonText = null;
@@ -560,11 +592,13 @@ namespace Fasetto.Word
             var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
             mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
+            mAddElementViewModel.ShortName.EditedText = mDraggedItem.ShortName;
+            mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
             mAddElementViewModel.ParentShortName = mTarget.ShortName;
             mAddElementViewModel.ParentCategoryID = mTarget.KCategoryID;
             mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
-            mAddElementViewModel.DateEffective = mDraggedItem.DateEffective;
-            mAddElementViewModel.DateDiscontinued = DateTime.Today;
+            mAddElementViewModel.DateEffective = DateTime.Today;
+            mAddElementViewModel.DateDiscontinued = new DateTime(9999,12,31);
             mAddElementViewModel.AddNodeButtonText = null;
             mAddElementViewModel.EditNodeButtonText = null;
             mAddElementViewModel.MoveNodeButtonText = null;

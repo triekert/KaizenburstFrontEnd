@@ -17,6 +17,7 @@ using System.Web;
 using static Dna.FrameworkDI;
 using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
+
 namespace Fasetto.Word.Web.Server
 {
     /// <summary>
@@ -594,7 +595,7 @@ namespace Fasetto.Word.Web.Server
 
         [Route(ApiRoutes.ReturnHierarchy)]
 
-        public async Task<ApiResponse<HierarchyResultListApiModel>> ReturnHierarchyAsync()
+        public async Task<ApiResponse<HierarchyResultListApiModel>> ReturnHierarchyAsync([FromBody]string model)
         {
             #region Get User
 
@@ -609,11 +610,12 @@ namespace Fasetto.Word.Web.Server
                     ErrorMessage = "User not found"
                 };
 
-            #endregion
+            #endregion //Get User
 
             #region sql query
-            var SqlString = "SELECT  [ShortName],coalesce([Description],'') Description,coalesce([Card],'')Card,coalesce([Frequency],'')Frequency,coalesce(convert(nvarchar(50),[KCategoryID]),'') KCategoryID,coalesce(convert(nvarchar(50),[ParentCategoryID]),'') ParentCategoryID,coalesce(convert(nvarchar(50),[fIconID]),'') Icon FROM [Kaizen].[Finance].[vwFinHierarchy]";
-
+            var SqlString = "SELECT  [ShortName],coalesce([Description],'') Description,coalesce(convert(nvarchar(50),[KCategoryID]),'') KCategoryID, coalesce(convert(nvarchar(50),[ParentCategoryID]),'') ParentCategoryID," +
+                "coalesce(convert(nvarchar(50),[fIconID]),'') Icon,DateEffective,coalesce(DateDiscontinued,convert(datetime,'9999/12/31'))DateDiscontinued,coalesce(convert(nvarchar(50),[fChangeID]),'') fChangeID,[isUnderReview],[isNewElement] FROM [Admin].[HierarchyGeneric]";// " + model;
+            var SqlString1 =  "SELECT  [ShortName],coalesce([Description],'') Description,coalesce([Card],'')Card,coalesce([Frequency],'')Frequency,coalesce(convert(nvarchar(50),[KCategoryID]),'') KCategoryID,coalesce(convert(nvarchar(50),[ParentCategoryID]),'') ParentCategoryID,coalesce(convert(nvarchar(50),[fIconID]),'') Icon FROM [Kaizen]." + model;// [Finance].[vwFinHierarchy]";
             var dataset = await GetDataSetAsync(SqlString);
             var dt = dataset.Tables[0];
             var hierarchyResultListApiModel = new HierarchyResultListApiModel();
@@ -626,29 +628,288 @@ namespace Fasetto.Word.Web.Server
                 {
                     ShortName = (string)(row[0]),
                     Description = (string)row[1],
-                    Card = (string)row[2],
-                    Frequency = (int)row[3],
-                    KCategoryID = (string)row[4],
-                    ParentCategoryID = (string)row[5],
-                    FIconID = (string)row[6]
-                };
+                    KCategoryID = (string)row[2],
+                    ParentCategoryID = (string)row[3],
+                    FIconID = (string)row[4],
+                    DateEffective = (DateTime)row[5],
+                    DateDiscontinued = (DateTime)row[6],
+                    KChangeID = (string)row[7],
+                    IsUnderReview = (bool)row[8],
+                    IsNewElement = false,
 
+                };
+                var mShortName = u.ShortName;
                 results.Add(u);
 
             }
+            var matches = results.Where(x => x.ShortName == "Brendon Snakes").ToList();   
             return new ApiResponse<HierarchyResultListApiModel>
-            {
+            { 
+        
                 Response = results
             };
-            #endregion
+            #endregion //sql query
 
             #region Find Users
 
 
-            #endregion
+            //convert response into HierarchyListDataModel
+            #endregion //Find Users
         }
 
 
+        [Route(ApiRoutes.PersistHierarchy)]
+        /// <summary>
+        /// Persist hierarchy changes made on front end
+        /// </summary>
+        /// <param name="mPersist"></param>
+        /// <returns></returns>
+        public async Task<ApiResponse<HierarchyResultListApiModel>> PersistHierarchyAsync([FromBody]HierarchyResultListApiModel mPersist)
+
+        {
+                #region Get User
+
+                // Get the current user
+                var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+                // If we have no user...
+                if (user == null)
+                    return new ApiResponse<HierarchyResultListApiModel>
+                    {
+                        // TODO: Localization
+                        ErrorMessage = "User not found"
+                    };
+
+            #endregion //Get User   
+            var results = mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").OrderBy(x => x.ShortName).ToList();
+
+            var mHierarchyLink = results.FirstOrDefault().KCategoryID;
+
+
+            var para = new SqlParameter[10];
+            para[0] = new SqlParameter("@ShortName", SqlDbType.NVarChar);
+            para[1] = new SqlParameter("@Description", SqlDbType.NVarChar);
+            para[2] = new SqlParameter("@kCategoryID", SqlDbType.UniqueIdentifier);
+            para[3] = new SqlParameter("@ParentCategoryID", SqlDbType.UniqueIdentifier);
+            para[4] = new SqlParameter("@fIconID", SqlDbType.UniqueIdentifier);
+            para[5] = new SqlParameter("@DateEffective", SqlDbType.DateTime);
+            para[6] = new SqlParameter("@DateDiscontinued", SqlDbType.DateTime);
+            para[7] = new SqlParameter("@fChangeID", SqlDbType.UniqueIdentifier);
+            para[8] = new SqlParameter("@isUnderReview", SqlDbType.Bit);
+            para[9] = new SqlParameter("@isNewElement", SqlDbType.Bit);
+
+
+
+            //var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (ShortName,Description,kCategoryID,ParentCategoryID,fIconID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement)" +// ) " +
+            //    "VALUES (@ShortName,@Description,@kCategoryID,@ParentCategoryID,@fIconID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement)";//)";
+            var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (fHierarchyID,ShortName,Description,kCategoryID,ParentCategoryID,fIconID,DateEffective,fChangeID,isUnderReview,isNewElement)" +// ) " +
+                "VALUES ('" + mHierarchyLink + "',@ShortName,@Description,@kCategoryID,@ParentCategoryID,@fIconID,@DateEffective,@fChangeID,@isUnderReview,@isNewElement)";//)";
+            //If elements are to be added, insert into backend
+            results = mPersist.Where(x => x.IsNewElement == true).OrderBy(x => x.ShortName).ToList();//
+            if (results.Count >0)
+
+            { foreach (var row in results)
+                { 
+                    para[0].Value = row.ShortName;
+                    para[1].Value = row.Description;
+                    para[2].Value = new Guid(row.KCategoryID);
+                    if (row.ParentCategoryID == null || row.ParentCategoryID == "")
+                        para[3].Value = new Guid();
+                    else
+                        para[3].Value = new Guid(row.ParentCategoryID);
+
+                    if (row.FIconID == null||row.FIconID =="")
+                    para[4].Value = new Guid();
+                    else
+                    para[4].Value = new Guid(row.FIconID); 
+                    if (row.DateEffective != Convert.ToDateTime("0001/01/01 00:00:00"))
+                        para[5].Value = row.DateEffective;
+                    else
+                        para[5].Value = Convert.ToDateTime("1753/01/01 00:00:00");
+                    if (row.DateDiscontinued != Convert.ToDateTime("0001/01/01 00:00:00"))
+                        para[6].Value = row.DateDiscontinued;
+                    else
+                        para[6].Value = Convert.ToDateTime("9999/12/31 00:00:00");
+
+                    if (row.KChangeID != null)
+                    { para[7].Value = new Guid(row.KChangeID); }
+                    else
+                        para[7].Value = new Guid();
+
+                    para[8].Value = row.IsUnderReview;
+                    para[9].Value = row.IsNewElement;
+
+                    try
+                    {
+                        // Try and run the task
+                        _ = await ExecuteAsync(SqlString, para);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log error
+                        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                        // Throw it as normal
+                        throw;
+                    }
+ 
+                }
+             }
+
+            SqlString = "UPDATE [Admin].[HierarchyGeneric] SET ShortName = @ShortName,Description = @Description,kCategoryID = @kCategoryID," +
+                "ParentCategoryID = @ParentCategoryID,fIconID = @fIconID,DateEffective = @DateEffective,DateDiscontinued = @DateDiscontinued,fChangeID = @fChangeID," +
+                "isUnderReview = @isUnderReview,isNewElement = @isNewElement WHERE kCategoryID = @kCategoryID AND DateEffective = @DateEffective"; 
+
+            //If elements are to be updated, insert into backend
+            results = mPersist.Where(x => x.IsNewElement != true && x.IsUnderReview == true).OrderBy(x => x.ShortName).ToList();//
+            if (results.Count > 0)
+
+            {
+                foreach (var row in results)
+                {
+                    para[0].Value = row.ShortName;
+                    para[1].Value = row.Description;
+                    para[2].Value = new Guid(row.KCategoryID);
+                    if (row.ParentCategoryID == null || row.ParentCategoryID == "")
+                        para[3].Value = new Guid();
+                    else
+                        para[3].Value = new Guid(row.ParentCategoryID);
+
+                    if (row.FIconID == null || row.FIconID == "")
+                        para[4].Value = new Guid();
+                    else
+                        para[4].Value = new Guid(row.FIconID);
+                    if (row.DateEffective != Convert.ToDateTime("0001/01/01 00:00:00"))
+                        para[5].Value = row.DateEffective;
+                    else
+                        para[5].Value = Convert.ToDateTime("1753/01/01 00:00:00");
+                    if (row.DateDiscontinued != Convert.ToDateTime("0001/01/01 00:00:00"))
+                        para[6].Value = row.DateDiscontinued;
+                    else
+                        para[6].Value = Convert.ToDateTime("9999/12/31 00:00:00");
+
+                    if (row.KChangeID != null)
+                    { para[7].Value = new Guid(row.KChangeID); }
+                    else
+                        para[7].Value = new Guid();
+
+                    para[8].Value = row.IsUnderReview;
+                    para[9].Value = row.IsNewElement;
+
+                    try
+                    {
+                        // Try and run the task
+                        _ = await ExecuteAsync(SqlString, para);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log error
+                        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                        // Throw it as normal
+                        throw;
+                    }
+
+
+                }
+            }
+
+            SqlString = "Delete from [Admin].[HierarchyGeneric]  WHERE kCategoryID = @kCategoryID AND DateEffective = @DateEffective";
+
+            //If elements are to be deleted, find and remove
+            results = mPersist.Where(x => x.IsDeleteElement == true && x.IsUnderReview == true).OrderBy(x => x.ShortName).ToList();//
+            if (results.Count > 0)
+
+            {
+                foreach (var row in results)
+                {
+                    para[0].Value = row.ShortName;
+                    para[1].Value = row.Description;
+                    para[2].Value = new Guid(row.KCategoryID);
+                    if (row.ParentCategoryID == null || row.ParentCategoryID == "")
+                        para[3].Value = new Guid();
+                    else
+                        para[3].Value = new Guid(row.ParentCategoryID);
+
+                    if (row.FIconID == null || row.FIconID == "")
+                        para[4].Value = new Guid();
+                    else
+                        para[4].Value = new Guid(row.FIconID);
+                    if (row.DateEffective != Convert.ToDateTime("0001/01/01 00:00:00"))
+                        para[5].Value = row.DateEffective;
+                    else
+                        para[5].Value = Convert.ToDateTime("1753/01/01 00:00:00");
+                    if (row.DateDiscontinued != Convert.ToDateTime("0001/01/01 00:00:00"))
+                        para[6].Value = row.DateDiscontinued;
+                    else
+                        para[6].Value = Convert.ToDateTime("9999/12/31 00:00:00");
+
+                    if (row.KChangeID != null)
+                    { para[7].Value = new Guid(row.KChangeID); }
+                    else
+                        para[7].Value = new Guid();
+
+                    para[8].Value = row.IsUnderReview;
+                    para[9].Value = row.IsNewElement;
+
+                    try
+                    {
+                        // Try and run the task
+                        _ = await ExecuteAsync(SqlString, para);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log error
+                        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                        // Throw it as normal
+                        throw;
+                    }
+                }
+            }
+
+
+
+                    #region sql query
+
+
+
+                    //var dt = dataset.Tables[0];
+                    //var hierarchyResultListApiModel = new HierarchyResultListApiModel();
+                    //var results = hierarchyResultListApiModel;
+
+
+                    //foreach (DataRow row in dt.Rows)
+                    //{
+                    //    var u = new HierarchyResultApiModel
+                    //    {
+                    //        ShortName = (string)(row[0]),
+                    //        Description = (string)row[1],
+                    //        Card = (string)row[2],
+                    //        Frequency = (int)row[3],
+                    //        KCategoryID = (string)row[4],
+                    //        ParentCategoryID = (string)row[5],
+                    //        FIconID = (string)row[6]
+                    //    };
+
+                    //    results.Add(u);
+
+                    //}
+                    return new ApiResponse<HierarchyResultListApiModel>
+            {
+                    //Response = results
+                };
+            #endregion //sql query
+
+            #region Find Users
+
+
+            #endregion //Find Users
+        }
+      
         #endregion
 
 
@@ -677,61 +938,6 @@ namespace Fasetto.Word.Web.Server
             await FasettoEmailSender.SendUserVerificationEmailAsync(user.UserName, userIdentity.Email, confirmationUrl);
         }
 
-        //public class CDatabase
-        //{
-        //    // USE CUSTOM CLASS TO RETURN DATA
-        //    public class CDatabaseResult
-        //    {
-        //        public bool mSuccess;
-        //        public string mResult;
-        //        public object mData;
-        //    }
-        //public  Task<CDatabaseResult> GetTextDataToCustomClassAsync(string sSQL, params SqlParameter[] parameters)
-        //{
-        //    //Return task based on datatype
-        //    return Task.Run(async () =>
-        //    {
-        //        try
-        //        {
-        //            //GET DATA
-        //            var sData = string.Empty;
-        //            using (var newConnection = new SqlConnection(Configuration["ConnectionStrings:DefaultConnection"]))
-        //            {
-        //                newConnection.Open();
-        //                var command = new SqlCommand(sSQL, newConnection);
-        //                var reader = await command.ExecuteReaderAsync();
-        //                while (reader.Read())
-        //                {
-        //                    var sLine = string.Empty;
-        //                    for (var i = 0; i < reader.FieldCount; i++)
-        //                    {
-        //                        if (sLine.Length == 0) { sLine += reader[i]; } else { sLine += "\t" + reader[i]; }
-        //                    }
-        //                    if (sData.Length == 0) { sData += sLine; } else { sData += "\r\n" + sLine; }
-        //                }
-        //                newConnection.Close();
-        //            }
-
-        //            var result = new CDatabaseResult()
-        //            {
-        //                mData = sData,
-        //                mSuccess = true
-        //            };
-
-        //            return result;
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            //Catch exception and return as error in class object
-        //            var result = new CDatabaseResult()
-        //            {
-        //                mResult = "GetData Error: " + ex.Message,
-        //                mSuccess = false
-        //            };
-        //            return result;
-        //        }
-        //    });
-        //}
 
         //EXECUTE ASYNC
         public Task<int> ExecuteAsync(string sSQL, params SqlParameter[] parameters)
@@ -745,7 +951,9 @@ namespace Fasetto.Word.Web.Server
                         if (parameters != null) newCommand.Parameters.AddRange(parameters);
 
                         newConnection.Open();
-                        return newCommand.ExecuteNonQueryAsync();
+                        var feedback = newCommand.ExecuteNonQuery();
+                        newCommand.Parameters.Clear();
+                        return feedback;
                     }
                 });
             }
@@ -772,3 +980,37 @@ namespace Fasetto.Word.Web.Server
         #endregion
     }
 }
+
+//con = new SqlConnection(ConfigurationManager.ConnectionStrings["constr"].ConnectionString);
+
+//cmd = new SqlCommand();
+
+//cmd.Connection = con;
+
+
+
+//cmd.Parameters.Add(new SqlParameter("@RollNo", SqlDbType.Int));
+
+//cmd.Parameters["@RollNo"].Value = textBox1.Text;
+
+
+
+//cmd.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar));
+
+//cmd.Parameters["@Name"].Value = textBox2.Text;
+
+
+
+//cmd.Parameters.Add(new SqlParameter("@Fees", SqlDbType.Float));
+
+//cmd.Parameters["@Fees"].Value = textBox3.Text;
+
+
+
+//cmd.CommandText = "insert into student values(@RollNo, @Name, @Fees)";
+
+
+
+//con.Open();
+
+//cmd.ExecuteNonQuery();

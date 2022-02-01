@@ -63,6 +63,13 @@
         /// </summary>
         public const string ReturnHierarchy = "api/finance/hierarchy";
 
+
+        /// <summary>
+        /// The route to the PersitHierarchy Api method
+        /// </summary>
+        public const string PersistHierarchy = "api/finance/pershier";
+
+
         #endregion
     }
 }

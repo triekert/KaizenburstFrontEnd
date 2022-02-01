@@ -116,12 +116,15 @@
                 </Grid>
             </Grid>
         </Border>
-        
-        <ScrollViewer x:Name="scrollViewer" Focusable="False" FocusManager.IsFocusScope="False">
+
+        <ScrollViewer x:Name="scrollViewer"  Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <TreeView 
               ItemsSource="{Binding FirstGeneration}" 
               TreeViewItem.Selected="TreeView_Selected"            
-              Name="tvParameters">
+              Name="tvParameters"
+               
+               >
+
                 <!--AllowDrop="True"  MouseDown="TreeView_MouseDown"  Drop="TreeView_Drop" MouseMove="TreeView_MouseMove">-->
 
                 <TreeView.ItemContainerStyle>
@@ -140,6 +143,8 @@
                         <EventSetter Event="KeyDown" Handler="TreeView_KeyBoard"/>
                         <EventSetter Event="MouseMove" Handler="TreeView_MouseMove"/>
                         <EventSetter Event="MouseDoubleClick" Handler="TreeView_MouseDoubleClick"/>
+                        <!--<EventSetter Event="MouseEnter" Handler="TreeView_MouseEnter"/>
+                        <EventSetter Event="MouseLeave" Handler="TreeView_MouseLeave"/>-->
                         <Style.Triggers>
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter Property="FontWeight" Value="UltraBold" />

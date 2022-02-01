@@ -3,6 +3,7 @@ using static Fasetto.Word.Core.CoreDI;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using Fasetto.Word.Core;
 
 namespace Fasetto.Word
 {
@@ -224,7 +225,11 @@ namespace Fasetto.Word
         public void Send()
         {
             mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel;
-            mViewModel.PersistHierarchyChanges();
+            var results = mViewModel.mPersist.Where(x => x.IsUnderReview).OrderBy(x => x.ShortName).ToList();
+            //var results = mViewModel.mPersist.OrderBy(x => x.ShortName).ToList();
+            if (results.Count > 0)
+                //mViewModel.mPersistTmp = (HierarchyResultApiModel)results;
+                _ = mViewModel.PersistHierarchyChangesAsync();
 
         }
 

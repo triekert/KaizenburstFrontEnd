@@ -11,7 +11,16 @@ namespace Fasetto.Word.Core
     /// </summary>
     public class HierarchyResultListApiModel : List<HierarchyResultApiModel>
     {
-
+        public void Remove(HierarchyResultListApiModel source, HierarchyResultListApiModel target)
+        {
+            foreach (var item in source)
+                target.Remove(item);
+        }
+        public void Clone(HierarchyResultListApiModel source, HierarchyResultListApiModel target)
+        {
+            foreach(var item in source)
+                target.Add(item);
+        }
     }
 
 }

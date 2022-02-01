@@ -57,7 +57,16 @@ namespace Fasetto.Word.Core
         /// and whether it should be excluded from current operations
         /// </summary>
         public bool IsUnderReview { get; set; }
+        /// <summary>
+        /// Property to indicate whether this element has been newly added change request
+        /// and whether it should be excluded from current operations
+        /// </summary>
+        public bool IsNewElement { get; set; }
 
+        /// <summary>
+        /// Property to indicate whether this element is to be removed from the persistence layer
+        /// </summary>
+        public bool IsDeleteElement { get; set; }
 
         #endregion       
     }

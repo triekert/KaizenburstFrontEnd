@@ -247,8 +247,13 @@ namespace Fasetto.Word {
         public void AddNode()
         {
             // Close settings menu
+
             var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel;
             var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
+            if (mElementViewModel.Description.OriginalText == "Description of New Element" || mElementViewModel.Description.EditedText == "Description of New Element") 
+                { mElementViewModel.Description.OriginalText = null;
+                mElementViewModel.Description.OriginalText = null;
+            }
             mViewModel.AddElement(mElementViewModel);
             ViewModelApplication.PopupVisible = false;
         }
@@ -287,6 +292,11 @@ namespace Fasetto.Word {
             var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel;
             var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mViewModel.MoveElement(mElementViewModel);
+            if (mElementViewModel.Description.OriginalText == "Description of New Element" && mElementViewModel.Description.EditedText == "Description of New Element")
+            {
+                mElementViewModel.Description.OriginalText = null;
+                mElementViewModel.Description.OriginalText = null;
+            }
             ViewModelApplication.PopupVisible = false;
         }
 

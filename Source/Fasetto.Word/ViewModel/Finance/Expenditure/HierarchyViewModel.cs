@@ -73,6 +73,16 @@ namespace Fasetto.Word
         public bool IsUnderReview => mElement.IsUnderReview;
 
         /// <summary>
+        /// Property to indicate whether this element has been newly added change request
+        /// and whether it should be excluded from current operations
+        /// </summary>
+        public bool IsNewElement => mElement.IsNewElement;
+
+        /// <summary>
+        /// Property to indicate whether this element is to be removed from the persistence layer
+        /// </summary>
+        public bool IsDeleteElement => mElement.IsDeleteElement;
+        /// <summary>
         /// A list of all children containd inside this item
         /// </summary>
         public ObservableCollection<HierarchyViewModel> Children => mChildren;
@@ -135,7 +145,7 @@ namespace Fasetto.Word
             { 
         
             mChildren = new ObservableCollection<HierarchyViewModel>(
-                    (from child in mElement.Children
+                    (from child in mElement.Children orderby(mElement.ShortName)
                      select new HierarchyViewModel(child, this))
                      .ToList());
             }

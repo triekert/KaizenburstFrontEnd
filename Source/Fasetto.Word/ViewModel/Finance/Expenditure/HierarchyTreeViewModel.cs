@@ -41,7 +41,7 @@ namespace Fasetto.Word
         protected HierarchyViewModel mRootHierarchyElement1;
         private readonly ICommand mSearchCommand;
         public HierarchyListDataModel mHDML;
-        public HierarchyResultListApiModel mPersist, mPersistTmp;
+        public HierarchyResultListApiModel mPersist, mPersistTmp,mOriginal;
         public HierarchyDataModel mHDM;
         public string mTableName;
         public HierarchyElementViewModel mElement;
@@ -80,7 +80,7 @@ namespace Fasetto.Word
             mHDM = new HierarchyDataModel
             {
                 KCategoryID = new Guid().ToString(),
-                ParentCategoryID = "",
+                ParentCategoryID = "00000000-0000-0000-0000-000000000000",
                 Description = "...Loading hierarchy data...",
                 ShortName = "Loading...Please be patient",
                 Children = new HierarchyListDataModel()
@@ -106,8 +106,11 @@ namespace Fasetto.Word
 
         {
 
-            var rootElement = mHDML.FirstOrDefault(x => x.ParentCategoryID == "");
-            mRootHierarchyElement = new HierarchyViewModel(rootElement);
+            var rootElement = mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
+            mRootHierarchyElement = new HierarchyViewModel(rootElement)
+            {
+                IsExpanded = true
+            };
 
             FirstGeneration = new ObservableCollection<HierarchyViewModel>(
                 new HierarchyViewModel[]
@@ -224,8 +227,27 @@ namespace Fasetto.Word
                     return;
 
                 // OK successfully registered (and logged in)... now get users data
-                var expenseHierarchy = result.ServerResponse.Response;
-                mPersist = expenseHierarchy;
+                mOriginal = result.ServerResponse.Response;
+                //var matches = mOriginal.Where(x => x.IsUnderReview != true).OrderBy(x => x.DateEffective).ToList();
+
+                //mOriginal = expenseHierarchy;
+               
+                try
+                {
+
+                    //List<Person> tempList = ((List<object>)arrayList[0]).Cast<Person>().ToList();
+                    var hierarchyResultApiModels = mOriginal.ToList();
+                    //mPersist = (HierarchyResultListApiModel)hierarchyResultApiModels;
+                    //mPersist = (HierarchyResultListApiModel)matches;
+                    mPersist = new HierarchyResultListApiModel();
+                    mPersist.Clone(mOriginal, mPersist);
+                }
+                 catch (Exception e)
+                {
+                    throw e;
+                }
+
+
                 //convert response into HierarchyListDataModel
                 //mHDML.Clear();
                 //mHDML.AddRange(ExpandHierarchyData(expenseHierarchy, "","Root"));
@@ -245,7 +267,7 @@ namespace Fasetto.Word
         {
 
             mHDML.Clear();
-            mHDML.AddRange(ExpandHierarchyData(mPersist, "", "Root"));
+            mHDML.AddRange(ExpandHierarchyData(mPersist, "00000000-0000-0000-0000-000000000000", "Root"));
 
             var matches = mPersist.OrderBy(x => x.DateEffective).ToList();
             foreach (var category in matches)
@@ -274,7 +296,10 @@ namespace Fasetto.Word
         {
             mPersist = results;
             // Find all children
-            var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateDiscontinued == new DateTime() && x.DateEffective <= DateTime.Today).ToList();
+            var TempDate = new DateTime(9999, 12, 31, 0, 0, 0);
+            //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued == new DateTime(9999,12,31,0,0,0) && !x.IsDeleteElement ).OrderBy(x=>x.ShortName).ToList();//
+
+            var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued >  DateTime.Today && !x.IsDeleteElement).OrderBy(x => x.ShortName).ToList();//
 
             // Hierarchy cannot be expanded
             if (children.Count() == 0)
@@ -446,44 +471,80 @@ namespace Fasetto.Word
             //
 
             if (category != null)
-            //Ensure that selected element is the 'current' one
-            {
+            //Move the selected element by discontinuing it at the current 'Parent'
+            //and adding a new element at the new parent location (all descendants are autotomatically
+            //moved)
+          
+            {  
                 if (category.DateEffective == element.DateEffective)
-                //move to new parent
                 {
-                    category.ParentCategoryID = element.ParentCategoryID;
-                    mSearchText = element.KCategoryID;
+                    //if the change is made to an element not yet committed
+                    //remove changes made up to this point...
+                    if (category.DateDiscontinued == element.DateDiscontinued)
+                    {
+                    category.IsUnderReview = true;
+                        category.ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText);
+                        category.Description = (element.Description.EditedText ?? element.Description.OriginalText);
+                        //category.FIconID = element.FIconID;
+                        category.ParentCategoryID = mParentCategoryID;
+                    }
+                    else
+                    { 
+                    var mPersistElement = new HierarchyResultApiModel
+                        {
+                        ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
+                        Description = (element.Description.EditedText ?? element.Description.OriginalText),
+                        //FIconID = category.FIconID,
+                        //Frequency = category.Frequency,
+                        //FinHierarchyID = category.FinHierarchyID,
+                        ParentCategoryID = mParentCategoryID,
+                        DateEffective = element.DateEffective,
+                        DateDiscontinued=element.DateDiscontinued,
+                        KCategoryID = element.KCategoryID,
+                        KChangeID = element.KChangeID,
+                        IsUnderReview = true,
+                        IsNewElement = true,
+                        };
+                    mPersist.Add(mPersistElement);
+                    }
+
+
+
                 }
                 else
                 {
-                    //Create a copy of the previous element with different parent
+                //Doiscontinue the element in the current location
+                category.KChangeID = element.KChangeID;
+                category.DateDiscontinued = element.DateEffective.AddSeconds(-10);
+                category.IsUnderReview = true;
+ 
                     var mPersistElement = new HierarchyResultApiModel
                     {
-                        ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
-                        Description = (element.Description.EditedText ?? element.Description.OriginalText),
-                        FIconID = category.FIconID,
-                        Frequency = category.Frequency,
-                        FinHierarchyID = category.FinHierarchyID,
-                        ParentCategoryID = mParentCategoryID,
-                        DateEffective = element.DateDiscontinued,
-                        KCategoryID = Guid.NewGuid().ToString().ToUpper(),
-                        KChangeID = element.KChangeID
+                    ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
+                    Description = (element.Description.EditedText ?? element.Description.OriginalText),
+                    FIconID = category.FIconID,
+                    Frequency = category.Frequency,
+                    FinHierarchyID = category.FinHierarchyID,
+                    ParentCategoryID = mParentCategoryID,
+                    DateEffective = element.DateEffective,
+                    DateDiscontinued = element.DateDiscontinued,
+                    KCategoryID = element.KCategoryID,
+                    KChangeID = element.KChangeID,
+                    IsUnderReview = true,
+                    IsNewElement = true,
                     };
                     mPersist.Add(mPersistElement);
                     //terminate the previous position of the element, and link to the change control
-                    category.DateDiscontinued = element.DateDiscontinued;
-                    category.KChangeID = element.KChangeID;
 
                 }
                 RefreshHierarchy();
                 PerformKIdSearch();
 
-                return;
+            return;
 
             }
-
-
             return;
+
         }
 
 
@@ -514,7 +575,7 @@ namespace Fasetto.Word
                 //var sourceElement = from HierarchyDataModel in this
                 //                    where KCategoryID
                 var matches = from category in mPersist
-                              where category.KCategoryID == element.KCategoryID && category.DateDiscontinued == new DateTime() && category.DateEffective <= DateTime.Today
+                              where category.KCategoryID == element.KCategoryID && category.DateDiscontinued == new DateTime(9999,12,31) && category.DateEffective <= DateTime.Today
 
                               select category;
                 foreach (var category in matches)
@@ -524,15 +585,18 @@ namespace Fasetto.Word
                     //mSearchText = category.ShortName;
                     var mPersistElement = new HierarchyResultApiModel
                     {
-                        ShortName = "Copy Of " + category.ShortName,
-                        Description = category.Description,
+                        ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
+                        Description = (element.Description.EditedText ?? element.Description.OriginalText),
                         FIconID = category.FIconID,
                         Frequency = category.Frequency,
                         FinHierarchyID = category.FinHierarchyID,
                         ParentCategoryID = mParentCategoryID,
-                        DateEffective = mElement.DateDiscontinued,
+                        DateEffective = mElement.DateEffective,
+                        DateDiscontinued = new DateTime(9999, 12, 31),
                         KCategoryID = Guid.NewGuid().ToString().ToUpper(),
-                        KChangeID = mElement.KChangeID
+                        KChangeID = mElement.KChangeID,
+                        IsUnderReview = true,
+                        IsNewElement = true,
                     };
                     mPersistTmp.Add(mPersistElement);
                     //category.DateDiscontinued = mElement.DateDiscontinued;
@@ -565,7 +629,7 @@ namespace Fasetto.Word
                 //var sourceElement = from HierarchyDataModel in this
                 //                    where KCategoryID
                 var matches = from category in mPersist
-                              where category.ParentCategoryID == mCategoryKId && category.DateDiscontinued == new DateTime() && category.DateEffective <= (DateTime.Today)
+                              where category.ParentCategoryID == mCategoryKId && category.DateDiscontinued == new DateTime(9999,12,31) && category.DateEffective <= (DateTime.Today)
                               select category;
                 foreach (var category in matches)
 
@@ -578,10 +642,14 @@ namespace Fasetto.Word
                         FinHierarchyID = category.FinHierarchyID,
                         ParentCategoryID = mParentKId,
                         KCategoryID = Guid.NewGuid().ToString().ToUpper(),
-                        ShortName = "Copy Of " + category.ShortName,
+                        ShortName = category.ShortName,
                         Description = category.Description,
-                        DateEffective = mElement.DateDiscontinued,
-                        KChangeID = mElement.KChangeID
+                        DateEffective = mElement.DateEffective,
+                        DateDiscontinued = new DateTime(9999, 12, 31),
+                        KChangeID = mElement.KChangeID,
+                        IsUnderReview = true,
+                        IsNewElement = true,
+
                     };
                     mPersistTmp.Add(mPersistElement);
                     //category.DateDiscontinued = mElement.DateDiscontinued;
@@ -610,23 +678,57 @@ namespace Fasetto.Word
                 //mSearchText = mCategoryKId;
                 var mElement = element as HierarchyElementViewModel;
 
-                //mSearchText = element.KCategoryID;
 
-                //var sourceElement = from HierarchyDataModel in this
-                //                    where KCategoryID
-                var matches = from category in mPersist
-                              where category.KCategoryID == element.KCategoryID
-                              select category;
-                foreach (var category in matches)
+                //              select category;
+
+ 
+                var category = (mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective == element.DateEffective).OrderByDescending(x => x.DateEffective).ToList()).FirstOrDefault();
+                var catprev = (mPersist.Where(x => x.KCategoryID == category.KCategoryID && x.DateDiscontinued < category.DateDiscontinued).OrderByDescending(x => x.DateEffective).ToList()).FirstOrDefault();
+                //foreach (var category in matches)
 
 
+                //var category = categoryset.FirstOrDefault();
+                //if the category is currently under review and already reflected on back end then remove from backend
+                if (category.IsUnderReview)
+                //If element has not yet been persisted, just remove from the data set
                 {
-                    //mSearchText = category.ShortName;
+                    //if the node being discontinued was linked to another node during the same transaction
+                    //restore the other node to previous condition
+                    if (catprev != null)
+                    {
+                        catprev.DateDiscontinued = category.DateDiscontinued;
+                        mSearchText = catprev.KCategoryID;
+                    }
+                    if (category.IsNewElement)
+                    {
+                        //If changes have not yet been persisted on database, remove the relevant nodes from the front end
+                        //var catNode = mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective == element.DateEffective);
+                        mPersistTmp = new HierarchyResultListApiModel();
+                        foreach (var catno in mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective == element.DateEffective))
+                            mPersistTmp.Add(catno);
+                        mPersist.Remove(mPersistTmp, mPersist);
+                        if (catprev == null)
 
-                    category.DateDiscontinued = mElement.DateDiscontinued;
-                    mSearchText = mElement.KCategoryID;
-                    DeleteElement1(mElement.KCategoryID);
+                            DeleteElement1(element.KCategoryID,mElement);
+                    }
+                    else
+                    {
+                        category.IsDeleteElement = true;
+                        if (catprev == null)
+                            DeleteElement1(element.KCategoryID,mElement);
+                    }
                 }
+                //    //mSearchText = category.ShortName;
+                //if item is already under review, delete the changed stuff
+                else 
+                { 
+                category.DateDiscontinued = mElement.DateDiscontinued;
+                mSearchText = mElement.KCategoryID;
+                category.IsUnderReview = true;
+                DeleteElement1(mElement.KCategoryID,mElement);
+                }
+
+                //}
 
 
                 RefreshHierarchy();
@@ -644,13 +746,16 @@ namespace Fasetto.Word
         /// </summary>
         /// <param name="mCategoryKId"></param>
         /// <param name="mParentKId"></param>
-        public void DeleteElement1(string mCategoryKId)
+        public void DeleteElement1(string mCategoryKId, HierarchyElementViewModel element)
         {
+            var mElement = element as HierarchyElementViewModel;
+            var catprev = (mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective == element.DateEffective).OrderByDescending(x => x.DateEffective).ToList()).FirstOrDefault();
             try
             {
 
                 //var sourceElement = from HierarchyDataModel in this
                 //                    where KCategoryID
+
                 var matches = from category in mPersist
                               where category.ParentCategoryID == mCategoryKId
                               select category;
@@ -658,12 +763,41 @@ namespace Fasetto.Word
 
 
                 {
-
+                    catprev = (mPersist.Where(x => x.KCategoryID == category.KCategoryID && x.DateDiscontinued < category.DateDiscontinued).OrderByDescending(x => x.DateEffective).ToList()).FirstOrDefault();
+                    if (catprev != null)
                     {
-                        category.DateDiscontinued = mElement.DateDiscontinued;
-                    };
+                        catprev.DateDiscontinued = category.DateDiscontinued;
+                        mSearchText = catprev.KCategoryID;
+                    }
+                    //foreach (var catprev)
+                    if (category.IsUnderReview)
+                //If element has not yet been persisted, just remove from the data set
+                    { 
 
-                    DeleteElement1(category.KCategoryID);
+                        if (category.IsNewElement)
+                        {
+                        //If changes have not yet been persisted on database, remove the relevant nodes from the front end
+                             //var catNode = mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective == element.DateEffective);
+                            mPersistTmp = new HierarchyResultListApiModel();
+                            foreach(var catno in mPersist.Where(x => x.KCategoryID == category.KCategoryID && x.DateEffective == category.DateEffective))
+                            mPersistTmp.Add(catno);
+                            mPersist.Remove(mPersistTmp, mPersist);
+                            if (catprev == null)
+                                DeleteElement1(category.KCategoryID,mElement);
+                        }
+                        else
+                          category.IsDeleteElement = true;
+                            if (catprev == null)
+                            DeleteElement1(category.KCategoryID, mElement);
+
+                    }
+                    category.DateDiscontinued = mElement.DateDiscontinued;
+                    category.IsUnderReview = true;
+                    DeleteElement1(category.KCategoryID,mElement);
+
+                    //}
+
+
 
                 }
             }
@@ -687,8 +821,12 @@ namespace Fasetto.Word
                 ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
                 Description = (element.Description.EditedText ?? element.Description.OriginalText),
                 ParentCategoryID = element.ParentCategoryID,
+                DateEffective = element.DateEffective.AddSeconds(-10),
+                DateDiscontinued = element.DateDiscontinued,
                 KCategoryID = element.KCategoryID,
-                KChangeID = element.KChangeID
+                KChangeID = element.KChangeID,
+                IsUnderReview = true,
+                IsNewElement= true,
             };
             mPersist.Add(mPersistElement);
 
@@ -708,13 +846,23 @@ namespace Fasetto.Word
             mSearchText = element.KCategoryID;
 
             var matches = from category in mPersist
-                          where category.KCategoryID == element.KCategoryID && category.DateDiscontinued == new DateTime() && (category.DateEffective <= element.DateDiscontinued)
+                          where category.KCategoryID == element.KCategoryID && category.DateDiscontinued == new DateTime(9999,12,31)// && (category.DateEffective <= element.DateDiscontinued)
                           select category;
              foreach(var category in matches)
+                //if this is a newly added element, just update the instance
                 if (category.ShortName != (element.ShortName.EditedText ?? element.ShortName.OriginalText) || category.ShortName != (element.Description.EditedText ?? element.Description.OriginalText)
                         || category.DateEffective != element.DateEffective)
+                { 
+                    if (category.DateEffective == element.DateEffective)
+                    category.KChangeID = element.KChangeID;
+                    category.IsUnderReview = true;
+                    category.ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText);
+                    category.Description = (element.Description.EditedText ?? element.Description.OriginalText);
+                    mSearchText = category.KCategoryID;
+                }
+                else
                 {
-                    category.DateDiscontinued =  element.DateEffective.AddSeconds(10);
+                    category.DateDiscontinued =  element.DateEffective.AddSeconds(-10);
                     category.KChangeID = element.KChangeID;
                     category.IsUnderReview = true;
 
@@ -726,17 +874,19 @@ namespace Fasetto.Word
                         DateDiscontinued = element.DateDiscontinued,
                         DateEffective = element.DateEffective,
                         //Unique ID for change element
-                        KCategoryID = Guid.NewGuid().ToString().ToUpper(),
+                        KCategoryID = element.KCategoryID,
                         IsUnderReview = true,
+                        IsNewElement = true,
                     KChangeID = element.KChangeID
                     };
                     mPersist.Add(mPersistElement);
+
+                   mSearchText = mPersistElement.KCategoryID;
+                }
+ 
                     RefreshHierarchy();
                     PerformKIdSearch();
                     return;
-
-                }
-
 
 
         }
@@ -758,14 +908,46 @@ namespace Fasetto.Word
         /// of change control, changes may be forwarded for recommendation or finally approved and implemented
         /// on back end
         /// </summary>
-        public void PersistHierarchyChanges()
+        public async Task PersistHierarchyChangesAsync()
         {
-            //To Do:
+            await PersistHierarchyAsync();
+            Close();
+        }
+        public async Task PersistHierarchyAsync()
+        {
+            await RunCommandAsync(() => HierarchyBuildIsRunning, async () =>
+            {
+
+                // Store single transcient instance of client data store
+                var scopedClientDataStore = ClientDataStore;
+
+                // Update values from local cache
+                // Get the user token
+                var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+                // Call the server and attempt to register with the provided credentials
+                // If we don't have a token (then not logged in...)
+                if (string.IsNullOrEmpty(token))
+                    // Then do nothing more
+                    return;
+                var result = await WebRequests.PostAsync<ApiResponse<HierarchyResultListApiModel>>(
+                // Set URL
+                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.PersistHierarchy),
+                    mPersist,
+                    bearerToken: token);
+
+                // If the response has an error...
+                if (await result.HandleErrorIfFailedAsync("Hierarchy retrieval Failed"))
+                    // We are done
+                    return;
+
+                // return to menu
+
+
+            });
         }
 
 
 
-
-
     }
+
 }
