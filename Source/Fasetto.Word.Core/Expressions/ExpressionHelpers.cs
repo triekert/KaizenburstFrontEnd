@@ -76,5 +76,22 @@ namespace Fasetto.Word.Core
             // Set the property value
             propertyInfo.SetValue(input, value);
         }
+       
+        /// <summary>
+        /// Converts a string to an integer, unless the parsing is invalid
+        /// In which case  the default value is returned.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="defaultIntValue"></param>
+        /// <returns></returns>
+    public static int ParseInt(this string value, int defaultIntValue = 0)
+        {
+        if (int.TryParse(value, out var parsedInt))
+        {
+            return parsedInt;
+        }
+
+        return defaultIntValue;
+        }
     }
 }

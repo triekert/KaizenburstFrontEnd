@@ -14,16 +14,16 @@
     <Grid>
 
         <Grid.RowDefinitions>
-            
+
             <!-- Title bar -->
             <RowDefinition Height="Auto" />
-            
+
             <!-- Chat List -->
             <RowDefinition Height="*" />
-            
+
             <!-- Message Send Text box -->
             <RowDefinition Height="Auto" />
-            
+
         </Grid.RowDefinitions>
 
         <!-- Popup Overlay -->
@@ -59,26 +59,25 @@
                        />
                 </Border>
             </Border>-->
-            
+
             <!-- Title text -->
-            <TextBlock Text="{Binding DisplayTitle}" 
-                       Grid.ColumnSpan="2"
+            <TextBlock Text="{Binding DisplayTitle}"
                        Foreground="{StaticResource ForegroundLightBrush}"
                        FontSize="{StaticResource FontSizeXLarge}"
                        FontFamily="{StaticResource LatoRegular}"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Bottom" Margin="315,0,0,11"
                        />
 
             <!-- Main buttons -->
             <StackPanel Orientation="Horizontal" Grid.Column="1">
-                
+
                 <!-- Search Button -->
                 <Button Style="{StaticResource IconGrowButton}" 
                         Content="{StaticResource FontAwesomeSearchIcon}"
                         Command="{Binding OpenSearchCommand}"
                         />
-                
+
                 <Button Style="{StaticResource IconGrowButton}" Content="{StaticResource FontAwesomeEllipsisVerticalIcon}" />
             </StackPanel>
 
@@ -118,27 +117,27 @@
 
 
             </Grid>
-            
+
         </Grid>
-        
+
         <!-- Chat List -->
         <local:ChatMessageListControl 
             x:Name="ChatMessageList" 
             Grid.Row="1" 
             DataContext="{Binding}"
             />
-        
+
         <!-- Attachment Menu Popup -->
         <Border Grid.Row="1"
                 Panel.ZIndex="2"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Left"
                 local:AnimateSlideInFromBottomProperty.Value="{Binding AttachmentMenuVisible}">
-            
+
             <local:BubbleContent DataContext="{Binding AttachmentMenu}" />
-            
+
         </Border>
-        
+
         <!-- Message Send Text box -->
         <Grid Grid.Row="2" 
               Panel.ZIndex="3"
@@ -150,10 +149,10 @@
             <Grid.ColumnDefinitions>
                 <!-- Attach button -->
                 <ColumnDefinition Width="Auto" />
-                
+
                 <!-- Text entry box -->
                 <ColumnDefinition Width="*" />
-                
+
                 <!-- Additional buttons -->
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
@@ -196,7 +195,7 @@
                     Content="{StaticResource FontAwesomeEmojiIcon}"
                     Foreground="{StaticResource WordOrangeBrush}"
                     />
-                
+
                 <!-- Send button -->
                 <Button Content="Send"
                         Padding="8"
@@ -210,6 +209,6 @@
             </StackPanel>
 
         </Grid>
-        
+
     </Grid>
 </local:BasePage>

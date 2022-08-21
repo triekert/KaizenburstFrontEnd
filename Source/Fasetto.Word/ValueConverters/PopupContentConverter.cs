@@ -5,22 +5,14 @@ using System.Globalization;
 namespace Fasetto.Word
 {
     /// <summary>
-    /// A converter that takes a <see cref="SideMenuContent"/> and converts it to the 
+    /// A converter that takes a <see cref="PopupContent"/> and converts it to the 
     /// correct UI element
     /// </summary>
     public class PopupContentConverter : BaseValueConverter<PopupContentConverter>
     {
         #region Protected Members
 
-        /// <summary>
-        /// An instance of the current chat list control
-        /// </summary>
-        //protected ChatListControl mChatListControl = new ChatListControl();
 
-
-        /// <summary>
-        /// An instance of the current Hiearchy control
-        /// </summary>
  
 
         #endregion
@@ -33,21 +25,15 @@ namespace Fasetto.Word
             // Switch based on type
             switch (popupType)
             {
-                // Add Hierarchy Element 
-                case PopupContent.AddElement:
-                    /// <summary>
-                    /// An instance of HierarchyElement control
-                    /// </summary>
 
+                case PopupContent.AddElement:
                     var mHierarchyElementControl = new HierarchyElementControl();
                     return mHierarchyElementControl;
 
-                    /// <summary>
-                    /// An instance of HierarchyElement control
-                    /// </summary>
                 case PopupContent.SelectHierarchy:
-                    var mHierarchySelectControl = new SettingsControl();
-                    return mHierarchySelectControl;
+                    var mSelectControl = new SettingsControl();
+                    return mSelectControl;
+
 
 
 

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using static Fasetto.Word.DI;
 
 namespace Fasetto.Word
 {
@@ -215,8 +216,10 @@ namespace Fasetto.Word
                 {
                     // Create a default view model
                     ViewModel = Framework.Service<VM>() ?? new VM();
+                    var mtesting = ViewModelApplication.CurrentPageViewModel;
                 }
             }
+            ViewModelApplication.CurrentPageViewModel = ViewModel;
         }
 
         #endregion

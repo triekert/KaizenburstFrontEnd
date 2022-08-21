@@ -10,14 +10,14 @@ namespace Fasetto.Word
     /// <summary>
     /// The Hierarchy element as a view model
     /// </summary>
-    public class HierarchyViewModel : BaseViewModel
+    public class ExpenditureViewModel : BaseViewModel
 
     {
         //#region Data
 
-        public readonly HierarchyViewModel mParent;
-        private readonly HierarchyDataModel mElement;
-        public ObservableCollection<HierarchyViewModel> mChildren;
+        public readonly ExpenditureViewModel mParent;
+        private readonly ExpenditureDataModel mElement;
+        public ObservableCollection<ExpenditureViewModel> mChildren;
         public bool mIsExpanded;
         public bool mIsSelected;
         public bool mIsAllowDrop;
@@ -104,7 +104,7 @@ namespace Fasetto.Word
         /// <summary>
         /// A list of all children containd inside this item
         /// </summary>
-        public ObservableCollection<HierarchyViewModel> Children => mChildren;
+        public ObservableCollection<ExpenditureViewModel> Children => mChildren;
 
 
         /// <summary>
@@ -144,18 +144,18 @@ namespace Fasetto.Word
         #endregion
         #region Constructors
 
-        public HierarchyViewModel()
+        public ExpenditureViewModel()
 
         {
 
         }
-        public HierarchyViewModel(HierarchyDataModel element)
+        public ExpenditureViewModel(ExpenditureDataModel element)
 
                  : this(element, null)
         {
         }
 
-        private HierarchyViewModel(HierarchyDataModel element, HierarchyViewModel parent)
+        private ExpenditureViewModel(ExpenditureDataModel element, ExpenditureViewModel parent)
         {
             mElement = element;
             mParent = parent;
@@ -163,9 +163,9 @@ namespace Fasetto.Word
             try
             { 
         
-            mChildren = new ObservableCollection<HierarchyViewModel>(
+            mChildren = new ObservableCollection<ExpenditureViewModel>(
                     (from child in mElement.Children orderby(mElement.ShortName)
-                     select new HierarchyViewModel(child, this))
+                     select new ExpenditureViewModel(child, this))
                      .ToList());
             }
             catch (Exception ex)

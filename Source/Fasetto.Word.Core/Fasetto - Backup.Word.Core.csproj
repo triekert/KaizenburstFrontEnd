@@ -1,13 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dna.Framework" Version="1.0.7.18" />
-    <PackageReference Include="Dna.Framework.AspNet" Version="1.0.7" />
-    <PackageReference Include="Fody" Version="6.5.2">
+    <PackageReference Include="Fody" Version="6.6.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
@@ -16,8 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ApiModels\Menu Tree\" />
-    <Folder Include="ApiModels\NewFolder\" />
+    <ProjectReference Include="..\..\..\dna-framework\Source\Dna.Framework\Dna.Framework.csproj" />
   </ItemGroup>
 
 </Project>

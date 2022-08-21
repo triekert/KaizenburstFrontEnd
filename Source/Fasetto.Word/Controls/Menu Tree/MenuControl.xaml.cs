@@ -14,7 +14,7 @@ namespace Fasetto.Word
     /// <summary>
     /// Interaction logic for HierarchyManagementControl.xaml
     /// </summary>
-    public partial class HierarchyControl : UserControl
+    public partial class MenuControl : UserControl
     {
 
         #region Public Properties
@@ -46,23 +46,21 @@ namespace Fasetto.Word
 
         //[Obsolete]
         //public HierarchyManagementControl(HierarchyManagementTreeDataModel hierarchyManagementTreeDataModel)
-        public HierarchyControl()
+        public MenuControl()
         {
 
-            //var root = "1C225789-3938-4480-86CB-071863DC5D33";
+            //Set the root of the hierarchy to return the Menu structure
             var root = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
-            root = ViewModelApplication.ControlParameter;
             mHierarchyTree = new HierarchyTreeViewModel(root);//root);
 
             DataContext = mHierarchyTree;
             InitializeComponent();
-            ViewModelApplication.CurrentControlViewModel = mHierarchyTree;
+            ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
             //CloseCommand = new RelayCommand(Close);
-
 
         }
 
-        public HierarchyControl(string destinationCategoryId)
+        public MenuControl(string destinationCategoryId)
         {
             mDestinationCategoryID = destinationCategoryId;
         }
@@ -146,7 +144,7 @@ namespace Fasetto.Word
             {
                 if (((TreeViewItem)sender).IsSelected)
                 {
-                    AddHierarchyElement();
+                    RunSelectedMenu();
                 }
             }
             else
@@ -154,7 +152,7 @@ namespace Fasetto.Word
             {
                 if (((TreeViewItem)sender).IsSelected)
                 {
-                    EditHierarchyElement();
+                    RunSelectedMenu();
                 }
             }
             e.Handled = true;
@@ -162,16 +160,15 @@ namespace Fasetto.Word
         private void TreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         { if (e.ChangedButton == MouseButton.Right)
             {
-             AddHierarchyElement();                            
+             RunSelectedMenu();
+                e.Handled = true;
             }
             else
                 if (e.ChangedButton == MouseButton.Left)
                     {
-                    EditHierarchyElement(); 
-                    }
-            var clkcnt = e.ClickCount;
+                RunSelectedMenu();
+            }
             e.Handled = true;
-
         }
         /// <summary>
         /// Monitor keyboard for use of Insert key
@@ -186,20 +183,20 @@ namespace Fasetto.Word
 
                 if (Keyboard.IsKeyDown(Key.Insert))
                 {
-                    AddHierarchyElement();                    
+                    RunSelectedMenu();                    
                     e.Handled= true;
                 }
                 else
                     if (Keyboard.IsKeyDown(Key.Enter))
                 {
-                    EditHierarchyElement();
+                    RunSelectedMenu();
                     e.Handled = true;
 
                 }
                 else
                     if (Keyboard.IsKeyDown(Key.Delete))
                     {
-                        DeleteHierarchyElement();
+                    RunSelectedMenu();
                     e.Handled = true;
 
                 }
@@ -213,75 +210,75 @@ namespace Fasetto.Word
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TreeView_MouseMove(object sender, MouseEventArgs e)
-        {
-            try
-            {
-                var item = GetNearestContainer(e.OriginalSource as UIElement);
-                mDraggedItemTest = (HierarchyViewModel)item.Header;
-                if (e.LeftButton == MouseButtonState.Pressed)
-                {
-                    var isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
-                    var currentPosition = e.GetPosition(tvParameters);
+        //private void TreeView_MouseMove(object sender, MouseEventArgs e)
+        //{
+        //    try
+        //    {
+        //        var item = GetNearestContainer(e.OriginalSource as UIElement);
+        //        mDraggedItemTest = (HierarchyViewModel)item.Header;
+        //        if (e.LeftButton == MouseButtonState.Pressed)
+        //        {
+        //            var isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+        //            var currentPosition = e.GetPosition(tvParameters);
 
-                    //Check for dragging of treeview item
-                    if ((Math.Abs(currentPosition.X - mLastMouseDown.X) > 10.0) ||
-                        (Math.Abs(currentPosition.Y - mLastMouseDown.Y) > 10.0))
-                    {
+        //            //Check for dragging of treeview item
+        //            if ((Math.Abs(currentPosition.X - mLastMouseDown.X) > 10.0) ||
+        //                (Math.Abs(currentPosition.Y - mLastMouseDown.Y) > 10.0))
+        //            {
 
-                        mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
-                        mSourceCategoryName = mDraggedItem.ShortName;
-                        //draggedItem = (TreeViewItem)tvParameters.SelectedItem;
-                        //mSource = (TreeViewItem)tvParameters.SelectedItem;
-                        if (mDraggedItem != null)
-                        {
-                            mTarget = null;//ensure target is reset
-                            if (!isCtrl)
-                            {
+        //                mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
+        //                mSourceCategoryName = mDraggedItem.ShortName;
+        //                //draggedItem = (TreeViewItem)tvParameters.SelectedItem;
+        //                //mSource = (TreeViewItem)tvParameters.SelectedItem;
+        //                if (mDraggedItem != null)
+        //                {
+        //                    mTarget = null;//ensure target is reset
+        //                    if (!isCtrl)
+        //                    {
 
-                                var finalDropEffect = DragDrop.DoDragDrop(tvParameters, tvParameters.SelectedValue,
-                                  DragDropEffects.Move);
-                                //Checking target is not null and item is dragging(moving)
-                                if ((finalDropEffect == DragDropEffects.Move) && (mTarget != null))
-                                {
-                                    // A Move drop was accepted
-                                    //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
-                                    //{
-                                    MoveHierarchyElement();// MoveItem();
-                                        mTargetT = null;
-                                        mSource= null;
-                                    //}
+        //                        var finalDropEffect = DragDrop.DoDragDrop(tvParameters, tvParameters.SelectedValue,
+        //                          DragDropEffects.Move);
+        //                        //Checking target is not null and item is dragging(moving)
+        //                        if ((finalDropEffect == DragDropEffects.Move) && (mTarget != null))
+        //                        {
+        //                            // A Move drop was accepted
+        //                            //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
+        //                            //{
+        //                            MoveHierarchyElement();// MoveItem();
+        //                                mTargetT = null;
+        //                                mSource= null;
+        //                            //}
 
-                                }
-                            }
-                            else
-                            {
-                                var finalDropEffect = DragDrop.DoDragDrop(tvParameters, tvParameters.SelectedValue,
-                                  DragDropEffects.Copy);
-                                if ((finalDropEffect == DragDropEffects.Copy) && (mTarget != null))
-                                {
-                                    // A Copy drop was accepted
-                                    //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
-                                    //{
-                                    CopyHierarchyElement();// CopyItem();
-                                    mTargetT = null;
-                                    mSource = null;
-                                    //}
+        //                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        var finalDropEffect = DragDrop.DoDragDrop(tvParameters, tvParameters.SelectedValue,
+        //                          DragDropEffects.Copy);
+        //                        if ((finalDropEffect == DragDropEffects.Copy) && (mTarget != null))
+        //                        {
+        //                            // A Copy drop was accepted
+        //                            //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
+        //                            //{
+        //                            CopyHierarchyElement();// CopyItem();
+        //                            mTargetT = null;
+        //                            mSource = null;
+        //                            //}
 
-                                }
-                            }
+        //                        }
+        //                    }
 
 
 
-                        }
-                    }
-                }
+        //                }
+        //            }
+        //        }
 
-            }
-            catch (Exception)
-            {
-            }
-        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //    }
+        //}
 
        
         /// <summary>
@@ -290,47 +287,47 @@ namespace Fasetto.Word
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TreeView_DragOver(object sender, DragEventArgs e)
-        {
-            try
-            {
-                var currentPosition = e.GetPosition(tvParameters);
+        //private void TreeView_DragOver(object sender, DragEventArgs e)
+        //{
+        //    try
+        //    {
+        //        var currentPosition = e.GetPosition(tvParameters);
 
-                if ((Math.Abs(currentPosition.X - mLastMouseDown.X) > 10.0) ||
-                   (Math.Abs(currentPosition.Y - mLastMouseDown.Y) > 10.0))
-                {
-                    // Verify that this is a valid drop and then store the drop target
-                    var item = GetNearestContainer(e.OriginalSource as UIElement);
+        //        if ((Math.Abs(currentPosition.X - mLastMouseDown.X) > 10.0) ||
+        //           (Math.Abs(currentPosition.Y - mLastMouseDown.Y) > 10.0))
+        //        {
+        //            // Verify that this is a valid drop and then store the drop target
+        //            var item = GetNearestContainer(e.OriginalSource as UIElement);
    
-                    if (item == null)
-                    { e.Effects = DragDropEffects.None; }
-                    else
-                    {
-                        mTargetT = item;
-                        mTarget = (HierarchyViewModel)item.GetType().GetProperties().Single(c => c.Name == "DataContext").GetValue(item);
-                        if (e.Effects == DragDropEffects.Move)
-                        { e.Effects = CheckDropTarget(mTarget, mDraggedItem) ? DragDropEffects.Move : DragDropEffects.None;}
-                        else
-                        { e.Effects = CheckDropTarget(mTarget, mDraggedItem) ? DragDropEffects.Copy : DragDropEffects.None;}
-                    }
-                }
-                e.Handled = true;
+        //            if (item == null)
+        //            { e.Effects = DragDropEffects.None; }
+        //            else
+        //            {
+        //                mTargetT = item;
+        //                mTarget = (HierarchyViewModel)item.GetType().GetProperties().Single(c => c.Name == "DataContext").GetValue(item);
+        //                if (e.Effects == DragDropEffects.Move)
+        //                { e.Effects = CheckDropTarget(mTarget, mDraggedItem) ? DragDropEffects.Move : DragDropEffects.None;}
+        //                else
+        //                { e.Effects = CheckDropTarget(mTarget, mDraggedItem) ? DragDropEffects.Copy : DragDropEffects.None;}
+        //            }
+        //        }
+        //        e.Handled = true;
 
-            }
-            catch (Exception)
-            {
-            }
-        }
-        private void TreeView_Drop(object sender, DragEventArgs e)
-        {
-            //try
-            //{
+        //    }
+        //    catch (Exception)
+        //    {
+        //    }
+        //}
+        //private void TreeView_Drop(object sender, DragEventArgs e)
+        //{
+        //    //try
+        //    //{
 
-                Mouse.SetCursor(Cursors.Wait);
-                    e.Handled = true;
-                    return;
+        //        Mouse.SetCursor(Cursors.Wait);
+        //            e.Handled = true;
+        //            return;
 
-        }
+        //}
         //private void TreeView_MouseEnter(object sender, MouseEventArgs e)
         //{
         //    //try
@@ -361,36 +358,36 @@ namespace Fasetto.Word
         /// <param name="mDraggedN"></param>
         /// <returns></returns>
 
-        private bool CheckDropTarget(HierarchyViewModel mTargetN, HierarchyViewModel mDraggedN)
-        {
-            //Check whether the target item is meeting your condition
+        //private bool CheckDropTarget(HierarchyViewModel mTargetN, HierarchyViewModel mDraggedN)
+        //{
+        //    //Check whether the target item is meeting your condition
 
 
-            //TO DO:
+        //    //TO DO:
 
-            //Check that move will not cause infinite loop(ascendant-descendant - ascendant)
-            //Check that the item being moved is not an ascendant of the item being moved to
-            //the KCategoryID attribute of the item being moved may not be an ancestor of the
-            //item being moved too.
-            //If this constraint is met, the boolean is set to TRUE
+        //    //Check that move will not cause infinite loop(ascendant-descendant - ascendant)
+        //    //Check that the item being moved is not an ascendant of the item being moved to
+        //    //the KCategoryID attribute of the item being moved may not be an ancestor of the
+        //    //item being moved too.
+        //    //If this constraint is met, the boolean is set to TRUE
 
-            mDestinationID = mTargetN.KCategoryID;
-            mSourceID = mDraggedItem.KCategoryID;
-            mParentID = mDraggedItem.ParentCategoryID;
-                //mSourceCategoryName = (string)res.GetType().GetProperties().Single(c => c.Name == "ShortName").GetValue(res);
-                if (mSourceID == mDestinationID
-                    || mParentID == mDestinationID)
-                    { return false; }
-                //var mDestinationID = (string)res.GetType().GetProperties().Single(c => c.Name == "KId").GetValue(res);
+        //    mDestinationID = mTargetN.KCategoryID;
+        //    mSourceID = mDraggedItem.KCategoryID;
+        //    mParentID = mDraggedItem.ParentCategoryID;
+        //        //mSourceCategoryName = (string)res.GetType().GetProperties().Single(c => c.Name == "ShortName").GetValue(res);
+        //        if (mSourceID == mDestinationID
+        //            || mParentID == mDestinationID)
+        //            { return false; }
+        //        //var mDestinationID = (string)res.GetType().GetProperties().Single(c => c.Name == "KId").GetValue(res);
 
-                MatchingKCategoryEnumerator = null;
+        //        MatchingKCategoryEnumerator = null;
  
-                return PerformKIdSearch();
+        //        return PerformKIdSearch();
 
 
 
 
-        }
+        //}
 
 
 
@@ -411,29 +408,29 @@ namespace Fasetto.Word
 
         //}
 
-        private static TObject FindVisualParent<TObject>(UIElement child) where TObject : UIElement
-        {
-            if (child == null)
-            {
-                return null;
-            }
+        //private static TObject FindVisualParent<TObject>(UIElement child) where TObject : UIElement
+        //{
+        //    if (child == null)
+        //    {
+        //        return null;
+        //    }
 
-            var parent = VisualTreeHelper.GetParent(child) as UIElement;
+        //    var parent = VisualTreeHelper.GetParent(child) as UIElement;
 
-            while (parent != null)
-            {
-                if (parent is TObject found)
-                {
-                    return found;
-                }
-                else
-                {
-                    parent = VisualTreeHelper.GetParent(parent) as UIElement;
-                }
-            }
+        //    while (parent != null)
+        //    {
+        //        if (parent is TObject found)
+        //        {
+        //            return found;
+        //        }
+        //        else
+        //        {
+        //            parent = VisualTreeHelper.GetParent(parent) as UIElement;
+        //        }
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
         private TreeViewItem GetNearestContainer(UIElement element)
         {
             // Walk up the element tree to the nearest tree view item.
@@ -514,51 +511,23 @@ namespace Fasetto.Word
         /// <summary>
         /// Use Popup View to add a Hierarchy Element
         /// </summary>
-        private void AddHierarchyElement()
+        private void RunSelectedMenu()
         {
             //Prepopulate
-            mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
-            if (mDraggedItem == null)
+            //Only allow one execution of  the function per event
+            if (!ViewModelApplication.SideMenuVisible)
                 return;
-            var results = mHierarchyTree.mPersist.Where(x => x.KCategoryID == mDraggedItem.ParentCategoryID).OrderBy(x => x.ShortName).ToList();
-            var mPage = "";
-            if (results.Count > 0)
-             mPage = results.FirstOrDefault().Page;
-            var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-            mAddElementViewModel.ShortName.OriginalText = "New Element Name";
-            mAddElementViewModel.Description.OriginalText = "Description of New Element";
-            mAddElementViewModel.ShortName.EditedText = "New Element Name";
-            mAddElementViewModel.Description.EditedText = "Description of New Element";
-            if (mPage == "Hierarchy")
-                mAddElementViewModel.Page = mPage;
-            else
-                mAddElementViewModel.Page = "";
-            mAddElementViewModel.Root.OriginalText = "Element Root";
-            mAddElementViewModel.Root.EditedText = "Element Root";
-            mAddElementViewModel.IsMenuItem = mDraggedItem.IsMenuItem;
-            mAddElementViewModel.ParentShortName = mDraggedItem.ShortName;
-            mAddElementViewModel.ParentCategoryID = mDraggedItem.KCategoryID;
-            mAddElementViewModel.KCategoryID = Guid.NewGuid().ToString().ToUpper();
-            mAddElementViewModel.DateEffective = DateTime.Today;
-            mAddElementViewModel.DateDiscontinued = new DateTime(9999,12,31);
-            mAddElementViewModel.AddNodeButtonText = "Add new Hierarchy Element";
-            mAddElementViewModel.EditNodeButtonText = null;
-            mAddElementViewModel.DeleteNodeButtonText = null;
-            mAddElementViewModel.CopyNodeButtonText = null;
-            mAddElementViewModel.MoveNodeButtonText = null;
-
-            mAddElementViewModel.HeadingText= "Add new Hierarchy Element";
-            
-            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-            ViewModelApplication.PopupVisible = true;
-            //ViewModelApplication.SettingsMenuVisible = true;
-        }
+      
+             mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
+            if (mDraggedItem == null || mDraggedItem.Children.Count > 0 || ((string)mDraggedItem.Page).Length == 0)
+                return;
+            ViewModelApplication.OpenMenu(mDraggedItem.Root,mDraggedItem.Page);
+               }
         /// <summary>
         /// Use Popup view to edit existing Hiearchy Element
         /// </summary>
         private void EditHierarchyElement()
         {
-
             //Prepopulate
             mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
             if (mDraggedItem == null)
@@ -568,10 +537,6 @@ namespace Fasetto.Word
             mAddElementViewModel.ShortName.EditedText = mDraggedItem.ShortName;
             mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
             mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
-            mAddElementViewModel.Page = mDraggedItem.Page;
-            mAddElementViewModel.Root.OriginalText = mDraggedItem.Root;
-            mAddElementViewModel.Root.EditedText = mDraggedItem.Root;
-            mAddElementViewModel.IsMenuItem = mDraggedItem.IsMenuItem;
             mAddElementViewModel.ParentShortName = mDraggedItem.ParentShortName;
             mAddElementViewModel.ParentCategoryID = mDraggedItem.ParentCategoryID;
             mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
@@ -596,15 +561,9 @@ namespace Fasetto.Word
                 return;
             var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
-            mAddElementViewModel.ShortName.EditedText = mDraggedItem.ShortName;
             mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
-            mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
             mAddElementViewModel.ParentShortName = mDraggedItem.ParentShortName;
             mAddElementViewModel.ParentCategoryID = mDraggedItem.ParentCategoryID;
-            mAddElementViewModel.Page = mDraggedItem.Page;
-            mAddElementViewModel.Root.OriginalText = mDraggedItem.Root;
-            mAddElementViewModel.Root.EditedText = mDraggedItem.Root;
-            mAddElementViewModel.IsMenuItem = mDraggedItem.IsMenuItem;
             mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
             mAddElementViewModel.DateEffective = mDraggedItem.DateEffective;
             mAddElementViewModel.DateDiscontinued = mDraggedItem.DateDiscontinued;
@@ -632,10 +591,6 @@ namespace Fasetto.Word
             mAddElementViewModel.Description.OriginalText = mDraggedItem.Description; 
             mAddElementViewModel.ShortName.EditedText = mDraggedItem.ShortName;
             mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
-            mAddElementViewModel.Page = mDraggedItem.Page;
-            mAddElementViewModel.Root.OriginalText = mDraggedItem.Root;
-            mAddElementViewModel.Root.EditedText = mDraggedItem.Root;
-            mAddElementViewModel.IsMenuItem = mDraggedItem.IsMenuItem;
             mAddElementViewModel.ParentShortName = mTarget.ShortName;
             mAddElementViewModel.ParentCategoryID = mTarget.KCategoryID;
             mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
@@ -665,10 +620,6 @@ namespace Fasetto.Word
             mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
             mAddElementViewModel.ShortName.EditedText = mDraggedItem.ShortName;
             mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
-            mAddElementViewModel.Page = mDraggedItem.Page;
-            mAddElementViewModel.Root.OriginalText = mDraggedItem.Root;
-            mAddElementViewModel.Root.EditedText = mDraggedItem.Root;
-            mAddElementViewModel.IsMenuItem = mDraggedItem.IsMenuItem;
             mAddElementViewModel.ParentShortName = mTarget.ShortName;
             mAddElementViewModel.ParentCategoryID = mTarget.KCategoryID;
             mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;

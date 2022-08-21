@@ -5,7 +5,7 @@ namespace Fasetto.Word.Core
     /// <summary>
     /// Class representing each complete tree of the hierarchy o
     /// </summary>
-    public class HierarchyTreeDataModel
+    public class ExpenditureTreeDataModel
     {
         /// <summary>
         /// string representation of UniqueIdentifier for a Hiearchy element
@@ -53,6 +53,6 @@ namespace Fasetto.Word.Core
         /// <summary>
         //sub categories that are also categories in themself
         /// </summary>
-        public List<HierarchyTreeDataModel> Children { get; set; }
+        public List<ExpenditureTreeDataModel> Children { get; set; }
     }
 }

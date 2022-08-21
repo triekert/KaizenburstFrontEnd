@@ -72,6 +72,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Xaml.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -126,6 +127,7 @@
     <Compile Include="Controls\Input\TextEntryControl.xaml.cs">
       <DependentUpon>TextEntryControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Menu Tree\MenuControl.xaml.cs" />
     <Compile Include="Controls\Menu\VerticalMenu.xaml.cs">
       <DependentUpon>VerticalMenu.xaml</DependentUpon>
     </Compile>
@@ -152,11 +154,16 @@
     <Compile Include="DialogWindow.xaml.cs">
       <DependentUpon>DialogWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MarkupExtension\EnumBindingSourceExtension.cs" />
+    <Compile Include="Pages\HierarchyPage.xaml.cs">
+      <DependentUpon>HierarchyPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ValueConverters\PageToIndexConverter.cs" />
     <Compile Include="ValueConverters\TextToVisiblityConverter.cs" />
     <Compile Include="ValueConverters\PopupContentConverter.cs" />
     <Compile Include="ViewModel\FinancePageViewModel.cs" />
@@ -190,10 +197,14 @@
     <Compile Include="ValueConverters\TimeToDisplayTimeConverter.cs" />
     <Compile Include="ValueConverters\HorizontalAlignmentConverter.cs" />
     <Compile Include="ValueConverters\TimeToReadTimeConverter.cs" />
+    <Compile Include="ViewModel\Finance\Expenditure\ExpenditureElementViewModel.cs" />
     <Compile Include="ViewModel\Finance\Expenditure\HierarchyElementViewModel.cs" />
+    <Compile Include="ViewModel\Finance\Expenditure\ExpenditureTreeViewModel.cs" />
     <Compile Include="ViewModel\Finance\Expenditure\HierarchyTreeViewModel.cs" />
+    <Compile Include="ViewModel\Finance\Expenditure\ExpenditureViewModel.cs" />
     <Compile Include="ViewModel\Finance\Expenditure\HierarchyViewModel.cs" />
     <Compile Include="ViewModel\Finance\Expenditure\HierarchyManagementViewModel1.cs" />
+    <Compile Include="ViewModel\Menu\HierarchyPageViewModel.cs" />
     <Compile Include="WebRequests\WebRequestResultExtensions.cs" />
     <Compile Include="WPFViewModels\DialogWindowViewModel.cs" />
     <Compile Include="WPFViewModels\ViewModelLocator.cs" />
@@ -271,6 +282,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Menu Tree\MenuControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Menu\VerticalMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -296,6 +311,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="DialogWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\HierarchyPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -406,10 +425,6 @@
     <Resource Include="Images\Backgrounds\emoji-background.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\dna-framework\Source\Dna.Framework\Dna.Framework.csproj">
-      <Project>{14278100-ec19-4d35-8e7d-38394655eb8f}</Project>
-      <Name>Dna.Framework</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Fasetto.Word.Core\Fasetto.Word.Core.csproj">
       <Project>{cac0a047-d879-4a29-8136-be1e33f5f35c}</Project>
       <Name>Fasetto.Word.Core</Name>
@@ -439,6 +454,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ViewModel\ApplicationMenu\" />
     <Folder Include="ViewModel\Finance\Investment\" />
   </ItemGroup>
   <ItemGroup>

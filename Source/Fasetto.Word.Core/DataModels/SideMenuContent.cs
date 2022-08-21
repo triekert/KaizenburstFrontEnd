@@ -23,6 +23,11 @@
         /// <summary>
         /// A list of finance menu options for KaizenBurst
         /// </summary>
-       Finance = 4
+       Finance = 4,
+
+        /// <summary>
+        /// A tree of  menu options for KaizenBurst
+        /// </summary>
+        Menu = 5
     }
 }

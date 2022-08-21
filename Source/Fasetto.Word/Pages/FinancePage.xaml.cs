@@ -2,6 +2,9 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
+using static Fasetto.Word.DI;
+
+
 
 namespace Fasetto.Word
 {
@@ -12,7 +15,7 @@ namespace Fasetto.Word
     {
         #region Constructor
 
-        /// <summary>
+        /// <summary>s
         /// Default constructor
         /// </summary>
         public FinancePage() : base()
@@ -48,7 +51,7 @@ namespace Fasetto.Word
             storyboard.Begin(Hierarchy);
 
             // Make the message box focused
-            MessageText.Focus();
+            //MessageText.Focus();
         }
 
         #endregion

@@ -5,6 +5,7 @@ using static Fasetto.Word.DI;
 
 namespace Fasetto.Word
 {
+
     /// <summary>
     /// Interaction logic for SettingsControl.xaml
     /// </summary>
@@ -23,8 +24,10 @@ namespace Fasetto.Word
             //    DataContext = new HierarchyElementViewModel();
             //else
             DataContext = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
+          
 
         }
+        
 
         private void TextEntryControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {

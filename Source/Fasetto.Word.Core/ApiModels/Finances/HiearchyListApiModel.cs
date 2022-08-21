@@ -5,7 +5,7 @@ namespace Fasetto.Word.Core
     /// <summary>
     /// Persistance of expense hierarchy item/s on database
     /// </summary>
-    public class HiearchyListApiModel : List<HierarchyApiModel>
+    public class HierarchyListApiModel : List<HierarchyApiModel>
     {
 
     }

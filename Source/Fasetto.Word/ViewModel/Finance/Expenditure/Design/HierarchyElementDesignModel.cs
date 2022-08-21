@@ -25,6 +25,9 @@ namespace Fasetto.Word
         {
             ShortName = new TextEntryViewModel { Label = "Node Name", OriginalText = "New Node" };
             Description = new TextEntryViewModel { Label = "Node Description", OriginalText = "New Node Description" };
+            Page = "New Page";
+            Root = new TextEntryViewModel { Label = "Root Modifier", OriginalText = "New Root Modifier" };
+            IsMenuItem = true;
             KCategoryID = "132AB-AF1245-941QW" ;
             ParentCategoryID = "132AB-AF1245-941QW" ;
             ParentShortName = "Parent Node";

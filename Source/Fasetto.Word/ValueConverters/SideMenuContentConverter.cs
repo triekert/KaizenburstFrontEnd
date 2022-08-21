@@ -50,6 +50,13 @@ namespace Fasetto.Word
                     var mFinanceMenuControl = new HierarchyControl();
                     return mFinanceMenuControl;//mChatListControl;
 
+                case SideMenuContent.Menu:
+                    /// <summary>
+                    /// An instance of the current Hiearchy control
+                    /// </summary>
+                    var mMenuMenuControl = new MenuControl();
+                    return mMenuMenuControl;//mChatListControl;
+
                 // Unknown
                 default:
                     return "No UI yet, sorry :)";

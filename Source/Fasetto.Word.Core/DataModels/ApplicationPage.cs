@@ -25,6 +25,23 @@
         /// </summary>
         Finance = 3,
 
+        /// <summary>
+        /// The Hierarchy page
+        /// </summary>
+        Hierarchy = 4,
+
+        /// <summary>
+        /// The Finance Menu page
+        /// </summary>
+        Actuals = 5,
+
+
+        /// <summary>
+        /// A Dummy (Folder) page - no Menu
+        /// </summary>
+        Folder = 6,
+
 
     }
+
 }

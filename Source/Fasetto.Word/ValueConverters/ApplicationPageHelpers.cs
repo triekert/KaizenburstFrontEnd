@@ -31,6 +31,9 @@ namespace Fasetto.Word
                 case ApplicationPage.Finance:
                     return new FinancePage(viewModel as FinancePageViewModel);
 
+                case ApplicationPage.Hierarchy:
+                    return new HierarchyPage(viewModel as HierarchyPageViewModel);
+
                 default:
                     Debugger.Break();
                     return null;
@@ -57,9 +60,13 @@ namespace Fasetto.Word
             if (page is FinancePage)
                 return ApplicationPage.Finance;
 
+            if (page is HierarchyPage)
+                return ApplicationPage.Hierarchy;
+
             // Alert developer of issue
             Debugger.Break();
             return default;
         }
+
     }
 }

@@ -34,7 +34,7 @@ namespace Fasetto.Word.Web.Server
                     // Configure framework
 
                     // Add file logger
-                    construct.AddFileLogger();
+                    _ = construct.AddFileLogger();
                 })
                 .UseStartup<Startup>();
         }

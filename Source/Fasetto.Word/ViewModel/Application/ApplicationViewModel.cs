@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using static Fasetto.Word.DI;
 using static Fasetto.Word.Core.CoreDI;
 using System.Windows.Input;
+using System;
 
 namespace Fasetto.Word
 {
@@ -82,7 +83,8 @@ namespace Fasetto.Word
         /// <summary>
         /// Determines the currently visible popup content
         /// </summary>
-        public PopupContent CurrentPopupContent { get; set; } = PopupContent.AddElement;
+        public PopupContent CurrentPopupContent { get; set; }
+            = PopupContent.AddElement;
 
         /// <summary>
         /// Points to the currently visible popup content view model
@@ -94,6 +96,12 @@ namespace Fasetto.Word
         /// Points to the currently visible side menu content (or page if control deployed to page) view model
         /// </summary>
         public object CurrentSideMenuViewModel { get; set; }
+
+
+        /// <summary>
+        /// Points to the controleleMent of the page content (or page if control deployed to page) view model
+        /// </summary>
+        public object CurrentControlViewModel { get; set; }
 
         /// <summary>
         /// Points to the currently visible page content view model
@@ -117,6 +125,8 @@ namespace Fasetto.Word
         /// Make provision for a control parameter that could be passed through to adjust a control
         /// </summary>
         public string ControlParameter { get; set; }
+
+
 
         #endregion
 
@@ -142,6 +152,10 @@ namespace Fasetto.Word
         /// </summary>
         public ICommand OpenMediaCommand { get; set; }
 
+        /// <summary>
+        /// The command to change the side menu to Media
+        /// </summary>
+        public ICommand OpenMenuCommand { get; set; }
 
         #endregion
 
@@ -157,6 +171,7 @@ namespace Fasetto.Word
             OpenContactsCommand = new RelayCommand(OpenContacts);
             OpenMediaCommand = new RelayCommand(OpenMedia);
             OpenFinanceCommand = new RelayCommand(OpenFinance);
+            OpenMenuCommand = new RelayCommand(OpenMenu);
         }
 
         #endregion
@@ -198,8 +213,32 @@ namespace Fasetto.Word
         public void OpenFinance()
         {
             // Set the current side menu to Finance
+            ViewModelApplication.ControlParameter = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
             ViewModelApplication.GoToPage(ApplicationPage.Finance);
-            //CurrentSideMenuContent = SideMenuContent.Finance;
+            //ViewModelApplication.GoToPage(ApplicationPage.Chat);
+            CurrentSideMenuContent = SideMenuContent.Finance;
+            SideMenuVisible = false;
+        }
+        public void OpenMenu()
+        {
+            // Set the current side menu to KaizenBurst Menu
+            ViewModelApplication.ControlParameter = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
+            //ViewModelApplication.GoToPage(ApplicationPage.Hierarchy);
+            CurrentSideMenuContent = SideMenuContent.Menu;
+
+            //ViewModelApplication.GoToPage(ApplicationPage.Hierarchy);
+            SideMenuVisible = true;
+        }
+        public void OpenMenu(string root,string page)
+        {
+            // Set the current side menu to Finance
+            ViewModelApplication.ControlParameter = root;
+            //convert from string to the appropriate Enum Application Page
+            var applicationPage = (ApplicationPage)Enum.Parse(typeof(ApplicationPage), page);
+            ViewModelApplication.GoToPage(applicationPage);
+            //CurrentSideMenuContent = SideMenuContent.Menu;
+
+            //ViewModelApplication.GoToPage(ApplicationPage.Hierarchy);
             SideMenuVisible = false;
         }
 
@@ -232,7 +271,7 @@ namespace Fasetto.Word
                 OnPropertyChanged(nameof(CurrentPage));
 
             // Show side menu or not?
-            SideMenuVisible = page == ApplicationPage.Chat || page == ApplicationPage.Finance;
+            SideMenuVisible = page == ApplicationPage.Chat || page == ApplicationPage.Finance|| page == ApplicationPage.Hierarchy;
 
         }
 

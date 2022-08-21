@@ -7,7 +7,7 @@ using System.Windows.Input;
 using static Dna.FrameworkDI;
 using static Fasetto.Word.DI;
 namespace Fasetto.Word { 
-    public class HierarchyElementViewModel : BaseViewModel
+    public class ExpenditureElementViewModel : BaseViewModel
     {
         #region Private Members
 
@@ -179,7 +179,7 @@ namespace Fasetto.Word {
         /// <summary>
         /// Default constructor
         /// </summary>
-        public HierarchyElementViewModel()
+        public ExpenditureElementViewModel()
         {
             // Create Node Name
             ShortName = new TextEntryViewModel

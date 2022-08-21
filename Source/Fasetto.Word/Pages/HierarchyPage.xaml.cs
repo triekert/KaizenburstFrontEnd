@@ -2,17 +2,20 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
+using static Fasetto.Word.DI;
+
+
 
 namespace Fasetto.Word
 {
     /// <summary>
-    /// Interaction logic for ChatPage.xaml
+    /// Interaction logic for FinancePage.xaml
     /// </summary>
-    public partial class HierarchyPage : BasePage<HierarchyManagementViewModel1>
+    public partial class HierarchyPage : BasePage<HierarchyPageViewModel>
     {
         #region Constructor
 
-        /// <summary>
+        /// <summary>s
         /// Default constructor
         /// </summary>
         public HierarchyPage() : base()
@@ -24,7 +27,7 @@ namespace Fasetto.Word
         /// Constructor with specific view model
         /// </summary>
         /// <param name="specificViewModel">The specific view model to use for this page</param>
-        public HierarchyPage(HierarchyManagementViewModel1 specificViewModel) : base(specificViewModel)
+        public HierarchyPage(HierarchyPageViewModel specificViewModel) : base(specificViewModel)
         {
             InitializeComponent();
         }
@@ -39,16 +42,16 @@ namespace Fasetto.Word
         protected override void OnViewModelChanged()
         {
             // Make sure UI exists first
-            if (ChatMessageList == null)
+            if (Hierarchy == null)
                 return;
 
             // Fade in chat message list
             var storyboard = new Storyboard();
             storyboard.AddFadeIn(1, from: true);
-            storyboard.Begin(ChatMessageList);
+            storyboard.Begin(Hierarchy);
 
             // Make the message box focused
-            MessageText.Focus();
+            //MessageText.Focus();
         }
 
         #endregion
@@ -88,11 +91,6 @@ namespace Fasetto.Word
                 // Mark the key as handled
                 e.Handled = true;
             }
-        }
-
-        private void ChatMessageList_Loaded(object sender, System.Windows.RoutedEventArgs e)
-        {
-
         }
     }
 }

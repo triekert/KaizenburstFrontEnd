@@ -10,9 +10,9 @@ namespace Fasetto.Word.Core
     public class HierarchyDataModel
     {
         /// <summary>
-        /// string representation of UniqueIdentifier for a Category element
+        /// string representation of UniqueIdentifier for a Category hierarchy
         /// </summary>
-        public string FinHierarchyID { get; set; }
+        public string FHierarchyID { get; set; }
 
         /// <summary>
         ///name of Category element
@@ -48,6 +48,11 @@ namespace Fasetto.Word.Core
         public string ParentCategoryID { get; set; }
 
         /// <summary>
+        //string representation of GUID for a specific Client
+        /// </summary>
+        public string FClientID { get; set; }
+
+        /// <summary>
         /// Parent ShortName of hiearchy item
         /// </summary>
         public string ParentShortName { get; set; }
@@ -72,6 +77,23 @@ namespace Fasetto.Word.Core
         /// </summary>
         public string KChangeID { get; set; }
 
+
+        /// <summary>
+        /// If a menu item, link tree item to menu Page
+        /// </summary>
+        public string Page { get; set; }
+
+
+        /// <summary>
+        /// If a menu item, link tree item to menu Page
+        /// </summary>
+        public string Root { get; set; }
+
+
+        /// <summary>
+        /// Property to indicate whether this element is a Menu Item or not..
+        /// </summary>
+        public bool IsMenuItem { get; set; }
 
         /// <summary>
         /// Property to indicate whether element is being evaluated by a change request
@@ -113,23 +135,6 @@ namespace Fasetto.Word.Core
 
         #endregion // NameContainsText
 
-        //#region Constructor
-        //public HierarchyDataModel(HierarchyResultListApiModel result)
-        //{
 
-        //    //var rootElement = from element in result
-        //    //                  where element.ParentCategoryID == ""
-        //    //                  select (element.ShortName, element.Description, element.KCategoryID, element.ParentCategoryID);
-        //    //mRootCategory = new HierarchyViewModel(rootElement.First().ShortName, rootElement.First().Description, rootElement.First().KCategoryID, mHDML);
-
-        //    //// Create the view models from the data
-        //    //FirstGeneration = new ObservableCollection<HierarchyDataModel>(
-        //    //rootElement.Select(root => new HierarchyDataModel(root.ShortName, root.Description, root.KCategoryID, result)));
-
-        //}
-        //public HierarchyDataModel()
-        //{ }
-
-        //#endregion //Constructor
     }
 }

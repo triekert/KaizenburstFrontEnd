@@ -53,7 +53,7 @@
                             <Button 
                                 Style="{StaticResource IconButton}" 
                                 Content="{StaticResource FontAwesomeProjectIcon}" 
-                                Command="{Binding OpenProjectCommand}"
+                                Command="{Binding OpenMenuCommand}"
                                 />
                             <!--<Button--> 
                                 <!--Style="{StaticResource IconButton}" 
@@ -64,12 +64,12 @@
                                 Style="{StaticResource IconButton}" 
                                 Content="{StaticResource FontAwesomeProjectIcon}" 
                                 Command="{Binding OpenProjectCommand}"
-                                />
+                                />-->
                             <Button 
                                 Style="{StaticResource IconButton}" 
                                 Content="{StaticResource FontAwesomePictureIcon}" 
-                                Command="{Binding OpenServicesCommand}"
-                                />-->
+                                Command="{Binding OpenMenuCommand}"
+                                />
 
                         </StackPanel>
 

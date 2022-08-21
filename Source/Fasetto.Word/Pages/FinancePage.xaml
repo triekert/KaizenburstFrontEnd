@@ -82,7 +82,7 @@
                 <!-- Close search button -->
                 <Button Style="{StaticResource IconGrowButton}" 
                         Content="{StaticResource FontAwesomeCloseIcon}"
-                        Command="{Binding SearchCommand}"
+                        Command="{Binding  CloseSearchCommand}"
                         Foreground="{StaticResource WordOrangeBrush}"
                         />
 
@@ -145,16 +145,16 @@
             </Grid.ColumnDefinitions>
 
             <!-- Attach button -->
-            <Button Style="{StaticResource IconGrowButton}"
+            <!--<Button Style="{StaticResource IconGrowButton}"
                     Height="{Binding MinHeight, RelativeSource={RelativeSource AncestorType=Grid}}"
                     Content="{StaticResource FontAwesomePaperclipIcon}"
                     VerticalAlignment="Top"
                     Command="{Binding AttachmentButtonCommand}"
                     Foreground="{StaticResource ForegroundDarkBrush}"
-                    />
+                    />-->
 
             <!-- Message box -->
-            <TextBox x:Name="MessageText"    
+            <!--<TextBox x:Name="MessageText"    
                      Grid.Column="1" 
                      Tag="Write a message..."
                      local:IsFocusedProperty.Value="True"
@@ -167,24 +167,25 @@
                      AcceptsTab="True"
                      VerticalScrollBarVisibility="Auto"
                      PreviewKeyDown="MessageText_PreviewKeyDown"
-                     />
+                     />-->
 
             <!-- Additional buttons -->
-            <StackPanel Grid.Column="2"
+            <StackPanel Grid.Column="1"
                         Orientation="Horizontal"
                         VerticalAlignment="Top"
+                        HorizontalAlignment="Center"
                         Margin="0 0 8 0"
                         >
 
                 <!-- Emoji button -->
-                <Button Style="{StaticResource IconGrowButton}"
+                <!--<Button Style="{StaticResource IconGrowButton}"
                     Height="{Binding MinHeight, RelativeSource={RelativeSource AncestorType=Grid}}"
                     Content="{StaticResource FontAwesomeEmojiIcon}"
                     Foreground="{StaticResource WordOrangeBrush}"
-                    />
+                    />-->
 
                 <!-- Send button -->
-                <Button Content="Send"
+                <Button Content="Submit Changess"
                         Padding="8"
                         IsDefault="True"
                         Focusable="False"

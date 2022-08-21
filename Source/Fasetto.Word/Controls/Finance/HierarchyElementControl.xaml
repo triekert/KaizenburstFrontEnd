@@ -14,7 +14,7 @@
 
 
         <Grid                      Keyboard.PreviewKeyDown="TreeView_KeyBoard" ForceCursor="True">
-            
+
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -35,7 +35,7 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Command="{Binding CloseCommand}" IsCancel="True" IsDefault="True"/>
-                     <!--Keyboard.KeyDown="TreeView_KeyBoard"-->                   
+                <!--Keyboard.KeyDown="TreeView_KeyBoard"-->
 
                 <!-- Settings header -->
                 <TextBlock FontSize="{StaticResource FontSizeLarge}"
@@ -92,28 +92,43 @@
                 <!-- Profile details -->
                 <StackPanel Grid.Column="1"
                             local:TextEntryWidthMatcherProperty.Value="True">
-                    <local:TextEntryControl DataContext="{Binding ShortName}" />
-                    <local:TextEntryControl DataContext="{Binding Description}" />
+                    <local:TextEntryControl DataContext="{Binding ShortName}" FontWeight="Bold" />
+                    <local:TextEntryControl DataContext="{Binding Description}" FontWeight="Bold" />
+                    <StackPanel Visibility="{Binding IsMenuItem, ConverterParameter=True, Converter={local:BooleanToVisiblityConverter}}"
+                                >
+                        <TextBlock FontSize="{DynamicResource FontSizeRegular}" Padding="10 10 10 10" 
+                           Foreground="{StaticResource ForegroundVeryDarkBrush}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"> 
+                           <Run Text="Menu Configuration"
+                             FontFamily="{StaticResource LatoRegular}" FontWeight="Bold" /></TextBlock>
+                        <StackPanel Orientation="Horizontal" Grid.Column="1" 
+                                >
+                            <TextBlock  Text ="Menu Page" FontFamily="{StaticResource LatoRegular}" 
+                                           Padding="10 10 42 10" FontWeight="Bold"/>
+                            <ComboBox MinWidth="150"
+                                      SelectedItem="{Binding Page}" 
+                                      ItemsSource="{Binding Source={local:EnumBindingSource {x:Type core:ApplicationPage}}}" IsDropDownOpen="True" SelectedIndex="{Binding Page, ConverterParameter=True, Converter={local:PageToIndexConverter}}" RenderTransformOrigin="0.445,0.556"/>
+                            <TextBlock  Text ="{Binding Page}"
+                                        Padding="10 10 10 10" FontFamily="{StaticResource LatoRegular}"  HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.495"/>
 
-                    <!--Display hierarchy element GUID of new element -->
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Column="1" 
+                                >
 
-                    <StackPanel Orientation="Horizontal" Grid.Column="1"
-                            local:TextEntryWidthMatcherProperty.Value="True"
-                            >
-                        <TextBlock Text="Guid for Node"
-                                   Padding="8 10 10 10"/>
-                        <TextBlock Text="{Binding KCategoryID}"
-                                                Padding="8 10 8 10"
-                                                Foreground="{StaticResource WordBlueBrush}"
-                                                TextTrimming="CharacterEllipsis"
-                                                FontFamily="{StaticResource LatoRegular}"
-                                                />
+                            <local:TextEntryControl DataContext="{Binding Root}" FontWeight="Bold" />
+                            <!--<ListBox Width="143" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+
+                            <TextBlock  Text ="{Binding Root}"
+                                           Padding="10 10 10 10" FontFamily="{StaticResource LatoRegular}"  Opacity="0.5"/>-->
+                        </StackPanel>
                     </StackPanel>
+
 
                     <StackPanel Orientation="Horizontal" Grid.Column="1" 
                                 local:TextEntryWidthMatcherProperty.Value="True">
-                        <TextBlock  Text ="Date Implemented "
-                                       Padding="10 10 10 10"/>
+                        <TextBlock  Text ="Date Implemented " FontFamily="{StaticResource LatoRegular}" 
+                                       Padding="10 10 10 10" FontWeight="Bold"/>
                         <DatePicker x:Name="dateEffective"  SelectedDate="{Binding DateEffective, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="20 10 20 10"
                                         SelectedDateFormat="Short"/>
 
@@ -122,25 +137,25 @@
 
                     <StackPanel Orientation="Horizontal" Grid.Column="1"
                                     local:TextEntryWidthMatcherProperty.Value="True" RenderTransformOrigin="0.525,0.565">
-                        <TextBlock  Text ="Date Discontinued"
-                                           Padding="10 10 13 10"/>
+                        <TextBlock  Text ="Date Discontinued" FontFamily="{StaticResource LatoRegular}" 
+                                           Padding="10 10 13 10" FontWeight="Bold"/>
                         <DatePicker x:Name="dateDiscontinued"  SelectedDate="{Binding DateDiscontinued, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="20 10 20 10"
                                             SelectedDateFormat="Short"  />
 
                     </StackPanel>
-                    <TextBlock FontSize="{StaticResource FontSizeLarge}" Padding="20 20 20 10" 
+                    <TextBlock FontSize="{DynamicResource FontSizeRegular}" Padding="20 10 20 10" 
                            Foreground="{StaticResource ForegroundVeryDarkBrush}"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center">
 
                         <!-- Parent node information -->
-                        <Run Text="Parent Node"
+                        <Run Text="Parent Element"
                              FontFamily="{StaticResource LatoRegular}" FontWeight="Bold" />
                     </TextBlock>
                     <StackPanel Orientation="Horizontal" Grid.Column="1"
                             local:TextEntryWidthMatcherProperty.Value="True"
                             >
-                        <TextBlock Text="Parent Node Name"
+                        <TextBlock Text="Parent Element Name" FontFamily="{StaticResource LatoRegular}" 
                                    Padding="8 10 10 10"/>
                         <TextBlock Text="{Binding ParentShortName}"
                                                 Padding="8 10 8 10"
@@ -149,7 +164,7 @@
                                                 FontFamily="{StaticResource LatoRegular}"/>
 
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Column="1"
+                    <!--<StackPanel Orientation="Horizontal" Grid.Column="1"
                             local:TextEntryWidthMatcherProperty.Value="True"
                             >
                         <TextBlock Text="Parent Node GUID"
@@ -160,7 +175,7 @@
                                                 TextTrimming="CharacterEllipsis"
                                                 FontFamily="{StaticResource LatoRegular}"
                                                 />
-                    </StackPanel>
+                    </StackPanel>-->
                     <!--Display Parent name  -->
 
 

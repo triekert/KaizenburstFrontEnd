@@ -1,38 +1,57 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Fasetto.Word.Core
 {
     /// <summary>
-    /// Return of selected  hierarchy item from hierarchy table on database 
+    /// Class representing each individual element of the hierarchy 
     /// </summary>
-    public class HierarchyResultApiModel
+    public class ExpenditureDataModel
     {
-        #region Public Properties
-
-        //string represetntation of UniqueIdentifier for a Category of hierarchy elements
+        /// <summary>
+        /// string representation of UniqueIdentifier for a Category hierarchy
+        /// </summary>
         public string FHierarchyID { get; set; }
 
-        //name of Category element
+        /// <summary>
+        ///name of Category element
+        /// </summary>
         public string ShortName { get; set; }
-        //description of Category element
-        public string Description { get; set; }
-        //string representation of card where the expense category is determined by the linked card
-        public string Card { get; set; }
-        //integer indicating the number of months between expected occurrences of expense category
-        public int Frequency { get; set; }
-        //string representation of GUID for a Category element
-        public string KCategoryID { get; set; }
-        //sstring representation of GUID for the Parent category of a Category element
-        //the parent of all root elements will be NULL... any hierarchy will have at least one root element
 
+        /// <summary>
+        ///description of Category element
+        /// </summary>
+        /// 
+        public string Description { get; set; }
+
+        /// <summary>
+        //string representation of card where the expense category is determined by the linked card
+        /// </summary>
+        /// 
+        public string Card { get; set; }
+
+        /// <summary>
+        //integer indicating the number of months between expected occurrences of expense category
+        /// </summary>
+        public int Frequency { get; set; }
+
+        /// <summary>
+        //string representation of GUID for a Category element
+        /// </summary>
+        public string KCategoryID { get; set; }
+
+        /// <summary>
+        //string representation of GUID for the Parent category of a Category element
+        //the parent of all root elements will be NULL... any hierarchy will have at least one root element
+        /// </summary>
         public string ParentCategoryID { get; set; }
 
         /// <summary>
         //string representation of GUID for a specific Client
         /// </summary>
         public string FClientID { get; set; }
+
         /// <summary>
         /// Parent ShortName of hiearchy item
         /// </summary>
@@ -54,6 +73,12 @@ namespace Fasetto.Word.Core
         public DateTime DateDiscontinued { get; set; }
 
         /// <summary>
+        /// Attach the current activity to a Change object
+        /// </summary>
+        public string KChangeID { get; set; }
+
+
+        /// <summary>
         /// If a menu item, link tree item to menu Page
         /// </summary>
         public string Page { get; set; }
@@ -64,20 +89,24 @@ namespace Fasetto.Word.Core
         /// </summary>
         public string Root { get; set; }
 
+
         /// <summary>
-        /// Attach the current activity to a Change object
+        /// Property to indicate whether this element is a Menu Item or not..
         /// </summary>
-        public string KChangeID { get; set; }
+        public bool IsMenuItem { get; set; }
+
         /// <summary>
         /// Property to indicate whether element is being evaluated by a change request
         /// and whether it should be excluded from current operations
         /// </summary>
         public bool IsUnderReview { get; set; }
+
         /// <summary>
         /// Property to indicate whether this element has been newly added change request
         /// and whether it should be excluded from current operations
         /// </summary>
         public bool IsNewElement { get; set; }
+
 
         /// <summary>
         /// Property to indicate whether this element is to be removed from the persistence layer
@@ -85,10 +114,27 @@ namespace Fasetto.Word.Core
         public bool IsDeleteElement { get; set; }
 
         /// <summary>
-        /// Property to indicate whether this element is a Menu Item or not..
+        //sub categories that are also categories in themself
         /// </summary>
-        public bool IsMenuItem { get; set; }
+        public List<ExpenditureDataModel> Children { get; set; }
 
-        #endregion       
+        #region KCategoryIdContainsText
+
+        /// <summary>
+        /// Check that the KCategoryId field contains data to enable the search
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public bool KCategoryIdContainsText(string text)
+        {
+            if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(KCategoryID))
+                return false;
+
+            return KCategoryID.IndexOf(text, StringComparison.InvariantCultureIgnoreCase) > -1;
+        }
+
+        #endregion // NameContainsText
+
+
     }
 }

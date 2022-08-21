@@ -11,7 +11,7 @@ namespace Fasetto.Word.Core
         #region Public Properties
 
         //string represetntation of UniqueIdentifier for a Category element
-        public string FinHierarchyID { get; set; }
+        public string FHierarchyID { get; set; }
 
         //name of Category element
         public string ShortName { get; set; }
