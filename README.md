@@ -1,9 +1,7 @@
-# Fasetto Word
-The new open-source chat application for Fasetto
+# Kaizenburst
+An open source ERP supporting the Kaizen philosophy
 
 # Gettings Started
-I will be making videos available on my YouTube channel that will be guides to everything contained in this repository
-
-http://www.angelsix.com/youtube
-
+Visit our website kaizenburst.co.za for information on the Kaizen philosophy, particularly how it 
+it is being implemented in developing this ERP to support continuous improvement.
 
