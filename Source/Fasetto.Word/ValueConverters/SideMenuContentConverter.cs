@@ -47,7 +47,7 @@ namespace Fasetto.Word
                     /// <summary>
                     /// An instance of the current Hiearchy control
                     /// </summary>
-                    var mFinanceMenuControl = new HierarchyControl();
+                    var mFinanceMenuControl = new MenuControl("7E669DCA-D356-43F0-BB64-5DF6D1499C99");
                     return mFinanceMenuControl;//mChatListControl;
 
                 case SideMenuContent.Menu:

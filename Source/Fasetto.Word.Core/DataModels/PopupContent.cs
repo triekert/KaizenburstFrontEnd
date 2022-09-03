@@ -6,7 +6,7 @@
     public enum PopupContent
     {
         /// <summary>
-        /// A list of chat threads
+        /// Management of Hierarchy Element information
         /// </summary>
         AddElement = 1,
 
@@ -24,6 +24,10 @@
         /// A list of finance menu options for KaizenBurst
         /// </summary>
        Finance = 4,
-        SelectHierarchy = 5
+
+        /// <summary>
+        /// Form for editing User settings
+        /// </summary>
+        Settings = 5
     }
 }

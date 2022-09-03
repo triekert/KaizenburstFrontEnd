@@ -18,7 +18,7 @@ namespace Fasetto.Word
     /// for the TreeView (the FirstGeneration property), a bindable
     /// SearchText property, and the SearchCommand to perform a search.
     /// </summary>
-    public class ExpenditureTreeViewModel : BaseViewModel
+    public class FinanceTreeViewModel : BaseViewModel
 
     {
 
@@ -27,18 +27,18 @@ namespace Fasetto.Word
         /// <summary>
         /// A list of all registered hierarchy elements
         /// </summary>
-        public ObservableCollection<HierarchyViewModel> FirstGeneration { get; set; }
+        public ObservableCollection<FinanceViewModel> FirstGeneration { get; set; }
 
 
-        //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
+        //public ObservableCollection<FinanceViewModel> FirstGeneration1 { get; set; }
 
         #endregion
 
         #region Data
 
-        //private readonly ReadOnlyCollection<HierarchyViewModel> mFirstGeneration;
-        protected HierarchyViewModel mRootHierarchyElement;
-        protected HierarchyViewModel mRootHierarchyElement1;
+        //private readonly ReadOnlyCollection<FinanceViewModel> mFirstGeneration;
+        protected FinanceViewModel mRootHierarchyElement;
+        protected FinanceViewModel mRootHierarchyElement1;
         private readonly ICommand mSearchCommand;
         public HierarchyListDataModel mHDML;
         public FinanceResultListApiModel mPersist, mPersistTmp,mOriginal;
@@ -65,7 +65,7 @@ namespace Fasetto.Word
 
         #region Constructor
         /// <summary>
-        /// The HierarchyTreeViewModel is a visual inteface for interacting with hiearchical
+        /// The FinanceTreeViewModel is a visual inteface for interacting with hiearchical
         /// Structures persisted on the database linked to the application
         /// Generic hierarchy structures with parent-child relationships may be used to represent
         /// appropriate data sets
@@ -73,7 +73,7 @@ namespace Fasetto.Word
         /// <param name="hierarchyTable"></param>
         /// The hierarchyTable passed through as a paremeter identifies the specific hierarchy set to be retrieved
         /// from persistent s
-        public ExpenditureTreeViewModel(string hierarchyTable)
+        public FinanceTreeViewModel(string hierarchyTable)
         {
             #region Dummy Root HierarchyListDataModel
             mHDML = new HierarchyListDataModel();
@@ -107,13 +107,13 @@ namespace Fasetto.Word
         {
 
             var rootElement = mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
-            mRootHierarchyElement = new HierarchyViewModel(rootElement)
+            mRootHierarchyElement = new FinanceViewModel(rootElement)
             {
                 IsExpanded = true
             };
 
-            FirstGeneration = new ObservableCollection<HierarchyViewModel>(
-                new HierarchyViewModel[]
+            FirstGeneration = new ObservableCollection<FinanceViewModel>(
+                new FinanceViewModel[]
                 {
                     mRootHierarchyElement
                 });
@@ -161,9 +161,9 @@ namespace Fasetto.Word
 
         private class SearchCategoryTreeCommand : ICommand
         {
-            private readonly ExpenditureTreeViewModel mCategoryTree;
+            private readonly FinanceTreeViewModel mCategoryTree;
 
-            public SearchCategoryTreeCommand(ExpenditureTreeViewModel CategoryTree)
+            public SearchCategoryTreeCommand(FinanceTreeViewModel CategoryTree)
             {
                 mCategoryTree = CategoryTree;
             }
@@ -354,7 +354,7 @@ namespace Fasetto.Word
             }
         }
 
-        public IEnumerator<HierarchyViewModel> MatchingCategoryEnumerator { get; private set; }
+        public IEnumerator<FinanceViewModel> MatchingCategoryEnumerator { get; private set; }
 
         #endregion // SearchText
 
@@ -396,7 +396,7 @@ namespace Fasetto.Word
             }
         }
 
-        private IEnumerable<HierarchyViewModel> FindMatches(string searchText, HierarchyViewModel Category)
+        private IEnumerable<FinanceViewModel> FindMatches(string searchText, FinanceViewModel Category)
         {
             if (Category.NameContainsText(searchText))
                 yield return Category;
@@ -409,7 +409,7 @@ namespace Fasetto.Word
         #endregion // Search Logic
 
         #region Search Logic //KCategoryID
-        public IEnumerator<HierarchyViewModel> MatchingKCategoryEnumerator { get; private set; }
+        public IEnumerator<FinanceViewModel> MatchingKCategoryEnumerator { get; private set; }
 
         #endregion // SearchKCategoryID
         #region Search Logic //KCategoryID
@@ -438,7 +438,7 @@ namespace Fasetto.Word
 
         }
 
-        private IEnumerable<HierarchyViewModel> FindKMatches(string searchText, HierarchyViewModel Category)
+        private IEnumerable<FinanceViewModel> FindKMatches(string searchText, FinanceViewModel Category)
         {
             //var mSearchText = searchText;
             if (Category.KCategoryIdContainsText(searchText))

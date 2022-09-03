@@ -17,7 +17,10 @@
 
   <ItemGroup>
     <Folder Include="ApiModels\Menu Tree\" />
+    <Folder Include="ApiModels\NewFolder1\" />
     <Folder Include="ApiModels\NewFolder\" />
+    <Folder Include="DataModels\Finance\Investment\" />
+    <Folder Include="DataModels\NewFolder1\" />
   </ItemGroup>
 
 </Project>

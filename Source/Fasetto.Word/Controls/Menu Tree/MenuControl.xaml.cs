@@ -46,6 +46,9 @@ namespace Fasetto.Word
 
         //[Obsolete]
         //public HierarchyManagementControl(HierarchyManagementTreeDataModel hierarchyManagementTreeDataModel)
+        /// <summary>
+        /// This initiation of the Menu Control tree
+        /// </summary>
         public MenuControl()
         {
 
@@ -60,9 +63,17 @@ namespace Fasetto.Word
 
         }
 
-        public MenuControl(string destinationCategoryId)
+        /// <summary>
+        /// the Overloading of MenuControl() with a parameter that selects the Menu Hierarchy for naviagion by passing the parameter
+        /// </summary>
+        /// <param name="root"></param>
+        public MenuControl(string root)
         {
-            mDestinationCategoryID = destinationCategoryId;
+            mHierarchyTree = new HierarchyTreeViewModel(root);//root);
+
+            DataContext = mHierarchyTree;
+            InitializeComponent();
+            ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
         }
 
         private void SearchTextBox_KeyDown(object sender, KeyEventArgs e)

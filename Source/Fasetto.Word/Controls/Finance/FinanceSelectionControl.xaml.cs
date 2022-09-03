@@ -1,28 +1,25 @@
-﻿using Fasetto.Word.Core;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Windows;
+﻿using System.ComponentModel;
 using System.Windows.Controls;
+using static Fasetto.Word.DI;
+using System.Windows;
+using System;
+
 using System.Windows.Input;
 using System.Windows.Media;
-using static Fasetto.Word.DI;
+using Fasetto.Word.Core;
+using System.Threading.Tasks;
+using Dna;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
 
 namespace Fasetto.Word
 {
     /// <summary>
-    /// Interaction logic for HierarchyManagementControl.xaml
+    /// Interaction logic for SettingsControl.xaml
     /// </summary>
-    public partial class HierarchyControl : UserControl
+    public partial class FinanceSelectionControl : UserControl
     {
-
-        #region Public Properties
-
-        //public string ControlTitle { get; set; } = "Title of Control";
-
-        #endregion//Public Properties
-
         #region Public Commands
         /// <summary>
         /// The command to close the settings menu
@@ -34,19 +31,19 @@ namespace Fasetto.Word
         private readonly HierarchyTreeViewModel mHierarchyTree;
         private string mSourceCategory;
         private string mSourceCategoryName;
-        private string mDestinationCategoryID, mDestinationID,mSourceID,mParentID;
+        private string mDestinationCategoryID, mDestinationID, mSourceID, mParentID;
         private string mDestinationCategoryName;
         private bool mIsSourceObtained = false, mIsEqual = false;
         private Point mLastMouseDown;
         private TreeViewItem mTargetT, mSource;
-        private HierarchyViewModel mDraggedItemTest,mDraggedItem,mTarget;
+        private HierarchyViewModel mDraggedItemTest, mDraggedItem, mTarget;
         //private readonly object mFamilyTree;
         private readonly HierarchyViewModel mTargetTest;
         //public string mControlTitle = "testing";
 
         //[Obsolete]
-        //public HierarchyManagementControl(HierarchyManagementTreeDataModel hierarchyManagementTreeDataModel)
-        public HierarchyControl()
+        //public HierarchyManagementControl(H
+        public FinanceSelectionControl()
         {
 
             //var root = "1C225789-3938-4480-86CB-071863DC5D33";
@@ -62,20 +59,16 @@ namespace Fasetto.Word
 
         }
 
-        public HierarchyControl(string root)
+        public FinanceSelectionControl(string destinationCategoryId)
         {
-            mHierarchyTree = new HierarchyTreeViewModel(root);//root);
-
-            DataContext = mHierarchyTree;
-            InitializeComponent();
-            ViewModelApplication.CurrentControlViewModel = mHierarchyTree;   
+            mDestinationCategoryID = destinationCategoryId;
         }
 
         private void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
-             mHierarchyTree.SearchCommand.Execute(null) ;
-                   }
+                mHierarchyTree.SearchCommand.Execute(null);
+        }
 
         private static List<HierarchyTreeDataModel> FillRecursive(List<HierarchyDataModel> flatObjects, string parentId)
         {
@@ -120,8 +113,8 @@ namespace Fasetto.Word
             //mSource =(TreeViewItem)sender;
             if (e.ChangedButton == MouseButton.Left)
             {
-                
-                if (((TreeViewItem)sender).IsSelected  && (((TreeViewItem)sender).IsExpanded ||(((HierarchyViewModel)((TreeViewItem)sender).DataContext).Children.Count() == 0)))
+
+                if (((TreeViewItem)sender).IsSelected && (((TreeViewItem)sender).IsExpanded || (((HierarchyViewModel)((TreeViewItem)sender).DataContext).Children.Count() == 0)))
                 {
 
                     //e.Handled = true;
@@ -164,15 +157,16 @@ namespace Fasetto.Word
             e.Handled = true;
         }
         private void TreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        { if (e.ChangedButton == MouseButton.Right)
+        {
+            if (e.ChangedButton == MouseButton.Right)
             {
-             AddHierarchyElement();                            
+                AddHierarchyElement();
             }
             else
                 if (e.ChangedButton == MouseButton.Left)
-                    {
-                    EditHierarchyElement(); 
-                    }
+            {
+                EditHierarchyElement();
+            }
             var clkcnt = e.ClickCount;
             e.Handled = true;
 
@@ -186,12 +180,12 @@ namespace Fasetto.Word
         {
             //check to determine whether user would like to add an item to the hierarchy
             if (ViewModelApplication.PopupVisible == false)
-            { 
+            {
 
                 if (Keyboard.IsKeyDown(Key.Insert))
                 {
-                    AddHierarchyElement();                    
-                    e.Handled= true;
+                    AddHierarchyElement();
+                    e.Handled = true;
                 }
                 else
                     if (Keyboard.IsKeyDown(Key.Enter))
@@ -202,8 +196,8 @@ namespace Fasetto.Word
                 }
                 else
                     if (Keyboard.IsKeyDown(Key.Delete))
-                    {
-                        DeleteHierarchyElement();
+                {
+                    DeleteHierarchyElement();
                     e.Handled = true;
 
                 }
@@ -242,7 +236,6 @@ namespace Fasetto.Word
                             mTarget = null;//ensure target is reset
                             if (!isCtrl)
                             {
-
                                 var finalDropEffect = DragDrop.DoDragDrop(tvParameters, tvParameters.SelectedValue,
                                   DragDropEffects.Move);
                                 //Checking target is not null and item is dragging(moving)
@@ -252,8 +245,8 @@ namespace Fasetto.Word
                                     //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
                                     //{
                                     MoveHierarchyElement();// MoveItem();
-                                        mTargetT = null;
-                                        mSource= null;
+                                    mTargetT = null;
+                                    mSource = null;
                                     //}
 
                                 }
@@ -287,7 +280,7 @@ namespace Fasetto.Word
             }
         }
 
-       
+
         /// <summary>
         /// Handle event when tree view item is dragged over potential
         /// target objects
@@ -305,7 +298,7 @@ namespace Fasetto.Word
                 {
                     // Verify that this is a valid drop and then store the drop target
                     var item = GetNearestContainer(e.OriginalSource as UIElement);
-   
+
                     if (item == null)
                     { e.Effects = DragDropEffects.None; }
                     else
@@ -313,9 +306,9 @@ namespace Fasetto.Word
                         mTargetT = item;
                         mTarget = (HierarchyViewModel)item.GetType().GetProperties().Single(c => c.Name == "DataContext").GetValue(item);
                         if (e.Effects == DragDropEffects.Move)
-                        { e.Effects = CheckDropTarget(mTarget, mDraggedItem) ? DragDropEffects.Move : DragDropEffects.None;}
+                        { e.Effects = CheckDropTarget(mTarget, mDraggedItem) ? DragDropEffects.Move : DragDropEffects.None; }
                         else
-                        { e.Effects = CheckDropTarget(mTarget, mDraggedItem) ? DragDropEffects.Copy : DragDropEffects.None;}
+                        { e.Effects = CheckDropTarget(mTarget, mDraggedItem) ? DragDropEffects.Copy : DragDropEffects.None; }
                     }
                 }
                 e.Handled = true;
@@ -330,16 +323,16 @@ namespace Fasetto.Word
             //try
             //{
 
-                Mouse.SetCursor(Cursors.Wait);
-                    e.Handled = true;
-                    return;
+            Mouse.SetCursor(Cursors.Wait);
+            e.Handled = true;
+            return;
 
         }
         //private void TreeView_MouseEnter(object sender, MouseEventArgs e)
         //{
         //    //try
         //    //{
-   
+
         //    ((HierarchyViewModel)((TreeViewItem)sender).DataContext).IsSelected = true;
 
         //    e.Handled = true;
@@ -381,15 +374,15 @@ namespace Fasetto.Word
             mDestinationID = mTargetN.KCategoryID;
             mSourceID = mDraggedItem.KCategoryID;
             mParentID = mDraggedItem.ParentCategoryID;
-                //mSourceCategoryName = (string)res.GetType().GetProperties().Single(c => c.Name == "ShortName").GetValue(res);
-                if (mSourceID == mDestinationID
-                    || mParentID == mDestinationID)
-                    { return false; }
-                //var mDestinationID = (string)res.GetType().GetProperties().Single(c => c.Name == "KId").GetValue(res);
+            //mSourceCategoryName = (string)res.GetType().GetProperties().Single(c => c.Name == "ShortName").GetValue(res);
+            if (mSourceID == mDestinationID
+                || mParentID == mDestinationID)
+            { return false; }
+            //var mDestinationID = (string)res.GetType().GetProperties().Single(c => c.Name == "KId").GetValue(res);
 
-                MatchingKCategoryEnumerator = null;
- 
-                return PerformKIdSearch();
+            MatchingKCategoryEnumerator = null;
+
+            return PerformKIdSearch();
 
 
 
@@ -527,7 +520,7 @@ namespace Fasetto.Word
             var results = mHierarchyTree.mPersist.Where(x => x.KCategoryID == mDraggedItem.ParentCategoryID).OrderBy(x => x.ShortName).ToList();
             var mPage = "";
             if (results.Count > 0)
-             mPage = results.FirstOrDefault().Page;
+                mPage = results.FirstOrDefault().Page;
             var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mAddElementViewModel.ShortName.OriginalText = "New Element Name";
             mAddElementViewModel.Description.OriginalText = "Description of New Element";
@@ -544,15 +537,15 @@ namespace Fasetto.Word
             mAddElementViewModel.ParentCategoryID = mDraggedItem.KCategoryID;
             mAddElementViewModel.KCategoryID = Guid.NewGuid().ToString().ToUpper();
             mAddElementViewModel.DateEffective = DateTime.Today;
-            mAddElementViewModel.DateDiscontinued = new DateTime(9999,12,31);
+            mAddElementViewModel.DateDiscontinued = new DateTime(9999, 12, 31);
             mAddElementViewModel.AddNodeButtonText = "Add new Hierarchy Element";
             mAddElementViewModel.EditNodeButtonText = null;
             mAddElementViewModel.DeleteNodeButtonText = null;
             mAddElementViewModel.CopyNodeButtonText = null;
             mAddElementViewModel.MoveNodeButtonText = null;
 
-            mAddElementViewModel.HeadingText= "Add new Hierarchy Element";
-            
+            mAddElementViewModel.HeadingText = "Add new Hierarchy Element";
+
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
@@ -587,7 +580,7 @@ namespace Fasetto.Word
             mAddElementViewModel.CopyNodeButtonText = null;
             mAddElementViewModel.MoveNodeButtonText = null;
             mAddElementViewModel.HeadingText = "Update Selected Element";
-            
+
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
@@ -618,7 +611,7 @@ namespace Fasetto.Word
             mAddElementViewModel.MoveNodeButtonText = null;
             mAddElementViewModel.DeleteNodeButtonText = "Delete Selected Element";
             mAddElementViewModel.HeadingText = "Delete Selected Element";
-            
+
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
@@ -633,7 +626,7 @@ namespace Fasetto.Word
 
             var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
-            mAddElementViewModel.Description.OriginalText = mDraggedItem.Description; 
+            mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
             mAddElementViewModel.ShortName.EditedText = mDraggedItem.ShortName;
             mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
             mAddElementViewModel.Page = mDraggedItem.Page;
@@ -651,7 +644,7 @@ namespace Fasetto.Word
             mAddElementViewModel.CopyNodeButtonText = null;
             mAddElementViewModel.EditNodeButtonText = null;
             mAddElementViewModel.HeadingText = "Move Selected Element (with descendants)";
-            
+
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
@@ -677,14 +670,14 @@ namespace Fasetto.Word
             mAddElementViewModel.ParentCategoryID = mTarget.KCategoryID;
             mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
             mAddElementViewModel.DateEffective = DateTime.Today;
-            mAddElementViewModel.DateDiscontinued = new DateTime(9999,12,31);
+            mAddElementViewModel.DateDiscontinued = new DateTime(9999, 12, 31);
             mAddElementViewModel.AddNodeButtonText = null;
             mAddElementViewModel.EditNodeButtonText = null;
             mAddElementViewModel.MoveNodeButtonText = null;
             mAddElementViewModel.CopyNodeButtonText = "Copy Selected Element";
             mAddElementViewModel.DeleteNodeButtonText = null;
             mAddElementViewModel.HeadingText = "Copy Selected Element (with descendants)";
-            
+
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;

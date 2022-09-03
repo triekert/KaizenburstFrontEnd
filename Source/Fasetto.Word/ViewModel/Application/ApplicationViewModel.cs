@@ -99,7 +99,7 @@ namespace Fasetto.Word
 
 
         /// <summary>
-        /// Points to the controleleMent of the page content (or page if control deployed to page) view model
+        /// Points to the control eleMent of the page content (or page if control deployed to page) view model
         /// </summary>
         public object CurrentControlViewModel { get; set; }
 
@@ -213,12 +213,26 @@ namespace Fasetto.Word
         public void OpenFinance()
         {
             // Set the current side menu to Finance
-            ViewModelApplication.ControlParameter = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
-            ViewModelApplication.GoToPage(ApplicationPage.Finance);
+            ViewModelApplication.ControlParameter = "7E669DCA-D356-43F0-BB64-5DF6D1499C99";
+            //ViewModelApplication.GoToPage(ApplicationPage.Finance);
             //ViewModelApplication.GoToPage(ApplicationPage.Chat);
             CurrentSideMenuContent = SideMenuContent.Finance;
+            SideMenuVisible = true;
+        }
+        public void OpenFinance(string root, string page)
+        {
+            // Set the current side menu to Kaizenburst Menu Options
+            ViewModelApplication.ControlParameter = root;
+            //convert from string to the appropriate Enum Application Page
+            var applicationPage = (ApplicationPage)Enum.Parse(typeof(ApplicationPage), page);
+            ViewModelApplication.GoToPage(applicationPage);
+            //CurrentSideMenuContent = SideMenuContent.Menu;
+
+            //ViewModelApplication.GoToPage(ApplicationPage.Hierarchy);
             SideMenuVisible = false;
         }
+
+
         public void OpenMenu()
         {
             // Set the current side menu to KaizenBurst Menu
@@ -231,7 +245,7 @@ namespace Fasetto.Word
         }
         public void OpenMenu(string root,string page)
         {
-            // Set the current side menu to Finance
+            // Set the current side menu to Kaizenburst Menu Options
             ViewModelApplication.ControlParameter = root;
             //convert from string to the appropriate Enum Application Page
             var applicationPage = (ApplicationPage)Enum.Parse(typeof(ApplicationPage), page);

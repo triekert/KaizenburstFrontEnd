@@ -35,7 +35,7 @@ namespace Fasetto.Word
         /// </summary>
         protected bool mSearchIsOpen;
 
-        public HierarchyTreeViewModel mViewModel;
+        public FinanceTreeViewModel mViewModel;
         #endregion
 
         #region Public Properties
@@ -45,30 +45,30 @@ namespace Fasetto.Word
         /// NOTE: Do not call Items.Add to add messages to this list
         ///       as it will make the FilteredItems out of sync
         /// </summary>
-        public ObservableCollection<ChatMessageListItemViewModel> Items
-        {
-            get => mItems;
-            set
-            {
-                // Make sure list has changed
-                if (mItems == value)
-                    return;
+        //public ObservableCollection<ChatMessageListItemViewModel> Items
+        //{
+        //    get => mItems;
+        //    set
+        //    {
+        //        // Make sure list has changed
+        //        if (mItems == value)
+        //            return;
 
-                // Update value
-                mItems = value;
+        //        // Update value
+        //        mItems = value;
 
-                // Update filtered list to match
-                FilteredItems = new ObservableCollection<ChatMessageListItemViewModel>(mItems);
-            }
-        }
+        //        // Update filtered list to match
+        //        FilteredItems = new ObservableCollection<ChatMessageListItemViewModel>(mItems);
+        //    }
+        //}
 
         /// <summary>
         /// The chat thread items for the list that include any search filtering
         /// </summary>
-        public ObservableCollection<ChatMessageListItemViewModel> FilteredItems { get; set; }
+        //public ObservableCollection<ChatMessageListItemViewModel> FilteredItems { get; set; }
 
         /// <summary>
-        /// The title of this chat list
+        /// The title of this application page
         /// </summary>
         public string DisplayTitle { get; set; }
 
@@ -85,7 +85,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The view model for the attachment menu
         /// </summary>
-        public ChatAttachmentPopupMenuViewModel AttachmentMenu { get; set; }
+        //public ChatAttachmentPopupMenuViewModel AttachmentMenu { get; set; }
 
         /// <summary>
         /// The text for the current message being written
@@ -184,6 +184,10 @@ namespace Fasetto.Word
         /// </summary>
         public FinancePageViewModel()
         {
+            //Populate screen title
+            //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
+            DisplayTitle = "Finance Management";
             // Create commands
             AttachmentButtonCommand = new RelayCommand(AttachmentButton);
             PopupClickawayCommand = new RelayCommand(PopupClickaway);
@@ -194,7 +198,7 @@ namespace Fasetto.Word
             ClearSearchCommand = new RelayCommand(ClearSearch);
 
             // Make a default menu
-            AttachmentMenu = new ChatAttachmentPopupMenuViewModel();
+            //AttachmentMenu = new ChatAttachmentPopupMenuViewModel();
         }
 
         #endregion
@@ -224,13 +228,36 @@ namespace Fasetto.Word
         /// </summary>
         public void Send()
         {
-            mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel;
-            var results = mViewModel.mPersist.Where(x => x.IsUnderReview).OrderBy(x => x.ShortName).ToList();
+            mViewModel = (FinanceTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            var results = mViewModel.mPersist.Where(x => x.IsUnderReview || x.IsDeleteElement).ToList();
+            var mPersistElement = new FinanceResultApiModel();
             //var results = mViewModel.mPersist.OrderBy(x => x.ShortName).ToList();
             if (results.Count > 0)
                 //mViewModel.mPersistTmp = (HierarchyResultApiModel)results;
-                _ = mViewModel.PersistHierarchyChangesAsync();
+                //ToDo:Where a new hierarchy is referred to in the a new menu item, Create the root element for this new hierarchy
 
+                results = mViewModel.mPersist.Where(x => (x.IsNewElement) & x.Page == "Finance").ToList();
+            if (results.Count > 0)
+            {
+                //mViewModel.mPersist.AddRange(results);
+                foreach (var row in results)
+
+                {
+                    mPersistElement.DateDiscontinued = row.DateDiscontinued;
+                    mPersistElement.DateEffective = row.DateEffective;
+                    mPersistElement.ShortName = row.ShortName;
+                    mPersistElement.Description = row.Description;
+                    mPersistElement.KCategoryID = row.Root;
+                    mPersistElement.Page = row.Page;
+                    mPersistElement.IsNewElement = row.IsNewElement;
+                    mPersistElement.IsUnderReview = row.IsUnderReview;
+                    mPersistElement.ParentCategoryID = "00000000-0000-0000-0000-000000000000";
+                    mPersistElement.FHierarchyID = row.Root;
+                }
+                mViewModel.mPersist.Add(mPersistElement);
+
+            }
+            _ = mViewModel.PersistHierarchyChangesAsync();
         }
 
         /// <summary>
@@ -239,12 +266,12 @@ namespace Fasetto.Word
         public void Search()
         {
             // Make sure we don't re-search the same text
-            if ((string.IsNullOrEmpty(mLastSearchText) && string.IsNullOrEmpty(SearchText)) ||
-                string.Equals(mLastSearchText, SearchText))
-                return;
+            //if ((string.IsNullOrEmpty(mLastSearchText) && string.IsNullOrEmpty(SearchText)) ||
+            //    string.Equals(mLastSearchText, SearchText))
+            //    return;
 
             // If we have no search text, or no items
-            if (string.IsNullOrEmpty(SearchText) )
+            if (string.IsNullOrEmpty(SearchText))
             {
                 // Make filtered list the same
 
@@ -260,10 +287,10 @@ namespace Fasetto.Word
             //    Items.Where(item => item.Message.ToLower().Contains(SearchText)));
 
             // Set last search text
-                mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel;
-                mViewModel.SearchText = SearchText;
-                mViewModel.PerformSearch();
-                //mViewModel.RefreshHierarchy();           
+            mViewModel = (FinanceTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            mViewModel.SearchText = SearchText;
+            mViewModel.PerformSearch();
+            //mViewModel.RefreshHierarchy();           
             mLastSearchText = SearchText;
         }
 

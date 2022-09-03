@@ -30,10 +30,13 @@ namespace Fasetto.Word
                     var mHierarchyElementControl = new HierarchyElementControl();
                     return mHierarchyElementControl;
 
-                case PopupContent.SelectHierarchy:
-                    var mSelectControl = new SettingsControl();
-                    return mSelectControl;
+                case PopupContent.Settings:
+                    var mSettings= new SettingsControl();
+                    return mSettings;
 
+                case PopupContent.Finance:
+                    var mFinanceControl = new FinanceSelectionControl();
+                    return mFinanceControl;
 
 
 
