@@ -70,6 +70,16 @@
         public const string PersistHierarchy = "api/finance/pershier";
 
 
+        /// <summary>
+        /// The route to the ReturnHierarchy Api method
+        /// </summary>
+        public const string ReturnExpenditure = "api/finance/expenditure";
+
+
+        /// <summary>
+        /// The route to the PersitHierarchy Api method
+        /// </summary>
+        public const string PersistExpenditure = "api/finance/expenditure";
         #endregion
     }
 }

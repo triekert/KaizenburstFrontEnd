@@ -15,7 +15,7 @@ namespace Fasetto.Word
     /// <summary>
     /// Interaction logic for ChatListControl.xaml
     /// </summary>
-    public partial class FinanceMenuControl : UserControl
+    public partial class ExpenditureControl : UserControl
 
 
         {
@@ -49,7 +49,7 @@ namespace Fasetto.Word
 
             //[Obsolete]
             //public HierarchyManagementControl(HierarchyManagementTreeDataModel hierarchyManagementTreeDataModel)
-            public FinanceMenuControl()
+            public ExpenditureControl()
             {
 
                 //var root = "1C225789-3938-4480-86CB-071863DC5D33";
@@ -65,7 +65,7 @@ namespace Fasetto.Word
 
             }
 
-            public FinanceMenuControl(string destinationCategoryId)
+            public ExpenditureControl(string destinationCategoryId)
             {
                 mDestinationCategoryID = destinationCategoryId;
             }

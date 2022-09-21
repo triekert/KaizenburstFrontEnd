@@ -34,6 +34,9 @@ namespace Fasetto.Word
                 case ApplicationPage.Hierarchy:
                     return new HierarchyPage(viewModel as HierarchyPageViewModel);
 
+                case ApplicationPage.Actuals:
+                    return new HierarchyPage(viewModel as HierarchyPageViewModel);
+
                 default:
                     Debugger.Break();
                     return null;

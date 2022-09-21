@@ -153,10 +153,14 @@ namespace Fasetto.Word
         public ICommand OpenMediaCommand { get; set; }
 
         /// <summary>
-        /// The command to change the side menu to Media
+        /// The command to change the side menu to Menu
         /// </summary>
         public ICommand OpenMenuCommand { get; set; }
 
+        /// <summary>
+        /// The command to change the side menu to Menu
+        /// </summary>
+        public ICommand OpenActualsCommand { get; set; }
         #endregion
 
         #region Constructor
@@ -172,6 +176,7 @@ namespace Fasetto.Word
             OpenMediaCommand = new RelayCommand(OpenMedia);
             OpenFinanceCommand = new RelayCommand(OpenFinance);
             OpenMenuCommand = new RelayCommand(OpenMenu);
+            OpenMenuCommand = new RelayCommand(OpenActuals);
         }
 
         #endregion
@@ -254,6 +259,16 @@ namespace Fasetto.Word
 
             //ViewModelApplication.GoToPage(ApplicationPage.Hierarchy);
             SideMenuVisible = false;
+        }
+        public void OpenActuals()
+        {
+            // Set the current side menu to KaizenBurst Menu
+            ViewModelApplication.ControlParameter = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
+            //ViewModelApplication.GoToPage(ApplicationPage.Hierarchy);
+            CurrentSideMenuContent = SideMenuContent.Menu;
+
+            //ViewModelApplication.GoToPage(ApplicationPage.Hierarchy);
+            SideMenuVisible = true;
         }
 
         #endregion

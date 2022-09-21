@@ -27,24 +27,24 @@ namespace Fasetto.Word
         /// <summary>
         /// A list of all registered hierarchy elements
         /// </summary>
-        public ObservableCollection<HierarchyViewModel> FirstGeneration { get; set; }
+        public ObservableCollection<ExpenditureViewModel> FirstGeneration { get; set; }
 
 
-        //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
+        //public ObservableCollection<ExpenditureViewModel> FirstGeneration1 { get; set; }
 
         #endregion
 
         #region Data
 
-        //private readonly ReadOnlyCollection<HierarchyViewModel> mFirstGeneration;
-        protected HierarchyViewModel mRootHierarchyElement;
-        protected HierarchyViewModel mRootHierarchyElement1;
+        //private readonly ReadOnlyCollection<ExpenditureViewModel> mFirstGeneration;
+        protected ExpenditureViewModel mRootExpenditureElement;
+        protected ExpenditureViewModel mRootExpenditureElement1;
         private readonly ICommand mSearchCommand;
-        public HierarchyListDataModel mHDML;
-        public FinanceResultListApiModel mPersist, mPersistTmp,mOriginal;
-        public HierarchyDataModel mHDM;
+        public ExpenditureListDataModel mHDML;
+        public ExpenditureResultListApiModel mPersist, mPersistTmp,mOriginal;
+        public ExpenditureDataModel mHDM;
         public string mTableName;
-        public HierarchyElementViewModel mElement;
+        public ExpenditureElementViewModel mElement;
 
         //IEnumerator<HierarchyManagementViewModel> mMatchingCategoryEnumerator;
 
@@ -73,28 +73,28 @@ namespace Fasetto.Word
         /// <param name="hierarchyTable"></param>
         /// The hierarchyTable passed through as a paremeter identifies the specific hierarchy set to be retrieved
         /// from persistent s
-        public ExpenditureTreeViewModel(string hierarchyTable)
+        public ExpenditureTreeViewModel(string ExpenditureTable)
         {
-            #region Dummy Root HierarchyListDataModel
-            mHDML = new HierarchyListDataModel();
-            mHDM = new HierarchyDataModel
+            #region Dummy Root ExpenditureListDataModel
+            mHDML = new ExpenditureListDataModel();
+            mHDM = new ExpenditureDataModel
             {
                 KCategoryID = new Guid().ToString(),
                 ParentCategoryID = "00000000-0000-0000-0000-000000000000",
-                Description = "...Loading hierarchy data...",
+                Description = "...Loading Expenditure data...",
                 ShortName = "Loading...Please be patient",
-                Children = new HierarchyListDataModel()
+                Children = new ExpenditureListDataModel()
             };
             mHDML.Add(mHDM);
 
-            mTableName = hierarchyTable;
+            mTableName = ExpenditureTable;
             #endregion
-            //retrieve hierarchy from persistent storage on server
-            //To Do: Add mTableName as parameter when calling HiearchyAsync to populate hierarchy
-            TaskManager.RunAndForget(HierarchyAsync);
+            //retrieve Expenditure from persistent storage on server
+            //To Do: Add mTableName as parameter when calling HiearchyAsync to populate Expenditure
+            TaskManager.RunAndForget(ExpenditureAsync);
 
 
-            // Get the OptFinHierarchies currently configured - first populate 'root hierarchy' variable with all configured root hierarchy elements currently available
+            // Get the OptFinHierarchies currently configured - first populate 'root Expenditure' variable with all configured root Expenditure elements currently available
 
 
             UpdateTreeViewElements();
@@ -107,15 +107,15 @@ namespace Fasetto.Word
         {
 
             var rootElement = mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
-            mRootHierarchyElement = new HierarchyViewModel(rootElement)
+            mRootExpenditureElement = new ExpenditureViewModel(rootElement)
             {
                 IsExpanded = true
             };
 
-            FirstGeneration = new ObservableCollection<HierarchyViewModel>(
-                new HierarchyViewModel[]
+            FirstGeneration = new ObservableCollection<ExpenditureViewModel>(
+                new ExpenditureViewModel[]
                 {
-                    mRootHierarchyElement
+                    mRootExpenditureElement
                 });
 
 
@@ -133,7 +133,7 @@ namespace Fasetto.Word
         /// <summary>
         /// A flag indicating if the login command is running
         /// </summary>
-        public bool HierarchyBuildIsRunning { get; set; }
+        public bool ExpenditureBuildIsRunning { get; set; }
 
         /// <summary>
         /// Title to be published on Control
@@ -195,13 +195,13 @@ namespace Fasetto.Word
         #endregion //Properties
 
         /// <summary>
-        /// Return Hierarchy of interest from Object persistance infrastructure
+        /// Return Expenditure of interest from Object persistance infrastructure
         /// User credentials are used to determine access authorisation
         /// </summary>
         /// <returns></returns>
-        public async Task HierarchyAsync()
+        public async Task ExpenditureAsync()
         {
-            await RunCommandAsync(() => HierarchyBuildIsRunning, async () =>
+            await RunCommandAsync(() => ExpenditureBuildIsRunning, async () =>
             {
 
                 // Store single transcient instance of client data store
@@ -215,14 +215,14 @@ namespace Fasetto.Word
                 if (string.IsNullOrEmpty(token))
                     // Then do nothing more
                     return;
-                var result = await WebRequests.PostAsync<ApiResponse<FinanceResultListApiModel>>(
+                var result = await WebRequests.PostAsync<ApiResponse<ExpenditureResultListApiModel>>(
                 // Set URL
-                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.ReturnHierarchy),
+                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.ReturnExpenditure),
                     mTableName,
                     bearerToken: token);
 
                 // If the response has an error...
-                if (await result.HandleErrorIfFailedAsync("Hierarchy retrieval Failed"))
+                if (await result.HandleErrorIfFailedAsync("Expenditure retrieval Failed"))
                     // We are done
                     return;
 
@@ -233,9 +233,9 @@ namespace Fasetto.Word
                
                 try
                 {
-                    //var hierarchyResultApiModels = mOriginal.ToList();
+                    //var ExpenditureResultApiModels = mOriginal.ToList();
                     //make a clone of the persisted data for manipulation on front end
-                    mPersist = new FinanceResultListApiModel();
+                    mPersist = new ExpenditureResultListApiModel();
                     mPersist.Clone(mOriginal, mPersist);
                 }
                  catch (Exception e)
@@ -244,28 +244,28 @@ namespace Fasetto.Word
                 }
 
 
-                RefreshHierarchy();
+                RefreshExpenditure();
 
 
             });
         }
 
         /// <summary>
-        /// Method to refresh element Hierarchy
+        /// Method to refresh element Expenditure
         /// -used when elements of the treefiew are being manipulated on the front end
         /// </summary>
-        public void RefreshHierarchy()
+        public void RefreshExpenditure()
         {
 
             mHDML.Clear();
-            //build a tree view, always starting with the root element, which is also the classification for the hierarchy
-            mHDML.AddRange(ExpandHierarchyData(mPersist, "00000000-0000-0000-0000-000000000000", "Root"));
+            //build a tree view, always starting with the root element, which is also the classification for the Expenditure
+            mHDML.AddRange(ExpandExpenditureData(mPersist, "00000000-0000-0000-0000-000000000000", "Root"));
             //Refresh the tree view title with the current name of the root element
             ControlTitle = (mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ShortName;
 
-            var matches = mPersist.OrderBy(x => x.DateEffective).ToList();
-            foreach (var category in matches)
-            { category.ParentShortName = matches.First(x => x.ParentCategoryID == category.ParentCategoryID).ShortName; }
+            //var matches = mPersist.OrderBy(x => x.DateEffective).ToList();
+            //foreach (var category in matches)
+            //{ category.ParentShortName = matches.First(x => x.ParentCategoryID == category.ParentCategoryID).ShortName; }
             //Update the viewModel with the returned values
 
             UpdateTreeViewElements();
@@ -277,16 +277,16 @@ namespace Fasetto.Word
 
 
         /// <summary>
-        /// This funtion builds a hierarchy of elements based on a
-        /// a Hierarchy result returned when querying a database structure
-        /// on which the hierarchy structures are persisted
+        /// This funtion builds a Expenditure of elements based on a
+        /// a Expenditure result returned when querying a database structure
+        /// on which the Expenditure structures are persisted
         /// </summary>
         /// <param name="results"></param>
-        /// This is a class of <HierarchyResultListApiModel></HierarchyResultListApiModel>
+        /// This is a class of <ExpenditureResultListApiModel></ExpenditureResultListApiModel>
         /// <param name="KCategoryID"></param>
         /// the ID of the parent for finding descendants is passsed through as a string
         /// <returns></returns>
-        private HierarchyListDataModel ExpandHierarchyData(FinanceResultListApiModel results, string KCategoryID, string mParentShortName)
+        private ExpenditureListDataModel ExpandExpenditureData(ExpenditureResultListApiModel results, string KCategoryID, string mParentShortName)
         {
             mPersist = results;
             // Find all children
@@ -297,35 +297,31 @@ namespace Fasetto.Word
             var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued > DateTime.Today && !x.IsDeleteElement).OrderBy(x => (x.ShortName.ParseInt())).ThenBy(x => x.ShortName).ToList();//
             // Hierarchy cannot be expanded
             if (children.Count() == 0)
-                return new HierarchyListDataModel();
+                return new ExpenditureListDataModel();
             //...otherwise, return all descendants recursively
-            var elements = new HierarchyListDataModel();
+            var elements = new ExpenditureListDataModel();
             foreach (var item in children)
             {
-                var ud1 = new HierarchyDataModel
+                var ud1 = new ExpenditureDataModel
                 {
-                    //var u = hierarchyDataModel;
+                    //var u = ExpenditureDataModel;
                     ShortName = item.ShortName,
                     Description = item.Description,
                     //Card = item.Card,
                     //Frequency = item.Frequency,
                     KCategoryID = item.KCategoryID,
                     ParentCategoryID = item.ParentCategoryID,
-                    ParentShortName = mParentShortName,
                     DateEffective = item.DateEffective,
                     DateDiscontinued = item.DateDiscontinued,
                     KChangeID = item.KChangeID,
                     IsUnderReview = item.IsUnderReview,
-                    Page = item.Page,
-                    Root = item.Root,
-                    IsMenuItem = item.IsMenuItem,
 
 
                     //To Do: make provision to add Icons to make the UI more intuitive and attractive
                     //FIconID = item.FIconID,
-                    Children = new HierarchyListDataModel()
+                    Children = new ExpenditureListDataModel()
                 };
-                ud1.Children = ExpandHierarchyData(results, ud1.KCategoryID, ud1.ShortName);
+                ud1.Children = ExpandExpenditureData(results, ud1.KCategoryID, ud1.ShortName);
                 elements.Add(ud1);
             }
             //var matches = elements.OrderBy(x => x.DateEffective).ToList();
@@ -354,7 +350,7 @@ namespace Fasetto.Word
             }
         }
 
-        public IEnumerator<HierarchyViewModel> MatchingCategoryEnumerator { get; private set; }
+        public IEnumerator<ExpenditureViewModel> MatchingCategoryEnumerator { get; private set; }
 
         #endregion // SearchText
 
@@ -382,7 +378,7 @@ namespace Fasetto.Word
 
         private void VerifyMatchingCategoryEnumerator()
         {
-            var matches = FindMatches(mSearchText, mRootHierarchyElement);
+            var matches = FindMatches(mSearchText, mRootExpenditureElement);
             MatchingCategoryEnumerator = matches.GetEnumerator();
 
             if (!MatchingCategoryEnumerator.MoveNext())
@@ -396,7 +392,7 @@ namespace Fasetto.Word
             }
         }
 
-        private IEnumerable<HierarchyViewModel> FindMatches(string searchText, HierarchyViewModel Category)
+        private IEnumerable<ExpenditureViewModel> FindMatches(string searchText, ExpenditureViewModel Category)
         {
             if (Category.NameContainsText(searchText))
                 yield return Category;
@@ -409,7 +405,7 @@ namespace Fasetto.Word
         #endregion // Search Logic
 
         #region Search Logic //KCategoryID
-        public IEnumerator<HierarchyViewModel> MatchingKCategoryEnumerator { get; private set; }
+        public IEnumerator<ExpenditureViewModel> MatchingKCategoryEnumerator { get; private set; }
 
         #endregion // SearchKCategoryID
         #region Search Logic //KCategoryID
@@ -432,13 +428,13 @@ namespace Fasetto.Word
         private void VerifyMatchingKCategoryEnumerator()
         {
             //var matchK = FindKMatches(mParentID, mTarget);
-            var matchK = FindKMatches(mSearchText, mRootHierarchyElement);
+            var matchK = FindKMatches(mSearchText, mRootExpenditureElement);
             MatchingKCategoryEnumerator = matchK.GetEnumerator();
             _ = !MatchingKCategoryEnumerator.MoveNext();
 
         }
 
-        private IEnumerable<HierarchyViewModel> FindKMatches(string searchText, HierarchyViewModel Category)
+        private IEnumerable<ExpenditureViewModel> FindKMatches(string searchText, ExpenditureViewModel Category)
         {
             //var mSearchText = searchText;
             if (Category.KCategoryIdContainsText(searchText))
@@ -458,12 +454,12 @@ namespace Fasetto.Word
         /// </summary>
         /// <param name="mCategoryKId"></param>
         /// <param name="mParentKId"></param>
-        public void MoveElement(HierarchyElementViewModel element)
+        public void MoveElement(ExpenditureElementViewModel element)
         {
             mSearchText = element.KCategoryID;
             mParentCategoryID = element.ParentCategoryID;
-            mPersistTmp = new FinanceResultListApiModel();
-            //var sourceElement = from HierarchyDataModel in this
+            mPersistTmp = new ExpenditureResultListApiModel();
+            //var sourceElement = from ExpenditureDataModel in this
             //                    where KCategoryID
             var matches = mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective <= element.DateDiscontinued).OrderByDescending(x => x.DateEffective).ToList();
             var category = matches.FirstOrDefault();
@@ -490,13 +486,13 @@ namespace Fasetto.Word
                     }
                     else
                     { 
-                    var mPersistElement = new FinanceResultApiModel
+                    var mPersistElement = new ExpenditureResultApiModel
                         {
                         ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
                         Description = (element.Description.EditedText ?? element.Description.OriginalText),
                         //FIconID = category.FIconID,
                         //Frequency = category.Frequency,
-                        //FinHierarchyID = category.FinHierarchyID,
+                        //FinExpenditureID = category.FinHierarchyID,
                         ParentCategoryID = mParentCategoryID,
                         DateEffective = element.DateEffective,
                         DateDiscontinued=element.DateDiscontinued,
@@ -518,12 +514,11 @@ namespace Fasetto.Word
                 category.DateDiscontinued = element.DateEffective.AddSeconds(-10);
                 category.IsUnderReview = true;
  
-                    var mPersistElement = new FinanceResultApiModel
+                    var mPersistElement = new ExpenditureResultApiModel
                     {
                     ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
                     Description = (element.Description.EditedText ?? element.Description.OriginalText),
                     FIconID = category.FIconID,
-                    Frequency = category.Frequency,
                     FHierarchyID = category.FHierarchyID,
                     ParentCategoryID = mParentCategoryID,
                     DateEffective = element.DateEffective,
@@ -537,7 +532,7 @@ namespace Fasetto.Word
                     //terminate the previous position of the element, and link to the change control
 
                 }
-                RefreshHierarchy();
+                RefreshExpenditure();
                 PerformKIdSearch();
 
             return;
@@ -562,13 +557,13 @@ namespace Fasetto.Word
         /// </summary>
         /// <param name="mCategoryKId"></param>
         /// <param name="mParentKId"></param>
-        public void CopyElement(HierarchyElementViewModel element)
+        public void CopyElement(ExpenditureElementViewModel element)
         {
             try
             {
                 //mSearchText = mCategoryKId;
                 mParentCategoryID = element.ParentCategoryID;
-                mPersistTmp = new FinanceResultListApiModel();
+                mPersistTmp = new ExpenditureResultListApiModel();
                 mElement = element;
                 //mSearchText = element.KCategoryID;
 
@@ -583,12 +578,11 @@ namespace Fasetto.Word
 
                 {
                     //mSearchText = category.ShortName;
-                    var mPersistElement = new FinanceResultApiModel
+                    var mPersistElement = new ExpenditureResultApiModel
                     {
                         ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
                         Description = (element.Description.EditedText ?? element.Description.OriginalText),
                         FIconID = category.FIconID,
-                        Frequency = category.Frequency,
                         FHierarchyID = category.FHierarchyID,
                         ParentCategoryID = mParentCategoryID,
                         DateEffective = mElement.DateEffective,
@@ -606,7 +600,7 @@ namespace Fasetto.Word
                 }
 
                 mPersist.AddRange(mPersistTmp);
-                RefreshHierarchy();
+                RefreshExpenditure();
                 PerformKIdSearch();
             }
             catch (Exception)
@@ -626,7 +620,7 @@ namespace Fasetto.Word
             try
             {
 
-                //var sourceElement = from HierarchyDataModel in this
+                //var sourceElement = from ExpenditureDataModel in this
                 //                    where KCategoryID
                 var matches = from category in mPersist
                               where category.ParentCategoryID == mCategoryKId && category.DateDiscontinued == new DateTime(9999,12,31) && category.DateEffective <= (DateTime.Today)
@@ -635,10 +629,9 @@ namespace Fasetto.Word
 
 
                 {
-                    var mPersistElement = new FinanceResultApiModel
+                    var mPersistElement = new ExpenditureResultApiModel
                     {
                         FIconID = category.FIconID,
-                        Frequency = category.Frequency,
                         FHierarchyID = category.FHierarchyID,
                         ParentCategoryID = mParentKId,
                         KCategoryID = Guid.NewGuid().ToString().ToUpper(),
@@ -671,12 +664,12 @@ namespace Fasetto.Word
         /// </summary>
         /// <param name="mCategoryKId"></param>
         /// <param name="mParentKId"></param>
-        public void DeleteElement(HierarchyElementViewModel element)
+        public void DeleteElement(ExpenditureElementViewModel element)
         {
             try
             {
                 //mSearchText = mCategoryKId;
-                var mElement = element as HierarchyElementViewModel;
+                var mElement = element as ExpenditureElementViewModel;
 
 
                 //              select category;
@@ -703,7 +696,7 @@ namespace Fasetto.Word
                     {
                         //If changes have not yet been persisted on database, remove the relevant nodes from the front end
                         //var catNode = mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective == element.DateEffective);
-                        mPersistTmp = new FinanceResultListApiModel();
+                        mPersistTmp = new ExpenditureResultListApiModel();
                         foreach (var catno in mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective == element.DateEffective))
                             mPersistTmp.Add(catno);
                         mPersist.Remove(mPersistTmp, mPersist);
@@ -731,7 +724,7 @@ namespace Fasetto.Word
                 //}
 
 
-                RefreshHierarchy();
+                RefreshExpenditure();
                 PerformKIdSearch();
             }
             catch (Exception)
@@ -746,14 +739,14 @@ namespace Fasetto.Word
         /// </summary>
         /// <param name="mCategoryKId"></param>
         /// <param name="mParentKId"></param>
-        public void DeleteElement1(string mCategoryKId, HierarchyElementViewModel element)
+        public void DeleteElement1(string mCategoryKId, ExpenditureElementViewModel element)
         {
-            var mElement = element as HierarchyElementViewModel;
+            var mElement = element as ExpenditureElementViewModel;
             var catprev = (mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective == element.DateEffective).OrderByDescending(x => x.DateEffective).ToList()).FirstOrDefault();
             try
             {
 
-                //var sourceElement = from HierarchyDataModel in this
+                //var sourceElement = from ExpenditureDataModel in this
                 //                    where KCategoryID
 
                 var matches = from category in mPersist
@@ -778,7 +771,7 @@ namespace Fasetto.Word
                         {
                         //If changes have not yet been persisted on database, remove the relevant nodes from the front end
                              //var catNode = mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective == element.DateEffective);
-                            mPersistTmp = new FinanceResultListApiModel();
+                            mPersistTmp = new ExpenditureResultListApiModel();
                             foreach(var catno in mPersist.Where(x => x.KCategoryID == category.KCategoryID && x.DateEffective == category.DateEffective))
                             mPersistTmp.Add(catno);
                             mPersist.Remove(mPersistTmp, mPersist);
@@ -809,16 +802,16 @@ namespace Fasetto.Word
         }
 
         /// <summary>
-        /// Add a new element to the Hierarchy Tree
+        /// Add a new element to the Expenditure Tree
         /// The calling programme is to generate a GUID for the new element
         /// </summary>
         /// <param name="mNewElement"></param>
-        public void AddElement(HierarchyElementViewModel element)
+        public void AddElement(ExpenditureElementViewModel element)
         {
             mSearchText = element.KCategoryID;
-            //Gemerate GUID for root of new hierarchy element
+            //Gemerate GUID for root of new Expenditure element
             var mRoot = element.Root.EditedText == element.Root.OriginalText ? Guid.NewGuid().ToString().ToUpper() : element.Root.EditedText;
-            var mPersistElement = new FinanceResultApiModel
+            var mPersistElement = new ExpenditureResultApiModel
             {
                 ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
                 Description = (element.Description.EditedText ?? element.Description.OriginalText),
@@ -829,18 +822,16 @@ namespace Fasetto.Word
                 KChangeID = element.KChangeID,
                 IsUnderReview = true,
                 IsNewElement= true,
-                Page = element.Page,
-                FHierarchyID = mTableName,
+                //FExpenditureID = mTableName,
                 //Create new root element if not already existing
-                Root = mRoot
             };
             mPersist.Add(mPersistElement);
 
 
-            RefreshHierarchy();
+            RefreshExpenditure();
             PerformKIdSearch();
-            //TO DO: Add code to create root element of hierarchy when creating a new hierarchy type menu item
-            //if page == 'Hierarchy', create new element guid(), use hierarchy name +description, parent = 00000000
+            //TO DO: Add code to create root element of Expenditure when creating a new Expenditure type menu item
+            //if page == 'Expenditure', create new element guid(), use Expenditure name +description, parent = 00000000
 
         }
 
@@ -849,25 +840,23 @@ namespace Fasetto.Word
 
         /// </summary>
         /// <param name="element"></param>
-        public void EditElement(HierarchyElementViewModel element)
+        public void EditElement(ExpenditureElementViewModel element)
         {
             mSearchText = element.KCategoryID;
 
             var matches = from category in mPersist
                           where category.KCategoryID == element.KCategoryID && category.DateDiscontinued == new DateTime(9999,12,31)// && (category.DateEffective <= element.DateDiscontinued)
                           select category;
-             foreach(var category in matches)
+            foreach (var category in matches)
                 //if this is a newly added element, just update the instance
                 if (category.ShortName != (element.ShortName.EditedText ?? element.ShortName.OriginalText) || category.Description != (element.Description.EditedText ?? element.Description.OriginalText)
-                        || category.DateEffective != element.DateEffective||category.Page != element.Page|| category.Root != (element.Root.EditedText ?? element.Description.OriginalText))
+                        || category.DateEffective != element.DateEffective)
                 { 
                     if (category.DateEffective == element.DateEffective)
                     category.KChangeID = element.KChangeID;
                     category.IsUnderReview = true;
                     category.ShortName = element.ShortName.EditedText ?? element.ShortName.OriginalText;
                     category.Description = element.Description.EditedText ?? element.Description.OriginalText;
-                    category.Page = element.Page;
-                    category.Root = element.Root.EditedText ?? element.Root.OriginalText;
                     mSearchText = category.KCategoryID;
 
                 }
@@ -877,15 +866,13 @@ namespace Fasetto.Word
                     category.KChangeID = element.KChangeID;
                     category.IsUnderReview = true;
 
-                    var mPersistElement = new FinanceResultApiModel
+                    var mPersistElement = new ExpenditureResultApiModel
                     {
                         ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
                         Description = (element.Description.EditedText ?? element.Description.OriginalText),
                         ParentCategoryID = element.ParentCategoryID,
                         DateDiscontinued = element.DateDiscontinued,
                         DateEffective = element.DateEffective,
-                        Page = element.Page,
-                        Root = (element.Root.EditedText ?? element.Root.OriginalText),
                     //Unique ID for change element
                         KCategoryID = element.KCategoryID,
                         IsUnderReview = true,
@@ -898,7 +885,7 @@ namespace Fasetto.Word
                    mSearchText = mPersistElement.KCategoryID;
                 }
  
-                    RefreshHierarchy();
+                    RefreshExpenditure();
                     PerformKIdSearch();
                     return;
 
@@ -918,18 +905,18 @@ namespace Fasetto.Word
         }
 
         /// <summary>
-        /// Persist all items changed or added on hierarchy to back end database. Depending on stage
+        /// Persist all items changed or added on Expenditure to back end database. Depending on stage
         /// of change control, changes may be forwarded for recommendation or finally approved and implemented
         /// on back end
         /// </summary>
-        public async Task PersistHierarchyChangesAsync()
+        public async Task PersistExpenditureChangesAsync()
         {
-            await PersistHierarchyAsync();
+            await PersistExpenditureAsync();
             Close();
         }
-        public async Task PersistHierarchyAsync()
+        public async Task PersistExpenditureAsync()
         {
-            await RunCommandAsync(() => HierarchyBuildIsRunning, async () =>
+            await RunCommandAsync(() => ExpenditureBuildIsRunning, async () =>
             {
 
                 // Store single transcient instance of client data store
@@ -943,14 +930,14 @@ namespace Fasetto.Word
                 if (string.IsNullOrEmpty(token))
                     // Then do nothing more
                     return;
-                var result = await WebRequests.PostAsync<ApiResponse<HierarchyResultListApiModel>>(
+                var result = await WebRequests.PostAsync<ApiResponse<ExpenditureResultListApiModel>>(
                 // Set URL
-                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.PersistHierarchy),
+                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.PersistExpenditure),
                     mPersist,
                     bearerToken: token);
 
                 // If the response has an error...
-                if (await result.HandleErrorIfFailedAsync("Hierarchy retrieval Failed"))
+                if (await result.HandleErrorIfFailedAsync("Expenditure retrieval Failed"))
                     // We are done
                     return;
 

@@ -26,7 +26,23 @@ namespace Fasetto.Word
         #region Public Properties
 
 
+        /// <summary>
+        /// Date transaction was posted
+        /// </summary>
+        public DateTime PostedDate => mElement.PostedDate;
+        /// <summary>
+        ///Total Expenditure against the transaction
+        /// </summary>
+        public decimal ActualAmount => mElement.ActualAmount;
+        /// <summary>
+        ///Allocated Expenditure of this  transaction against budget item
+        /// </summary>
+        public decimal TransactionAmount=> mElement.TransactionAmount;
 
+        /// <summary>
+        ///Budget amount allocated against budget item
+        /// </summary>
+        public decimal BudgetedAmount => mElement.BudgetedAmount;
         /// <summary>
         /// The name of this hierarchy item
         /// </summary>
@@ -36,9 +52,21 @@ namespace Fasetto.Word
         /// Description of hiearchy item
         /// </summary>
         public string Description =>mElement.Description;
+
+        /// <summary>
+        //string representation of card where the expense category is determined by the linked card
+        /// </summary>
+        /// 
+        public string Card => mElement.Card;
+
+        /// <summary>
+        ///Month of transaction
+        /// </summary>
+        public int Month => mElement.Month;
         /// <summary>
         /// The Identifier of this hierarchy item
         /// </summary>
+        /// 
         public string KCategoryID => mElement.KCategoryID;
 
         /// <summary>
@@ -50,10 +78,6 @@ namespace Fasetto.Word
         /// </summary>
         public string ParentCategoryID =>mElement.ParentCategoryID;
 
-        /// <summary>
-        /// Parent ShortName of hiearchy item
-        /// </summary>
-        public string ParentShortName => mElement.ParentShortName;
 
         /// <summary>
         /// Calendar date from which Element is seen as active
@@ -70,20 +94,6 @@ namespace Fasetto.Word
         /// </summary>
         public string KChangeID   => mElement.KChangeID;
 
-        /// <summary>
-        /// If a menu item, link tree item to menu Page
-        /// </summary>
-        public string Page => mElement.Page;
-
-        /// <summary>
-        /// If a menu item, link tree item to menu Page
-        /// </summary>
-        public string Root => mElement.Root;
-
-        /// <summary>
-        /// Property to indicate whether this element is a Menu Item or not..
-        /// </summary>
-        public bool IsMenuItem => mElement.IsMenuItem;
 
         /// <summary>
         /// Property to indicate whether element is being evaluated by a change request

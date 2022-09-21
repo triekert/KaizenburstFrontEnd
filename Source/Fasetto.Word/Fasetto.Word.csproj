@@ -114,8 +114,8 @@
       <DependentUpon>ChatMessageListItemControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Finance\Class1.cs" />
-    <Compile Include="Controls\Finance\FinanceMenuControl.xaml.cs">
-      <DependentUpon>FinanceMenuControl.xaml</DependentUpon>
+    <Compile Include="Controls\Finance\ExpenditureControl.xaml.cs">
+      <DependentUpon>ExpenditureControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Finance\HierarchyControl.xaml.cs" />
     <Compile Include="Controls\Finance\HierarchyElementControl.cs">
@@ -158,6 +158,9 @@
       <DependentUpon>DialogWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="MarkupExtension\EnumBindingSourceExtension.cs" />
+    <Compile Include="Pages\ActualsPage.xaml.cs">
+      <DependentUpon>ActualsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\HierarchyPage.xaml.cs">
       <DependentUpon>HierarchyPage.xaml</DependentUpon>
     </Compile>
@@ -202,6 +205,7 @@
     <Compile Include="ValueConverters\HorizontalAlignmentConverter.cs" />
     <Compile Include="ValueConverters\TimeToReadTimeConverter.cs" />
     <Compile Include="ViewModel\Finance\Expenditure\ExpenditureElementViewModel.cs" />
+    <Compile Include="ViewModel\ActualsPageViewModel.cs" />
     <Compile Include="ViewModel\Hierarchy\HierarchyElementViewModel.cs" />
     <Compile Include="ViewModel\Finance\Expenditure\ExpenditureTreeViewModel.cs" />
     <Compile Include="ViewModel\Finance\Expenditure\FinanceTreeViewModel.cs" />
@@ -269,7 +273,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Finance\FinanceMenuControl.xaml">
+    <Page Include="Controls\Finance\ExpenditureControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -322,6 +326,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="DialogWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\ActualsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

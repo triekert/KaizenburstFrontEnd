@@ -8,9 +8,9 @@ using Fasetto.Word.Core;
 namespace Fasetto.Word
 {
     /// <summary>
-    /// A view model for a chat message thread list
+    /// A view model for monitoring actual transactions
     /// </summary>
-    public class FinancePageViewModel : BaseViewModel
+    public class ActualsPageViewModel : BaseViewModel
     {
         #region Protected Members
 
@@ -35,7 +35,7 @@ namespace Fasetto.Word
         /// </summary>
         protected bool mSearchIsOpen;
 
-        public FinanceTreeViewModel mViewModel;
+        public ExpenditureTreeViewModel mViewModel;
         #endregion
 
         #region Public Properties
@@ -68,7 +68,7 @@ namespace Fasetto.Word
         //public ObservableCollection<ChatMessageListItemViewModel> FilteredItems { get; set; }
 
         /// <summary>
-        /// The title of this application page
+        /// The title of this chat list
         /// </summary>
         public string DisplayTitle { get; set; }
 
@@ -182,12 +182,12 @@ namespace Fasetto.Word
         /// <summary>
         /// Default constructor
         /// </summary>
-        public FinancePageViewModel()
+        public ActualsPageViewModel()
         {
             //Populate screen title
             //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
             //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
-            DisplayTitle = "Finance Management";
+            DisplayTitle = "Transaction Management";
             // Create commands
             AttachmentButtonCommand = new RelayCommand(AttachmentButton);
             PopupClickawayCommand = new RelayCommand(PopupClickaway);
@@ -228,36 +228,36 @@ namespace Fasetto.Word
         /// </summary>
         public void Send()
         {
-            mViewModel = (FinanceTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            mViewModel = (ExpenditureTreeViewModel)ViewModelApplication.CurrentControlViewModel;
             var results = mViewModel.mPersist.Where(x => x.IsUnderReview || x.IsDeleteElement).ToList();
             var mPersistElement = new HierarchyResultApiModel();
             //var results = mViewModel.mPersist.OrderBy(x => x.ShortName).ToList();
-            if (results.Count > 0)
-                //mViewModel.mPersistTmp = (HierarchyResultApiModel)results;
-                //ToDo:Where a new hierarchy is referred to in the a new menu item, Create the root element for this new hierarchy
+            //if (results.Count > 0)
+            //    //mViewModel.mPersistTmp = (HierarchyResultApiModel)results;
+            //    //ToDo:Where a new hierarchy is referred to in the a new menu item, Create the root element for this new hierarchy
 
-                results = mViewModel.mPersist.Where(x => (x.IsNewElement) & x.Page == "Finance").ToList();
-            if (results.Count > 0)
-            {
-                //mViewModel.mPersist.AddRange(results);
-                foreach (var row in results)
+            //    results = mViewModel.mPersist.Where(x => (x.IsNewElement) & x.Page == "Actuals").ToList();
+            //    if (results.Count > 0)
+            //    { 
+            //    //mViewModel.mPersist.AddRange(results);
+            //        foreach (var row in results)
 
-                {
-                    mPersistElement.DateDiscontinued = row.DateDiscontinued;
-                    mPersistElement.DateEffective = row.DateEffective;
-                    mPersistElement.ShortName = row.ShortName;
-                    mPersistElement.Description = row.Description;
-                    mPersistElement.KCategoryID = row.Root;
-                    mPersistElement.Page = row.Page;
-                    mPersistElement.IsNewElement = row.IsNewElement;
-                    mPersistElement.IsUnderReview = row.IsUnderReview;
-                    mPersistElement.ParentCategoryID = "00000000-0000-0000-0000-000000000000";
-                    mPersistElement.FHierarchyID = row.Root;
-                }
-                mViewModel.mPersist.Add(mPersistElement);
+            //            {
+            //            mPersistElement.DateDiscontinued = row.DateDiscontinued;
+            //            mPersistElement.DateEffective = row.DateEffective;
+            //            mPersistElement.ShortName = row.ShortName;
+            //            mPersistElement.Description = row.Description;
+            //            mPersistElement.KCategoryID = row.Root;
+            //            mPersistElement.Page = row.Page;
+            //            mPersistElement.IsNewElement = row.IsNewElement;
+            //            mPersistElement.IsUnderReview = row.IsUnderReview;
+            //            mPersistElement.ParentCategoryID = "00000000-0000-0000-0000-000000000000";
+            //            mPersistElement.FHierarchyID = row.Root;
+            //            }
+            //            mViewModel.mPersist.Add(mPersistElement);
 
-            }
-            _ = mViewModel.PersistHierarchyChangesAsync();
+            //    }
+            //    _ = mViewModel.PersistHierarchyChangesAsync();
         }
 
         /// <summary>
@@ -287,7 +287,7 @@ namespace Fasetto.Word
             //    Items.Where(item => item.Message.ToLower().Contains(SearchText)));
 
             // Set last search text
-            mViewModel = (FinanceTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            mViewModel = (ExpenditureTreeViewModel)ViewModelApplication.CurrentControlViewModel;
             mViewModel.SearchText = SearchText;
             mViewModel.PerformSearch();
             //mViewModel.RefreshHierarchy();           

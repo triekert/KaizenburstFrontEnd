@@ -9,14 +9,14 @@ namespace Fasetto.Word.Core
     /// <summary>
     /// Return of hierarchy items from database for a selected hierarchy
     /// </summary>
-    public class FinanceResultListApiModel : List<FinanceResultApiModel>
+    public class ExpenditureResultListApiModel : List<ExpenditureResultApiModel>
     {
-        public void Remove(FinanceResultListApiModel source, FinanceResultListApiModel target)
+        public void Remove(ExpenditureResultListApiModel source, ExpenditureResultListApiModel target)
         {
             foreach (var item in source)
                 target.Remove(item);
         }
-        public void Clone(FinanceResultListApiModel source, FinanceResultListApiModel target)
+        public void Clone(ExpenditureResultListApiModel source, ExpenditureResultListApiModel target)
         {
             foreach(var item in source)
                 target.Add(item);

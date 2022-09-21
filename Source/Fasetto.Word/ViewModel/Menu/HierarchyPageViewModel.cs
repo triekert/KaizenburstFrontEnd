@@ -8,7 +8,7 @@ using Fasetto.Word.Core;
 namespace Fasetto.Word
 {
     /// <summary>
-    /// A view model for a chat message thread list
+    /// A view model for managing hierarchies 
     /// </summary>
     public class HierarchyPageViewModel : BaseViewModel
     {

@@ -31,7 +31,7 @@
         Hierarchy = 4,
 
         /// <summary>
-        /// The Finance Menu page
+        /// Re-allocation/adjustment of transactions
         /// </summary>
         Actuals = 5,
 

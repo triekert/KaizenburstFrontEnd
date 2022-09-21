@@ -581,7 +581,7 @@ namespace Fasetto.Word.Web.Server
 
         #region Finance
 
-        #region Hiearachy
+        #region Hierarchy
 
         /// <summary>
         /// Returns Hierarchy for Navigation

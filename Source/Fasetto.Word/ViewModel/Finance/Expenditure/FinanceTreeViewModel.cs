@@ -41,7 +41,7 @@ namespace Fasetto.Word
         protected FinanceViewModel mRootHierarchyElement1;
         private readonly ICommand mSearchCommand;
         public HierarchyListDataModel mHDML;
-        public FinanceResultListApiModel mPersist, mPersistTmp,mOriginal;
+        public HierarchyResultListApiModel mPersist, mPersistTmp,mOriginal;
         public HierarchyDataModel mHDM;
         public string mTableName;
         public HierarchyElementViewModel mElement;
@@ -215,7 +215,7 @@ namespace Fasetto.Word
                 if (string.IsNullOrEmpty(token))
                     // Then do nothing more
                     return;
-                var result = await WebRequests.PostAsync<ApiResponse<FinanceResultListApiModel>>(
+                var result = await WebRequests.PostAsync<ApiResponse<HierarchyResultListApiModel>>(
                 // Set URL
                     RouteHelpers.GetAbsoluteRoute(ApiRoutes.ReturnHierarchy),
                     mTableName,
@@ -235,7 +235,7 @@ namespace Fasetto.Word
                 {
                     //var hierarchyResultApiModels = mOriginal.ToList();
                     //make a clone of the persisted data for manipulation on front end
-                    mPersist = new FinanceResultListApiModel();
+                    mPersist = new HierarchyResultListApiModel();
                     mPersist.Clone(mOriginal, mPersist);
                 }
                  catch (Exception e)
@@ -286,7 +286,7 @@ namespace Fasetto.Word
         /// <param name="KCategoryID"></param>
         /// the ID of the parent for finding descendants is passsed through as a string
         /// <returns></returns>
-        private HierarchyListDataModel ExpandHierarchyData(FinanceResultListApiModel results, string KCategoryID, string mParentShortName)
+        private HierarchyListDataModel ExpandHierarchyData(HierarchyResultListApiModel results, string KCategoryID, string mParentShortName)
         {
             mPersist = results;
             // Find all children
@@ -462,7 +462,7 @@ namespace Fasetto.Word
         {
             mSearchText = element.KCategoryID;
             mParentCategoryID = element.ParentCategoryID;
-            mPersistTmp = new FinanceResultListApiModel();
+            mPersistTmp = new HierarchyResultListApiModel();
             //var sourceElement = from HierarchyDataModel in this
             //                    where KCategoryID
             var matches = mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective <= element.DateDiscontinued).OrderByDescending(x => x.DateEffective).ToList();
@@ -490,7 +490,7 @@ namespace Fasetto.Word
                     }
                     else
                     { 
-                    var mPersistElement = new FinanceResultApiModel
+                    var mPersistElement = new HierarchyResultApiModel
                         {
                         ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
                         Description = (element.Description.EditedText ?? element.Description.OriginalText),
@@ -518,12 +518,11 @@ namespace Fasetto.Word
                 category.DateDiscontinued = element.DateEffective.AddSeconds(-10);
                 category.IsUnderReview = true;
  
-                    var mPersistElement = new FinanceResultApiModel
+                    var mPersistElement = new HierarchyResultApiModel
                     {
                     ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
                     Description = (element.Description.EditedText ?? element.Description.OriginalText),
                     FIconID = category.FIconID,
-                    Frequency = category.Frequency,
                     FHierarchyID = category.FHierarchyID,
                     ParentCategoryID = mParentCategoryID,
                     DateEffective = element.DateEffective,
@@ -568,7 +567,7 @@ namespace Fasetto.Word
             {
                 //mSearchText = mCategoryKId;
                 mParentCategoryID = element.ParentCategoryID;
-                mPersistTmp = new FinanceResultListApiModel();
+                mPersistTmp = new HierarchyResultListApiModel();
                 mElement = element;
                 //mSearchText = element.KCategoryID;
 
@@ -583,12 +582,11 @@ namespace Fasetto.Word
 
                 {
                     //mSearchText = category.ShortName;
-                    var mPersistElement = new FinanceResultApiModel
+                    var mPersistElement = new HierarchyResultApiModel
                     {
                         ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
                         Description = (element.Description.EditedText ?? element.Description.OriginalText),
                         FIconID = category.FIconID,
-                        Frequency = category.Frequency,
                         FHierarchyID = category.FHierarchyID,
                         ParentCategoryID = mParentCategoryID,
                         DateEffective = mElement.DateEffective,
@@ -635,10 +633,9 @@ namespace Fasetto.Word
 
 
                 {
-                    var mPersistElement = new FinanceResultApiModel
+                    var mPersistElement = new HierarchyResultApiModel
                     {
                         FIconID = category.FIconID,
-                        Frequency = category.Frequency,
                         FHierarchyID = category.FHierarchyID,
                         ParentCategoryID = mParentKId,
                         KCategoryID = Guid.NewGuid().ToString().ToUpper(),
@@ -703,7 +700,7 @@ namespace Fasetto.Word
                     {
                         //If changes have not yet been persisted on database, remove the relevant nodes from the front end
                         //var catNode = mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective == element.DateEffective);
-                        mPersistTmp = new FinanceResultListApiModel();
+                        mPersistTmp = new HierarchyResultListApiModel();
                         foreach (var catno in mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective == element.DateEffective))
                             mPersistTmp.Add(catno);
                         mPersist.Remove(mPersistTmp, mPersist);
@@ -778,7 +775,7 @@ namespace Fasetto.Word
                         {
                         //If changes have not yet been persisted on database, remove the relevant nodes from the front end
                              //var catNode = mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective == element.DateEffective);
-                            mPersistTmp = new FinanceResultListApiModel();
+                            mPersistTmp = new HierarchyResultListApiModel();
                             foreach(var catno in mPersist.Where(x => x.KCategoryID == category.KCategoryID && x.DateEffective == category.DateEffective))
                             mPersistTmp.Add(catno);
                             mPersist.Remove(mPersistTmp, mPersist);
@@ -818,7 +815,7 @@ namespace Fasetto.Word
             mSearchText = element.KCategoryID;
             //Gemerate GUID for root of new hierarchy element
             var mRoot = element.Root.EditedText == element.Root.OriginalText ? Guid.NewGuid().ToString().ToUpper() : element.Root.EditedText;
-            var mPersistElement = new FinanceResultApiModel
+            var mPersistElement = new HierarchyResultApiModel
             {
                 ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
                 Description = (element.Description.EditedText ?? element.Description.OriginalText),
@@ -877,7 +874,7 @@ namespace Fasetto.Word
                     category.KChangeID = element.KChangeID;
                     category.IsUnderReview = true;
 
-                    var mPersistElement = new FinanceResultApiModel
+                    var mPersistElement = new HierarchyResultApiModel
                     {
                         ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
                         Description = (element.Description.EditedText ?? element.Description.OriginalText),

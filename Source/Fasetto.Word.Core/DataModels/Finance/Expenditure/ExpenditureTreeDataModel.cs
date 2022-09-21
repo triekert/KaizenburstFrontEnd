@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Fasetto.Word.Core
 {
@@ -8,17 +9,33 @@ namespace Fasetto.Word.Core
     public class ExpenditureTreeDataModel
     {
         /// <summary>
-        /// string representation of UniqueIdentifier for a Hiearchy element
+        /// Date transaction was posted
         /// </summary>
-        public string FHierarchyID { get; set; }
+        public DateTime PostedDate { get; set; }
 
         /// <summary>
-        ///name of Category element
+        ///Total Expenditure against the transaction
         /// </summary>
+        public decimal ActualAmount { get; set; }
+
+        /// <summary>
+        ///Allocated Expenditure of this  transaction against budget item
+        /// </summary>
+        public decimal TransactionAmount { get; set; }
+
+        /// <summary>
+        ///Budget amount allocated against budget item
+        /// </summary>
+        public decimal BudgetedlAmount { get; set; }
+
+        /// <summary>
+        ///Budget category
+        /// </summary>
+        /// 
         public string ShortName { get; set; }
 
         /// <summary>
-        ///description of Category element
+        ///description linked to transaction
         /// </summary>
         /// 
         public string Description { get; set; }
@@ -30,9 +47,9 @@ namespace Fasetto.Word.Core
         public string Card { get; set; }
 
         /// <summary>
-        //integer indicating the number of months between expected occurrences of expense category
+        ///Month of transaction
         /// </summary>
-        public int Frequency { get; set; }
+        public int Month { get; set; }
 
         /// <summary>
         //string representation of GUID for a Category element
@@ -40,15 +57,66 @@ namespace Fasetto.Word.Core
         public string KCategoryID { get; set; }
 
         /// <summary>
-        //sstring representation of GUID for the Parent category of a Category element
+        //string representation of GUID for the Parent category of a Category element
         //the parent of all root elements will be NULL... any hierarchy will have at least one root element
         /// </summary>
-        public string ParentCategoryId { get; set; }
+        public string ParentCategoryID { get; set; }
+
+        /// <summary>
+        //string representation of GUID for a specific Cost Structures
+        /// </summary>
+        public string FHierarchyID { get; set; }
+
+        /// <summary>
+        //string representation of GUID for a transaction
+        /// </summary>
+        public string KFinTranID { get; set; }
+
+        /// <summary>
+        //string representation of GUID for a transaction allocation
+        /// </summary>
+        public string KFinActualID { get; set; }
 
         /// <summary>
         //the link to tthe ICON used to depict this category
         /// </summary>
-        public string FIconId { get; set; }
+        public string FIconID { get; set; }
+
+        /// <summary>
+        /// Calendar date from which Element is seen as active
+        /// </summary>
+        public DateTime DateEffective { get; set; }
+
+        /// <summary>
+        /// Calendar date from which Element is deactivated
+        /// </summary>
+        public DateTime DateDiscontinued { get; set; }
+
+        /// <summary>
+        /// Attach the current activity to a Change object
+        /// </summary>
+        public string KChangeID { get; set; }
+
+
+        /// <summary>
+        /// Property to indicate whether element is being evaluated by a change request
+        /// and whether it should be excluded from current operations
+        /// </summary>
+        public bool IsUnderReview { get; set; }
+
+        /// <summary>
+        /// Property to indicate whether this element has been newly added change request
+        /// and whether it should be excluded from current operations
+        /// </summary>
+        public bool IsNewElement { get; set; }
+
+
+        /// <summary>
+        /// Property to indicate whether this element is to be removed from the persistence layer
+        /// </summary>
+        public bool IsDeleteElement { get; set; }
+
+
 
         /// <summary>
         //sub categories that are also categories in themself

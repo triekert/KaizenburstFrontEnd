@@ -10,17 +10,33 @@ namespace Fasetto.Word.Core
     public class ExpenditureDataModel
     {
         /// <summary>
-        /// string representation of UniqueIdentifier for a Category hierarchy
+        /// Date transaction was posted
         /// </summary>
-        public string FHierarchyID { get; set; }
+        public DateTime PostedDate { get; set; }
 
         /// <summary>
-        ///name of Category element
+        ///Total Expenditure against the transaction
         /// </summary>
+        public decimal ActualAmount { get; set; }
+
+        /// <summary>
+        ///Allocated Expenditure of this  transaction against budget item
+        /// </summary>
+        public decimal TransactionAmount{ get; set; }
+
+        /// <summary>
+        ///Budget amount allocated against budget item
+        /// </summary>
+        public decimal BudgetedAmount { get; set; }
+
+        /// <summary>
+        ///Budget category
+        /// </summary>
+        /// 
         public string ShortName { get; set; }
 
         /// <summary>
-        ///description of Category element
+        ///description linked to transaction
         /// </summary>
         /// 
         public string Description { get; set; }
@@ -32,9 +48,9 @@ namespace Fasetto.Word.Core
         public string Card { get; set; }
 
         /// <summary>
-        //integer indicating the number of months between expected occurrences of expense category
+        ///Month of transaction
         /// </summary>
-        public int Frequency { get; set; }
+        public int  Month { get; set; }
 
         /// <summary>
         //string representation of GUID for a Category element
@@ -48,14 +64,19 @@ namespace Fasetto.Word.Core
         public string ParentCategoryID { get; set; }
 
         /// <summary>
-        //string representation of GUID for a specific Client
+        //string representation of GUID for a specific Cost Structures
         /// </summary>
-        public string FClientID { get; set; }
+        public string FHierarchyID { get; set; }
 
         /// <summary>
-        /// Parent ShortName of hiearchy item
+        //string representation of GUID for a transaction
         /// </summary>
-        public string ParentShortName { get; set; }
+        public string KFinTranID { get; set; }
+
+        /// <summary>
+        //string representation of GUID for a transaction allocation
+        /// </summary>
+        public string KFinActualID { get; set; }
 
         /// <summary>
         //the link to tthe ICON used to depict this category
@@ -77,23 +98,6 @@ namespace Fasetto.Word.Core
         /// </summary>
         public string KChangeID { get; set; }
 
-
-        /// <summary>
-        /// If a menu item, link tree item to menu Page
-        /// </summary>
-        public string Page { get; set; }
-
-
-        /// <summary>
-        /// If a menu item, link tree item to menu Page
-        /// </summary>
-        public string Root { get; set; }
-
-
-        /// <summary>
-        /// Property to indicate whether this element is a Menu Item or not..
-        /// </summary>
-        public bool IsMenuItem { get; set; }
 
         /// <summary>
         /// Property to indicate whether element is being evaluated by a change request
