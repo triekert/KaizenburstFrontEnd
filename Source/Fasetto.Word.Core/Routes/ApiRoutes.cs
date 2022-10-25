@@ -81,5 +81,17 @@
         /// </summary>
         public const string PersistExpenditure = "api/finance/expenditure";
         #endregion
+
+
+        #region Services
+        /// <summary>
+        /// The route to the Loading of Water Meter Reading Api method
+        /// </summary>
+        /// 
+        public const string LoadReadings = "api/Services/LoadReadings";
+        //public const string LoadReadings = "api.netqedge.com/v1?From=2022-10-19T18%3A13%3A31.001&To=2022-10-19T20%3A13%3A31.000";
+
+
+        #endregion
     }
 }

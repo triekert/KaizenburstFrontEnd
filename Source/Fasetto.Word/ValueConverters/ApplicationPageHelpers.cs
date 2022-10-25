@@ -37,6 +37,9 @@ namespace Fasetto.Word
                 case ApplicationPage.Actuals:
                     return new HierarchyPage(viewModel as HierarchyPageViewModel);
 
+                case ApplicationPage.LoadMeters:
+                    return new LoadReadingsPage(viewModel as LoadReadingsPageViewModel);
+
                 default:
                     Debugger.Break();
                     return null;
@@ -65,6 +68,9 @@ namespace Fasetto.Word
 
             if (page is HierarchyPage)
                 return ApplicationPage.Hierarchy;
+
+            if (page is LoadReadingsPage)
+                return ApplicationPage.LoadMeters;
 
             // Alert developer of issue
             Debugger.Break();

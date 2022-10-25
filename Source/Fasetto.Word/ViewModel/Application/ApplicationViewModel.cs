@@ -161,6 +161,12 @@ namespace Fasetto.Word
         /// The command to change the side menu to Menu
         /// </summary>
         public ICommand OpenActualsCommand { get; set; }
+
+
+        /// <summary>
+        /// The command to change the side menu to Menu
+        /// </summary>
+        public ICommand OpenLoadMetersCommand { get; set; }
         #endregion
 
         #region Constructor
@@ -177,6 +183,7 @@ namespace Fasetto.Word
             OpenFinanceCommand = new RelayCommand(OpenFinance);
             OpenMenuCommand = new RelayCommand(OpenMenu);
             OpenMenuCommand = new RelayCommand(OpenActuals);
+            OpenLoadMetersCommand = new RelayCommand(OpenLoadMeters);
         }
 
         #endregion
@@ -270,6 +277,17 @@ namespace Fasetto.Word
             //ViewModelApplication.GoToPage(ApplicationPage.Hierarchy);
             SideMenuVisible = true;
         }
+        public void OpenLoadMeters()
+        {
+            // Set the current side menu to KaizenBurst Menu
+            ViewModelApplication.ControlParameter = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
+            //ViewModelApplication.GoToPage(ApplicationPage.Hierarchy);
+            //CurrentSideMenuContent = SideMenuContent.Menu;
+
+            //ViewModelApplication.GoToPage(ApplicationPage.Hierarchy);
+            SideMenuVisible = false;
+        }
+
 
         #endregion
 

@@ -10,6 +10,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -579,8 +581,187 @@ namespace Fasetto.Word.Web.Server
         #endregion
 
 
-        #region Finance
+        #region Services
 
+        /// <summary>
+        /// Retrieves meter readings from Client API and updates database
+        /// </summary>
+        /// <param name="model">The search credentials</param>
+        /// <returns>
+        ///     Returns a list of hiearchy items if successful, 
+        ///     otherwise returns the error reasons for the failure
+        /// </returns>
+
+        [Route(ApiRoutes.LoadReadings)]
+        public async Task<ApiResponse> ReturnMeterReadingsAsync([FromBody] string model)
+        {
+            //First build webrequest to query API client and retrieve <List> of <Reading.
+             #region sql query
+
+
+                var para = new SqlParameter[3];
+                para[0] = new SqlParameter("@ID", SqlDbType.VarChar);
+                para[1] = new SqlParameter("@Date", SqlDbType.DateTime);
+                para[2] = new SqlParameter("@Reading", SqlDbType.Decimal);
+            while (1 == 1){
+             var SqlString = "SELECT TOP 1 [Date],'?From='+ LEFT(CONVERT(nvarchar,[Date],20),10)+'%20'+SUBSTRING(CONVERT(nvarchar,[Date],20),12,2)" +
+                "+'%3A'+SUBSTRING(CONVERT(nvarchar,[Date],20),15,2)+'%3A'+SUBSTRING(CONVERT(nvarchar,[Date],20),18,2) + '&To='+LEFT(CONVERT(nvarchar,DATEADD(d,1,[Date]),20),10)" +
+                "+'%20'+SUBSTRING(CONVERT(nvarchar,DATEADD(d,1,[Date]),20),12,2)+'%3A'+SUBSTRING(CONVERT(nvarchar,DATEADD(d,1,[Date]),20),15,2)+'%3A'+" +
+                "SUBSTRING(CONVERT(nvarchar,DATEADD(d,1,[Date]),20),18,2) FROM [Services].[MeterReading] (NOLOCK)  ORDER BY Date DESC";              
+
+
+            try
+            {
+                // Try and run the task
+                var dataset = await GetDataSetAsync(SqlString);
+                var dt = dataset.Tables[0];
+                var paramP = dt.Rows[0];
+                var param = paramP[1].ToString();
+                    var param0 = (DateTime)paramP[0];
+
+                var date1 = param0.Add(new TimeSpan(0, 1, 0, 0));
+
+
+                param = "https://api.netqedge.com/v1" + param;
+                var serverResponse = default(HttpWebResponse);
+                serverResponse = await Get2Async(param);
+
+                var result1 = serverResponse.CreateWebRequestResult<WaterReading>();
+                  if (result1.RawServerResponse != null)
+                    {
+                // Deserialize raw response
+                //var myObject = JsonConvert.DeserializeObject<WaterReading>(result1.RawServerResponse);
+
+
+
+
+
+                    var ObjOrderList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<WaterReading>>(result1.RawServerResponse);
+
+                
+                    foreach (var site in ObjOrderList)
+                        foreach (var row in site.Readings)
+                        {
+                            para[0].Value = row.DeviceId;
+                            para[1].Value = Convert.ToDateTime(row.timestamp);
+                            para[2].Value = Convert.ToDecimal(row.Value);
+
+                            try
+                            {
+                                // Try and run the task
+                                SqlString = "UPDATE [Services].[MeterReading] SET MeterReading = @Reading FROM [Services].[MeterReading] mr (NOLOCK)LEFT OUTER JOIN [Services].[Meter] m (NOLOCK)ON mr.fMeterID = m.[kMeterId]" +
+                                  " AND m.[Reference]= @Id WHERE mr.Date = @Date AND NOT MeterReading = @Reading";
+                                _ = await ExecuteAsync(SqlString, para);
+                                SqlString = "INSERT INTO [Services].[MeterReading]([Date],[MeterReading],[fMeterID]) SELECT @Date,@Reading,m.[kMeterId]FROM [Services].[Meter] m (NOLOCK)LEFT OUTER JOIN [Services].[MeterReading]" +
+                                                   " mr (NOLOCK)ON mr.Date = @Date  AND mr.MeterReading = @Reading AND mr.fMeterID = m.[kMeterId]WHERE m.[Reference]= @Id AND mr.MeterReading IS NULL";
+                                _ = await ExecuteAsync(SqlString, para);
+                            }
+                            catch (Exception ex)
+                            {
+                                // Log error
+                                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                                // Throw it as normal
+                                throw;
+                            }
+
+                        }
+                }
+                else
+                {       return new ApiResponse();
+                        break; }
+
+                //ObjOrderList.ForEach(WaterReading reading => { });
+                
+                //Readings.ForEach(delegate (Reading reading )
+                //Readings.Foreach (delegate (Reading reading )
+                //return new ApiResponse();
+                //{
+
+                //    Response = result1
+                //};
+
+            }
+            catch (Exception ex)
+            {
+                // Log error
+                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                // Throw it as normal
+                throw;
+            }
+
+        }
+            return new ApiResponse();
+    }
+        #endregion
+
+        //     SqlString = "SELECT  c.[ShortName],coalesce(c.[Description],'') Description,coalesce(convert(nvarchar(50),c.[KCategoryID]),'') KCategoryID, coalesce(convert(nvarchar(50),c.[ParentCategoryID]),'') ParentCategoryID," +
+        //        "coalesce(convert(nvarchar(50),c.[fIconID]),'') Icon,coalesce(c.DateEffective,convert(datetime,'1753/1/1'))DateEffective,coalesce(c.DateDiscontinued,convert(datetime,'9999/12/31'))DateDiscontinued,coalesce(convert(nvarchar(50),c.[fChangeID]),'') fChangeID,c.[isUnderReview],c.[isNewElement]," +
+        //        "coalesce(c.[Page],'') Page, coalesce(c.[Root],'') Root,p.[isMenuItem] FROM [Admin].[HierarchyGeneric] c INNER JOIN  [Admin].[HierarchyGeneric] p on p.kCategoryID = c.fHierarchyID  WHERE c.fHierarchyID = " +
+        //        "'" + model + "'";
+        //    ;// " + model;
+        //    try
+        //    {
+        //        // Try and run the task
+        //        var dataset = await GetDataSetAsync(SqlString);
+        //        var dt = dataset.Tables[0];
+        //        var hierarchyResultListApiModel = new HierarchyResultListApiModel();
+        //        var results = hierarchyResultListApiModel;
+
+
+        //        foreach (DataRow row in dt.Rows)
+        //        {
+        //            var u = new HierarchyResultApiModel
+        //            {
+        //                ShortName = (string)(row[0]),
+        //                Description = (string)row[1],
+        //                KCategoryID = (string)row[2],
+        //                ParentCategoryID = (string)row[3],
+        //                FHierarchyID = model,
+        //                FIconID = (string)row[4],
+        //                DateEffective = (DateTime)row[5],
+        //                DateDiscontinued = (DateTime)row[6],
+        //                KChangeID = (string)row[7],
+
+        //                IsUnderReview = (row[8] != DBNull.Value) ? (bool)row[8] : false,
+        //                IsNewElement = false,
+        //                Page = (string)row[10],
+        //                Root = (string)row[11],
+        //                IsMenuItem = (row[12] != DBNull.Value) ? (bool)row[12] : false,
+
+        //            };
+        //            var mShortName = u.ShortName;
+        //            results.Add(u);
+
+        //        }
+        //        var matches = results.Where(x => x.ShortName == "Brendon Snakes").ToList();
+        //        return new ApiResponse<HierarchyResultListApiModel>
+        //        {
+
+        //            Response = results
+        //        };
+        //        #endregion //sql query
+
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log error
+        //        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+        //        // Throw it as normal
+        //        throw;
+        //    }
+        //    //var SqlString1 =  "SELECT  [ShortName],coalesce([Description],'') Description,coalesce([Card],'')Card,coalesce([Frequency],'')Frequency,coalesce(convert(nvarchar(50),[KCategoryID]),'') KCategoryID,coalesce(convert(nvarchar(50),[ParentCategoryID]),'') ParentCategoryID,coalesce(convert(nvarchar(50),[fIconID]),'') Icon FROM [Kaizen]." + model;// [Finance].[vwFinHierarchy]";
+
+        //    #region Find Users
+
+
+        //    //convert response into HierarchyListDataModel
+        //    #endregion //Find Users
+        //}
+        #endregion
         #region Hierarchy
 
         /// <summary>
@@ -942,7 +1123,7 @@ namespace Fasetto.Word.Web.Server
         #endregion
 
 
-        #endregion
+
 
 
         #region Private Helpers
@@ -1003,40 +1184,89 @@ namespace Fasetto.Word.Web.Server
             }
         //}
 
+        /// <summary>
+        /// Attempts to Load Readings from third party API provider
+        /// </summary>
+        /// <param name="parameter">The <see cref="SecureString"/> passed in from the view for the users password</param>
+        /// <returns></returns>
+        //public async Task LoadReadingsAsync()
+        //{
+
+        //    {
+
+        //        // If the response has an error...
+        //        //if (await result.ContentEncoding
+
+        //        //HandleErrorIfFailedAsync("LoadReadings Failed"))
+        //        //    // We are done
+        //        //    return;
+
+        //        // OK successfully registered (and logged in)... now get users data
+        //        //var loginResult = result.ServerResponse.Response;
+        //        var result = await Get1Async();
+
+        //        var readings = result.ContentLength;
+        //        var content = result.ResponseUri;
+        //        var headers = result.Headers;
+
+
+        //        var serverResponse = default(HttpWebResponse);
+        //        serverResponse = await Get1Async();
+
+        //        var result1 = serverResponse.CreateWebRequestResult<WaterReading>();
+        //        //if (result1.RawServerResponse.IsNullOrEmpty())
+        //        //    // Done
+        //        //    return result1;
+
+        //        // Deserialize raw response
+        //        //var myObject = JsonConvert.DeserializeObject<WaterReading>(result1.RawServerResponse);
+        //        var ObjOrderList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<WaterReading>>(result1.RawServerResponse);
+
+        //        }
+
+
+
+        //        return;
+
+        // }
+            
+    
+            
+        /// <summary>
+        /// Connedts with the API to retkurn a list Object of the required type
+        /// </summary>
+        /// <returns></returns>
+        public  static async Task<HttpWebResponse> Get2Async(string uri)
+        {
+            var request1 = WebRequest.CreateHttp(uri);//?From=2022-10-19T18%3A13%3A31.001&To=2022-10-20T20%3A13%3A31.000; /// v1//RouteHelpers.GetAbsoluteRoute(ApiRoutes.LoadReadings));
+            request1.Method = HttpMethod.Get.ToString();
+            request1.Headers.Add("x-api-key: UbCZyYRin01xwXdFwda4Z901Qax0OywBzzHTDSA5");
+
+            //" ? From = 2022 - 10 - 19T18 % 3A13 % 3A31.001 & To = 2022 - 10 - 19T20 % 3A13 % 3A31.000l"); ;
+            //var result = await request1.GetResponseAsync();
+            try
+            {
+                // Return the raw server response
+                return await request1.GetResponseAsync() as HttpWebResponse;
+            }
+            // Catch Web Exceptions (which throw for things like 401)
+            catch (WebException ex)
+            {
+                // If we got a response...
+                if (ex.Response is HttpWebResponse httpResponse)
+                    // Return the response
+                    return httpResponse;
+
+                // Otherwise, we don't have any information to be able to return
+                // So re-throw
+                throw;
+            }
+
+
+        }
+    //}
+        //}
+
         #endregion
     }
 }
-
-//con = new SqlConnection(ConfigurationManager.ConnectionStrings["constr"].ConnectionString);
-
-//cmd = new SqlCommand();
-
-//cmd.Connection = con;
-
-
-
-//cmd.Parameters.Add(new SqlParameter("@RollNo", SqlDbType.Int));
-
-//cmd.Parameters["@RollNo"].Value = textBox1.Text;
-
-
-
-//cmd.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar));
-
-//cmd.Parameters["@Name"].Value = textBox2.Text;
-
-
-
-//cmd.Parameters.Add(new SqlParameter("@Fees", SqlDbType.Float));
-
-//cmd.Parameters["@Fees"].Value = textBox3.Text;
-
-
-
-//cmd.CommandText = "insert into student values(@RollNo, @Name, @Fees)";
-
-
-
-//con.Open();
-
-//cmd.ExecuteNonQuery();

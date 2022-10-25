@@ -164,6 +164,9 @@
     <Compile Include="Pages\HierarchyPage.xaml.cs">
       <DependentUpon>HierarchyPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\LoadReadingsPage.xaml.cs">
+      <DependentUpon>LoadReadingsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -216,6 +219,7 @@
     <Compile Include="ViewModel\Hierarchy\HierarchyManagementViewModel1.cs" />
     <Compile Include="ViewModel\Finance\FinanceSelectionViewModel.cs" />
     <Compile Include="ViewModel\Menu\HierarchyPageViewModel.cs" />
+    <Compile Include="ViewModel\Services\LoadReadingsPageViewModel.cs" />
     <Compile Include="WebRequests\WebRequestResultExtensions.cs" />
     <Compile Include="WPFViewModels\DialogWindowViewModel.cs" />
     <Compile Include="WPFViewModels\ViewModelLocator.cs" />
@@ -342,6 +346,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\ChatPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\LoadReadingsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

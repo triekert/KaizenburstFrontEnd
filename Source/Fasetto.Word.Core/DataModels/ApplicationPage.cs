@@ -41,6 +41,10 @@
         /// </summary>
         Folder = 6,
 
+        /// <summary>
+        ///Load meter readings for services
+        /// </summary>
+       LoadMeters = 7,
 
     }
 
