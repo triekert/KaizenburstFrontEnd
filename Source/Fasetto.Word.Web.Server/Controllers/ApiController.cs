@@ -668,7 +668,11 @@ namespace Fasetto.Word.Web.Server
                         }
                 }
                 else
-                {       return new ApiResponse();
+                {
+                        SqlString = "EXEC [Services].[spVirtualMeterReadings]";
+                        _ = await ExecuteAsync(SqlString, para);
+
+                        return new ApiResponse();
                         break; }
 
                 //ObjOrderList.ForEach(WaterReading reading => { });
