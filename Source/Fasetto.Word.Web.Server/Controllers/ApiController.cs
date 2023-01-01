@@ -14,6 +14,7 @@ using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using static Dna.FrameworkDI;
@@ -596,108 +597,259 @@ namespace Fasetto.Word.Web.Server
         public async Task<ApiResponse> ReturnMeterReadingsAsync([FromBody] string model)
         {
             //First build webrequest to query API client and retrieve <List> of <Reading.
-             #region sql query
+            #region sql query
 
 
-                var para = new SqlParameter[3];
-                para[0] = new SqlParameter("@ID", SqlDbType.VarChar);
-                para[1] = new SqlParameter("@Date", SqlDbType.DateTime);
-                para[2] = new SqlParameter("@Reading", SqlDbType.Decimal);
-            while (1 == 1){
-             var SqlString = "SELECT TOP 1 [Date],'?From='+ LEFT(CONVERT(nvarchar,[Date],20),10)+'%20'+SUBSTRING(CONVERT(nvarchar,[Date],20),12,2)" +
-                "+'%3A'+SUBSTRING(CONVERT(nvarchar,[Date],20),15,2)+'%3A'+SUBSTRING(CONVERT(nvarchar,[Date],20),18,2) + '&To='+LEFT(CONVERT(nvarchar,DATEADD(d,1,[Date]),20),10)" +
-                "+'%20'+SUBSTRING(CONVERT(nvarchar,DATEADD(d,1,[Date]),20),12,2)+'%3A'+SUBSTRING(CONVERT(nvarchar,DATEADD(d,1,[Date]),20),15,2)+'%3A'+" +
-                "SUBSTRING(CONVERT(nvarchar,DATEADD(d,1,[Date]),20),18,2) FROM [Services].[MeterReading] (NOLOCK)  ORDER BY Date DESC";              
+            var para = new SqlParameter[3];
+            para[0] = new SqlParameter("@ID", SqlDbType.VarChar);
+            para[1] = new SqlParameter("@Date", SqlDbType.DateTime);
+            para[2] = new SqlParameter("@Reading", SqlDbType.Decimal);
 
+            var SqlString = "EXEC  [Services].[spDateForMeterCursor] @fClientID = NULL, @DateStart = NULL, @DateEnd = NULL";
 
             try
             {
                 // Try and run the task
                 var dataset = await GetDataSetAsync(SqlString);
                 var dt = dataset.Tables[0];
-                var paramP = dt.Rows[0];
-                var param = paramP[1].ToString();
-                    var param0 = (DateTime)paramP[0];
-
-                var date1 = param0.Add(new TimeSpan(0, 1, 0, 0));
+                var hierarchyResultListApiModel = new HierarchyResultListApiModel();
+                var results = hierarchyResultListApiModel;
 
 
-                param = "https://api.netqedge.com/v1" + param;
-                var serverResponse = default(HttpWebResponse);
-                serverResponse = await Get2Async(param);
-
-                var result1 = serverResponse.CreateWebRequestResult<WaterReading>();
-                  if (result1.RawServerResponse != null)
+                foreach (DataRow row1 in dt.Rows)
+                {
+                    try
                     {
-                // Deserialize raw response
-                //var myObject = JsonConvert.DeserializeObject<WaterReading>(result1.RawServerResponse);
+                        var param = (string)(row1[0]);
+                        param = "https://api.netqedge.com/v1" + param;
+                        //For testing a specific subset of data via api   2022-11-27 20:54:47.000
+                        //param = "https://api.netqedge.com/v1?From=2022-12-16%2000%3A00%3A00&To=2022-12-16%2012%3A30%3A00";
+                        var serverResponse = default(HttpWebResponse);
+                        serverResponse = await Get2Async(param);
+
+                        var result1 = serverResponse.CreateWebRequestResult<WaterReading>();
+                        if (result1.RawServerResponse != null)
+                        {       // Deserialize raw response
+                                //var myObject = JsonConvert.DeserializeObject<WaterReading>(result1.RawServerResponse);
 
 
+                            var ObjOrderList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<WaterReading>>(result1.RawServerResponse);
 
 
-
-                    var ObjOrderList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<WaterReading>>(result1.RawServerResponse);
-
-                
-                    foreach (var site in ObjOrderList)
-                        foreach (var row in site.Readings)
-                        {
-                            para[0].Value = row.DeviceId;
-                            para[1].Value = Convert.ToDateTime(row.timestamp);
-                            para[2].Value = Convert.ToDecimal(row.Value);
-
-                            try
+                            foreach (var site in ObjOrderList)
                             {
-                                // Try and run the task
-                                SqlString = "UPDATE [Services].[MeterReading] SET MeterReading = @Reading FROM [Services].[MeterReading] mr (NOLOCK)LEFT OUTER JOIN [Services].[Meter] m (NOLOCK)ON mr.fMeterID = m.[kMeterId]" +
-                                  " AND m.[Reference]= @Id WHERE mr.Date = @Date AND NOT MeterReading = @Reading";
-                                _ = await ExecuteAsync(SqlString, para);
-                                SqlString = "INSERT INTO [Services].[MeterReading]([Date],[MeterReading],[fMeterID]) SELECT @Date,@Reading,m.[kMeterId]FROM [Services].[Meter] m (NOLOCK)LEFT OUTER JOIN [Services].[MeterReading]" +
-                                                   " mr (NOLOCK)ON mr.Date = @Date  AND mr.MeterReading = @Reading AND mr.fMeterID = m.[kMeterId]WHERE m.[Reference]= @Id AND mr.MeterReading IS NULL";
-                                _ = await ExecuteAsync(SqlString, para);
-                            }
-                            catch (Exception ex)
-                            {
-                                // Log error
-                                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+                                foreach (var row in site.Readings)
+                                {
+                                    para[0].Value = row.DeviceId;
+                                    para[1].Value = Convert.ToDateTime(row.timestamp);
+                                    para[2].Value = Convert.ToDecimal(row.Value);
+                                    //var dateTime = Convert.ToDateTime(row.timestamp.Substring(0, 18).Replace("T", " "));
+                                    //para[1].Value = dateTime;
+                                    try
+                                    {
+                                        // Try and run the task
 
-                                // Throw it as normal
-                                throw;
+                                        SqlString = "UPDATE [Services].[MeterReading] SET MeterReading = @Reading FROM [Services].[MeterReading] mr (NOLOCK)LEFT OUTER JOIN [Services].[Meter] m (NOLOCK)ON mr.fMeterID = m.[kMeterId]" +
+                                         " WHERE  m.[Reference]= @Id  AND mr.Date = @Date  AND NOT MeterReading = @Reading";
+
+                                        //TO DO: When running the query below from the server, the system updates a reading for a different meter but the same timestamp...
+                                        //When running that same query directly on the database, the update (error) does not occur??? why
+                                        //DECLARE @Date datetime = '2022-10-27 02:45:04',@Id nvarchar = 'C53AE8',@Reading decimal (10,3) =320.576
+                                        //                                    UPDATE[Services].[MeterReading]
+                                        //SET MeterReading = @Reading FROM[Services].[MeterReading] mr(NOLOCK)LEFT OUTER JOIN[Services].[Meter] m(NOLOCK)ON mr.fMeterID = m.[kMeterId] AND m.[Reference]= @Id WHERE mr.Date = @Date AND NOT MeterReading = @Reading
+                                        _ = await ExecuteAsync(SqlString, para);
+                                        SqlString = "INSERT INTO [Services].[MeterReading]([Date],[MeterReading],[fMeterID]) SELECT @Date,@Reading,m.[kMeterId]FROM [Services].[Meter] m (NOLOCK)LEFT OUTER JOIN [Services].[MeterReading]" +
+                                                           " mr (NOLOCK)ON mr.Date = @Date  AND mr.MeterReading = @Reading AND mr.fMeterID = m.[kMeterId]WHERE m.[Reference]= @Id AND mr.MeterReading IS NULL";
+                                        _ = await ExecuteAsync(SqlString, para);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        // Log error
+                                        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                                        // Throw it as normal
+                                        throw;
+                                    }
+                                }
                             }
 
                         }
+                        else
+                        {
+                            return new ApiResponse();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log error
+                        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                        // Throw it as normal
+                        throw;
+                    }
+
                 }
-                else
-                {
-                        SqlString = "EXEC [Services].[spVirtualMeterReadings]";
-                        _ = await ExecuteAsync(SqlString, para);
 
-                        return new ApiResponse();
-                        break; }
-
-                //ObjOrderList.ForEach(WaterReading reading => { });
-                
-                //Readings.ForEach(delegate (Reading reading )
-                //Readings.Foreach (delegate (Reading reading )
-                //return new ApiResponse();
-                //{
-
-                //    Response = result1
-                //};
 
             }
-            catch (Exception ex)
-            {
-                // Log error
-                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
 
-                // Throw it as normal
-                throw;
-            }
+                    catch (Exception ex)
+                    {
+                        // Log error
+                        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
 
+                        // Throw it as normal
+                        throw;
+                    }
+
+                return new ApiResponse();
         }
-            return new ApiResponse();
-    }
+
+
+            //var param0 = DateTime.Now;
+            //while (1 == 1)
+            //{
+            //    var SqlString = "SELECT TOP 1 [Date],'?From='+ LEFT(CONVERT(nvarchar,DATEADD(second, DATEDIFF(second, GETDATE(), GETUTCDATE()), [Date]),20),10)+'%20'+SUBSTRING(CONVERT(nvarchar,DATEADD(second, DATEDIFF(second, GETDATE(), GETUTCDATE()) , [Date]),20),12,2)" +
+            //    "+'%3A'+SUBSTRING(CONVERT(nvarchar,DATEADD(second, DATEDIFF(second, GETDATE(), GETUTCDATE()), [Date]),20),15,2)+'%3A'+SUBSTRING(CONVERT(nvarchar,[Date],20),18,2) + '&To='+LEFT(CONVERT(nvarchar,DATEADD(HH,6,DATEADD(second, DATEDIFF(second, GETDATE(), GETUTCDATE()), [Date])),20),10)" +
+            //    "+'%20'+SUBSTRING(CONVERT(nvarchar,DATEADD(hh,6,DATEADD(second, DATEDIFF(second, GETDATE(), GETUTCDATE()), [Date])),20),12,2)+'%3A'+SUBSTRING(CONVERT(nvarchar,DATEADD(hh,6,DATEADD(second, DATEDIFF(second, GETDATE(), GETUTCDATE()), [Date])),20),15,2)+'%3A'+" +
+            //    "SUBSTRING(CONVERT(nvarchar,DATEADD(hh,6,[Date]),20),18,2) FROM [Services].[MeterReading] (NOLOCK)  WHERE NOT MeterReading IS NULL ORDER BY Date DESC";
+
+
+
+            //    try
+            //    {
+            //        // Try and run the task
+            //        var dataset = await GetDataSetAsync(SqlString);
+            //        var dt = dataset.Tables[0];
+            //        var paramP = dt.Rows[0];
+            //        var param = paramP[1].ToString();
+            //        //If date has not changed since previous call, exit this routine
+            //       if ((DateTime)paramP[0] == param0)
+            //        {
+            //            SqlString = "DECLARE @return_value Int EXEC    @return_value = [Services].[spGetAllCompleteTimeslots]   @fClientID = NULL,	@DateStart = NULL,	@DateEnd = NULL SELECT @return_value as 'Return Value'";
+            //            para[0].Value = "";
+            //            para[1].Value = DateTime.Now;
+            //            para[2].Value = 1;
+
+            //            //_ = await ExecuteAsync(SqlString, para);
+
+
+            //            SqlString = "EXEC [Services].[spVirtualMeterReadings] @fClientID = NULL, @LookBackDate = NULL";
+            //            _ = await ExecuteAsync(SqlString, para);
+
+
+            //            SqlString = "EXEC [Services].[spCalculateVarianceMainRecur] @fClientID = NULL,@BulkPropertyID =NULL,@LookBackDate = NULL";
+            //            _ = await ExecuteAsync(SqlString, para);
+            //            return new ApiResponse();
+            //        }
+            //        else
+            //        {
+
+            //            param0 = (DateTime)paramP[0];
+
+            //            var date1 = param0.Add(new TimeSpan(0, 1, 0, 0));
+
+
+            //            param = "https://api.netqedge.com/v1" + param;
+
+            //            //For testing a specific subset of data via api
+            //            //param = "https://api.netqedge.com/v1?From=2022-11-23%2013%3A00%3A00&To=2022-11-23%2019%3A005%3A55";
+
+            //            var serverResponse = default(HttpWebResponse);
+            //            serverResponse = await Get2Async(param);
+
+            //            var result1 = serverResponse.CreateWebRequestResult<WaterReading>();
+            //            if (result1.RawServerResponse != null)
+            //            {
+            //                // Deserialize raw response
+            //                //var myObject = JsonConvert.DeserializeObject<WaterReading>(result1.RawServerResponse);
+
+
+
+
+
+            //                var ObjOrderList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<WaterReading>>(result1.RawServerResponse);
+
+
+            //                foreach (var site in ObjOrderList)
+            //                    foreach (var row in site.Readings)
+            //                    {
+            //                        para[0].Value = row.DeviceId;
+            //                        para[1].Value = Convert.ToDateTime(row.timestamp);
+            //                        para[2].Value = Convert.ToDecimal(row.Value);
+            //                        //var dateTime = Convert.ToDateTime(row.timestamp.Substring(0, 18).Replace("T", " "));
+            //                        //para[1].Value = dateTime;
+            //                        try
+            //                        {
+            //                            // Try and run the task
+
+            //                            SqlString = "UPDATE [Services].[MeterReading] SET MeterReading = @Reading FROM [Services].[MeterReading] mr (NOLOCK)LEFT OUTER JOIN [Services].[Meter] m (NOLOCK)ON mr.fMeterID = m.[kMeterId]" +
+            //                             " WHERE  m.[Reference]= @Id  AND mr.Date = @Date  AND NOT MeterReading = @Reading";
+
+            //                            //TO DO: When running the query below from the server, the system updates a reading for a different meter but the same timestamp...
+            //                            //When running that same query directly on the database, the update (error) does not occur??? why
+            //                            //DECLARE @Date datetime = '2022-10-27 02:45:04',@Id nvarchar = 'C53AE8',@Reading decimal (10,3) =320.576
+            //                            //                                    UPDATE[Services].[MeterReading]
+            //                            //SET MeterReading = @Reading FROM[Services].[MeterReading] mr(NOLOCK)LEFT OUTER JOIN[Services].[Meter] m(NOLOCK)ON mr.fMeterID = m.[kMeterId] AND m.[Reference]= @Id WHERE mr.Date = @Date AND NOT MeterReading = @Reading
+            //                            _ = await ExecuteAsync(SqlString, para);
+            //                            SqlString = "INSERT INTO [Services].[MeterReading]([Date],[MeterReading],[fMeterID]) SELECT @Date,@Reading,m.[kMeterId]FROM [Services].[Meter] m (NOLOCK)LEFT OUTER JOIN [Services].[MeterReading]" +
+            //                                               " mr (NOLOCK)ON mr.Date = @Date  AND mr.MeterReading = @Reading AND mr.fMeterID = m.[kMeterId]WHERE m.[Reference]= @Id AND mr.MeterReading IS NULL";
+            //                            _ = await ExecuteAsync(SqlString, para);
+            //                        }
+            //                        catch (Exception ex)
+            //                        {
+            //                            // Log error
+            //                            //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+            //                            // Throw it as normal
+            //                            throw;
+            //                        }
+
+            //                    }
+
+
+            //            }
+            //            else
+            //            {
+            //                SqlString = "DECLARE @return_value Int EXEC    @return_value = [Services].[spGetAllCompleteTimeslots]   @fClientID = NULL,	@DateStart = NULL,	@DateEnd = NULL SELECT @return_value as 'Return Value'";
+            //                para[0].Value = "";
+            //                para[1].Value = DateTime.Now;
+            //                para[2].Value = 1;
+
+            //                //_ = await ExecuteAsync(SqlString, para);
+
+
+            //                SqlString = "EXEC [Services].[spVirtualMeterReadings] @fClientID = NULL, @LookBackDate = NULL";
+            //                _ = await ExecuteAsync(SqlString, para);
+
+
+            //                SqlString = "EXEC [Services].[spCalculateVarianceMainRecur] @fClientID = NULL,@BulkPropertyID =NULL,@LookBackDate = NULL";
+            //                _ = await ExecuteAsync(SqlString, para);
+
+
+            //                return new ApiResponse();
+
+            //            }
+            //        }
+
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //    // Log error
+            //    //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+            //    // Throw it as normal
+            //    throw;
+            //    }
+
+            //}
+        //    return new ApiResponse();
+        //}
+
+        //private void If(bool v)
+        //{
+        //    throw new NotImplementedException();
+        //}
         #endregion
 
         //     SqlString = "SELECT  c.[ShortName],coalesce(c.[Description],'') Description,coalesce(convert(nvarchar(50),c.[KCategoryID]),'') KCategoryID, coalesce(convert(nvarchar(50),c.[ParentCategoryID]),'') ParentCategoryID," +

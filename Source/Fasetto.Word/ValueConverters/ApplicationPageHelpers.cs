@@ -40,6 +40,9 @@ namespace Fasetto.Word
                 case ApplicationPage.LoadMeters:
                     return new LoadReadingsPage(viewModel as LoadReadingsPageViewModel);
 
+                case ApplicationPage.BulkRecon:
+                    return new BulkReconPage(viewModel as BulkReconPageViewModel);
+
                 default:
                     Debugger.Break();
                     return null;

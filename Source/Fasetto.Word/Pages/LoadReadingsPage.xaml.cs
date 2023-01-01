@@ -6,7 +6,7 @@ namespace Fasetto.Word
     /// <summary>
     /// Interaction logic for LoadReadingsPage.xaml
     /// </summary>
-    public partial class LoadReadingsPage : BasePage<LoadReadingsPageViewModel>, IHavePassword
+    public partial class LoadReadingsPage : BasePage<LoadReadingsPageViewModel>
     {
         #region Constructor
 
@@ -29,9 +29,6 @@ namespace Fasetto.Word
         #endregion
 
 
-        /// <summary>
-        /// The secure password for this login page
-        /// </summary>
-        public SecureString SecurePassword => PasswordText.SecurePassword;
+
     }
 }

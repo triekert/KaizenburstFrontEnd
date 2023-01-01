@@ -46,6 +46,11 @@
         /// </summary>
        LoadMeters = 7,
 
+        /// <summary>
+        ///Bulk meter recons
+        /// </summary>
+        BulkRecon = 8,
+
     }
 
 }

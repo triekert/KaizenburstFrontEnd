@@ -17,6 +17,7 @@ using System.Xml.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 namespace Fasetto.Word
 {
@@ -49,7 +50,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The command to login
         /// </summary>
-        public ICommand LoginCommand { get; set; }
+        public ICommand CloseCommand { get; set; }
 
         /// <summary>
         /// The command to LoadReadings for a new account
@@ -67,13 +68,13 @@ namespace Fasetto.Word
         {
             // Create commands
 
-            var request1 = WebRequest.CreateHttp("http://api.netqedge.com/v1? From = 2022 - 10 - 19T18 % 3A13 % 3A31.001 & To = 2022 - 10 - 19T20 % 3A13 % 3A31.000l"); /// v1//RouteHelpers.GetAbsoluteRoute(ApiRoutes.LoadReadings));
+            //var request1 = WebRequest.CreateHttp("http://api.netqedge.com/v1? From = 2022 - 10 - 19T18 % 3A13 % 3A31.001 & To = 2022 - 10 - 19T20 % 3A13 % 3A31.000l"); /// v1//RouteHelpers.GetAbsoluteRoute(ApiRoutes.LoadReadings));
             //request1.Method = HttpMethod.Get.ToString();
             //request1.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {"UbCZyYRin01xwXdFwda4Z901Qax0OywBzzHTDSA5"}");
             //" ? From = 2022 - 10 - 19T18 % 3A13 % 3A31.001 & To = 2022 - 10 - 19T20 % 3A13 % 3A31.000l"); ;
             //var result = await request1.GetResponseAsync() ;
             LoadReadingsCommand = new RelayParameterizedCommand(async (parameter) => await LoadReadingsAsync(parameter));
-            //LoginCommand = new RelayCommand(async () => await LoginAsync());
+            CloseCommand = new RelayCommand(Close);
             //configureRequest?.Invoke(request1);
         }
 
@@ -105,9 +106,7 @@ namespace Fasetto.Word
                     RouteHelpers.GetAbsoluteRoute(ApiRoutes.LoadReadings), null
                     ,
                     bearerToken: token);
-
-  
-
+                  
                 return;
 
             });
@@ -145,12 +144,14 @@ namespace Fasetto.Word
         /// Takes the user to the login page
         /// </summary>
         /// <returns></returns>
-        public async Task LoginAsync()
+        public void Close()
         {
-            // Go to register page?
-            ViewModelApplication.GoToPage(ApplicationPage.Login);
+            // Close settings menu
+            ViewModelApplication.SideMenuVisible = true;
+            ViewModelApplication.CurrentSideMenuViewModel = null;
+            ViewModelApplication.GoToPage(ApplicationPage.Chat);
 
-            await Task.Delay(1);
+
         }
     }
 }

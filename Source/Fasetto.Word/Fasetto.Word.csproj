@@ -161,6 +161,9 @@
     <Compile Include="Pages\ActualsPage.xaml.cs">
       <DependentUpon>ActualsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\BulkReconPage.xaml.cs">
+      <DependentUpon>BulkReconPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\HierarchyPage.xaml.cs">
       <DependentUpon>HierarchyPage.xaml</DependentUpon>
     </Compile>
@@ -219,6 +222,9 @@
     <Compile Include="ViewModel\Hierarchy\HierarchyManagementViewModel1.cs" />
     <Compile Include="ViewModel\Finance\FinanceSelectionViewModel.cs" />
     <Compile Include="ViewModel\Menu\HierarchyPageViewModel.cs" />
+    <Compile Include="ViewModel\Services\BulkReconTreeViewModel.cs" />
+    <Compile Include="ViewModel\Services\BulkReconViewModel.cs" />
+    <Compile Include="ViewModel\Services\BulkReconPageViewModel.cs" />
     <Compile Include="ViewModel\Services\LoadReadingsPageViewModel.cs" />
     <Compile Include="WebRequests\WebRequestResultExtensions.cs" />
     <Compile Include="WPFViewModels\DialogWindowViewModel.cs" />
@@ -334,6 +340,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\ActualsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\BulkReconPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
