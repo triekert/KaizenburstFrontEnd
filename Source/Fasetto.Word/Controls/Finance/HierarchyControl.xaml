@@ -119,17 +119,24 @@
 
         <ScrollViewer x:Name="scrollViewer"  Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
                                             local:ScrollToBottomOnLoadProperty.Value="True"
-                      local:AutoScrollToBottomProperty.Value="True"
+                      local:AutoScrollToBottomProperty.Value="True" 
                       >
+
 
             <TreeView 
                 
               ItemsSource="{Binding FirstGeneration}" 
               TreeViewItem.Selected="TreeView_Selected"            
               Name="tvParameters"
-                
-               
-               >
+              Grid.IsSharedSizeScope="True">
+
+                <TreeView.Template>
+                    <ControlTemplate>
+                        <Border BorderBrush="{TemplateBinding BorderBrush}"  BorderThickness="{TemplateBinding BorderThickness}"  SnapsToDevicePixels="true">
+                            <ItemsPresenter/>
+                        </Border>
+                    </ControlTemplate>
+                </TreeView.Template>
 
                 <!--AllowDrop="True"  MouseDown="TreeView_MouseDown"  Drop="TreeView_Drop" MouseMove="TreeView_MouseMove">-->
 
@@ -163,11 +170,14 @@
                 </TreeView.ItemContainerStyle>
 
                 <TreeView.ItemTemplate>
+
                     <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"  Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}">
-                             <TextBlock Width="150"  HorizontalAlignment="Right"  TextWrapping="WrapWithOverflow" Text="{Binding ShortName}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+
+
+                            <TextBlock Width="250"  HorizontalAlignment="Right"  TextWrapping="WrapWithOverflow" Text="{Binding ShortName}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                             <TextBlock Text="  "/>
-                            <TextBlock Text="{Binding Description}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                            <TextBlock     TextWrapping="WrapWithOverflow" Text="{Binding Description}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                         </StackPanel>
           
                     </HierarchicalDataTemplate>

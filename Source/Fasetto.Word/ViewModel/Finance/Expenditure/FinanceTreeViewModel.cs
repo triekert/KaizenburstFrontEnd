@@ -10,6 +10,7 @@ using System.Windows.Input;
 using static Fasetto.Word.DI;
 using static Fasetto.Word.Core.CoreDI;
 using System.Linq;
+using Fasetto.Word.Core.ApiModels.Services;
 
 namespace Fasetto.Word
 {

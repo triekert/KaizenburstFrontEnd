@@ -75,6 +75,9 @@ namespace Fasetto.Word
             if (page is LoadReadingsPage)
                 return ApplicationPage.LoadMeters;
 
+            if (page is BulkReconPage)
+                return ApplicationPage.BulkRecon;
+
             // Alert developer of issue
             Debugger.Break();
             return default;

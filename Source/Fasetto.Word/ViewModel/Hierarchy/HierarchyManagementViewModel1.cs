@@ -1,5 +1,6 @@
 ﻿using Dna;
 using Fasetto.Word.Core;
+using Fasetto.Word.Core.ApiModels.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
