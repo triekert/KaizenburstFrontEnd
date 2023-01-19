@@ -74,21 +74,21 @@ namespace Fasetto.Word
         /// <param name="hierarchyTable"></param>
         /// The hierarchyTable passed through as a paremeter identifies the specific hierarchy set to be retrieved
         /// from persistent s
-        public BulkReconTreeViewModel(string hierarchyTable)
+        public BulkReconTreeViewModel(string bulkMeter, DateTime timeStart, DateTime timeEnd)
         {
             #region Dummy Root HierarchyListDataModel
             mHDML = new BulkReconListDataModel();
             mHDM = new BulkReconDataModel
             {
-                KCategoryID = new Guid().ToString(),
-                ParentCategoryID = "00000000-0000-0000-0000-000000000000",
-                Description = "...Loading hierarchy data...",
+                //KCategoryID = new Guid().ToString(),
+                //ParentCategoryID = "00000000-0000-0000-0000-000000000000",
+                //Description = "...Loading hierarchy data...",
                 ShortName = "Loading...Please be patient",
-                Children = new BulkReconListDataModel()
+                //Children = new BulkReconListDataModel()
             };
             mHDML.Add(mHDM);
 
-            mTableName = hierarchyTable;
+            //mTableName = hierarchyTable;
             #endregion
             //retrieve hierarchy from persistent storage on server
             //To Do: Add mTableName as parameter when calling HiearchyAsync to populate hierarchy
@@ -307,27 +307,27 @@ namespace Fasetto.Word
                 {
                     //var u = hierarchyDataModel;
                     ShortName = item.ShortName,
-                    Description = item.Description,
+                    //Description = item.Description,
                     //Card = item.Card,
                     //Frequency = item.Frequency,
-                    KCategoryID = item.KCategoryID,
-                    ParentCategoryID = item.ParentCategoryID,
-                    ParentShortName = mParentShortName,
-                    DateEffective = item.DateEffective,
-                    DateDiscontinued = item.DateDiscontinued,
-                    KChangeID = item.KChangeID,
-                    IsUnderReview = item.IsUnderReview,
-                    Page = item.Page,
-                    Root = item.Root,
-                    IsMenuItem = item.IsMenuItem,
+                    //KCategoryID = item.KCategoryID,
+                    //ParentCategoryID = item.ParentCategoryID,
+                    //ParentShortName = mParentShortName,
+                    //DateEffective = item.DateEffective,
+                    //DateDiscontinued = item.DateDiscontinued,
+                    //KChangeID = item.KChangeID,
+                    //IsUnderReview = item.IsUnderReview,
+                    //Page = item.Page,
+                    //Root = item.Root,
+                    //IsMenuItem = item.IsMenuItem,
 
 
                     //To Do: make provision to add Icons to make the UI more intuitive and attractive
                     //FIconID = item.FIconID,
-                    Children = new BulkReconListDataModel()
+                    //Children = new BulkReconListDataModel()
                 };
-                ud1.Children = ExpandHierarchyData(results, ud1.KCategoryID, ud1.ShortName);
-                elements.Add(ud1);
+                //ud1.Children = ExpandHierarchyData(results, ud1.KCategoryID, ud1.ShortName);
+                //elements.Add(ud1);
             }
             //var matches = elements.OrderBy(x => x.DateEffective).ToList();
             //foreach(var category in matches)

@@ -27,7 +27,7 @@
         </Grid.RowDefinitions>
 
         <!-- Popup Overlay -->
-        <Border Background="Transparent" 
+        <Border Background="{DynamicResource ForegroundLightBrush}" 
                 Grid.RowSpan="2"
                 Panel.ZIndex="1"
                 Visibility="{Binding AnyPopupVisible, Converter={local:BooleanToVisiblityConverter}, ConverterParameter=True}"
@@ -78,12 +78,15 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
+                <Border Background="{DynamicResource ForegroundLightBrush}"
+                            Grid.Row="1">
+                </Border>
 
                 <!-- Close search button -->
                 <Button Style="{StaticResource IconGrowButton}" 
                         Content="{StaticResource FontAwesomeCloseIcon}"
                         Command="{Binding  CloseSearchCommand}"
-                        Foreground="{StaticResource WordOrangeBrush}"
+                        Foreground="{DynamicResource WordRedBrush}"
                         />
 
                 <!-- Search box -->
@@ -111,7 +114,7 @@
         <!-- Chat List -->
         <local:HierarchyControl 
             x:Name="Hierarchy" 
-            Grid.Row="1" 
+            Grid.Row="1" Loaded="Hierarchy_Loaded" 
             />
 
         <!-- Attachment Menu Popup -->
@@ -144,30 +147,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!-- Attach button -->
-            <!--<Button Style="{StaticResource IconGrowButton}"
-                    Height="{Binding MinHeight, RelativeSource={RelativeSource AncestorType=Grid}}"
-                    Content="{StaticResource FontAwesomePaperclipIcon}"
-                    VerticalAlignment="Top"
-                    Command="{Binding AttachmentButtonCommand}"
-                    Foreground="{StaticResource ForegroundDarkBrush}"
-                    />-->
 
-            <!-- Message box -->
-            <!--<TextBox x:Name="MessageText"    
-                     Grid.Column="1" 
-                     Tag="Write a message..."
-                     local:IsFocusedProperty.Value="True"
-                     Text="{Binding PendingMessageText, UpdateSourceTrigger=PropertyChanged}"
-                     FontSize="{StaticResource FontSizeRegular}"
-                     VerticalAlignment="Center"
-                     BorderThickness="0"
-                     Padding="0 10 10 10"
-                     AcceptsReturn="True"
-                     AcceptsTab="True"
-                     VerticalScrollBarVisibility="Auto"
-                     PreviewKeyDown="MessageText_PreviewKeyDown"
-                     />-->
 
             <!-- Additional buttons -->
             <StackPanel Grid.Column="1"

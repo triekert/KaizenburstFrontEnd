@@ -117,18 +117,11 @@
             </Grid>
         </Border>
 
-        <ScrollViewer x:Name="scrollViewer"  Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
-                                            local:ScrollToBottomOnLoadProperty.Value="True"
-                      local:AutoScrollToBottomProperty.Value="True" 
-                      >
-
-
+        <ScrollViewer x:Name="scrollViewer"  Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
             <TreeView 
-                
               ItemsSource="{Binding FirstGeneration}" 
               TreeViewItem.Selected="TreeView_Selected"            
-              Name="tvParameters"
-              Grid.IsSharedSizeScope="True">
+              Name="tvParameters">
 
                 <TreeView.Template>
                     <ControlTemplate>

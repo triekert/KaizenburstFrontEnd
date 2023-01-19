@@ -9,7 +9,7 @@ using static Fasetto.Word.DI;
 namespace Fasetto.Word
 {
     /// <summary>
-    /// Interaction logic for FinancePage.xaml
+    /// Interaction logic for BulkReconPage.xaml
     /// </summary>
     public partial class BulkReconPage : BasePage<BulkReconPageViewModel>
     {

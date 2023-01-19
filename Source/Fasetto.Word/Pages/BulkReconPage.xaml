@@ -107,6 +107,8 @@
             </Grid>
 
         </Grid>
+        <DataGrid x:Name="mBulkReconDataModel">
+        </DataGrid>
 
         <!-- Chat List -->
         <!--<local:HierarchyControl 
@@ -115,24 +117,15 @@
             />-->
 
         <!-- Attachment Menu Popup -->
+        <!--<DataGrid  x:Name="BR"  ItemsSource="{Binding BulkReconDataModel}"/>-->
 
-        <ListBox x:Name="BulkReconList"
-                     Grid.Row="1" >
-                <!--<ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Grid 
-                            <Grid.RowDefinitions
-                                </Grid.RowDefinitions>
-                                
-                                --><!--<StackPanel>
-                                    <TextBlock  Text="{Binding BulkMeter}"/>
 
-                                </StackPanel>--><!--
-                                    </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>-->
-            
-         </ListBox>
+
+
+        <!--<local:HierarchyControl 
+            x:Name="Hierarchy" 
+            Grid.Row="1" 
+            />-->
         <!--<ComboBox
             x:Name="BulkReconCB"
             Grid.Column="1"

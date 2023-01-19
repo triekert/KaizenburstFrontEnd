@@ -190,7 +190,7 @@ namespace Fasetto.Word
             OpenMediaCommand = new RelayCommand(OpenMedia);
             OpenFinanceCommand = new RelayCommand(OpenFinance);
             OpenMenuCommand = new RelayCommand(OpenMenu);
-            OpenMenuCommand = new RelayCommand(OpenActuals);
+            OpenActualsCommand = new RelayCommand(OpenActuals);
             OpenLoadMetersCommand = new RelayCommand(OpenLoadMeters);
             OpenBulkReconCommand = new RelayCommand(OpenBulkRecon);
         }

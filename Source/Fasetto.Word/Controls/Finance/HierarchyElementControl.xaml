@@ -8,7 +8,7 @@
              d:DataContext="{x:Static local:HierarchyElementDesignModel.Instance}"
              mc:Ignorable="d" >
 
-    <Border Background="{StaticResource ForegroundLightBrush}" 
+    <Border Background="{DynamicResource ForegroundDarkBrush}" 
             Padding="15">
 
 
@@ -92,7 +92,8 @@
                 <!-- Profile details -->
                 <StackPanel Grid.Column="1"
                             local:TextEntryWidthMatcherProperty.Value="True">
-                    <local:TextEntryControl DataContext="{Binding ShortName}" FontWeight="Bold" />
+   
+                    <!--<local:TextEntryControl DataContext="{Binding ShortName}" FontWeight="Bold" />-->
                     <local:TextEntryControl DataContext="{Binding Description}" FontWeight="Bold" />
                     <StackPanel Visibility="{Binding IsMenuItem, ConverterParameter=True, Converter={local:BooleanToVisiblityConverter}}"
                                 >

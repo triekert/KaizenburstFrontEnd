@@ -83,7 +83,7 @@
                     </Grid>
 
                     <!-- The user content -->
-                    <Border Background="{StaticResource ForegroundLightBrush}"
+                    <Border Background="{DynamicResource ForegroundLightBrush}"
                             Grid.Row="1">
                         <ContentPresenter />
                     </Border>

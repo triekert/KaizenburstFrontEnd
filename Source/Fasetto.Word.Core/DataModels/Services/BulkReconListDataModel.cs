@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace Fasetto.Word.Core
 {
     /// <summary>
-    /// Persistance of hierarchy on database
+    /// Data related to reconciliation of radings between bulkmeter and consumer meters
     /// </summary>
     public class BulkReconListDataModel : List<BulkReconDataModel>
     {
