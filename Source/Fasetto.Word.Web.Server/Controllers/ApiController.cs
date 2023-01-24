@@ -3,22 +3,16 @@ using Fasetto.Word.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Security.Claims;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using static Dna.FrameworkDI;
-using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
 
 namespace Fasetto.Word.Web.Server
@@ -732,7 +726,8 @@ namespace Fasetto.Word.Web.Server
         /// </returns>
 
         [Route(ApiRoutes.ReturnBulkRecon)]
-        public async Task<ApiResponse> ReturnBulkReadingAsync([FromBody] string model)
+        public async Task<ApiResponse> ReturnBulkReadingAsync([FromBody] ParameterBulkReconApiModel model)
+
         {
             #region Get User
 
@@ -751,47 +746,39 @@ namespace Fasetto.Word.Web.Server
 
             #region sql query
 
-            var SqlString = "SELECT  c.[ShortName],coalesce(c.[Description],'') Description,coalesce(convert(nvarchar(50),c.[KCategoryID]),'') KCategoryID, coalesce(convert(nvarchar(50),c.[ParentCategoryID]),'') ParentCategoryID," +
-                                    "coalesce(convert(nvarchar(50),c.[fIconID]),'') Icon,coalesce(c.DateEffective,convert(datetime,'1753/1/1'))DateEffective,coalesce(c.DateDiscontinued,convert(datetime,'9999/12/31'))DateDiscontinued,coalesce(convert(nvarchar(50),c.[fChangeID]),'') fChangeID,c.[isUnderReview],c.[isNewElement]," +
-                                    "coalesce(c.[Page],'') Page, coalesce(c.[Root],'') Root,p.[isMenuItem] FROM [Admin].[HierarchyGeneric] c INNER JOIN  [Admin].[HierarchyGeneric] p on p.kCategoryID = c.fHierarchyID  WHERE c.fHierarchyID = " +
-                                    "'" + model + "'";
-            ;// " + model;
+
+
+            var SqlString = "EXEC  [Services].[spBulkMeterRecon]		@fPropertyID =  '" +model.BulkMeter+"' ,  @DateStart =' " + model.TimeStart.ToString() + "',  @DateEnd = '" + model.TimeEnd.ToString() + "'";
+;
             try
             {
                 // Try and run the task
                 var dataset = await GetDataSetAsync(SqlString);
                 var dt = dataset.Tables[0];
-                var hierarchyResultListApiModel = new HierarchyResultListApiModel();
-                var results = hierarchyResultListApiModel;
+                var bulkReconResultListApiModel = new BulkReconResultListApiModel();
+                var results = bulkReconResultListApiModel;
 
 
                 foreach (DataRow row in dt.Rows)
                 {
-                    var u = new HierarchyResultApiModel
+                    var u = new BulkReconResultApiModel
                     {
-                        ShortName = (string)(row[0]),
-                        Description = (string)row[1],
-                        KCategoryID = (string)row[2],
-                        ParentCategoryID = (string)row[3],
-                        FHierarchyID = model,
-                        FIconID = (string)row[4],
-                        DateEffective = (DateTime)row[5],
-                        DateDiscontinued = (DateTime)row[6],
-                        KChangeID = (string)row[7],
-
-                        IsUnderReview = (row[8] != DBNull.Value) ? (bool)row[8] : false,
-                        IsNewElement = false,
-                        Page = (string)row[10],
-                        Root = (string)row[11],
-                        IsMenuItem = (row[12] != DBNull.Value) ? (bool)row[12] : false,
-
+                    BulkMeter =row[0].ToString(),
+                    ShortName  = (string)row[1],
+                    TimeSlotStart =(DateTime)row[2],
+                    Missing=(int)row[3],
+                    ChildMeters=(int)row[4],
+                    VolumeIn = (float)row[5],
+                    VolumeOut = (float)row[6],
+                    VolumeDelta = (float)row[7],
+                    MovingAvgDelta = (float)row[8],
+                    PercDelta = (float)row[9],
                     };
-                    var mShortName = u.ShortName;
                     results.Add(u);
 
                 }
-                var matches = results.Where(x => x.ShortName == "Brendon Snakes").ToList();
-                return new ApiResponse<HierarchyResultListApiModel>
+
+                return new ApiResponse<BulkReconResultListApiModel>
                 {
 
                     Response = results
@@ -812,110 +799,6 @@ namespace Fasetto.Word.Web.Server
 
 
 
-
-            //var para = new SqlParameter[3];
-            //para[0] = new SqlParameter("@ID", SqlDbType.VarChar);
-            //para[1] = new SqlParameter("@Date", SqlDbType.DateTime);
-            //para[2] = new SqlParameter("@Reading", SqlDbType.Decimal);
-
-            ////var SqlString = "EXEC  [Services].[spDateForMeterCursor] @fClientID = NULL, @DateStart = NULL, @DateEnd = NULL";
-
-            //try
-            //{
-            //    // Try and run the task
-            //    var dataset = await GetDataSetAsync(SqlString);
-            //    var dt = dataset.Tables[0];
-            //    var hierarchyResultListApiModel = new HierarchyResultListApiModel();
-            //    var results = hierarchyResultListApiModel;
-
-
-            //    foreach (DataRow row1 in dt.Rows)
-            //    {
-            //        try
-            //        {
-            //            var param = (string)(row1[0]);
-            //            param = "https://api.netqedge.com/v1" + param;
-            //            //For testing a specific subset of data via api   2022-11-27 20:54:47.000
-            //            //param = "https://api.netqedge.com/v1?From=2022-12-16%2000%3A00%3A00&To=2022-12-16%2012%3A30%3A00";
-            //            var serverResponse = default(HttpWebResponse);
-            //            serverResponse = await Get2Async(param);
-
-            //            var result1 = serverResponse.CreateWebRequestResult<WaterReading>();
-            //            if (result1.RawServerResponse != null)
-            //            {       // Deserialize raw response
-            //                    //var myObject = JsonConvert.DeserializeObject<WaterReading>(result1.RawServerResponse);
-
-
-            //                var ObjOrderList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<WaterReading>>(result1.RawServerResponse);
-
-
-            //                foreach (var site in ObjOrderList)
-            //                {
-            //                    foreach (var row in site.Readings)
-            //                    {
-            //                        para[0].Value = row.DeviceId;
-            //                        para[1].Value = Convert.ToDateTime(row.timestamp);
-            //                        para[2].Value = Convert.ToDecimal(row.Value);
-            //                        //var dateTime = Convert.ToDateTime(row.timestamp.Substring(0, 18).Replace("T", " "));
-            //                        //para[1].Value = dateTime;
-            //                        try
-            //                        {
-            //                            // Try and run the task
-
-            //                            SqlString = "UPDATE [Services].[MeterReading] SET MeterReading = @Reading FROM [Services].[MeterReading] mr (NOLOCK)LEFT OUTER JOIN [Services].[Meter] m (NOLOCK)ON mr.fMeterID = m.[kMeterId]" +
-            //                             " WHERE  m.[Reference]= @Id  AND mr.Date = @Date  AND NOT MeterReading = @Reading";
-
-            //                            //TO DO: When running the query below from the server, the system updates a reading for a different meter but the same timestamp...
-            //                            //When running that same query directly on the database, the update (error) does not occur??? why
-            //                            //DECLARE @Date datetime = '2022-10-27 02:45:04',@Id nvarchar = 'C53AE8',@Reading decimal (10,3) =320.576
-            //                            //                                    UPDATE[Services].[MeterReading]
-            //                            //SET MeterReading = @Reading FROM[Services].[MeterReading] mr(NOLOCK)LEFT OUTER JOIN[Services].[Meter] m(NOLOCK)ON mr.fMeterID = m.[kMeterId] AND m.[Reference]= @Id WHERE mr.Date = @Date AND NOT MeterReading = @Reading
-            //                            _ = await ExecuteAsync(SqlString, para);
-            //                            SqlString = "INSERT INTO [Services].[MeterReading]([Date],[MeterReading],[fMeterID]) SELECT @Date,@Reading,m.[kMeterId]FROM [Services].[Meter] m (NOLOCK)LEFT OUTER JOIN [Services].[MeterReading]" +
-            //                                               " mr (NOLOCK)ON mr.Date = @Date  AND mr.MeterReading = @Reading AND mr.fMeterID = m.[kMeterId]WHERE m.[Reference]= @Id AND mr.MeterReading IS NULL";
-            //                            _ = await ExecuteAsync(SqlString, para);
-            //                        }
-            //                        catch (Exception ex)
-            //                        {
-            //                            // Log error
-            //                            //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
-
-            //                            // Throw it as normal
-            //                            throw;
-            //                        }
-            //                    }
-            //                }
-
-            //            }
-            //            else
-            //            {
-            //                return new ApiResponse();
-            //            }
-            //        }
-            //        catch (Exception ex)
-            //        {
-            //            // Log error
-            //            //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
-
-            //            // Throw it as normal
-            //            throw;
-            //        }
-
-            //    }
-
-
-            //}
-
-            //catch (Exception ex)
-            //{
-            //    // Log error
-            //    //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
-
-            //    // Throw it as normal
-            //    throw;
-            //}
-
-            //return new ApiResponse();
         }
         #endregion
 

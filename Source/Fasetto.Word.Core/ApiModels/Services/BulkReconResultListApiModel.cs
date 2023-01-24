@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 
-namespace Fasetto.Word.Core.ApiModels.Services
+namespace Fasetto.Word.Core
 {
     /// <summary>
     /// Return of hierarchy items from database for a selected hierarchy

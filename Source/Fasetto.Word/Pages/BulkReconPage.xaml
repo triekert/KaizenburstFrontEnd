@@ -16,7 +16,8 @@
         <Grid.RowDefinitions>
 
             <!-- Title bar -->
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="30.389" />
+            <RowDefinition Height="19.611"/>
 
             <!-- Chat List -->
             <RowDefinition Height="*" />
@@ -28,7 +29,7 @@
 
         <!-- Popup Overlay -->
         <Border Background="Transparent" 
-                Grid.RowSpan="2"
+                Grid.RowSpan="3"
                 Panel.ZIndex="1"
                 Visibility="{Binding AnyPopupVisible, Converter={local:BooleanToVisiblityConverter}, ConverterParameter=True}"
                 >
@@ -38,7 +39,7 @@
         </Border>
 
         <!-- Title bar -->
-        <Grid Height="50">
+        <Grid Height="50" Grid.RowSpan="2">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -78,12 +79,15 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
+                <Border Background="{DynamicResource ForegroundLightBrush}"
+                            Grid.Row="1">
+                </Border>
 
                 <!-- Close search button -->
                 <Button Style="{StaticResource IconGrowButton}" 
                         Content="{StaticResource FontAwesomeCloseIcon}"
                         Command="{Binding  CloseSearchCommand}"
-                        Foreground="{StaticResource WordOrangeBrush}"
+                        Foreground="{DynamicResource WordOrangeBrush}"
                         />
 
                 <!-- Search box -->
@@ -103,41 +107,27 @@
                     </TextBox.InputBindings>
                 </TextBox>
 
-
             </Grid>
 
         </Grid>
-        <DataGrid x:Name="mBulkReconDataModel">
+         <DataGrid x:Name="mBRDML" Grid.Row="2"  ItemsSource="{Binding mBRDML}" 
+                  HeadersVisibility="All">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header ="Bulk Meter"
+                                    Binding="{Binding ShortName}"/>
+                <DataGridTextColumn Header ="TimeSlot"
+                                    Binding="{Binding TimeStart}"/>
+            </DataGrid.Columns>
+
+
         </DataGrid>
 
-        <!-- Chat List -->
-        <!--<local:HierarchyControl 
-            x:Name="Hierarchy" 
-            Grid.Row="1" 
-            />-->
 
-        <!-- Attachment Menu Popup -->
-        <!--<DataGrid  x:Name="BR"  ItemsSource="{Binding BulkReconDataModel}"/>-->
-
-
-
-
-        <!--<local:HierarchyControl 
-            x:Name="Hierarchy" 
-            Grid.Row="1" 
-            />-->
-        <!--<ComboBox
-            x:Name="BulkReconCB"
-            Grid.Column="1"
-            <ComboBox.ItemTemplate
-            
-           </ComboBox>-->
-
-            <Border Grid.Row="1"
+        <Border Grid.Row="2"
                 Panel.ZIndex="2"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Left"
-                local:AnimateSlideInFromBottomProperty.Value="{Binding AttachmentMenuVisible}">
+                local:AnimateSlideInFromBottomProperty.Value="{Binding AttachmentMenuVisible}" Margin="0,0,0,-78" Grid.RowSpan="2">
 
             <local:BubbleContent DataContext="{Binding AttachmentMenu}" />
 
@@ -148,7 +138,7 @@
               Panel.ZIndex="3"
               MinHeight="50"
               MaxHeight="114"
-              Background="{StaticResource ForegroundLightBrush}"
+              Background="{StaticResource ForegroundLightBrush}" Margin="0,597,0,0" Grid.RowSpan="2"
               >
 
             <Grid.ColumnDefinitions>
@@ -162,7 +152,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-             <!--Attach button 
+            <!--Attach button 
             <Button Style="{StaticResource IconGrowButton}"
                     Height="{Binding MinHeight, RelativeSource={RelativeSource AncestorType=Grid}}"
                     Content="{StaticResource FontAwesomePaperclipIcon}"
@@ -171,7 +161,7 @@
                     Foreground="{StaticResource ForegroundDarkBrush}"
                     />
 
-             Message box--> 
+             Message box-->
             <!--<TextBox x:Name="MessageText"    
                      Grid.Column="1" 
                      Tag="Write a message..."
@@ -203,7 +193,7 @@
                     />-->
 
                 <!-- Send button -->
-                <Button Content="Submit Changess"
+                <Button Content="Submit Changes"
                         Padding="8"
                         IsDefault="True"
                         Focusable="False"
@@ -215,6 +205,7 @@
             </StackPanel>
 
         </Grid>
+
 
     </Grid>
 </local:BasePage>

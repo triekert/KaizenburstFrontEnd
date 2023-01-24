@@ -28,7 +28,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The chat thread items for the list
         /// </summary>
-        protected ObservableCollection<ChatMessageListItemViewModel> mItems;
+        //protected ObservableCollection<ChatMessageListItemViewModel> mItems;
 
         /// <summary>
         /// A flag indicating if the search dialog is open

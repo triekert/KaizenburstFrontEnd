@@ -86,7 +86,7 @@
                 <Button Style="{StaticResource IconGrowButton}" 
                         Content="{StaticResource FontAwesomeCloseIcon}"
                         Command="{Binding  CloseSearchCommand}"
-                        Foreground="{DynamicResource WordRedBrush}"
+                        Foreground="{DynamicResource WordOrangeBrush}"
                         />
 
                 <!-- Search box -->
@@ -165,7 +165,7 @@
                     />-->
 
                 <!-- Send button -->
-                <Button Content="Submit Changess"
+                <Button Content="Submit Changes"
                         Padding="8"
                         IsDefault="True"
                         Focusable="False"

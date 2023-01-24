@@ -152,13 +152,13 @@ namespace Fasetto.Word
         /// <summary>
         /// A list of all children containd inside this item
         /// </summary>
-        public ObservableCollection< BulkReconViewModel>  Children => mChildren;
+        public ObservableCollection<BulkReconViewModel> Children => mChildren;
 
 
         /// <summary>
         /// Title of Control
         /// </summary>
-        public string Title { get; set; } = "Tree View of Finance";
+        public string Title { get; set; } = "Bulk Meter Reconciliation";
 
 
         /// <summary>

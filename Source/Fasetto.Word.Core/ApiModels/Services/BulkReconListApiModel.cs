@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Fasetto.Word.Core
 {
@@ -6,7 +7,15 @@ namespace Fasetto.Word.Core
     /// Persistance of expense hierarchy item/s on database
     /// </summary>
     public class BulkReconListApiModel : List<BulkReconApiModel>
+  
     {
+
+
+
+
 
     }
 }
+
+
+

@@ -4,13 +4,12 @@ using Fasetto.Word.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using static Fasetto.Word.DI;
 using static Fasetto.Word.Core.CoreDI;
-using System.Linq;
-using Fasetto.Word.Core.ApiModels.Services;
+using static Fasetto.Word.DI;
 
 namespace Fasetto.Word
 {
@@ -41,10 +40,10 @@ namespace Fasetto.Word
         protected BulkReconViewModel mRootHierarchyElement;
         protected BulkReconViewModel mRootHierarchyElement1;
         private readonly ICommand mSearchCommand;
-        public BulkReconListDataModel mHDML;
+        public BulkReconListDataModel mBRDML;
         public BulkReconResultListApiModel mPersist, mPersistTmp,mOriginal;
-        public BulkReconDataModel mHDM;
-        public string mTableName;
+        public BulkReconDataModel mBRDM;
+        public ParameterBulkReconApiModel mRequest;
         public HierarchyElementViewModel mElement;
 
         //IEnumerator<HierarchyManagementViewModel> mMatchingCategoryEnumerator;
@@ -77,16 +76,31 @@ namespace Fasetto.Word
         public BulkReconTreeViewModel(string bulkMeter, DateTime timeStart, DateTime timeEnd)
         {
             #region Dummy Root HierarchyListDataModel
-            mHDML = new BulkReconListDataModel();
-            mHDM = new BulkReconDataModel
+            mBRDML = new BulkReconListDataModel();
+            mBRDM = new BulkReconDataModel
             {
                 //KCategoryID = new Guid().ToString(),
                 //ParentCategoryID = "00000000-0000-0000-0000-000000000000",
                 //Description = "...Loading hierarchy data...",
                 ShortName = "Loading...Please be patient",
+                TimeSlotStart = new DateTime(2023, 1, 22, 0, 0, 0) ,
+                Missing =3,
+                ChildMeters = 87,
+                VolumeIn = 3145.342F,
+                VolumeOut = 3215.124F
+
+
                 //Children = new BulkReconListDataModel()
             };
-            mHDML.Add(mHDM);
+            mBRDML.Add(mBRDM);
+
+            mRequest = new ParameterBulkReconApiModel
+            { 
+                BulkMeter = bulkMeter,
+                TimeStart = timeStart,
+                TimeEnd = timeEnd
+            };
+
 
             //mTableName = hierarchyTable;
             #endregion
@@ -98,29 +112,12 @@ namespace Fasetto.Word
             // Get the OptFinHierarchies currently configured - first populate 'root hierarchy' variable with all configured root hierarchy elements currently available
 
 
-            UpdateTreeViewElements();
+            //UpdateTreeViewElements();
             CloseCommand = new RelayCommand(Close);
             mSearchCommand = new SearchCategoryTreeCommand(this);
         }
 
-        private void UpdateTreeViewElements()
 
-        {
-
-            var rootElement = mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
-            mRootHierarchyElement = new BulkReconViewModel(rootElement)
-            {
-                IsExpanded = true
-            };
-
-            FirstGeneration = new ObservableCollection<BulkReconViewModel>(
-                new BulkReconViewModel[]
-                {
-                    mRootHierarchyElement
-                });
-
-
-        }
 
 
 
@@ -207,6 +204,9 @@ namespace Fasetto.Word
 
                 // Store single transcient instance of client data store
                 var scopedClientDataStore = ClientDataStore;
+                //
+                //return;
+                //
 
                 // Update values from local cache
                 // Get the user token
@@ -219,7 +219,7 @@ namespace Fasetto.Word
                 var result = await WebRequests.PostAsync<ApiResponse<BulkReconResultListApiModel>>(
                 // Set URL
                     RouteHelpers.GetAbsoluteRoute(ApiRoutes.ReturnBulkRecon),
-                    mTableName,
+                    mRequest,
                     bearerToken: token);
 
                 // If the response has an error...
@@ -230,14 +230,38 @@ namespace Fasetto.Word
                 // OK successfully registered (and logged in)... now get aprpropriate tree view data
                 //for now; keep a snapshot of persisted data
                 mOriginal = result.ServerResponse.Response;
+
                 ;
                
                 try
                 {
                     //var hierarchyResultApiModels = mOriginal.ToList();
                     //make a clone of the persisted data for manipulation on front end
-                    mPersist = new BulkReconResultListApiModel();
-                    mPersist.Clone(mOriginal, mPersist);
+                    //mPersist = new BulkReconResultListApiModel();
+                    //mPersist.Clone(mOriginal, mPersist);
+                    mBRDML.Clear();
+                    var matches = result.ServerResponse.Response.ToList();
+                    foreach (var item in matches)
+                    {
+                        var ud1 = new BulkReconDataModel
+                        {
+                            //var u = hierarchyDataModel;
+                            ShortName           = item.ShortName,
+                            KCategoryID         = item.KCategoryID,
+                            BulkMeter             = item.BulkMeter ,
+                            TimeSlotStart        = item.TimeSlotStart ,
+                            Missing                 = item.Missing,
+                            ChildMeters          = item.ChildMeters,
+                            VolumeIn              = item.VolumeIn,
+                            VolumeOut           = item.VolumeOut,
+                            VolumeDelta        = item.VolumeDelta,
+                            MovingAvgDelta  = item.MovingAvgDelta,
+                            PercDelta            = item.PercDelta,
+  
+                        };
+                        mBRDML.Add(ud1);
+                    }
+
                 }
                  catch (Exception e)
                 {
@@ -245,7 +269,7 @@ namespace Fasetto.Word
                 }
 
 
-                RefreshHierarchy();
+                //RefreshHierarchy();
 
 
             });
@@ -258,9 +282,9 @@ namespace Fasetto.Word
         public void RefreshHierarchy()
         {
 
-            mHDML.Clear();
+            mBRDML.Clear();
             //build a tree view, always starting with the root element, which is also the classification for the hierarchy
-            mHDML.AddRange(ExpandHierarchyData(mPersist, "00000000-0000-0000-0000-000000000000", "Root"));
+            mBRDML.AddRange(ExpandHierarchyData(mPersist, "00000000-0000-0000-0000-000000000000", "Root"));
             //Refresh the tree view title with the current name of the root element
             ControlTitle = (mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ShortName;
 
@@ -269,7 +293,7 @@ namespace Fasetto.Word
             { category.ParentShortName = matches.First(x => x.ParentCategoryID == category.ParentCategoryID).ShortName; }
             //Update the viewModel with the returned values
 
-            UpdateTreeViewElements();
+            //UpdateTreeViewElements();
 
 
             //}

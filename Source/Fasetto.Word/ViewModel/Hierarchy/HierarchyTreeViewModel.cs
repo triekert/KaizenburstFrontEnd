@@ -4,13 +4,12 @@ using Fasetto.Word.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using static Fasetto.Word.DI;
 using static Fasetto.Word.Core.CoreDI;
-using System.Linq;
-using Fasetto.Word.Core.ApiModels.Services;
+using static Fasetto.Word.DI;
 
 namespace Fasetto.Word
 {

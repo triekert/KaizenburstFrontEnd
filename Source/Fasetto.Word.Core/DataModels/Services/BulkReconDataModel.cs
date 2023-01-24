@@ -170,22 +170,6 @@ namespace Fasetto.Word.Core
         /// </summary>
         public List<BulkReconDataModel> Children { get; set; }
 
-        #region KCategoryIdContainsText
-
-        /// <summary>
-        /// Check that the KCategoryId field contains data to enable the search
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public bool KCategoryIdContainsText(string text)
-        {
-            if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(KCategoryID))
-                return false;
-
-            return KCategoryID.IndexOf(text, StringComparison.InvariantCultureIgnoreCase) > -1;
-        }
-
-        #endregion // NameContainsText
 
 
     }

@@ -1,17 +1,9 @@
-﻿using static Fasetto.Word.DI;
-using static Fasetto.Word.Core.CoreDI;
+﻿using Fasetto.Word.Core;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using Fasetto.Word.Core;
-using System.Windows.Forms;
-using System.Data.Linq;
-using Dna;
-using System.Windows;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
-using Fasetto.Word.Core.ApiModels.Services;
-using System.Threading.Tasks;
-using System;
+using static Fasetto.Word.DI;
 
 namespace Fasetto.Word
 {
@@ -194,7 +186,8 @@ namespace Fasetto.Word
         public bool BulkReconBuildIsRunning { get; set; }        
         private BulkReconDataModel mBulkReconItem ;
         private BulkReconListDataModel mBulkRecon = new BulkReconListDataModel();
-         private BulkReconResultListApiModel mBulkReconApi= new BulkReconResultListApiModel();
+        public BulkReconResultListApiModel mBulkReconApi= new BulkReconResultListApiModel();
+        public BulkReconTreeViewModel mBulkReconTreeView;
         private string mTableName ;
         #endregion
 
@@ -220,21 +213,13 @@ namespace Fasetto.Word
 
             #region Dummy Root BulkReconDataModel
 
-            mBulkReconItem = new BulkReconDataModel
-            {
-                //KCategoryID = new Guid().ToString(),
-                //ParentCategoryID = "00000000-0000-0000-0000-000000000000",
-                //Description = "...Loading hierarchy data...",
-                ShortName = "Loading...Please be patient",
-                //Children = new BulkReconListDataModel()
-            };
-            mBulkRecon.Add(mBulkReconItem);
+            mBulkReconTreeView = new BulkReconTreeViewModel("5249FFEB-6907-46AA-9204-D4527E11F9CE", DateTime.Today, DateTime.Today);
 
             //mTableName = hierarchyTable;
             #endregion
             //retrieve hierarchy from persistent storage on server
             //To Do: Add mTableName as parameter when calling HiearchyAsync to populate hierarchy
-            TaskManager.RunAndForget(BulkReconAsync);
+            //TaskManager.RunAndForget(BulkReconAsync);
 
 
             // Get the OptFinHierarchies currently configured - first populate 'root hierarchy' variable with all configured root hierarchy elements currently available
@@ -373,57 +358,9 @@ namespace Fasetto.Word
         /// User credentials are used to determine access authorisation
         /// </summary>
         /// <returns></returns>
-
-        public async Task BulkReconAsync()
-        {
-            await RunCommandAsync(() => BulkReconBuildIsRunning, async () =>
-            {
-
-                // Store single transcient instance of client data store
-                var scopedClientDataStore = ClientDataStore;
-
-                // Update values from local cache
-                // Get the user token
-                var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
-                // Call the server and attempt to register with the provided credentials
-                // If we don't have a token (then not logged in...)
-                if (string.IsNullOrEmpty(token))
-                    // Then do nothing more
-                    return;
-                var result = await WebRequests.PostAsync<ApiResponse<BulkReconResultListApiModel>>(
-                // Set URL
-                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.ReturnBulkRecon),
-                    mTableName,
-                    bearerToken: token);
-
-                // If the response has an error...
-                if (await result.HandleErrorIfFailedAsync("Bulk Recon retrieval Failed"))
-                    // We are done
-                    return;
-
-                // OK successfully registered (and logged in)... now get aprpropriate tree view data
-                //for now; keep a snapshot of persisted data
-                //mOriginal = result.ServerResponse.Response;
-                //;
-
-                try
-                {
-                    //var hierarchyResultApiModels = mOriginal.ToList();
-                    //make a clone of the persisted data for manipulation on front end
-                    mBulkReconApi = new BulkReconResultListApiModel();
-                }
-                catch (Exception e)
-                {
-                    throw e;
-                }
-
-                //RefreshHierarchy();
-
-
-            });
         }
 
 
         #endregion
-    }
+    
 }
