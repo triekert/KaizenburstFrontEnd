@@ -246,6 +246,8 @@ namespace Fasetto.Word
 
                 RefreshHierarchy();
 
+                ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
+
 
             });
         }

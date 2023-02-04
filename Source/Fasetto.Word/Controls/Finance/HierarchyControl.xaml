@@ -6,7 +6,6 @@
              mc:Ignorable="d" 
              xmlns:local="clr-namespace:Fasetto.Word"             
              d:DesignHeight="300" d:DesignWidth="300">
-
     <DockPanel>
         <!-- SEARCH AREA -->
         <Border 
@@ -21,8 +20,8 @@
                 </LinearGradientBrush>
             </Border.Background>
 
-            <!--<StackPanel 
-                HorizontalAlignment="Right" 
+            <StackPanel 
+                HorizontalAlignment="Stretch" 
                 Margin="0,0,10,0" 
                 Orientation="Horizontal"
                 >
@@ -30,14 +29,14 @@
                       x:Name="searchTextBox"
                       KeyDown="SearchTextBox_KeyDown"
                       Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                      Width="200" FontSize="18" TextWrapping="Wrap" RenderTransformOrigin="0.1,0.616" AutomationProperties.HelpText="Begin entering name...."
+                      Width ="225" FontSize="18" TextWrapping="Wrap" RenderTransformOrigin="0.1,0.616" AutomationProperties.HelpText="Begin entering name...."
                     >
                     <TextBox.InputBindings>
-                        --><!-- Clear text on Esc --><!--
+                        <!--Clear text on Esc-->
                         <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc" />
-                        --><!-- Search on enter --><!--
+                        <!--Search on enter-->
                         <KeyBinding Command="{Binding SearchCommand}" Key="Return" />
-                        </TextBox.InputBindings>
+                    </TextBox.InputBindings>
                 </TextBox>
 
                 <Button Style="{StaticResource IconGrowButton}" 
@@ -48,20 +47,21 @@
                     <Button.Foreground>
                         <SolidColorBrush Color="{DynamicResource ForegroundLight}"/>
                     </Button.Foreground>
-                    <Button.ToolTip>
+                    <!--<Button.ToolTip>
                         <ToolTip Placement="Mouse"
 
                              Opened="ToolTip_Opened"
 
                              Closed="ToolTip_Closed">Login with the entered credentials</ToolTip>
-                    </Button.ToolTip>
+                    </Button.ToolTip>-->
                 </Button>
-            </StackPanel>-->
+            </StackPanel>
         </Border>
         <Border 
          DockPanel.Dock="Top" 
          BorderBrush="#FF734444" 
          BorderThickness="1,0,1,1">
+
 
             <Grid>
 

@@ -201,19 +201,19 @@ namespace Fasetto.Word
             //Populate screen title
             //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
             //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000")
-            DisplayTitle = "Bulk Meter Reconciliation";
+            DisplayTitle = "Bulk Meter Reconciliation-Test1";
             // Create commands
             AttachmentButtonCommand = new RelayCommand(AttachmentButton);
             PopupClickawayCommand = new RelayCommand(PopupClickaway);
-            SendCommand = new RelayCommand(Send);
-            SearchCommand = new RelayCommand(Search);
+            //SendCommand = new RelayCommand(Send);
+            //SearchCommand = new RelayCommand(Search);
             OpenSearchCommand = new RelayCommand(OpenSearch);
             CloseSearchCommand = new RelayCommand(CloseSearch);
             ClearSearchCommand = new RelayCommand(ClearSearch);
 
             #region Dummy Root BulkReconDataModel
 
-            mBulkReconTreeView = new BulkReconTreeViewModel("5249FFEB-6907-46AA-9204-D4527E11F9CE", DateTime.Today, DateTime.Today);
+            //mBulkReconTreeView = new BulkReconTreeViewModel("5249FFEB-6907-46AA-9204-D4527E11F9CE", DateTime.Today, DateTime.Today);
 
             //mTableName = hierarchyTable;
             #endregion
@@ -259,39 +259,39 @@ namespace Fasetto.Word
         /// <summary>
         /// When the user clicks the send button, sends the message
         /// </summary>
-        public void Send()
-        {
-            mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
-            var results = mViewModel.mPersist.Where(x => x.IsUnderReview|| x.IsDeleteElement).ToList();
-            var mPersistElement = new HierarchyResultApiModel();
-            //var results = mViewModel.mPersist.OrderBy(x => x.ShortName).ToList();
-            if (results.Count > 0)
-                //mViewModel.mPersistTmp = (HierarchyResultApiModel)results;
-                //ToDo:Where a new hierarchy is referred to in the a new menu item, Create the root element for this new hierarchy
+        //public void Send()
+        //{
+        //    mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+        //    var results = mViewModel.mPersist.Where(x => x.IsUnderReview|| x.IsDeleteElement).ToList();
+        //    var mPersistElement = new HierarchyResultApiModel();
+        //    //var results = mViewModel.mPersist.OrderBy(x => x.ShortName).ToList();
+        //    if (results.Count > 0)
+        //        //mViewModel.mPersistTmp = (HierarchyResultApiModel)results;
+        //        //ToDo:Where a new hierarchy is referred to in the a new menu item, Create the root element for this new hierarchy
 
-                results = mViewModel.mPersist.Where(x => (x.IsNewElement) & x.Page == "Hierarchy").ToList();
-                if (results.Count > 0)
-                { 
-                //mViewModel.mPersist.AddRange(results);
-                    foreach (var row in results)
+        //        results = mViewModel.mPersist.Where(x => (x.IsNewElement) & x.Page == "Hierarchy").ToList();
+        //        if (results.Count > 0)
+        //        { 
+        //        //mViewModel.mPersist.AddRange(results);
+        //            foreach (var row in results)
 
-                        {
-                        mPersistElement.DateDiscontinued = row.DateDiscontinued;
-                        mPersistElement.DateEffective = row.DateEffective;
-                        mPersistElement.ShortName = row.ShortName;
-                        mPersistElement.Description = row.Description;
-                        mPersistElement.KCategoryID = row.Root;
-                        mPersistElement.Page = row.Page;
-                        mPersistElement.IsNewElement = row.IsNewElement;
-                        mPersistElement.IsUnderReview = row.IsUnderReview;
-                        mPersistElement.ParentCategoryID = "00000000-0000-0000-0000-000000000000";
-                        mPersistElement.FHierarchyID = row.Root;
-                        }
-                        mViewModel.mPersist.Add(mPersistElement);
+        //                {
+        //                mPersistElement.DateDiscontinued = row.DateDiscontinued;
+        //                mPersistElement.DateEffective = row.DateEffective;
+        //                mPersistElement.ShortName = row.ShortName;
+        //                mPersistElement.Description = row.Description;
+        //                mPersistElement.KCategoryID = row.Root;
+        //                mPersistElement.Page = row.Page;
+        //                mPersistElement.IsNewElement = row.IsNewElement;
+        //                mPersistElement.IsUnderReview = row.IsUnderReview;
+        //                mPersistElement.ParentCategoryID = "00000000-0000-0000-0000-000000000000";
+        //                mPersistElement.FHierarchyID = row.Root;
+        //                }
+        //                mViewModel.mPersist.Add(mPersistElement);
                         
-                }
-                _ = mViewModel.PersistHierarchyChangesAsync();
-        }
+        //        }
+        //        _ = mViewModel.PersistHierarchyChangesAsync();
+        //}
 
         /// <summary>
         /// Searches the current message list and filters the view

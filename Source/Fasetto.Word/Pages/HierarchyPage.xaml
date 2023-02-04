@@ -57,16 +57,16 @@
                        />
 
             <!-- Main buttons -->
-            <StackPanel Orientation="Horizontal" Grid.Column="1">
+            <!--<StackPanel Orientation="Horizontal" Grid.Column="1">
 
-                <!-- Search Button -->
+                --><!-- Search Button --><!--
                 <Button Style="{StaticResource IconGrowButton}" 
                         Content="{StaticResource FontAwesomeSearchIcon}"
                         Command="{Binding OpenSearchCommand}"
                         />
 
                 <Button Style="{StaticResource IconGrowButton}" Content="{StaticResource FontAwesomeEllipsisVerticalIcon}" />
-            </StackPanel>
+            </StackPanel>-->
 
             <!-- Search Overlay -->
             <Grid Grid.ColumnSpan="2"
@@ -112,13 +112,17 @@
         </Grid>
 
         <!-- Chat List -->
+        
+        
         <local:HierarchyControl 
+            Background="{DynamicResource ForegroundLightBrush}"
             x:Name="Hierarchy" 
             Grid.Row="1" Loaded="Hierarchy_Loaded" 
             />
 
         <!-- Attachment Menu Popup -->
-        <Border Grid.Row="1"
+        <Border  Background="{DynamicResource ForegroundLightBrush}"
+               Grid.Row="1"
                 Panel.ZIndex="2"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Left"

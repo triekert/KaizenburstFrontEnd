@@ -15,145 +15,81 @@ namespace Fasetto.Word
     {
         //#region Data
 
-        public readonly BulkReconViewModel mParent;
+        //public readonly BulkReconViewModel mParent;
         private readonly BulkReconDataModel mElement;
-        public ObservableCollection<BulkReconViewModel> mChildren;
-        public bool mIsExpanded;
-        public bool mIsSelected;
-        public bool mIsAllowDrop;
+        //public ObservableCollection<BulkReconViewModel> mChildren;
+        //public bool mIsExpanded;
+        //public bool mIsSelected;
+        //public bool mIsAllowDrop;
         //#endregion // Data
 
         #region Public Properties
 
+        /// <summary>
+        /// GUID of BulkMeter 
+        /// </summary>
+        public string BulkMeter { get; set; }
+
+
+      
 
         /// <summary>
-        /// The name of this Bulk Meter being monitiored    
+        ///timestamp of TimeSlot
         /// </summary>
-        public string BulkMeter => mElement.ShortName;
-
-        /// <summary>
-        /// Calendar date from which Element is deactivated
-        /// </summary>
-        public DateTime TimeSlotStart => mElement.DateDiscontinued;
+        public DateTime TimeSlotStart { get; set; }
 
 
         /// <summary>
-        /// The name of this hierarchy item
+        ///Number of meters for which no readings currently received for  TImeSlot
         /// </summary>
-        public int Missing => mElement.Missing;
+        public int Missing { get; set; }
 
 
         /// <summary>
         ///Total number of consumer meters linked to bulk meter
         /// </summary>
-        public int ChildMeters => mElement.ChildMeters;
-
-
-        /// <summary>
-        /// The name of this hierarchy item
-        /// </summary>
-        public float VolumeIn => mElement.VolumeIn;
+        public int ChildMeters { get; set; }
 
 
         /// <summary>
         ///Consumption recorded/calculated for bulk meter for Timeslot
         /// </summary>
-        public float VolumeOut => mElement.VolumeOut;
+        public float VolumeIn { get; set; }
+
+
+        /// <summary>
+        ///Aggregate consumption recorded/calculated on all consumer meters for Timeslot
+        /// </summary>
+        public float VolumeOut { get; set; }
+
 
         /// <summary>
         ///Aggregate consumption difference between input and output  for Timeslot
         /// </summary>
-        public float VolumeDelta => mElement.VolumeDelta;
+        public float VolumeDelta { get; set; }
+
 
         /// <summary>
         ///Moving average for calculated Delta  for Timeslot
         /// </summary>
-        public float MovingAvgDelta => mElement.MovingAvgDelta;
+        public float MovingAvgDelta { get; set; }
+
 
         /// <summary>
         ///VolumeDelta expressed as a percentage of VolumeIn  for Timeslot
         /// </summary>
-        public float PercDelta=> mElement.PercDelta;
+        public float PercDelta { get; set; }
 
         /// <summary>
-        /// The name of this hierarchy item
+        ///name of Category element
         /// </summary>
-        public string ShortName => mElement.ShortName;
+        public string ShortName { get; set; }
 
-        ///// <summary>
-        ///// Description of hiearchy item
-        ///// </summary>
-        //public string Description =>mElement.Description;
         /// <summary>
-        /// The Identifier of this hierarchy item
+        ///description of Category element
         /// </summary>
-        public string KCategoryID => mElement.KCategoryID;
-
-        ///// <summary>
-        ///// The Identifier of the Hierarchy Type for this item
-        ///// </summary>
-        //public string FHierarchyID => mElement.FHierarchyID;
-        ///// <summary>
-        ///// Parent ID  of hiearchy item
-        ///// </summary>
-        //public string ParentCategoryID =>mElement.ParentCategoryID;
-
-        ///// <summary>
-        ///// Parent ShortName of hiearchy item
-        ///// </summary>
-        //public string ParentShortName => mElement.ParentShortName;
-
-        ///// <summary>
-        ///// Calendar date from which Element is seen as active
-        ///// </summary>
-        //public DateTime DateEffective => mElement.DateEffective;
-
-        ///// <summary>
-        ///// Calendar date from which Element is deactivated
-        ///// </summary>
-        //public DateTime DateDiscontinued => mElement.DateDiscontinued;
-
-        ///// <summary>
-        ///// Attach the current activity to a Change object
-        ///// </summary>
-        //public string KChangeID   => mElement.KChangeID;
-
-        ///// <summary>
-        ///// If a menu item, link tree item to menu Page
-        ///// </summary>
-        //public string Page => mElement.Page;
-
-        ///// <summary>
-        ///// If a menu item, link tree item to menu Page
-        ///// </summary>
-        //public string Root => mElement.Root;
-
-        ///// <summary>
-        ///// Property to indicate whether this element is a Menu Item or not..
-        ///// </summary>
-        //public bool IsMenuItem => mElement.IsMenuItem;
-
-        ///// <summary>
-        ///// Property to indicate whether element is being evaluated by a change request
-        ///// and whether it should be excluded from current operations
-        ///// </summary>
-        //public bool IsUnderReview => mElement.IsUnderReview;
-
-        ///// <summary>
-        ///// Property to indicate whether this element has been newly added change request
-        ///// and whether it should be excluded from current operations
-        ///// </summary>
-        //public bool IsNewElement => mElement.IsNewElement;
-
-        ///// <summary>
-        ///// Property to indicate whether this element is to be removed from the persistence layer
-        ///// </summary>
-        //public bool IsDeleteElement => mElement.IsDeleteElement;
-        /// <summary>
-        /// A list of all children containd inside this item
-        /// </summary>
-        public ObservableCollection<BulkReconViewModel> Children => mChildren;
-
+        /// 
+        public string Description { get; set; }
 
         /// <summary>
         /// Title of Control
@@ -173,7 +109,7 @@ namespace Fasetto.Word
         /// Indicates if this item can be expanded
         /// </summary>
 
-        public bool CanExpand => Children?.Count(f => f != null) > 0;
+        //public bool CanExpand => Children?.Count(f => f != null) > 0;
 
 
 
@@ -187,7 +123,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The command to expand this item
         /// </summary>
-        public ICommand ExpandCommand { get; set; }
+        //public ICommand ExpandCommand { get; set; }
 
         #endregion
         #region Constructors
@@ -197,31 +133,31 @@ namespace Fasetto.Word
         {
 
         }
-        public BulkReconViewModel(BulkReconDataModel element)
+        //public BulkReconViewModel(BulkReconDataModel element)
 
-                 : this(element, null)
-        {
-        }
+        //         : this(element, null)
+        //{
+        //}
 
-        private BulkReconViewModel(BulkReconDataModel element, BulkReconViewModel parent)
-        {
-            mElement = element;
-            mParent = parent;
-            var exception = default(Exception);
-            try
-            { 
+        //private BulkReconViewModel(BulkReconDataModel element, BulkReconViewModel parent)
+        //{
+        //    mElement = element;
+        //    mParent = parent;
+        //    var exception = default(Exception);
+        //    try
+        //    { 
         
-            mChildren = new ObservableCollection<BulkReconViewModel>(
-                    (from child in mElement.Children orderby(mElement.ShortName)
-                     select new BulkReconViewModel(child, this))
-                     .ToList());
-            }
-            catch (Exception ex)
-            {
-                exception = ex;
-            }
+        //    mChildren = new ObservableCollection<BulkReconViewModel>(
+        //            (from child in mElement.Children orderby(mElement.ShortName)
+        //             select new BulkReconViewModel(child, this))
+        //             .ToList());
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        exception = ex;
+        //    }
 
-        }
+        //}
 
 
 
@@ -236,68 +172,68 @@ namespace Fasetto.Word
         /// Gets/sets whether the TreeViewItem 
         /// associated with this object is expanded.
         /// </summary>
-        public bool IsExpanded
-        {
-            get => mIsExpanded;
-            set
-            {
-                if (value != mIsExpanded)
-                {
-                    mIsExpanded = value;
-                    //OnPropertyChanged("IsExpanded");
-                }
+        //public bool IsExpanded
+        //{
+        //    get => mIsExpanded;
+        //    set
+        //    {
+        //        if (value != mIsExpanded)
+        //        {
+        //            mIsExpanded = value;
+        //            //OnPropertyChanged("IsExpanded");
+        //        }
 
-                // Expand all the way up to the root.
-                if (mIsExpanded && mParent != null)
-                    mParent.IsExpanded = true;
-                var mDescription = mElement.Description;
-            }
-        }
+        //        // Expand all the way up to the root.
+        //        if (mIsExpanded && mParent != null)
+        //            mParent.IsExpanded = true;
+        //        var mDescription = mElement.Description;
+        //    }
+        //}
 
         #endregion // IsExpanded
 
-        #region IsSelected
+        //#region IsSelected
 
-        /// <summary>
-        /// Gets/sets whether the TreeViewItem 
-        /// associated with this object is selected in the UI.
-        /// </summary>
-        public bool IsSelected
-        {
-            get => mIsSelected;
-            set
-            {
-                if (value != mIsSelected)
-                {
-                    mIsSelected = value;
-                    //var kCategoryID = KCategoryID;
+        ///// <summary>
+        ///// Gets/sets whether the TreeViewItem 
+        ///// associated with this object is selected in the UI.
+        ///// </summary>
+        //public bool IsSelected
+        //{
+        //    get => mIsSelected;
+        //    set
+        //    {
+        //        if (value != mIsSelected)
+        //        {
+        //            mIsSelected = value;
+        //            //var kCategoryID = KCategoryID;
 
-                    var name1 = ShortName;
-                    //OnPropertyChanged("IsSelected");
-                }
-            }
-        }
+        //            var name1 = ShortName;
+        //            //OnPropertyChanged("IsSelected");
+        //        }
+        //    }
+        //}
 
-        #endregion // IsSelected
+        //#endregion // IsSelected
         #region IsAllowDrop
 
         /// <summary>
         /// Gets/sets whether the TreeViewItem 
         /// associated with this object is selected.
         /// </summary>
-        public bool IsAllowDrop
-        {
-            get => mIsAllowDrop;
-            set =>
-                //if (value != _isAllowDrop)
-                //{
-                //    _isAllowDrop = value;
-                //    //int ndx =base.GetEnumerator();
-                //    string name1 = this.ShortName;
-                //    this.OnPropertyChanged("IsAllowDrop");
-                //}
-                mIsAllowDrop = true;
-        }
+        //public bool IsAllowDrop
+        //{
+        //    get => mIsAllowDrop;
+        //    set =>
+        //        //if (value != _isAllowDrop)
+        //        //{
+        //        //    _isAllowDrop = value;
+        //        //    //int ndx =base.GetEnumerator();
+        //        //    string name1 = this.ShortName;
+        //        //    this.OnPropertyChanged("IsAllowDrop");
+        //        //}
+        //        mIsAllowDrop = true;
+        //}
 
         #endregion // IsAllowDreop
         #region TreeView_MouseDown
@@ -316,39 +252,39 @@ namespace Fasetto.Word
 
         #endregion // IsSelected
 
-        #region NameContainsText
+        //#region NameContainsText
 
-        /// <summary>
-        /// Check that the ShortName field contains data to enable the search
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public bool NameContainsText(string text)
-        {
-            if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(ShortName))
-                return false;
+        ///// <summary>
+        ///// Check that the ShortName field contains data to enable the search
+        ///// </summary>
+        ///// <param name="text"></param>
+        ///// <returns></returns>
+        //public bool NameContainsText(string text)
+        //{
+        //    if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(ShortName))
+        //        return false;
 
-            return ShortName.IndexOf(text, StringComparison.InvariantCultureIgnoreCase) > -1;
-        }
+        //    return ShortName.IndexOf(text, StringComparison.InvariantCultureIgnoreCase) > -1;
+        //}
 
-        #endregion // NameContainsText
+        //#endregion // NameContainsText
 
-        #region KCategoryIdContainsText
+        //#region KCategoryIdContainsText
 
-        /// <summary>
-        /// Check that the KCategoryId field contains data to enable the search
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public bool KCategoryIdContainsText(string text)
-        {
-            if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(KCategoryID))
-                return false;
+        ///// <summary>
+        ///// Check that the KCategoryId field contains data to enable the search
+        ///// </summary>
+        ///// <param name="text"></param>
+        ///// <returns></returns>
+        //public bool KCategoryIdContainsText(string text)
+        //{
+        //    if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(KCategoryID))
+        //        return false;
 
-            return KCategoryID.IndexOf(text, StringComparison.InvariantCultureIgnoreCase) > -1;
-        }
+        //    return KCategoryID.IndexOf(text, StringComparison.InvariantCultureIgnoreCase) > -1;
+        //}
 
-        #endregion // NameContainsText
+        //#endregion // NameContainsText
 
 
 
@@ -390,21 +326,21 @@ namespace Fasetto.Word
         /// <summary>
         /// Epands this directory and finds all the children
         /// </summary>
-        private void Expand()
-        {
+        //private void Expand()
+        //{
 
 
 
-            //// Find all children
-            //var children = from element in mHDML
-            //               where element.ParentCategoryID == KCategoryID
-            //               select (element.ShortName, element.Description, element.KCategoryID, element.ParentCategoryID);
-            //// Hierarchy cannot be expanded
-            //if (children.Count() == 0)
-            //    return;
-            //Children = new ObservableCollection<HierarchyViewModel>(
-            //    children.Select(child => new HierarchyViewModel(child.ShortName, child.Description, child.KCategoryID, mHDML)));
-        }
+        //    //// Find all children
+        //    //var children = from element in mHDML
+        //    //               where element.ParentCategoryID == KCategoryID
+        //    //               select (element.ShortName, element.Description, element.KCategoryID, element.ParentCategoryID);
+        //    //// Hierarchy cannot be expanded
+        //    //if (children.Count() == 0)
+        //    //    return;
+        //    //Children = new ObservableCollection<HierarchyViewModel>(
+        //    //    children.Select(child => new HierarchyViewModel(child.ShortName, child.Description, child.KCategoryID, mHDML)));
+        //}
 
 
 

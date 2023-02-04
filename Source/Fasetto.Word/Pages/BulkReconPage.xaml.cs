@@ -92,5 +92,10 @@ namespace Fasetto.Word
                 e.Handled = true;
             }
         }
+        private void BulkRecon_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+
+        }
+
     }
 }

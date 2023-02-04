@@ -8,7 +8,7 @@
              d:DataContext="{x:Static local:HierarchyElementDesignModel.Instance}"
              mc:Ignorable="d" >
 
-    <Border Background="{DynamicResource ForegroundDarkBrush}" 
+    <Border Background="{DynamicResource BackgroundLightBrush}" 
             Padding="15">
 
 
@@ -31,7 +31,7 @@
                     Height="40"
                     Content="{StaticResource FontAwesomeArrowLeftIcon}"
                     FontFamily="{StaticResource FontAwesome}"
-                    Foreground="{StaticResource ForegroundDarkBrush}"
+                    Foreground="{StaticResource  WordOrangeBrush}"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Command="{Binding CloseCommand}" IsCancel="True" IsDefault="True"/>

@@ -20,7 +20,8 @@ namespace Fasetto.Word
         /// </summary>
         public HierarchyPage() : base()
         {
-            InitializeComponent();
+            //InitializeComponent();
+            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
         }
 
         /// <summary>

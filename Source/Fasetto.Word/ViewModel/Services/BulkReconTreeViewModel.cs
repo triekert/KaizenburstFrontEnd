@@ -25,9 +25,9 @@ namespace Fasetto.Word
         #region Public Properties
 
         /// <summary>
-        /// A list of all registered hierarchy elements
+        /// A set of Bulk Meter Recon records for the selected period
         /// </summary>
-        public ObservableCollection<BulkReconViewModel> FirstGeneration { get; set; }
+        public ObservableCollection<BulkReconViewModel>BulkRecon{ get; set; }
 
 
         //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
@@ -37,14 +37,14 @@ namespace Fasetto.Word
         #region Data
 
         //private readonly ReadOnlyCollection<HierarchyViewModel> mFirstGeneration;
-        protected BulkReconViewModel mRootHierarchyElement;
-        protected BulkReconViewModel mRootHierarchyElement1;
-        private readonly ICommand mSearchCommand;
+        //protected BulkReconViewModel mRootHierarchyElement;
+        //protected BulkReconViewModel mRootHierarchyElement1;
+        //private readonly ICommand mSearchCommand;
         public BulkReconListDataModel mBRDML;
-        public BulkReconResultListApiModel mPersist, mPersistTmp,mOriginal;
-        public BulkReconDataModel mBRDM;
+        //public BulkReconResultListApiModel mPersist, mPersistTmp,mOriginal;
+        public BulkReconViewModel mBRVM;
         public ParameterBulkReconApiModel mRequest;
-        public HierarchyElementViewModel mElement;
+        //public HierarchyElementViewModel mElement;
 
         //IEnumerator<HierarchyManagementViewModel> mMatchingCategoryEnumerator;
 
@@ -75,24 +75,22 @@ namespace Fasetto.Word
         /// from persistent s
         public BulkReconTreeViewModel(string bulkMeter, DateTime timeStart, DateTime timeEnd)
         {
-            #region Dummy Root HierarchyListDataModel
-            mBRDML = new BulkReconListDataModel();
-            mBRDM = new BulkReconDataModel
+            #region Build HierarchyViewCollection
+            BulkRecon = new ObservableCollection<BulkReconViewModel>();
+
+            mBRVM = new BulkReconViewModel
             {
-                //KCategoryID = new Guid().ToString(),
-                //ParentCategoryID = "00000000-0000-0000-0000-000000000000",
-                //Description = "...Loading hierarchy data...",
+
                 ShortName = "Loading...Please be patient",
-                TimeSlotStart = new DateTime(2023, 1, 22, 0, 0, 0) ,
-                Missing =3,
+                TimeSlotStart = new DateTime(2023, 1, 22, 0, 0, 0),
+                Missing = 3,
                 ChildMeters = 87,
                 VolumeIn = 3145.342F,
                 VolumeOut = 3215.124F
 
 
-                //Children = new BulkReconListDataModel()
             };
-            mBRDML.Add(mBRDM);
+            BulkRecon.Add(mBRVM);
 
             mRequest = new ParameterBulkReconApiModel
             { 
@@ -114,7 +112,7 @@ namespace Fasetto.Word
 
             //UpdateTreeViewElements();
             CloseCommand = new RelayCommand(Close);
-            mSearchCommand = new SearchCategoryTreeCommand(this);
+            //mSearchCommand = new SearchCategoryTreeCommand(this);
         }
 
 
@@ -155,38 +153,38 @@ namespace Fasetto.Word
         /// <summary>
         /// Returns the command used to execute a search in the Category tree.
         /// </summary>
-        public ICommand SearchCommand => mSearchCommand;
+        //public ICommand SearchCommand => mSearchCommand;
 
-        private class SearchCategoryTreeCommand : ICommand
-        {
-            private readonly BulkReconTreeViewModel mCategoryTree;
+        //private class SearchCategoryTreeCommand : ICommand
+        //{
+        //    private readonly BulkReconTreeViewModel mCategoryTree;
 
-            public SearchCategoryTreeCommand(BulkReconTreeViewModel CategoryTree)
-            {
-                mCategoryTree = CategoryTree;
-            }
+        //    public SearchCategoryTreeCommand(BulkReconTreeViewModel CategoryTree)
+        //    {
+        //        mCategoryTree = CategoryTree;
+        //    }
 
-            public bool CanExecute(object parameter)
-            {
-                return true;
-            }
+        //    public bool CanExecute(object parameter)
+        //    {
+        //        return true;
+        //    }
 
-            event EventHandler ICommand.CanExecuteChanged
-            {
-                // I intentionally left these empty because
-                // this command never raises the event, and
-                // not using the WeakEvent pattern here can
-                // cause memory leaks.  WeakEvent pattern is
-                // not simple to implement, so why bother.
-                add { }
-                remove { }
-            }
+        //    event EventHandler ICommand.CanExecuteChanged
+        //    {
+        //        // I intentionally left these empty because
+        //        // this command never raises the event, and
+        //        // not using the WeakEvent pattern here can
+        //        // cause memory leaks.  WeakEvent pattern is
+        //        // not simple to implement, so why bother.
+        //        add { }
+        //        remove { }
+        //    }
 
-            public void Execute(object parameter)
-            {
-                mCategoryTree.PerformSearch();
-            }
-        }
+        //    public void Execute(object parameter)
+        //    {
+        //        mCategoryTree.PerformSearch();
+        //    }
+        //}
 
         #endregion // SearchCommand
 
@@ -229,7 +227,7 @@ namespace Fasetto.Word
 
                 // OK successfully registered (and logged in)... now get aprpropriate tree view data
                 //for now; keep a snapshot of persisted data
-                mOriginal = result.ServerResponse.Response;
+                //mOriginal = result.ServerResponse.Response;
 
                 ;
                
@@ -239,15 +237,16 @@ namespace Fasetto.Word
                     //make a clone of the persisted data for manipulation on front end
                     //mPersist = new BulkReconResultListApiModel();
                     //mPersist.Clone(mOriginal, mPersist);
-                    mBRDML.Clear();
+                    //BulkRecon.Clear();
+                    BulkRecon = new ObservableCollection<BulkReconViewModel>();
+                    //BulkRecon.Clear();
                     var matches = result.ServerResponse.Response.ToList();
                     foreach (var item in matches)
                     {
-                        var ud1 = new BulkReconDataModel
+                        var mBRVM = new BulkReconViewModel
                         {
                             //var u = hierarchyDataModel;
                             ShortName           = item.ShortName,
-                            KCategoryID         = item.KCategoryID,
                             BulkMeter             = item.BulkMeter ,
                             TimeSlotStart        = item.TimeSlotStart ,
                             Missing                 = item.Missing,
@@ -259,7 +258,7 @@ namespace Fasetto.Word
                             PercDelta            = item.PercDelta,
   
                         };
-                        mBRDML.Add(ud1);
+                        BulkRecon.Add(mBRVM);
                     }
 
                 }
@@ -279,25 +278,25 @@ namespace Fasetto.Word
         /// Method to refresh element Hierarchy
         /// -used when elements of the treefiew are being manipulated on the front end
         /// </summary>
-        public void RefreshHierarchy()
-        {
+        //public void RefreshHierarchy()
+        //{
 
-            mBRDML.Clear();
-            //build a tree view, always starting with the root element, which is also the classification for the hierarchy
-            mBRDML.AddRange(ExpandHierarchyData(mPersist, "00000000-0000-0000-0000-000000000000", "Root"));
-            //Refresh the tree view title with the current name of the root element
-            ControlTitle = (mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ShortName;
+        //    mBRDML.Clear();
+        //    //build a tree view, always starting with the root element, which is also the classification for the hierarchy
+        //    mBRDML.AddRange(ExpandHierarchyData(mPersist, "00000000-0000-0000-0000-000000000000", "Root"));
+        //    //Refresh the tree view title with the current name of the root element
+        //    ControlTitle = (mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ShortName;
 
-            var matches = mPersist.OrderBy(x => x.DateEffective).ToList();
-            foreach (var category in matches)
-            { category.ParentShortName = matches.First(x => x.ParentCategoryID == category.ParentCategoryID).ShortName; }
-            //Update the viewModel with the returned values
+        //    var matches = mPersist.OrderBy(x => x.DateEffective).ToList();
+        //    foreach (var category in matches)
+        //    { category.ParentShortName = matches.First(x => x.ParentCategoryID == category.ParentCategoryID).ShortName; }
+        //    //Update the viewModel with the returned values
 
-            //UpdateTreeViewElements();
+        //    //UpdateTreeViewElements();
 
 
-            //}
-        }
+        //    //}
+        //}
 
 
 
@@ -313,7 +312,7 @@ namespace Fasetto.Word
         /// <returns></returns>
         private BulkReconListDataModel ExpandHierarchyData(BulkReconResultListApiModel results, string KCategoryID, string mParentShortName)
         {
-            mPersist = results;
+            //mPersist = results;
             // Find all children
             var TempDate = new DateTime(9999, 12, 31, 0, 0, 0);
             //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued == new DateTime(9999,12,31,0,0,0) && !x.IsDeleteElement ).OrderBy(x=>x.ShortName).ToList();//
@@ -387,49 +386,49 @@ namespace Fasetto.Word
 
         #region Search Logic -Short Name
 
-        public void PerformSearch()
-        {
-            if (MatchingCategoryEnumerator == null || !MatchingCategoryEnumerator.MoveNext())
-                VerifyMatchingCategoryEnumerator();
+        //public void PerformSearch()
+        //{
+        //    if (MatchingCategoryEnumerator == null || !MatchingCategoryEnumerator.MoveNext())
+        //        VerifyMatchingCategoryEnumerator();
 
-            var Category = MatchingCategoryEnumerator.Current;
+        //    var Category = MatchingCategoryEnumerator.Current;
 
-            if (Category == null)
-                return;
+        //    if (Category == null)
+        //        return;
 
-            // Ensure that this Category is in view.
-            if (Category.mParent != null)
-                Category.mParent.IsExpanded = true;
+        //    // Ensure that this Category is in view.
+        //    if (Category.mParent != null)
+        //        Category.mParent.IsExpanded = true;
 
-            Category.IsSelected = true;
-            //Category.IsExpanded = false;
-        }
+        //    Category.IsSelected = true;
+        //    //Category.IsExpanded = false;
+        //}
 
-        private void VerifyMatchingCategoryEnumerator()
-        {
-            var matches = FindMatches(mSearchText, mRootHierarchyElement);
-            MatchingCategoryEnumerator = matches.GetEnumerator();
+        //private void VerifyMatchingCategoryEnumerator()
+        //{
+        //    var matches = FindMatches(mSearchText, mRootHierarchyElement);
+        //    MatchingCategoryEnumerator = matches.GetEnumerator();
 
-            if (!MatchingCategoryEnumerator.MoveNext())
-            {
-                MessageBox.Show(
-                    "No matching names were found - please check your spelling.",
-                    "Search for Tree Item failed",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information
-                    );
-            }
-        }
+        //    if (!MatchingCategoryEnumerator.MoveNext())
+        //    {
+        //        MessageBox.Show(
+        //            "No matching names were found - please check your spelling.",
+        //            "Search for Tree Item failed",
+        //            MessageBoxButton.OK,
+        //            MessageBoxImage.Information
+        //            );
+        //    }
+        //}
 
-        private IEnumerable<BulkReconViewModel> FindMatches(string searchText, BulkReconViewModel Category)
-        {
-            if (Category.NameContainsText(searchText))
-                yield return Category;
+        //private IEnumerable<BulkReconViewModel> FindMatches(string searchText, BulkReconViewModel Category)
+        //{
+        //    if (Category.NameContainsText(searchText))
+        //        yield return Category;
 
-            foreach (var child in Category.Children)
-                foreach (var match in FindMatches(searchText, child))
-                    yield return match;
-        }
+        //    foreach (var child in Category.Children)
+        //        foreach (var match in FindMatches(searchText, child))
+        //            yield return match;
+        //}
 
         #endregion // Search Logic
 
@@ -438,41 +437,41 @@ namespace Fasetto.Word
 
         #endregion // SearchKCategoryID
         #region Search Logic //KCategoryID
-        private void PerformKIdSearch()
-        {
+        //private void PerformKIdSearch()
+        //{
 
-            if (MatchingKCategoryEnumerator == null || !MatchingKCategoryEnumerator.MoveNext())
-                VerifyMatchingKCategoryEnumerator();
-            var KCategory = MatchingKCategoryEnumerator.Current;
-            if (KCategory == null)
-                return;
+        //    if (MatchingKCategoryEnumerator == null || !MatchingKCategoryEnumerator.MoveNext())
+        //        VerifyMatchingKCategoryEnumerator();
+        //    var KCategory = MatchingKCategoryEnumerator.Current;
+        //    if (KCategory == null)
+        //        return;
 
-            // Ensure that this Category is in view.
-            if (KCategory.mParent != null)
-                KCategory.mParent.IsExpanded = true;
+        //    // Ensure that this Category is in view.
+        //    if (KCategory.mParent != null)
+        //        KCategory.mParent.IsExpanded = true;
 
-            KCategory.IsSelected = true;
-        }
+        //    KCategory.IsSelected = true;
+        //}
 
-        private void VerifyMatchingKCategoryEnumerator()
-        {
-            //var matchK = FindKMatches(mParentID, mTarget);
-            var matchK = FindKMatches(mSearchText, mRootHierarchyElement);
-            MatchingKCategoryEnumerator = matchK.GetEnumerator();
-            _ = !MatchingKCategoryEnumerator.MoveNext();
+        //private void VerifyMatchingKCategoryEnumerator()
+        //{
+        //    //var matchK = FindKMatches(mParentID, mTarget);
+        //    var matchK = FindKMatches(mSearchText, mRootHierarchyElement);
+        //    MatchingKCategoryEnumerator = matchK.GetEnumerator();
+        //    _ = !MatchingKCategoryEnumerator.MoveNext();
 
-        }
+        //}
 
-        private IEnumerable<BulkReconViewModel> FindKMatches(string searchText, BulkReconViewModel Category)
-        {
-            //var mSearchText = searchText;
-            if (Category.KCategoryIdContainsText(searchText))
-                yield return Category;
+        //private IEnumerable<BulkReconViewModel> FindKMatches(string searchText, BulkReconViewModel Category)
+        //{
+        //    //var mSearchText = searchText;
+        //    if (Category.KCategoryIdContainsText(searchText))
+        //        yield return Category;
 
-            foreach (var child in Category.Children)
-                foreach (var matchK in FindKMatches(searchText, child))
-                    yield return matchK;
-        }
+        //    foreach (var child in Category.Children)
+        //        foreach (var matchK in FindKMatches(searchText, child))
+        //            yield return matchK;
+        //}
 
         #endregion //Search Logic //KCategoryID
         #region Tree Manipulation
@@ -937,6 +936,7 @@ namespace Fasetto.Word
             // Close settings menu
             ViewModelApplication.SideMenuVisible = true;
             ViewModelApplication.CurrentSideMenuViewModel = null;
+            ViewModelApplication.CurrentPageViewModel= null;
             ViewModelApplication.GoToPage(ApplicationPage.Chat);
 
 
@@ -947,43 +947,43 @@ namespace Fasetto.Word
         /// of change control, changes may be forwarded for recommendation or finally approved and implemented
         /// on back end
         /// </summary>
-        public async Task PersistHierarchyChangesAsync()
-        {
-            await PersistHierarchyAsync();
-            Close();
-        }
-        public async Task PersistHierarchyAsync()
-        {
-            await RunCommandAsync(() => BulkReconBuildIsRunning, async () =>
-            {
+        //public async Task PersistHierarchyChangesAsync()
+        //{
+        //    await PersistHierarchyAsync();
+        //    Close();
+        //}
+        //public async Task PersistHierarchyAsync()
+        //{
+        //    await RunCommandAsync(() => BulkReconBuildIsRunning, async () =>
+        //    {
 
-                // Store single transcient instance of client data store
-                var scopedClientDataStore = ClientDataStore;
+        //        // Store single transcient instance of client data store
+        //        var scopedClientDataStore = ClientDataStore;
 
-                // Update values from local cache
-                // Get the user token
-                var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
-                // Call the server and attempt to register with the provided credentials
-                // If we don't have a token (then not logged in...)
-                if (string.IsNullOrEmpty(token))
-                    // Then do nothing more
-                    return;
-                var result = await WebRequests.PostAsync<ApiResponse<BulkReconResultListApiModel>>(
-                // Set URL
-                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.PersistHierarchy),
-                    mPersist,
-                    bearerToken: token);
+        //        // Update values from local cache
+        //        // Get the user token
+        //        var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+        //        // Call the server and attempt to register with the provided credentials
+        //        // If we don't have a token (then not logged in...)
+        //        if (string.IsNullOrEmpty(token))
+        //            // Then do nothing more
+        //            return;
+        //        var result = await WebRequests.PostAsync<ApiResponse<BulkReconResultListApiModel>>(
+        //        // Set URL
+        //            RouteHelpers.GetAbsoluteRoute(ApiRoutes.PersistHierarchy),
+        //            mPersist,
+        //            bearerToken: token);
 
-                // If the response has an error...
-                if (await result.HandleErrorIfFailedAsync("Hierarchy retrieval Failed"))
-                    // We are done
-                    return;
+        //        // If the response has an error...
+        //        if (await result.HandleErrorIfFailedAsync("Hierarchy retrieval Failed"))
+        //            // We are done
+        //            return;
 
-                // return to menu
+        //        // return to menu
 
 
-            });
-        }
+        //    });
+        //}
 
 
 
