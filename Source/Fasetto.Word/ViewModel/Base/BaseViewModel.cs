@@ -81,7 +81,7 @@ namespace Fasetto.Word
         /// <param name="action">The action to run if the command is not already running</param>
         /// <typeparam name="T">The type the action returns</typeparam>
         /// <returns></returns>
-        protected async Task<T> RunCommandAsync<T>(Expression<Func<bool>> updatingFlag, Func<Task<T>> action, T defaultValue = default(T))
+        protected async Task<T> RunCommandAsync<T>(Expression<Func<bool>> updatingFlag, Func<Task<T>> action, T defaultValue = default)
         {
             // Lock to ensure single access to check
             lock (mPropertyValueCheckLock)

@@ -116,7 +116,7 @@ namespace Fasetto.Word
         #endregion
         #region Data
 
-        public HierarchyListDataModel mHDML;
+        //public HierarchyListDataModel mHDML;
         #endregion
         #region Public Commands
 

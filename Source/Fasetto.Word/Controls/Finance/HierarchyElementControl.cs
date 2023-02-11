@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
 

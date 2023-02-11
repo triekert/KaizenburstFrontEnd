@@ -201,7 +201,7 @@ namespace Fasetto.Word
             //Populate screen title
             //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
             //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000")
-            DisplayTitle = "Bulk Meter Reconciliation-Test1";
+            DisplayTitle = "Bulk Meter Reconciliation ";
             // Create commands
             AttachmentButtonCommand = new RelayCommand(AttachmentButton);
             PopupClickawayCommand = new RelayCommand(PopupClickaway);

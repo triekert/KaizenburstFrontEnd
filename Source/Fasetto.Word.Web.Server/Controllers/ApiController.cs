@@ -742,7 +742,7 @@ namespace Fasetto.Word.Web.Server
                     ErrorMessage = "User not found"
                 };
 
-            #endregion
+            #endregion Get User
 
             #region sql query
 
@@ -783,7 +783,7 @@ namespace Fasetto.Word.Web.Server
 
                     Response = results
                 };
-                #endregion //sql query
+                #endregion /Get User
 
 
             }
@@ -800,14 +800,106 @@ namespace Fasetto.Word.Web.Server
 
 
         }
-        #endregion
+        #endregion ReturnBulkRecon
+
+        #region ReturnReconDetail   
+        /// <summary>
+        /// Retrieves individual readings for consumer meters
+        /// </summary>
+        /// <param name="model">Parameter API for retrieval of info</param>
+        /// <returns>
+        ///     Returns the water consumption per selected Bulk Metr and period if successful, 
+        ///     otherwise returns the error reasons for the failure
+        /// </returns>
+
+        [Route(ApiRoutes.ReturnReconDetail)]
+        public async Task<ApiResponse> ReturnReconDetailAsync([FromBody] ParameterBulkReconApiModel model)
+
+        {
+            #region Get User
+
+            // Get the current user
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            // If we have no user...
+            if (user == null)
+                return new ApiResponse
+                {
+                    // TODO: Localization
+                    ErrorMessage = "User not found"
+                };
+
+            #endregion
+
+            #region sql query
 
 
 
-        #endregion
+            var SqlString = "EXEC [Services].[spCalculateVarianceChildReadingsMaster]	 @BulkPropertyID =  '" + model.BulkMeter + "' ,  @DateStart =' " + model.TimeStart.ToString() + "',  @DateEnd = '" + model.TimeEnd.ToString() + "'";
+            ;
+            try
+            {
+                // Try and run the task
+                var dataset = await GetDataSetAsync(SqlString);
+                var dt = dataset.Tables[0];
+                var bulkReconDetailResultListApiModel = new BulkReconDetailResultListApiModel();
+                var results = bulkReconDetailResultListApiModel;
 
-  
-    
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    var u = new BulkReconDetailResultApiModel
+                    {
+
+                        ShortName = row[2].ToString(),
+                        TimeStart = (DateTime)row[3],
+                        Volume = (float)row[5],
+                        MeterReadingCalc = (float)row[14],
+                        ReadingTimePrior = (DateTime)row[6],
+                        ReadingPrior = (float)row[7],
+                        ReadingTimeNext = (DateTime)row[8],
+                        ReadingNext = (float)row[9],
+                        TimeEnd = (DateTime)row[4],
+                        MeterReadingCalcE = (float)row[15],
+                        ReadingTimePriorE = (DateTime)row[10],
+                        ReadingPriorE = (float)row[11],
+                        ReadingTimeNextE = (DateTime)row[12],
+                        ReadingNextE = (float)row[13],
+
+
+                    };
+                    results.Add(u);
+
+                }
+
+                return new ApiResponse<BulkReconDetailResultListApiModel>
+                {
+
+                    Response = results
+                };
+                #endregion sql query
+
+
+            }
+            catch (Exception ex)
+            {
+                // Log error
+                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                // Throw it as normal
+                throw;
+            }
+
+
+
+
+        }
+        #endregion Services
+
+        #endregion Services
+
+
+
         #region Hierarchy
 
         /// <summary>

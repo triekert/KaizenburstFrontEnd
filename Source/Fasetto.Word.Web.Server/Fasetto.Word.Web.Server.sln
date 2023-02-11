@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33209.295
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fasetto.Word.Web.Server", "Fasetto.Word.Web.Server.csproj", "{65DEA697-FB37-4DFD-BEF0-8BAC070BE6D1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AA148A6D-5396-4AFF-891F-5F57998393CB} = {AA148A6D-5396-4AFF-891F-5F57998393CB}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fasetto.Word.Core", "..\Fasetto.Word.Core\Fasetto.Word.Core.csproj", "{AA148A6D-5396-4AFF-891F-5F57998393CB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{65DEA697-FB37-4DFD-BEF0-8BAC070BE6D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65DEA697-FB37-4DFD-BEF0-8BAC070BE6D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65DEA697-FB37-4DFD-BEF0-8BAC070BE6D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65DEA697-FB37-4DFD-BEF0-8BAC070BE6D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA148A6D-5396-4AFF-891F-5F57998393CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA148A6D-5396-4AFF-891F-5F57998393CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA148A6D-5396-4AFF-891F-5F57998393CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA148A6D-5396-4AFF-891F-5F57998393CB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {796DDE16-0E4B-440C-962D-D58EC7675483}
+	EndGlobalSection
+EndGlobal

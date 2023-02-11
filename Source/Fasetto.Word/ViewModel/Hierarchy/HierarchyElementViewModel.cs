@@ -1,12 +1,8 @@
-﻿using Dna;
-using Fasetto.Word.Core;
-using System;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows.Input;
-using static Dna.FrameworkDI;
 using static Fasetto.Word.DI;
-namespace Fasetto.Word { 
+namespace Fasetto.Word
+{
     public class HierarchyElementViewModel : BaseViewModel
     {
         #region Private Members

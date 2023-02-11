@@ -91,6 +91,8 @@ namespace Fasetto.Word
             #endregion
             //retrieve hierarchy from persistent storage on server
             //To Do: Add mTableName as parameter when calling HiearchyAsync to populate hierarchy
+            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            ViewModelApplication.PopupVisible = false;
             TaskManager.RunAndForget(HierarchyAsync);
 
 

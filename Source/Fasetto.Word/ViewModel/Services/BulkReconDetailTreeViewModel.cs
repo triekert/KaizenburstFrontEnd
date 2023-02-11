@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -18,7 +19,7 @@ namespace Fasetto.Word
     /// for the TreeView (the FirstGeneration property), a bindable
     /// SearchText property, and the SearchCommand to perform a search.
     /// </summary>
-    public class BulkReconTreeViewModel : BaseViewModel
+    public class BulkReconDetailTreeViewModel : BaseViewModel
 
     {
 
@@ -27,7 +28,7 @@ namespace Fasetto.Word
         /// <summary>
         /// A set of Bulk Meter Recon records for the selected period
         /// </summary>
-        public ObservableCollection<BulkReconViewModel>BulkRecon{ get; set; }
+        public ObservableCollection<BulkReconDetailViewModel>BulkReconDetail{ get; set; }
 
 
         //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
@@ -74,12 +75,13 @@ namespace Fasetto.Word
         /// <param name="hierarchyTable"></param>
         /// The hierarchyTable passed through as a paremeter identifies the specific hierarchy set to be retrieved
         /// from persistent s
-        public BulkReconTreeViewModel(string bulkMeter, DateTime timeStart, DateTime timeEnd)
+        public BulkReconDetailTreeViewModel(string bulkMeter, DateTime timeStart, DateTime timeEnd)
         {
-            #region Build HierarchyViewCollection
-            BulkRecon = new ObservableCollection<BulkReconViewModel>();
+            #region Build BulkReconDetailCollection
 
-            mBRVM = new BulkReconViewModel
+            BulkReconDetail = new ObservableCollection<BulkReconDetailViewModel>();
+
+            var BRDVM = new BulkReconDetailViewModel
             {
 
                 ShortName = "Loading...Please be patient",
@@ -91,7 +93,7 @@ namespace Fasetto.Word
 
 
             };
-            BulkRecon.Add(mBRVM);
+            BulkReconDetail.Add(BRDVM);
 
             mRequest = new ParameterBulkReconApiModel
             { 
@@ -105,7 +107,7 @@ namespace Fasetto.Word
             #endregion
             //retrieve hierarchy from persistent storage on server
             //To Do: Add mTableName as parameter when calling HiearchyAsync to populate hierarchy
-            TaskManager.RunAndForget(BulkReconAsync);
+            TaskManager.RunAndForget(BulkReconDetailAsync);
 
 
             // Get the OptFinHierarchies currently configured - first populate 'root hierarchy' variable with all configured root hierarchy elements currently available
@@ -196,7 +198,7 @@ namespace Fasetto.Word
         /// User credentials are used to determine access authorisation
         /// </summary>
         /// <returns></returns>
-        public async Task BulkReconAsync()
+        public async Task BulkReconDetailAsync()
         {
             await RunCommandAsync(() => BulkReconBuildIsRunning, async () =>
             {
@@ -215,14 +217,14 @@ namespace Fasetto.Word
                 if (string.IsNullOrEmpty(token))
                     // Then do nothing more
                     return;
-                var result = await WebRequests.PostAsync<ApiResponse<BulkReconResultListApiModel>>(
+                var result = await WebRequests.PostAsync<ApiResponse<BulkReconDetailResultListApiModel>>(
                 // Set URL
-                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.ReturnBulkRecon),
+                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.ReturnReconDetail),
                     mRequest,
                     bearerToken: token);
 
                 // If the response has an error...
-                if (await result.HandleErrorIfFailedAsync("Bulk Recon retrieval Failed"))
+                if (await result.HandleErrorIfFailedAsync("Bulk Recon Detail retrieval Failed"))
                     // We are done
                     return;
 
@@ -234,43 +236,38 @@ namespace Fasetto.Word
                
                 try
                 {
-                    //var hierarchyResultApiModels = mOriginal.ToList();
-                    //make a clone of the persisted data for manipulation on front end
-                    //mPersist = new BulkReconResultListApiModel();
-                    //mPersist.Clone(mOriginal, mPersist);
-                    //BulkRecon.Clear();
-                    BulkRecon = new ObservableCollection<BulkReconViewModel>();
-                    //BulkRecon.Clear();
-                    var matches = result.ServerResponse.Response.ToList();
 
+                    BulkReconDetail = new ObservableCollection<BulkReconDetailViewModel>();
+                    var matches = result.ServerResponse.Response.ToList();
 
                     foreach (var item in matches)
                     {
-
-                    var mBRVM = new BulkReconViewModel
-
+                        var mBRDVM = new BulkReconDetailViewModel
                         {
                             ShortName = item.ShortName,
-                            BulkMeter = item.BulkMeter,
-                            TimeSlotStart = item.TimeSlotStart,
-                            Missing = item.Missing,
-                            ChildMeters = item.ChildMeters,
-                            VolumeIn = item.VolumeIn,
-                            VolumeOut = item.VolumeOut,
-                            VolumeDelta = item.VolumeDelta,
-                            MovingAvgDelta = item.MovingAvgDelta,
-                            PercDelta = item.PercDelta,
-
+                            TimeStart = item.TimeStart,
+                            Volume = item.Volume,
+                            MeterReadingCalc = item.MeterReadingCalc,
+                            ReadingTimePrior = item.ReadingTimePrior,
+                            ReadingPrior = item.ReadingPrior,
+                            ReadingTimeNext = item.ReadingTimeNext,
+                            ReadingNext = item.ReadingNext,
+                            TimeEnd = item.TimeEnd,
+                            MeterReadingCalcE = item.MeterReadingCalcE,
+                            ReadingTimePriorE = item.ReadingTimePriorE,
+                            ReadingPriorE = item.ReadingPriorE,
+                            ReadingTimeNextE = item.ReadingTimeNextE,
+                            ReadingNextE = item.ReadingNextE
                         };
-                        BulkRecon.Add(mBRVM); 
+                        BulkReconDetail.Add(mBRDVM);
                     }
-
+                ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
                 }
+
                  catch (Exception e)
                 {
                     throw e;
                 }
-
 
             });
         }
@@ -311,54 +308,54 @@ namespace Fasetto.Word
         /// <param name="KCategoryID"></param>
         /// the ID of the parent for finding descendants is passsed through as a string
         /// <returns></returns>
-        private BulkReconListDataModel ExpandHierarchyData(BulkReconResultListApiModel results, string KCategoryID, string mParentShortName)
-        {
-            //mPersist = results;
-            // Find all children
-            var TempDate = new DateTime(9999, 12, 31, 0, 0, 0);
-            //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued == new DateTime(9999,12,31,0,0,0) && !x.IsDeleteElement ).OrderBy(x=>x.ShortName).ToList();//
-            //To do:  accept a date parameter to retroactively modify hierarchy data
-            //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued >  DateTime.Today && !x.IsDeleteElement).OrderBy(x => x.ShortName).ToList();//
-            var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued > DateTime.Today && !x.IsDeleteElement).OrderBy(x => (x.ShortName.ParseInt())).ThenBy(x => x.ShortName).ToList();//
-            // Hierarchy cannot be expanded
-            if (children.Count() == 0)
-                return new BulkReconListDataModel();
-            //...otherwise, return all descendants recursively
-            var elements = new BulkReconListDataModel();
-            foreach (var item in children)
-            {
-                var ud1 = new BulkReconDataModel
-                {
-                    //var u = hierarchyDataModel;
-                    ShortName = item.ShortName,
-                    //Description = item.Description,
-                    //Card = item.Card,
-                    //Frequency = item.Frequency,
-                    //KCategoryID = item.KCategoryID,
-                    //ParentCategoryID = item.ParentCategoryID,
-                    //ParentShortName = mParentShortName,
-                    //DateEffective = item.DateEffective,
-                    //DateDiscontinued = item.DateDiscontinued,
-                    //KChangeID = item.KChangeID,
-                    //IsUnderReview = item.IsUnderReview,
-                    //Page = item.Page,
-                    //Root = item.Root,
-                    //IsMenuItem = item.IsMenuItem,
+        //private BulkReconListDataModel ExpandHierarchyData(BulkReconResultListApiModel results, string KCategoryID, string mParentShortName)
+        //{
+        //    //mPersist = results;
+        //    // Find all children
+        //    var TempDate = new DateTime(9999, 12, 31, 0, 0, 0);
+        //    //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued == new DateTime(9999,12,31,0,0,0) && !x.IsDeleteElement ).OrderBy(x=>x.ShortName).ToList();//
+        //    //To do:  accept a date parameter to retroactively modify hierarchy data
+        //    //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued >  DateTime.Today && !x.IsDeleteElement).OrderBy(x => x.ShortName).ToList();//
+        //    var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued > DateTime.Today && !x.IsDeleteElement).OrderBy(x => (x.ShortName.ParseInt())).ThenBy(x => x.ShortName).ToList();//
+        //    // Hierarchy cannot be expanded
+        //    if (children.Count() == 0)
+        //        return new BulkReconListDataModel();
+        //    //...otherwise, return all descendants recursively
+        //    var elements = new BulkReconListDataModel();
+        //    foreach (var item in children)
+        //    {
+        //        var ud1 = new BulkReconDataModel
+        //        {
+        //            //var u = hierarchyDataModel;
+        //            ShortName = item.ShortName,
+        //            //Description = item.Description,
+        //            //Card = item.Card,
+        //            //Frequency = item.Frequency,
+        //            //KCategoryID = item.KCategoryID,
+        //            //ParentCategoryID = item.ParentCategoryID,
+        //            //ParentShortName = mParentShortName,
+        //            //DateEffective = item.DateEffective,
+        //            //DateDiscontinued = item.DateDiscontinued,
+        //            //KChangeID = item.KChangeID,
+        //            //IsUnderReview = item.IsUnderReview,
+        //            //Page = item.Page,
+        //            //Root = item.Root,
+        //            //IsMenuItem = item.IsMenuItem,
 
 
-                    //To Do: make provision to add Icons to make the UI more intuitive and attractive
-                    //FIconID = item.FIconID,
-                    //Children = new BulkReconListDataModel()
-                };
-                //ud1.Children = ExpandHierarchyData(results, ud1.KCategoryID, ud1.ShortName);
-                //elements.Add(ud1);
-            }
-            //var matches = elements.OrderBy(x => x.DateEffective).ToList();
-            //foreach(var category in matches)
-            //    { category.ParentShortName = matches.First(x=>x.ParentCategoryID == category.ParentCategoryID).ShortName; }
+        //            //To Do: make provision to add Icons to make the UI more intuitive and attractive
+        //            //FIconID = item.FIconID,
+        //            //Children = new BulkReconListDataModel()
+        //        };
+        //        //ud1.Children = ExpandHierarchyData(results, ud1.KCategoryID, ud1.ShortName);
+        //        //elements.Add(ud1);
+        //    }
+        //    //var matches = elements.OrderBy(x => x.DateEffective).ToList();
+        //    //foreach(var category in matches)
+        //    //    { category.ParentShortName = matches.First(x=>x.ParentCategoryID == category.ParentCategoryID).ShortName; }
 
-            return elements;
-        }
+        //    return elements;
+        //}
 
         #region SearchText
 
@@ -934,12 +931,9 @@ namespace Fasetto.Word
 
         public void Close()
         {
-            // Close settings menu
-            ViewModelApplication.SideMenuVisible = true;
-            ViewModelApplication.CurrentSideMenuViewModel = null;
-            ViewModelApplication.CurrentPageViewModel= null;
-            ViewModelApplication.GoToPage(ApplicationPage.Chat);
 
+            ViewModelApplication.CurrentPopupViewModel = null;
+            ViewModelApplication.PopupVisible = false; ;
 
         }
 

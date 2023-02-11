@@ -38,7 +38,9 @@ namespace Fasetto.Word
                     var mFinanceControl = new FinanceSelectionControl();
                     return mFinanceControl;
 
-
+                case PopupContent.BulkReconDetail:
+                    var mBulkReconDetailControl = new BulkReconDetailControl();
+                    return mBulkReconDetailControl;
 
                 // Unknown
                 default:

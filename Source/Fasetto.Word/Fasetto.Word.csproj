@@ -99,6 +99,7 @@
     <Compile Include="AttachedProperties\NoFrameHistory.cs" />
     <Compile Include="AttachedProperties\PasswordBoxAttachedProperties.cs" />
     <Compile Include="AttachedProperties\TextEntryWidthMatcherProperty.cs" />
+    <Compile Include="Controls\Services\BulkReconDetailControl.xaml.cs" />
     <Compile Include="Controls\Services\BulkReconControl.xaml.cs" />
     <Compile Include="Controls\BubbleContent.xaml.cs">
       <DependentUpon>BubbleContent.xaml</DependentUpon>
@@ -225,7 +226,9 @@
     <Compile Include="ViewModel\Hierarchy\HierarchyManagementViewModel1.cs" />
     <Compile Include="ViewModel\Finance\FinanceSelectionViewModel.cs" />
     <Compile Include="ViewModel\Menu\HierarchyPageViewModel.cs" />
+    <Compile Include="ViewModel\Services\BulkReconDetailTreeViewModel.cs" />
     <Compile Include="ViewModel\Services\BulkReconTreeViewModel.cs" />
+    <Compile Include="ViewModel\Services\BulkReconDetailViewModel.cs" />
     <Compile Include="ViewModel\Services\BulkReconViewModel.cs" />
     <Compile Include="ViewModel\Services\BulkReconPageViewModel.cs" />
     <Compile Include="ViewModel\Services\LoadReadingsPageViewModel.cs" />
@@ -323,6 +326,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Finance\FinanceSelectionControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Services\BulkReconDetailControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

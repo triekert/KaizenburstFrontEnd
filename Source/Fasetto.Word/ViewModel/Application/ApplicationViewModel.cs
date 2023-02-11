@@ -84,7 +84,7 @@ namespace Fasetto.Word
         /// Determines the currently visible popup content
         /// </summary>
         public PopupContent CurrentPopupContent { get; set; }
-            = PopupContent.AddElement;
+            //= PopupContent.AddElement;
 
         /// <summary>
         /// Points to the currently visible popup content view model

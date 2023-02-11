@@ -28,6 +28,18 @@
         /// <summary>
         /// Form for editing User settings
         /// </summary>
-        Settings = 5
+        Settings = 5,
+
+
+        /// <summary>
+        /// Detail meter readings for water recon
+        /// </summary>
+        BulkReconDetail = 6,
+
+
+        /// <summary>
+        /// Detail meter readings for water recon
+        /// </summary>
+        MissingMeters = 7
     }
 }
