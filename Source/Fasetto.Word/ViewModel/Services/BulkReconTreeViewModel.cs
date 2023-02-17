@@ -45,6 +45,7 @@ namespace Fasetto.Word
         public BulkReconViewModel mBRVM;
         public ParameterBulkReconApiModel mRequest;
         public string mBulkMeter;
+
         //public HierarchyElementViewModel mElement;
 
         //IEnumerator<HierarchyManagementViewModel> mMatchingCategoryEnumerator;

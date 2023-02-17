@@ -850,7 +850,7 @@ namespace Fasetto.Word.Web.Server
                 {
                     var u = new BulkReconDetailResultApiModel
                     {
-
+                        BulkMeter = row[1].ToString(),
                         ShortName = row[2].ToString(),
                         TimeStart = (DateTime)row[3],
                         Volume = (float)row[5],

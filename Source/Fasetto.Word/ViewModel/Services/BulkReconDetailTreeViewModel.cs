@@ -46,6 +46,8 @@ namespace Fasetto.Word
         public BulkReconViewModel mBRVM;
         public ParameterBulkReconApiModel mRequest;
         public string mBulkMeter;
+        public DateTime mTimeStart;
+        public DateTime mTimeEnd;
         //public HierarchyElementViewModel mElement;
 
         //IEnumerator<HierarchyManagementViewModel> mMatchingCategoryEnumerator;
@@ -107,7 +109,11 @@ namespace Fasetto.Word
             #endregion
             //retrieve hierarchy from persistent storage on server
             //To Do: Add mTableName as parameter when calling HiearchyAsync to populate hierarchy
+            mBulkMeter = bulkMeter;
+            mTimeStart = timeStart;
+            mTimeEnd = timeEnd;
             TaskManager.RunAndForget(BulkReconDetailAsync);
+
 
 
             // Get the OptFinHierarchies currently configured - first populate 'root hierarchy' variable with all configured root hierarchy elements currently available
@@ -244,6 +250,7 @@ namespace Fasetto.Word
                     {
                         var mBRDVM = new BulkReconDetailViewModel
                         {
+                            BulkMeter = item.BulkMeter,
                             ShortName = item.ShortName,
                             TimeStart = item.TimeStart,
                             Volume = item.Volume,

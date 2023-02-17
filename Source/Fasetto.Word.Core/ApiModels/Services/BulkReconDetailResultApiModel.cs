@@ -12,6 +12,11 @@ namespace Fasetto.Word.Core
         #region Public Properties
 
 
+        /// <summary>
+        /// GUID of BulkMeter linked Property
+        /// </summary>
+        public string BulkMeter { get; set; }
+
 
         /// <summary>
         ///name of property/Bulkmeter

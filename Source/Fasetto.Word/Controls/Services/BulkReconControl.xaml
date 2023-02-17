@@ -4,10 +4,34 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" 
-             xmlns:local="clr-namespace:Fasetto.Word" xmlns:forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" d:DataContext="{d:DesignInstance Type=local:BulkReconViewModel}"
+             xmlns:local="clr-namespace:Fasetto.Word" xmlns:forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" xmlns:sys="clr-namespace:System;assembly=mscorlib" d:DataContext="{d:DesignInstance Type=local:BulkReconViewModel}"
+             
              d:DesignHeight="300" d:DesignWidth="300">
 
-
+    <UserControl.Resources>
+        <sys:String x:Key="colName">dynamic string...</sys:String>
+        <Style x:Key="ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" >
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridColumnHeader">
+                        <Label Foreground="Blue" FontWeight="ExtraBlack" Background="AntiqueWhite" FontFamily="Lato Black" Content="{TemplateBinding Content}"
+                               HorizontalAlignment="Stretch" HorizontalContentAlignment ="Center"  VerticalAlignment="Center"  />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--<sys:String x:Key="colCell">dynamic string...</sys:String>
+        <Style x:Key="ColumnCellStyle" TargetType="{x:Type}" >
+            <Setter Property="CellStyle">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridTextColumn">
+                        <Label Foreground="black" FontWeight="UltraBold" Background="AntiqueWhite" FontFamily="Arial" Content="{TemplateBinding Content}"
+                               HorizontalAlignment="Stretch" HorizontalContentAlignment ="Center"  VerticalAlignment="Center"  />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>-->
+    </UserControl.Resources>
        <DockPanel>
         <!-- SEARCH AREA -->
         <Border 
@@ -22,41 +46,7 @@
                 </LinearGradientBrush>
             </Border.Background>
 
-            <!--<StackPanel 
-                HorizontalAlignment="Stretch" 
-                Margin="0,0,10,0" 
-                Orientation="Horizontal"
-                >
-                <TextBox 
-                      x:Name="searchTextBox"
-                      KeyDown="SearchTextBox_KeyDown"
-                      Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                      Width="200" Height="43" FontSize="18" TextWrapping="Wrap" RenderTransformOrigin="0.1,0.616" AutomationProperties.HelpText="Begin entering name...."
-                    >
-                    <TextBox.InputBindings>
-                        --><!--Clear text on Esc--><!--
-                        <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc" />
-                        --><!--Search on enter--><!--
-                        <KeyBinding Command="{Binding SearchCommand}" Key="Return" />
-                    </TextBox.InputBindings>
-                </TextBox>
-                <Button Style="{StaticResource IconGrowButton}" 
-                        Content="{StaticResource FontAwesomeSearchIcon}"
-                        Command="{Binding SearchCommand}"
-                        Padding="4" Background="{DynamicResource WordOrangeBrush}" Height="43" Width="88" RenderTransformOrigin="1.221,0.593" AutomationProperties.HelpText="Search for items in the hierarchy" 
-                      >
-                    <Button.Foreground>
-                        <SolidColorBrush Color="{DynamicResource ForegroundLight}"/>
-                    </Button.Foreground>
-                    --><!--<Button.ToolTip>
-                        <ToolTip Placement="Mouse"
-
-                             Opened="ToolTip_Opened"
-
-                             Closed="ToolTip_Closed">Login with the entered credentials</ToolTip>
-                    </Button.ToolTip>--><!--
-                </Button>
-            </StackPanel>-->
+   
         </Border>
         <Border 
          DockPanel.Dock="Top" 
@@ -64,11 +54,6 @@
          BorderThickness="1,0,1,1">
 
             <Grid>
-
-                <!--<Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>-->
 
 
                 <!--Settings Title-->
@@ -120,7 +105,7 @@
         <DataGrid x:Name="BulkRecon" Grid.Row="3"  ItemsSource="{Binding BulkRecon}" 
                   HeadersVisibility="All" RenderTransformOrigin="0.5,0.5"       GridLinesVisibility="None" 
                     AutoGenerateColumns="False" AlternatingRowBackground="Aqua"
-                    SelectionMode="Extended" SelectionUnit="FullRow"    
+                    SelectionMode="Extended" SelectionUnit="FullRow"  VerticalAlignment="Center"  HorizontalAlignment="Center" HorizontalContentAlignment="Center"
                   >
             <!--<DataGrid.ColumnHeaderStyle>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
@@ -133,33 +118,40 @@
             <DataGrid.Resources>
                 <Style TargetType="DataGridRow">
                     <EventSetter Event ="MouseDoubleClick"  Handler="DataGridRow_MouseDoubleClick"/>
-                    <EventSetter Event ="KeyDown"  Handler="DataGridRow_KeyDown"/>                    
+                    <EventSetter Event ="KeyDown"  Handler="DataGridRow_KeyDown"/>
+                    <EventSetter Event ="PreviewMouseRightButtonDown"  Handler="DataGridRow_MouseRightClick"/>
+                </Style>
+                <Style TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
                 </Style>
             </DataGrid.Resources>
                 
             <DataGrid.Columns>
                 <!--<DataGridTextColumn Header ="Bulk Meter" FontWeight="Bold"
                                     Binding="{Binding ShortName}"/>-->
-                <DataGridTemplateColumn Header="TimeSlot">
+                <DataGridTemplateColumn Header="TimeSlot" HeaderStyle="{StaticResource ColumnHeaderStyle}"> 
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Path=TimeSlotStart,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
-
-                </DataGridTemplateColumn>                
-
-                <DataGridTextColumn Header ="Meters Missing" 
-                                    Binding="{Binding  Missing}" />
-                <DataGridTextColumn Header ="Bulk Reading"
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Meters Missing" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path= Missing}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header ="Bulk Reading" HeaderStyle="{StaticResource ColumnHeaderStyle}"
                                     Binding="{Binding VolumeIn}"/>
-                <DataGridTextColumn Header ="Consumed"
+                <DataGridTextColumn Header ="Consumed" HeaderStyle="{StaticResource ColumnHeaderStyle}"
                                     Binding="{Binding VolumeOut}"/>
-                <DataGridTextColumn Header ="Mismatch"
+                <DataGridTextColumn Header ="Mismatch" HeaderStyle="{StaticResource ColumnHeaderStyle}" 
                                     Binding="{Binding VolumeDelta}"/>
-                <DataGridTextColumn Header ="MovingAvgDelta"
+                <DataGridTextColumn Header ="MovingAvgDelta" HeaderStyle="{StaticResource ColumnHeaderStyle}"
                                     Binding="{Binding  MovingAvgDelta}"/>
-                <DataGridTextColumn Header ="Perc Delta"
+                <DataGridTextColumn Header ="Perc Delta" HeaderStyle="{StaticResource ColumnHeaderStyle}"
                                     Binding="{Binding PercDelta}"/>                
             </DataGrid.Columns>
 

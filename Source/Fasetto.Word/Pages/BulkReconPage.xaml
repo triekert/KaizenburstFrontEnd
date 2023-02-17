@@ -38,23 +38,23 @@
         </Border>
 
         <!-- Title bar -->
-        <Grid Height="50">
+        <!--<Grid Height="50">-->
 
-            <Grid.ColumnDefinitions>
+            <!--<Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
 
             </Grid.ColumnDefinitions>
 
 
-            <!-- Title text -->
+            --><!-- Title text --><!--
             <TextBlock Text="{Binding DisplayTitle}"
                        Foreground="{StaticResource ForegroundLightBrush}"
                        FontSize="{StaticResource FontSizeXLarge}"
                        FontFamily="{StaticResource LatoRegular}"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center" Margin="0,0,0,0"
-                       />
+                       />-->
 
             <!-- Main buttons --><!--
             <StackPanel Orientation="Horizontal" Grid.Column="1">
@@ -69,12 +69,12 @@
             </StackPanel>-->
 
             <!-- Search Overlay -->
-            <Grid Grid.ColumnSpan="2"
+            <!--<Grid Grid.ColumnSpan="2"
                   local:AnimateSlideInFromRightMarginProperty.Value="{Binding SearchIsOpen}"
 
                   >
 
-                <!--<Grid.ColumnDefinitions>
+                --><!--<Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
@@ -89,7 +89,7 @@
                         Foreground="{DynamicResource WordOrangeBrush}"
                         />-->
 
-                <!-- Search box -->
+                <!-- Search box --><!--
                 <TextBox 
                     Grid.Column="1" 
                     Tag="Search text..."
@@ -99,17 +99,17 @@
                     FontSize="{StaticResource FontSizeRegular}"
                     >
                     <TextBox.InputBindings>
-                        <!-- Clear text on Esc -->
+                        --><!-- Clear text on Esc --><!--
                         <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc" />
-                        <!-- Search on enter -->
+                        --><!-- Search on enter --><!--
                         <KeyBinding Command="{Binding SearchCommand}" Key="Return" />
                     </TextBox.InputBindings>
                 </TextBox>
 
 
-            </Grid>
+            </Grid>-->
 
-        </Grid>
+        <!--</Grid>-->
 
         <!-- Chat List -->
 

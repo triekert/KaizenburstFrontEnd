@@ -18,7 +18,7 @@ namespace Fasetto.Word
         //#region Data
 
         //public readonly BulkReconViewModel mParent;
-        private readonly BulkReconDataModel mElement;
+        //private readonly BulkReconDetailDataModel mElement;
         //public ObservableCollection<BulkReconViewModel> mChildren;
         //public bool mIsExpanded;
         //public bool mIsSelected;

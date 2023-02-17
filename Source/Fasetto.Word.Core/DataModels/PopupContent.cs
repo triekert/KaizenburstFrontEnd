@@ -40,6 +40,12 @@
         /// <summary>
         /// Detail meter readings for water recon
         /// </summary>
-        MissingMeters = 7
+        MissingMeters = 7,
+
+
+        /// <summary>
+        /// Popup for selection of BulkMeter and time range
+        /// </summary>
+        BulkMeterSelectionControl = 8
     }
 }

@@ -1,10 +1,12 @@
 ﻿using Fasetto.Word.Core;
 using System;
+using System.Activities.Expressions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Design;
 using System.Data;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -54,7 +56,7 @@ namespace Fasetto.Word
         //private readonly object mFamilyTree;
         private readonly HierarchyViewModel mTargetTest;
         public string DisplayTitle { get; set; }
-
+     
 
         //[Obsolete]
         //public HierarchyManagementControl(HierarchyManagementTreeDataModel hierarchyManagementTreeDataModel)
@@ -65,9 +67,11 @@ namespace Fasetto.Word
             var mReturnBulkReconDetail = (BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             //mBulkReconDetailTreeView = new BulkReconDetailTreeViewModel("5249FFEB-6907-46AA-9204-D4527E11F9CE", mReturnBulkReconDetail.TimeStart, mReturnBulkReconDetail.TimeEnd);
             DataContext = mReturnBulkReconDetail;
+            //ViewModelApplication.CurrentPopupViewModel = new BulkReconDetailTreeViewModel();
+
             InitializeComponent();
 
-            //ViewModelApplication.CurrentPopupViewModel = new BulkReconDetailViewModel();
+
 
 
 
@@ -91,8 +95,8 @@ namespace Fasetto.Word
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var row = sender as DataGridRow;
-            var bulkReconRec = row.DataContext as BulkReconViewModel;
-            MessageBox.Show($"The timeslot selected is {bulkReconRec.TimeSlotStart}") ;
+            var bulkReconDetailRec = row.DataContext as BulkReconDetailViewModel;
+            MessageBox.Show($"The timeslot selected is {bulkReconDetailRec.TimeStart}") ;
         }
 
         private void DataGridRow_KeyDown(object sender, KeyEventArgs e)
@@ -100,12 +104,22 @@ namespace Fasetto.Word
             if (e.Key == Key.Enter)
             {
                 //_ = (BulkReconViewModel)(BulkRecon.SelectedItems).OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault()).TimeSlotStart;
-               var  tempBR = new ObservableCollection<BulkReconViewModel>();
-                foreach (var tBR in BulkRecon.SelectedItems)
-                    tempBR.Add((BulkReconViewModel)tBR);
-                var TimeStart=tempBR.OrderBy(x=>x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
-                var TimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
+                ViewModelApplication.PopupVisible = false;
+
+                var  tempBR = new ObservableCollection<BulkReconDetailViewModel>();
+                foreach (var tBR in BulkReconDetail.SelectedItems)
+                    tempBR.Add((BulkReconDetailViewModel)tBR);
+                var TimeStart=tempBR.OrderBy(x=>x.TimeStart).ToList().FirstOrDefault().TimeStart;
+                var TimeEnd = tempBR.OrderByDescending(x => x.TimeEnd).ToList().FirstOrDefault().TimeEnd;
+                var BulkMeter = tempBR.OrderByDescending(x => x.TimeStart).ToList().FirstOrDefault().BulkMeter;
+                var ShortName = tempBR.OrderByDescending(x => x.TimeStart).ToList().FirstOrDefault().ShortName;
+
+                ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+                ViewModelApplication.CurrentPopupViewModel = new BulkReconDetailTreeViewModel(BulkMeter, TimeStart, TimeEnd);
+
+                ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
                 ViewModelApplication.CurrentPopupContent = PopupContent.BulkReconDetail;
+                ViewModelApplication.PopupVisible = true;
             }
         }
         private void BulkRecon_OnSelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
@@ -114,7 +128,28 @@ namespace Fasetto.Word
             //var bulkReconRec = row.DataContext as BulkReconViewModel;
             //MessageBox.Show($"The timeslot selected is {bulkReconRec.TimeSlotStart}");
         }
-
+        /// <summary>
+        /// When right button is clicked calculate aggregate variance for all meters served by bulk meter
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DataGridRow_MouseRightClick(object sender, MouseButtonEventArgs e)
+        {
+            var tempBR = new ObservableCollection<BulkReconDetailViewModel>();
+            foreach (var tBR in BulkReconDetail.ItemsSource)
+                tempBR.Add((BulkReconDetailViewModel)tBR);
+            var mmBulk = ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBulkMeter; //5249ffeb-6907-46aa-9204-d4527e11f9ce
+            var prematch = tempBR.Where(x => x.BulkMeter == ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBulkMeter).ToList();
+            var mBulkReading = tempBR.Where(x => x.BulkMeter == ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBulkMeter).ToList().FirstOrDefault().Volume;
+            var matches = tempBR.Where(x => x.BulkMeter != ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBulkMeter).ToList();
+            var mConsumerReading = 0.00;
+            foreach (var category in matches)
+                mConsumerReading += category.Volume;
+            var mHrs = (((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTimeEnd - ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTimeStart).Hours;
+            var mDifference = mBulkReading - mConsumerReading;
+            var mDiscrepancyRate = Math.Round((mDifference / mHrs),2);
+            MessageBox.Show($"Volume through bulk: {mBulkReading} \n Aggregate consumer volume:  {mConsumerReading}\n Volume difference:  {mDifference} \n Mismatch Rate per Hour{mDiscrepancyRate}");
+        }
         private void TreeView_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             //var tst = e.OriginalSource;

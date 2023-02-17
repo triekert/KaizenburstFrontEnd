@@ -168,10 +168,10 @@ namespace Fasetto.Word.Core
 
 
 
-        /// <summary>
-        //sub categories that are also categories in themself
-        /// </summary>
-        public List<BulkReconDataModel> Children { get; set; }
+        ///// <summary>
+        ////sub categories that are also categories in themself
+        ///// </summary>
+        //public List<BulkReconDataModel> Children { get; set; }
 
         #endregion       
     }

@@ -50,6 +50,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Activities" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.IO.Log" />
@@ -140,6 +141,9 @@
     </Compile>
     <Compile Include="Controls\Finance\FinanceSelectionControl.xaml.cs">
       <DependentUpon>FinanceSelectionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Services\BulkMeterSelectionControl.cs">
+      <DependentUpon>BulkMeterSelectionControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\SettingsControl.xaml.cs">
       <DependentUpon>SettingsControl.xaml</DependentUpon>
@@ -334,6 +338,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Services\BulkReconControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Services\BulkMeterSelectionControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
