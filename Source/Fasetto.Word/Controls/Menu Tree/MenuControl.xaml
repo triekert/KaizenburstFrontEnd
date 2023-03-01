@@ -33,11 +33,11 @@
                       Width="200" FontSize="18" TextWrapping="Wrap" RenderTransformOrigin="0.1,0.616" AutomationProperties.HelpText="Begin entering name...."
                     >
                     <TextBox.InputBindings>
-                         <!--Clear text on Esc--> 
+                        <!--Clear text on Esc-->
                         <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc" />
-                         <!--Search on enter--> 
+                        <!--Search on enter-->
                         <KeyBinding Command="{Binding SearchCommand}" Key="Return" />
-                        </TextBox.InputBindings>
+                    </TextBox.InputBindings>
                 </TextBox>
 
                 <Button Style="{StaticResource IconGrowButton}" 
@@ -94,7 +94,7 @@
                     <TextBlock FontSize="{StaticResource FontSizeLarge}"
 
                        Foreground="{StaticResource ForegroundVeryDarkBrush}"
-                       HorizontalAlignment="Center"
+                       HorizontalAlignment="Right"
                        VerticalAlignment="Center">
                 
              <!--Tree icon--> 

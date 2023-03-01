@@ -38,28 +38,31 @@
         </Border>
 
         <!-- Title bar -->
-        <!--<Grid Height="50">-->
+        <Grid Height="50">
 
-            <!--<Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
 
             </Grid.ColumnDefinitions>
 
 
-            --><!-- Title text --><!--
+            <!-- Title text -->
             <TextBlock Text="{Binding DisplayTitle}"
                        Foreground="{StaticResource ForegroundLightBrush}"
                        FontSize="{StaticResource FontSizeXLarge}"
                        FontFamily="{StaticResource LatoRegular}"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center" Margin="0,0,0,0"
-                       />-->
+                       />
 
-            <!-- Main buttons --><!--
+            <!-- Main buttons -->
+            <!--
             <StackPanel Orientation="Horizontal" Grid.Column="1">
 
-                --><!-- Search Button --><!--
+                -->
+            <!-- Search Button -->
+            <!--
                 <Button Style="{StaticResource IconGrowButton}" 
                         Content="{StaticResource FontAwesomeSearchIcon}"
                         Command="{Binding OpenSearchCommand}"
@@ -69,12 +72,12 @@
             </StackPanel>-->
 
             <!-- Search Overlay -->
-            <!--<Grid Grid.ColumnSpan="2"
+            <Grid Grid.ColumnSpan="2"
                   local:AnimateSlideInFromRightMarginProperty.Value="{Binding SearchIsOpen}"
 
                   >
 
-                --><!--<Grid.ColumnDefinitions>
+                <!--<Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
@@ -89,7 +92,7 @@
                         Foreground="{DynamicResource WordOrangeBrush}"
                         />-->
 
-                <!-- Search box --><!--
+                <!-- Search box -->
                 <TextBox 
                     Grid.Column="1" 
                     Tag="Search text..."
@@ -99,17 +102,17 @@
                     FontSize="{StaticResource FontSizeRegular}"
                     >
                     <TextBox.InputBindings>
-                        --><!-- Clear text on Esc --><!--
+                        <!-- Clear text on Esc -->
                         <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc" />
-                        --><!-- Search on enter --><!--
+                        <!-- Search on enter -->
                         <KeyBinding Command="{Binding SearchCommand}" Key="Return" />
                     </TextBox.InputBindings>
                 </TextBox>
 
 
-            </Grid>-->
+            </Grid>
 
-        <!--</Grid>-->
+        </Grid>
 
         <!-- Chat List -->
 
@@ -141,19 +144,27 @@
               >
 
             <Grid.ColumnDefinitions>
-                --><!-- Attach button --><!--
+                -->
+        <!-- Attach button -->
+        <!--
                 <ColumnDefinition Width="Auto" />
 
-                --><!-- Text entry box --><!--
+                -->
+        <!-- Text entry box -->
+        <!--
                 <ColumnDefinition Width="*" />
 
-                --><!-- Additional buttons --><!--
+                -->
+        <!-- Additional buttons -->
+        <!--
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
 
 
-            --><!-- Additional buttons --><!--
+            -->
+        <!-- Additional buttons -->
+        <!--
             <StackPanel Grid.Column="1"
                         Orientation="Horizontal"
                         VerticalAlignment="Top"
@@ -161,22 +172,24 @@
                         Margin="0 0 8 0"
                         >
 
-                --><!-- Emoji button -->
-                <!--<Button Style="{StaticResource IconGrowButton}"
+                -->
+        <!-- Emoji button -->
+        <!--<Button Style="{StaticResource IconGrowButton}"
                     Height="{Binding MinHeight, RelativeSource={RelativeSource AncestorType=Grid}}"
                     Content="{StaticResource FontAwesomeEmojiIcon}"
                     Foreground="{StaticResource WordOrangeBrush}"
                     />-->
 
-                <!-- Send button -->
-                <!--<Button Content="Submit Changes"
+        <!-- Send button -->
+        <!--<Button Content="Submit Changes"
                         Padding="8"
                         IsDefault="True"
                         Focusable="False"
                         Command="{Binding SendCommand}"
                         Background="{StaticResource WordGreenBrush}"
                         FontSize="{StaticResource FontSizeRegular}"
-                        />--><!--
+                        />-->
+        <!--
 
             </StackPanel>
 

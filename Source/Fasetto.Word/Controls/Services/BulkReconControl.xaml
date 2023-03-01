@@ -32,7 +32,7 @@
             </Setter>
         </Style>-->
     </UserControl.Resources>
-       <DockPanel>
+    <DockPanel>
         <!-- SEARCH AREA -->
         <Border 
          DockPanel.Dock="Bottom" 
@@ -46,7 +46,7 @@
                 </LinearGradientBrush>
             </Border.Background>
 
-   
+
         </Border>
         <Border 
          DockPanel.Dock="Top" 
@@ -125,11 +125,11 @@
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
                 </Style>
             </DataGrid.Resources>
-                
+
             <DataGrid.Columns>
                 <!--<DataGridTextColumn Header ="Bulk Meter" FontWeight="Bold"
                                     Binding="{Binding ShortName}"/>-->
-                <DataGridTemplateColumn Header="TimeSlot" HeaderStyle="{StaticResource ColumnHeaderStyle}"> 
+                <DataGridTemplateColumn Header="TimeSlot" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Path=TimeSlotStart,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
@@ -152,7 +152,7 @@
                 <DataGridTextColumn Header ="MovingAvgDelta" HeaderStyle="{StaticResource ColumnHeaderStyle}"
                                     Binding="{Binding  MovingAvgDelta}"/>
                 <DataGridTextColumn Header ="Perc Delta" HeaderStyle="{StaticResource ColumnHeaderStyle}"
-                                    Binding="{Binding PercDelta}"/>                
+                                    Binding="{Binding PercDelta}"/>
             </DataGrid.Columns>
 
 
