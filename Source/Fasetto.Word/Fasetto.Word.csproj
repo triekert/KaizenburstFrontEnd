@@ -100,6 +100,9 @@
     <Compile Include="AttachedProperties\NoFrameHistory.cs" />
     <Compile Include="AttachedProperties\PasswordBoxAttachedProperties.cs" />
     <Compile Include="AttachedProperties\TextEntryWidthMatcherProperty.cs" />
+    <Compile Include="Controls\Input\DateTimeControl.xaml.cs">
+      <DependentUpon>DateTimeControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Services\BulkReconDetailControl.xaml.cs" />
     <Compile Include="Controls\Services\BulkReconControl.xaml.cs" />
     <Compile Include="Controls\BubbleContent.xaml.cs">
@@ -145,6 +148,7 @@
     <Compile Include="Controls\Services\BulkMeterSelectionControl.cs">
       <DependentUpon>BulkMeterSelectionControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Services\MeterSelectionControl.xaml.cs" />
     <Compile Include="Controls\SettingsControl.xaml.cs">
       <DependentUpon>SettingsControl.xaml</DependentUpon>
     </Compile>
@@ -172,6 +176,9 @@
     <Compile Include="Pages\BulkReconPage.xaml.cs">
       <DependentUpon>BulkReconPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\MeterSelectionPage.xaml.cs">
+      <DependentUpon>MeterSelectionPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\HierarchyPage.xaml.cs">
       <DependentUpon>HierarchyPage.xaml</DependentUpon>
     </Compile>
@@ -186,6 +193,7 @@
     <Compile Include="ValueConverters\PageToIndexConverter.cs" />
     <Compile Include="ValueConverters\TextToVisiblityConverter.cs" />
     <Compile Include="ValueConverters\PopupContentConverter.cs" />
+    <Compile Include="ValueConverters\TimeToStringConverter.cs" />
     <Compile Include="ViewModel\Application\Design\FinanceSelectionDesignModel.cs" />
     <Compile Include="ViewModel\FinancePageViewModel.cs" />
     <Compile Include="ViewModel\Finance\Expenditure\Design\HierarchyElementDesignModel.cs" />
@@ -229,7 +237,9 @@
     <Compile Include="ViewModel\Hierarchy\HierarchyViewModel.cs" />
     <Compile Include="ViewModel\Hierarchy\HierarchyManagementViewModel1.cs" />
     <Compile Include="ViewModel\Finance\FinanceSelectionViewModel.cs" />
-    <Compile Include="ViewModel\Menu\HierarchyPageViewModel.cs" />
+    <Compile Include="ViewModel\Input\DateTimeViewModel.cs" />
+    <Compile Include="ViewModel\Menu\HierarchyPageViewModel .cs" />
+    <Compile Include="ViewModel\Menu\MeterSelectionPageViewModel.cs" />
     <Compile Include="ViewModel\Services\BulkReconDetailTreeViewModel.cs" />
     <Compile Include="ViewModel\Services\BulkReconTreeViewModel.cs" />
     <Compile Include="ViewModel\Services\BulkReconDetailViewModel.cs" />
@@ -309,6 +319,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Input\DateTimeControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Input\TextEntryControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -345,6 +359,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Services\MeterSelectionControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\SettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -370,6 +388,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\BulkReconPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\MeterSelectionPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

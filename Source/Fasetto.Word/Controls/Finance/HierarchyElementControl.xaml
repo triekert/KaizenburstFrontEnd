@@ -22,13 +22,13 @@
             </Grid.RowDefinitions>
 
             <!-- Settings Title -->
-            <Grid Height="40" Margin="0 0 0 20">
+            <Grid Height="30" Margin="0 0 0 20">
 
                 <!-- Back button -->
                 <Button  
 
                     Style="{StaticResource IconGrowButton}"
-                    Height="40"
+                    Height="50"
                     Content="{StaticResource FontAwesomeArrowLeftIcon}"
                     FontFamily="{StaticResource FontAwesome}"
                     Foreground="{StaticResource  WordOrangeBrush}"
@@ -93,8 +93,8 @@
                 <StackPanel Grid.Column="1"
                             local:TextEntryWidthMatcherProperty.Value="True">
 
-                    <local:TextEntryControl DataContext="{Binding ShortName}" FontWeight="Bold" />
-                    <local:TextEntryControl DataContext="{Binding Description}" FontWeight="Bold" />
+                    <local:TextEntryControl DataContext="{Binding ShortName}" FontWeight="ExtraBlack"  />
+                    <local:TextEntryControl DataContext="{Binding Description}" FontWeight="ExtraBlack" />
                     <StackPanel Visibility="{Binding IsMenuItem, ConverterParameter=True, Converter={local:BooleanToVisiblityConverter}}"
                                 >
                         <TextBlock FontSize="{DynamicResource FontSizeRegular}" Padding="10 10 10 10" 
@@ -109,7 +109,7 @@
                                            Padding="10 10 42 10" FontWeight="Bold"/>
                             <ComboBox MinWidth="150"
                                       SelectedItem="{Binding Page}" 
-                                      ItemsSource="{Binding Source={local:EnumBindingSource {x:Type core:ApplicationPage}}}" IsDropDownOpen="True" SelectedIndex="{Binding Page, ConverterParameter=True, Converter={local:PageToIndexConverter}}" RenderTransformOrigin="0.445,0.556"/>
+                                      ItemsSource="{Binding Source={local:EnumBindingSource {x:Type core:ApplicationPage}}}" IsDropDownOpen="False" SelectedIndex="{Binding Page, ConverterParameter=True, Converter={local:PageToIndexConverter}}" RenderTransformOrigin="0.445,0.556"/>
 
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Grid.Column="1" 

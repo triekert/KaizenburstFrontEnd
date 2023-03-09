@@ -43,6 +43,9 @@ namespace Fasetto.Word
                 case ApplicationPage.BulkRecon:
                     return new BulkReconPage(viewModel as BulkReconPageViewModel);
 
+
+                case ApplicationPage.MeterSelection:
+                    return new MeterSelectionPage(viewModel as MeterSelectionPageViewModel);
                 default:
                     Debugger.Break();
                     return null;
@@ -74,6 +77,9 @@ namespace Fasetto.Word
 
             if (page is LoadReadingsPage)
                 return ApplicationPage.LoadMeters;
+
+            if (page is MeterSelectionPage)
+                return ApplicationPage.MeterSelection;
 
             if (page is BulkReconPage)
                 return ApplicationPage.BulkRecon;

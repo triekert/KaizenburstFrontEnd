@@ -15,15 +15,17 @@ namespace Fasetto.Word
         #endregion
 
         #region Public Properties
-
+        /// <summary>
+        /// Name of hierarchy item
+        /// </summary>
         public TextEntryViewModel ShortName { get; set; }
 
         /// <summary>
-        /// Description of hiearchy item
+        /// Description of hierarchy item
         /// </summary>
         public TextEntryViewModel Description { get; set; }
         /// <summary>
-        /// Page linked to  hiearchy item
+        /// Page linked to  hierarchy item
         /// </summary>
         public string Page { get; set; }
 

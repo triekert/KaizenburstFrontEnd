@@ -11,14 +11,14 @@ namespace Fasetto.Word
     /// <summary>
     /// Interaction logic for FinancePage.xaml
     /// </summary>
-    public partial class HierarchyPage : BasePage<HierarchyPageViewModel>
+    public partial class MeterSelectionPage : BasePage<MeterSelectionPageViewModel>
     {
         #region Constructor
 
         /// <summary>s
         /// Default constructor
         /// </summary>
-        public HierarchyPage() : base()
+        public MeterSelectionPage() : base()
         {
             //InitializeComponent();
             ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
@@ -28,7 +28,7 @@ namespace Fasetto.Word
         /// Constructor with specific view model
         /// </summary>
         /// <param name="specificViewModel">The specific view model to use for this page</param>
-        public HierarchyPage(HierarchyPageViewModel specificViewModel) : base(specificViewModel)
+        public MeterSelectionPage(MeterSelectionPageViewModel specificViewModel) : base(specificViewModel)
         {
             InitializeComponent();
         }
@@ -43,15 +43,6 @@ namespace Fasetto.Word
         protected override void OnViewModelChanged()
         {
             // Make sure UI exists first
-            //if (Hierarchy == null)
-            //    return;
-
-            //// Fade in chat message list
-            //var storyboard = new Storyboard();
-            //storyboard.AddFadeIn(1, from: true);
-            //storyboard.Begin(Hierarchy);
-
-
             if (MeterSelection == null)
                 return;
 
@@ -103,12 +94,12 @@ namespace Fasetto.Word
             }
         }
 
-        private void Hierarchy_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        private void MeterSelection_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
 
         }
 
-        private void MeterSelection_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
         {
 
         }

@@ -51,6 +51,10 @@
         /// </summary>
         BulkRecon = 8,
 
+        /// <summary>
+        ///Selection of Bulk Meter
+        /// </summary>
+        MeterSelection = 9,
     }
 
 }
