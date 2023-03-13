@@ -108,6 +108,8 @@
                             <TextBlock  Text ="Menu Page" FontFamily="{StaticResource LatoRegular}" 
                                            Padding="10 10 42 10" FontWeight="Bold"/>
                             <ComboBox MinWidth="150"
+                                      MaxDropDownHeight="100"
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                                       SelectedItem="{Binding Page}" 
                                       ItemsSource="{Binding Source={local:EnumBindingSource {x:Type core:ApplicationPage}}}" IsDropDownOpen="False" SelectedIndex="{Binding Page, ConverterParameter=True, Converter={local:PageToIndexConverter}}" RenderTransformOrigin="0.445,0.556"/>
 

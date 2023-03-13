@@ -34,7 +34,11 @@ namespace Fasetto.Word
         /// </summary>
         public DateTimeControl()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            //DataContext = this;
+            //var cboTp = TP.SelectedValue as ComboBoxItem;
+            //cboTp.Content = cboTp.Content;
+           
         }
 
         #endregion
@@ -52,6 +56,7 @@ namespace Fasetto.Word
             {
                 // Set the column definition width to the new value
                 (d as DateTimeControl).LabelColumnDefinition.Width = (GridLength)e.NewValue;
+               
             }
 
 // Making ex available for developer on break
@@ -67,5 +72,18 @@ namespace Fasetto.Word
         }
 
         #endregion
+
+        private void TP_Selected(object sender, RoutedEventArgs e)
+        {
+            var cboTp = TP.SelectedValue as ComboBoxItem;
+            cboTp.Content = cboTp.Content;
+        }
+
+        private void TP_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var cboTp = TP.SelectedValue as ComboBoxItem;
+            //var mContent = cboTp.Content;
+            
+        }
     }
 }

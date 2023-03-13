@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Fasetto.Word
@@ -31,12 +32,12 @@ namespace Fasetto.Word
         /// <summary>
         /// String representatio of timestamp
         /// </summary>
-        public string EditedTime { get; set; }
+        public ComboBoxItem EditedTime { get; set; }
 
         /// <summary>
         /// String representatio of timestamp
         /// </summary>
-        public string OriginalTime { get; set; }
+        public ComboBoxItem OriginalTime { get; set; }
 
         /// <summary>
         /// Indicates if the current datetime is in edit mode
@@ -100,6 +101,7 @@ namespace Fasetto.Word
         {
             // Set the edited text to the current value
             EditedDateTime = OriginalDateTime;
+            EditedTime = OriginalTime;
 
             // Go into edit mode
             Editing = true;
@@ -123,6 +125,7 @@ namespace Fasetto.Word
 
             // Save currently saved value
             var currentSavedValue = OriginalDateTime;
+            var currentSavedValue1 = OriginalTime;
 
             RunCommandAsync(() => Working, async () =>
             {
@@ -131,7 +134,12 @@ namespace Fasetto.Word
 
                 // Commit the changed text
                 // So we can see it while it is working
+                var mDate = EditedDateTime.ToShortDateString();
+                mDate = mDate +" "+ EditedTime.Content;
+                EditedDateTime=DateTime.Parse(mDate);
                 OriginalDateTime = EditedDateTime;
+                OriginalTime = EditedTime;
+                
 
                 // Try and do the work
                 result = CommitAction == null ? true : await CommitAction();
@@ -145,7 +153,7 @@ namespace Fasetto.Word
                 {
                     // Restore original value
                     OriginalDateTime = currentSavedValue;
-
+                    OriginalTime = currentSavedValue1;
                     // Go back into edit mode
                     Editing = true;
                 }

@@ -43,22 +43,22 @@ namespace Fasetto.Word
         protected override void OnViewModelChanged()
         {
             // Make sure UI exists first
-            //if (Hierarchy == null)
-            //    return;
-
-            //// Fade in chat message list
-            //var storyboard = new Storyboard();
-            //storyboard.AddFadeIn(1, from: true);
-            //storyboard.Begin(Hierarchy);
-
-
-            if (MeterSelection == null)
+            if (Hierarchy == null)
                 return;
 
             // Fade in chat message list
             var storyboard = new Storyboard();
             storyboard.AddFadeIn(1, from: true);
-            storyboard.Begin(MeterSelection);
+            storyboard.Begin(Hierarchy);
+
+
+            //if (MeterSelection == null)
+            //    return;
+
+            //// Fade in chat message list
+            //var storyboard = new Storyboard();
+            //storyboard.AddFadeIn(1, from: true);
+            //storyboard.Begin(MeterSelection);
 
             // Make the message box focused
             //MessageText.Focus();

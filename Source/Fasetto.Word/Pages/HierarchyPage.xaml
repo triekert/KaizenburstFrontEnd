@@ -111,20 +111,20 @@
 
         </Grid>
 
-        <!-- Chat List -->
+        <!-- Hierarchy Tree-->
         
         
-        <!--<local:HierarchyControl 
+        <local:HierarchyControl 
             Background="{DynamicResource ForegroundLightBrush}"
             x:Name="Hierarchy" 
             Grid.Row="1" Loaded="Hierarchy_Loaded" 
-            />-->
+            />
 
-        <local:MeterSelectionControl 
+        <!--<local:MeterSelectionControl 
             Background="{DynamicResource ForegroundLightBrush}"
             x:Name="MeterSelection" 
             Grid.Row="1" Loaded="MeterSelection_Loaded" Grid.ColumnSpan="3" 
-            />
+            />-->
 
         <!-- Attachment Menu Popup -->
         <Border  Background="{DynamicResource ForegroundLightBrush}"

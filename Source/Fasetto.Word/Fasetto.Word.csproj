@@ -190,6 +190,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ValueConverters\TimeToItemConverter.cs" />
     <Compile Include="ValueConverters\PageToIndexConverter.cs" />
     <Compile Include="ValueConverters\TextToVisiblityConverter.cs" />
     <Compile Include="ValueConverters\PopupContentConverter.cs" />

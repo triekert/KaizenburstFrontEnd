@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Fasetto.Word.Core;
+using System.Security.Cryptography.X509Certificates;
+using System;
 
 namespace Fasetto.Word
 {
@@ -12,6 +14,14 @@ namespace Fasetto.Word
     /// </summary>
     public class MeterSelectionPageViewModel : BaseViewModel
     {
+        #region Private Members
+
+        /// <summary>
+        /// The text to show while loading text
+        /// </summary>
+        private string mLoadingText = "...";
+
+        #endregion
         #region Protected Members
 
         /// <summary>
@@ -35,7 +45,7 @@ namespace Fasetto.Word
         /// </summary>
         protected bool mSearchIsOpen;
 
-        public HierarchyTreeViewModel mViewModel ;
+        public HierarchyTreeViewModel mViewModel;
         #endregion
 
         #region Public Properties
@@ -71,34 +81,84 @@ namespace Fasetto.Word
         /// The title of this chat list
         /// </summary>
         public string DisplayTitle { get; set; }
+
         /// <summary>
-        /// Selected Client for bulk metering
+        /// The Client for which Bulk Meter reconciliation is to be processed
         /// </summary>
         public TextEntryViewModel Client { get; set; }
 
         /// <summary>
-        /// Selected Bulk Meter for reconciliation of water consumption
-        /// </summary>
-        public TextEntryViewModel BulkMeter { get; set; }
-        /// <summary>
-        /// Selected Client for bulk metering
+        /// The start time for analysis of readings
         /// </summary>
         public DateTimeViewModel TimeStart { get; set; }
 
         /// <summary>
-        /// Selected Bulk Meter for reconciliation of water consumption
+        /// The start time for analysis of readings
         /// </summary>
-        public DateTimeViewModel TimeStop { get; set; }
+        public DateTimeViewModel TimeEnd { get; set; }
+        /// <summary>
+        /// True to show the attachment menu, false to hide it
+        /// </summary>
+        public bool AttachmentMenuVisible { get; set; }
 
+        /// <summary>
+        /// True if any pop-up menus are visible
+        /// </summary>
+        public bool AnyPopupVisible => AttachmentMenuVisible;
 
+        /// <summary>
+        /// The view model for the attachment menu
+        /// </summary>
+        //public ChatAttachmentPopupMenuViewModel AttachmentMenu { get; set; }
 
+        /// <summary>
+        /// The text for the current message being written
+        /// </summary>
+        public string PendingMessageText { get; set; }
 
         /// <summary>
         /// The text to search for when we do a search
         /// </summary>
+        public string SearchText
+        {
+            get => mSearchText;
+            set
+            {
+                // Check value is different
+                if (mSearchText == value)
+                    return;
 
+                // Update value
+                mSearchText = value;
 
-       
+                // If the search text is empty...
+                if (string.IsNullOrEmpty(SearchText))
+                    // Search to restore messages
+                    Search();
+            }
+        }
+
+        /// <summary>
+        /// A flag indicating if the search dialog is open
+        /// </summary>
+        public bool SearchIsOpen
+        {
+            get => mSearchIsOpen;
+            set
+            {
+                // Check value has changed
+                if (mSearchIsOpen == value)
+                    return;
+
+                // Update value
+                mSearchIsOpen = value;
+
+                // If dialog closes...
+                if (!mSearchIsOpen)
+                    // Clear search text
+                    SearchText = string.Empty;
+            }
+        }
 
         #endregion
 
@@ -151,12 +211,49 @@ namespace Fasetto.Word
             //Populate screen title
             //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
             //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
-            DisplayTitle = "Bulk Meter Selection";
+            DisplayTitle = "Bulk Meter Management";
+            Client = new TextEntryViewModel
+            {
+                Label = "Client",
+                OriginalText = mLoadingText,
+                //CommitAction = SaveFirstNameAsync
+            };
+
+            TimeStart = new DateTimeViewModel
+            {
+                Label = "Period Start",
+                OriginalDateTime = DateTime.Now.AddDays(-1),
+                EditedDateTime = DateTime.Now.AddDays(-1),
+                OriginalTime = new System.Windows.Controls.ComboBoxItem(),
+                EditedTime = new System.Windows.Controls.ComboBoxItem(),
+                //(DateTime.Now.AddHours(-1)).ToShortTimeString(),
+                //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
+            };
+            TimeStart.OriginalTime.Content = "00:00";
+            TimeStart.EditedTime.Content = "00:30";
+
+
+            TimeEnd = new DateTimeViewModel
+            {
+                Label = "Period End",
+                OriginalDateTime = DateTime.Now,
+                EditedDateTime = DateTime.Now,
+                OriginalTime = new System.Windows.Controls.ComboBoxItem(),
+                EditedTime = new System.Windows.Controls.ComboBoxItem(),
+                //(DateTime.Now.AddHours(-1)).ToShortTimeString(),
+                //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
+            };
+            TimeEnd.OriginalTime.Content = "00:00";
+            TimeEnd.EditedTime.Content = "00:30";
+
             // Create commands
-            //AttachmentButtonCommand = new RelayCommand(AttachmentButton);
-            //PopupClickawayCommand = new RelayCommand(PopupClickaway);
-
-
+            AttachmentButtonCommand = new RelayCommand(AttachmentButton);
+            PopupClickawayCommand = new RelayCommand(PopupClickaway);
+            SendCommand = new RelayCommand(Send);
+            SearchCommand = new RelayCommand(Search);
+            OpenSearchCommand = new RelayCommand(OpenSearch);
+            CloseSearchCommand = new RelayCommand(CloseSearch);
+            ClearSearchCommand = new RelayCommand(ClearSearch);
 
             // Make a default menu
             //AttachmentMenu = new ChatAttachmentPopupMenuViewModel();
@@ -169,24 +266,116 @@ namespace Fasetto.Word
         /// <summary>
         /// When the attachment button is clicked show/hide the attachment pop-up
         /// </summary>
-        //public void AttachmentButton()
-        //{
-        //    // Toggle menu visibility
-        //    AttachmentMenuVisible ^= true;
-        //}
+        public void AttachmentButton()
+        {
+            // Toggle menu visibility
+            AttachmentMenuVisible ^= true;
+        }
 
         /// <summary>
         /// When the pop-up click away area is clicked hide any pop-ups
         /// </summary>
-        //public void PopupClickaway()
-        //{
-        //    // Hide attachment menu
-        //    AttachmentMenuVisible = false;
-        //}
+        public void PopupClickaway()
+        {
+            // Hide attachment menu
+            AttachmentMenuVisible = false;
+        }
 
+        /// <summary>
+        /// When the user clicks the send button, sends the message
+        /// </summary>
+        public void Send()
+        {
+            mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            var results = mViewModel.mPersist.Where(x => x.IsUnderReview || x.IsDeleteElement).ToList();
+            var mPersistElement = new HierarchyResultApiModel();
+            //var results = mViewModel.mPersist.OrderBy(x => x.ShortName).ToList();
+            if (results.Count > 0)
+                //mViewModel.mPersistTmp = (HierarchyResultApiModel)results;
+                //ToDo:Where a new hierarchy is referred to in the a new menu item, Create the root element for this new hierarchy
 
+                results = mViewModel.mPersist.Where(x => (x.IsNewElement) & x.Page == "Hierarchy").ToList();
+            if (results.Count > 0)
+            {
+                //mViewModel.mPersist.AddRange(results);
+                foreach (var row in results)
 
+                {
+                    mPersistElement.DateDiscontinued = row.DateDiscontinued;
+                    mPersistElement.DateEffective = row.DateEffective;
+                    mPersistElement.ShortName = row.ShortName;
+                    mPersistElement.Description = row.Description;
+                    mPersistElement.KCategoryID = row.Root;
+                    mPersistElement.Page = row.Page;
+                    mPersistElement.IsNewElement = row.IsNewElement;
+                    mPersistElement.IsUnderReview = row.IsUnderReview;
+                    mPersistElement.ParentCategoryID = "00000000-0000-0000-0000-000000000000";
+                    mPersistElement.FHierarchyID = row.Root;
+                }
+                mViewModel.mPersist.Add(mPersistElement);
 
+            }
+            _ = mViewModel.PersistHierarchyChangesAsync();
+        }
+
+        /// <summary>
+        /// Searches the current message list and filters the view
+        /// </summary>
+        public void Search()
+        {
+            // Make sure we don't re-search the same text
+            //if ((string.IsNullOrEmpty(mLastSearchText) && string.IsNullOrEmpty(SearchText)) ||
+            //    string.Equals(mLastSearchText, SearchText))
+            //    return;
+
+            // If we have no search text, or no items
+            if (string.IsNullOrEmpty(SearchText))
+            {
+                // Make filtered list the same
+
+                // Set last search text
+                mLastSearchText = SearchText;
+
+                return;
+            }
+
+            // Find all items that contain the given text
+            //// TODO: Make more efficient search
+            //FilteredItems = new ObservableCollection<ChatMessageListItemViewModel>(
+            //    Items.Where(item => item.Message.ToLower().Contains(SearchText)));
+
+            // Set last search text
+            mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            mViewModel.SearchText = SearchText;
+            mViewModel.PerformSearch();
+            //mViewModel.RefreshHierarchy();           
+            mLastSearchText = SearchText;
+        }
+
+        /// <summary>
+        /// Clears the search text
+        /// </summary>
+        public void ClearSearch()
+        {
+            // If there is some search text...
+            if (!string.IsNullOrEmpty(SearchText))
+                // Clear the text
+                SearchText = string.Empty;
+            // Otherwise...
+            else
+                // Close search dialog
+                SearchIsOpen = false;
+        }
+
+        /// <summary>
+        /// Opens the search dialog
+        /// </summary>
+        public void OpenSearch() => SearchIsOpen = true;
+
+        /// <summary>
+        /// Closes the search dialog
+        /// </summary>
+        public void CloseSearch() => SearchIsOpen = false;
 
         #endregion
     }
