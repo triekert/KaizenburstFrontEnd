@@ -41,13 +41,14 @@ namespace Fasetto.Word
         //protected BulkReconViewModel mRootHierarchyElement;
         //protected BulkReconViewModel mRootHierarchyElement1;
         //private readonly ICommand mSearchCommand;
-        public BulkReconListDataModel mBRDML;
+        //public BulkReconListDataModel mBRDML;
         //public BulkReconResultListApiModel mPersist, mPersistTmp,mOriginal;
-        public BulkReconViewModel mBRVM;
+        //public BulkReconViewModel mBRVM;
         public ParameterBulkReconApiModel mRequest;
         public string mBulkMeter;
         public DateTime mTimeStart;
         public DateTime mTimeEnd;
+        public object PriorPopupViewModel { get; set; }
         //public HierarchyElementViewModel mElement;
 
         //IEnumerator<HierarchyManagementViewModel> mMatchingCategoryEnumerator;
@@ -112,6 +113,7 @@ namespace Fasetto.Word
             mBulkMeter = bulkMeter;
             mTimeStart = timeStart;
             mTimeEnd = timeEnd;
+            PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
             TaskManager.RunAndForget(BulkReconDetailAsync);
 
 
@@ -938,9 +940,26 @@ namespace Fasetto.Word
 
         public void Close()
         {
+            //Give control back to parent 'Popup view model'
 
-            ViewModelApplication.CurrentPopupViewModel = null;
-            ViewModelApplication.PopupVisible = false; ;
+            var mType = ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel.GetType().Name;
+                ViewModelApplication.CurrentPopupViewModel = ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+            var mBulkReconDetailTreeViewModel = ViewModelApplication.CurrentPopupViewModel;
+                ViewModelApplication.PopupVisible = false;
+
+            if (mType == "BulkReconDetailTreeViewModel")
+                {
+                ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+                ViewModelApplication.CurrentPopupViewModel = mBulkReconDetailTreeViewModel;
+                ViewModelApplication.CurrentPopupContent = PopupContent.BulkReconDetail;
+            }
+            else
+            {
+
+                ViewModelApplication.CurrentPopupContent = PopupContent.BulkRecon;}
+
+            ViewModelApplication.PopupVisible = true;
+
 
         }
 

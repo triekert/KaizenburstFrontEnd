@@ -62,14 +62,14 @@ namespace Fasetto.Word
         {
 
             //var root = "1C225789-3938-4480-86CB-071863DC5D33";
-            mBulkReconTreeView = new BulkReconTreeViewModel("5249ffeb-6907-46aa-9204-d4527e11f9ce", DateTime.Now.AddDays(-1), DateTime.Now);
-            mBulkMeter = "Tre Donne Estate Main Feed";
+            mBulkReconTreeView = (BulkReconTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
+            //mBulkMeter = "Tre Donne Estate Main Feed";
             DataContext = mBulkReconTreeView;
-            ((BulkReconPageViewModel)ViewModelApplication.CurrentPageViewModel).DisplayTitle = ((BulkReconPageViewModel)ViewModelApplication.CurrentPageViewModel).DisplayTitle + mBulkMeter;
+            //((BulkReconPageViewModel)ViewModelApplication.CurrentPageViewModel).DisplayTitle = ((BulkReconPageViewModel)ViewModelApplication.CurrentPageViewModel).DisplayTitle + mBulkMeter;
 
             InitializeComponent();
-            mBulkReconTreeView.mBulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
-            ViewModelApplication.CurrentControlViewModel = mBulkReconTreeView;
+            //mBulkReconTreeView.mBulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
+            //ViewModelApplication.CurrentControlViewModel = mBulkReconTreeView;
 
             //CloseCommand = new RelayCommand(Close);
 
@@ -98,19 +98,21 @@ namespace Fasetto.Word
             if (e.Key == Key.Enter)
             {
                 //_ = (BulkReconViewModel)(BulkRecon.SelectedItems).OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault()).TimeSlotStart;
-                ViewModelApplication.PopupVisible = false;
-                ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+                //ViewModelApplication.PopupVisible = false;
+                //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
                 var tempBR = new ObservableCollection<BulkReconViewModel>();
                 foreach (var tBR in BulkRecon.SelectedItems)
                     tempBR.Add((BulkReconViewModel)tBR);
                 var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
                 var mTimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart.AddMinutes(30);
+                var mBulkMeter = tempBR.OrderByDescending(x => x.BulkMeter).ToList().FirstOrDefault().BulkMeter;
+                var ShortName = tempBR.OrderByDescending(x => x.ShortName).ToList().FirstOrDefault().ShortName;
 
-                ViewModelApplication.CurrentPopupViewModel = new BulkReconDetailTreeViewModel(mBulkReconTreeView.mBulkMeter, mTimeStart, mTimeEnd);
+                ViewModelApplication.CurrentPopupViewModel = new BulkReconDetailTreeViewModel(mBulkMeter, mTimeStart, mTimeEnd);
 
-                ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + mBulkMeter;
-
-
+                ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+                ViewModelApplication.PopupVisible = false;
+                //ViewModelApplication.CurrentPopupContent = Null;
                 ViewModelApplication.CurrentPopupContent = PopupContent.BulkReconDetail;
                 ViewModelApplication.PopupVisible = true;
 

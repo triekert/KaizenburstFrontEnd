@@ -103,6 +103,9 @@
     <Compile Include="Controls\Input\DateTimeControl.xaml.cs">
       <DependentUpon>DateTimeControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Input\HierarchyItemSelectionControl.xaml.cs">
+      <DependentUpon>HierarchyItemSelectionControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Services\BulkReconDetailControl.xaml.cs" />
     <Compile Include="Controls\Services\BulkReconControl.xaml.cs" />
     <Compile Include="Controls\BubbleContent.xaml.cs">
@@ -120,7 +123,6 @@
     <Compile Include="Controls\Chat\ChatMessage\ChatMessageListItemControl.xaml.cs">
       <DependentUpon>ChatMessageListItemControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Finance\Class1.cs" />
     <Compile Include="Controls\Finance\ExpenditureControl.xaml.cs">
       <DependentUpon>ExpenditureControl.xaml</DependentUpon>
     </Compile>
@@ -239,6 +241,7 @@
     <Compile Include="ViewModel\Hierarchy\HierarchyManagementViewModel1.cs" />
     <Compile Include="ViewModel\Finance\FinanceSelectionViewModel.cs" />
     <Compile Include="ViewModel\Input\DateTimeViewModel.cs" />
+    <Compile Include="ViewModel\Input\HierarchyItemSelectionViewModel.cs" />
     <Compile Include="ViewModel\Menu\HierarchyPageViewModel .cs" />
     <Compile Include="ViewModel\Menu\MeterSelectionPageViewModel.cs" />
     <Compile Include="ViewModel\Services\BulkReconDetailTreeViewModel.cs" />
@@ -321,6 +324,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Input\DateTimeControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Input\HierarchyItemSelectionControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

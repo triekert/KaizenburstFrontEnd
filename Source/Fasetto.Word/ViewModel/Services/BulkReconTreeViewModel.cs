@@ -936,10 +936,9 @@ namespace Fasetto.Word
         public void Close()
         {
             // Close settings menu
-            ViewModelApplication.SideMenuVisible = true;
-            ViewModelApplication.CurrentSideMenuViewModel = null;
-            ViewModelApplication.CurrentPageViewModel= null;
-            ViewModelApplication.GoToPage(ApplicationPage.Chat);
+
+            ViewModelApplication.PopupVisible = false;
+
 
 
         }

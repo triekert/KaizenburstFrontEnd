@@ -42,6 +42,11 @@ namespace Fasetto.Word
                     var mBulkReconDetailControl = new BulkReconDetailControl();
                     return mBulkReconDetailControl;
 
+
+                case PopupContent.BulkRecon:
+                    var mBulkReconControl = new BulkReconControl();
+                    return mBulkReconControl;
+
                 case PopupContent.BulkMeterSelectionControl:
                     var mBulkMeterSelectionControl = new BulkMeterSelectionControl();
                     return mBulkMeterSelectionControl;

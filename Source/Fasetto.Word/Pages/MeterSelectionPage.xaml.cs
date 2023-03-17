@@ -40,20 +40,20 @@ namespace Fasetto.Word
         /// <summary>
         /// Fired when the view model changes
         /// </summary>
-        protected override void OnViewModelChanged()
-        {
-            // Make sure UI exists first
-            if (MeterSelection == null)
-                return;
+        //protected override void OnViewModelChanged()
+        //{
+        //    // Make sure UI exists first
+        //    if (MeterSelection == null)
+        //        return;
 
-            // Fade in chat message list
-            var storyboard = new Storyboard();
-            storyboard.AddFadeIn(1, from: true);
-            storyboard.Begin(MeterSelection);
+        //    // Fade in chat message list
+        //    var storyboard = new Storyboard();
+        //    storyboard.AddFadeIn(1, from: true);
+        //    storyboard.Begin(MeterSelection);
 
-            // Make the message box focused
-            //MessageText.Focus();
-        }
+        //    // Make the message box focused
+        //    //MessageText.Focus();
+        //}
 
         #endregion
 

@@ -85,7 +85,18 @@ namespace Fasetto.Word
         /// <summary>
         /// The Client for which Bulk Meter reconciliation is to be processed
         /// </summary>
-        public TextEntryViewModel Client { get; set; }
+        public HierarchyItemSelectionViewModel Client { get; set; }
+
+        /// <summary>
+        /// The GUID for the Bulk Meter for which reconciliation is to be processed
+        /// </summary>
+        public string BulkMeter { get; set; }
+
+
+        /// <summary>
+        /// The Name for the Bulk Meter for which reconciliation is to be processed
+        /// </summary>
+        public string ShortName { get; set; }
 
         /// <summary>
         /// The start time for analysis of readings
@@ -96,6 +107,11 @@ namespace Fasetto.Word
         /// The start time for analysis of readings
         /// </summary>
         public DateTimeViewModel TimeEnd { get; set; }
+
+
+
+
+
         /// <summary>
         /// True to show the attachment menu, false to hide it
         /// </summary>
@@ -192,7 +208,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The command for when the user wants to close to search dialog
         /// </summary>
-        public ICommand CloseSearchCommand { get; set; }
+        public ICommand CloseCommand { get; set; }
 
         /// <summary>
         /// The command for when the user wants to clear the search text
@@ -212,12 +228,15 @@ namespace Fasetto.Word
             //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
             //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
             DisplayTitle = "Bulk Meter Management";
-            Client = new TextEntryViewModel
+
+            Client = new HierarchyItemSelectionViewModel
             {
                 Label = "Client",
-                OriginalText = mLoadingText,
+                EditedName = mLoadingText,
+
                 //CommitAction = SaveFirstNameAsync
             };
+
 
             TimeStart = new DateTimeViewModel
             {
@@ -252,7 +271,7 @@ namespace Fasetto.Word
             SendCommand = new RelayCommand(Send);
             SearchCommand = new RelayCommand(Search);
             OpenSearchCommand = new RelayCommand(OpenSearch);
-            CloseSearchCommand = new RelayCommand(CloseSearch);
+            CloseCommand = new RelayCommand(Close);
             ClearSearchCommand = new RelayCommand(ClearSearch);
 
             // Make a default menu
@@ -286,36 +305,19 @@ namespace Fasetto.Word
         /// </summary>
         public void Send()
         {
-            mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
-            var results = mViewModel.mPersist.Where(x => x.IsUnderReview || x.IsDeleteElement).ToList();
-            var mPersistElement = new HierarchyResultApiModel();
-            //var results = mViewModel.mPersist.OrderBy(x => x.ShortName).ToList();
-            if (results.Count > 0)
-                //mViewModel.mPersistTmp = (HierarchyResultApiModel)results;
-                //ToDo:Where a new hierarchy is referred to in the a new menu item, Create the root element for this new hierarchy
+            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            //To do: Lookup to be user rights and available options driven
+            BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
+            ShortName = "Tre Donne";
 
-                results = mViewModel.mPersist.Where(x => (x.IsNewElement) & x.Page == "Hierarchy").ToList();
-            if (results.Count > 0)
-            {
-                //mViewModel.mPersist.AddRange(results);
-                foreach (var row in results)
-
-                {
-                    mPersistElement.DateDiscontinued = row.DateDiscontinued;
-                    mPersistElement.DateEffective = row.DateEffective;
-                    mPersistElement.ShortName = row.ShortName;
-                    mPersistElement.Description = row.Description;
-                    mPersistElement.KCategoryID = row.Root;
-                    mPersistElement.Page = row.Page;
-                    mPersistElement.IsNewElement = row.IsNewElement;
-                    mPersistElement.IsUnderReview = row.IsUnderReview;
-                    mPersistElement.ParentCategoryID = "00000000-0000-0000-0000-000000000000";
-                    mPersistElement.FHierarchyID = row.Root;
-                }
-                mViewModel.mPersist.Add(mPersistElement);
-
-            }
-            _ = mViewModel.PersistHierarchyChangesAsync();
+            ViewModelApplication.CurrentPopupViewModel = new BulkReconTreeViewModel(BulkMeter, TimeStart.EditedDateTime, TimeEnd.EditedDateTime);
+            ((BulkReconTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+            ViewModelApplication.CurrentPopupContent = PopupContent.BulkRecon;
+            ViewModelApplication.PopupVisible = true;
+            //ViewModelApplication.CurrentPopupViewModel = new BulkReconlTreeViewModel(BulkMeter, TimeStart.EditedDateTime, TimeEnd.EditedDateTime);
+            //((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+            //ViewModelApplication.CurrentPopupContent = PopupContent.BulkReconDetail;
+            //ViewModelApplication.PopupVisible = true;
         }
 
         /// <summary>
@@ -375,8 +377,12 @@ namespace Fasetto.Word
         /// <summary>
         /// Closes the search dialog
         /// </summary>
-        public void CloseSearch() => SearchIsOpen = false;
-
+        public void Close()
+        { 
+        // Close settings menu
+        ViewModelApplication.SideMenuVisible = true;
+            ViewModelApplication.CurrentSideMenuViewModel = null;
+            ViewModelApplication.GoToPage(ApplicationPage.Chat);}
         #endregion
     }
 }

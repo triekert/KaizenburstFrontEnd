@@ -46,6 +46,12 @@
         /// <summary>
         /// Popup for selection of BulkMeter and time range
         /// </summary>
-        BulkMeterSelectionControl = 8
+        BulkMeterSelectionControl = 8,
+
+
+        /// <summary>
+        /// Detail meter readings for water recon
+        /// </summary>
+        BulkRecon = 9
     }
 }
