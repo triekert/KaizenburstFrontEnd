@@ -51,6 +51,10 @@ namespace Fasetto.Word
                     var mBulkMeterSelectionControl = new BulkMeterSelectionControl();
                     return mBulkMeterSelectionControl;
 
+                case PopupContent.HierarchyItemSelection:                    
+                    var mHierarchyItemSelection = new HierarchySelectionControl();
+                    return mHierarchyItemSelection;
+
                 // Unknown
                 default:
                     return "No UI yet, sorry :)";

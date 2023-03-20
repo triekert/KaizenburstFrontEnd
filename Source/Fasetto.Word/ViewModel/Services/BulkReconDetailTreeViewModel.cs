@@ -1,6 +1,7 @@
 ﻿
 using Dna;
 using Fasetto.Word.Core;
+using Fasetto.Word.Core.ApiModels.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

@@ -106,6 +106,7 @@
     <Compile Include="Controls\Input\HierarchyItemSelectionControl.xaml.cs">
       <DependentUpon>HierarchyItemSelectionControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Input\HierarchySelectionControl.xaml.cs" />
     <Compile Include="Controls\Services\BulkReconDetailControl.xaml.cs" />
     <Compile Include="Controls\Services\BulkReconControl.xaml.cs" />
     <Compile Include="Controls\BubbleContent.xaml.cs">
@@ -234,6 +235,7 @@
     <Compile Include="ViewModel\Hierarchy\HierarchyElementViewModel.cs" />
     <Compile Include="ViewModel\Finance\Expenditure\ExpenditureTreeViewModel.cs" />
     <Compile Include="ViewModel\Finance\Expenditure\FinanceTreeViewModel.cs" />
+    <Compile Include="ViewModel\Hierarchy\HierarchyTreeViewModel1.cs" />
     <Compile Include="ViewModel\Hierarchy\HierarchyTreeViewModel.cs" />
     <Compile Include="ViewModel\Finance\Expenditure\ExpenditureViewModel.cs" />
     <Compile Include="ViewModel\Finance\Expenditure\FinanceViewModel .cs" />
@@ -336,6 +338,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\List\ListControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Input\HierarchySelectionControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

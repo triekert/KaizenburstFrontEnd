@@ -125,8 +125,29 @@ namespace Fasetto.Word
         /// Make provision for a control parameter that could be passed through to adjust a control
         /// </summary>
         public string ControlParameter { get; set; }
+        /// <summary>
+        /// Make provision for another control parameter that could be passed through to adjust a control
+        /// </summary>
+        public string ControlParameter1 { get; set; }
 
+        /// <summary>
+        /// Make provision for a nother control parameter  for communication betwween parent and child
+        /// </summary>
+        public string ControlParameter2 { get; set; }
 
+        /// <summary>
+        /// Make provision for another control parameter for communication parent and child
+        /// </summary>
+        public bool ControlParameter3 { get; set; }
+        /// <summary>
+        /// Make provision for another control parameter that could be passed through to adjust a control
+        /// </summary>
+        public string ControlParameter4 { get; set; }
+
+        /// <summary>
+        /// Make provision for a nother control parameter  for communication betwween parent and child
+        /// </summary>
+        public string ControlParameter5 { get; set; }
 
         #endregion
 

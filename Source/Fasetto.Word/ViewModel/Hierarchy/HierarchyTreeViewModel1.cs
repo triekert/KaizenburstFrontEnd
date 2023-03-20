@@ -18,7 +18,7 @@ namespace Fasetto.Word
     /// for the TreeView (the FirstGeneration property), a bindable
     /// SearchText property, and the SearchCommand to perform a search.
     /// </summary>
-    public class HierarchyTreeViewModel : BaseViewModel
+    public class HierarchyTreeViewModel1 : BaseViewModel
 
     {
 
@@ -73,7 +73,7 @@ namespace Fasetto.Word
         /// <param name="hierarchyTable"></param>
         /// The hierarchyTable passed through as a paremeter identifies the specific hierarchy set to be retrieved
         /// from persistent s
-        public HierarchyTreeViewModel(string hierarchyTable)
+        public HierarchyTreeViewModel1(string hierarchyTable)
         {
             #region Dummy Root HierarchyListDataModel
             ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
@@ -164,9 +164,9 @@ namespace Fasetto.Word
 
         private class SearchCategoryTreeCommand : ICommand
         {
-            private readonly HierarchyTreeViewModel mCategoryTree;
+            private readonly HierarchyTreeViewModel1 mCategoryTree;
 
-            public SearchCategoryTreeCommand(HierarchyTreeViewModel CategoryTree)
+            public SearchCategoryTreeCommand(HierarchyTreeViewModel1 CategoryTree)
             {
                 mCategoryTree = CategoryTree;
             }

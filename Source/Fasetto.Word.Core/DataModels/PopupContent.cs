@@ -52,6 +52,13 @@
         /// <summary>
         /// Detail meter readings for water recon
         /// </summary>
-        BulkRecon = 9
+        BulkRecon = 9,
+
+
+        /// <summary>
+        /// Hierarchy Selection Control
+        /// </summary>
+        HierarchyItemSelection = 10
+
     }
 }

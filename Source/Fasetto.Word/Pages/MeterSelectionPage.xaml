@@ -10,184 +10,195 @@
       d:DataContext="{x:Static local:ChatMessageListDesignModel.Instance}"
       >
     <!-- -->
+    <Border>
+        <Grid>
 
-    <Grid>
+            <Grid.RowDefinitions>
 
-        <Grid.RowDefinitions>
+                <!-- Inputs -->
+                <RowDefinition Height="400" />
 
-            <!-- Inputs -->
-            <RowDefinition Height="400" />
+                <!-- Action Buttons -->
+                <RowDefinition Height="*" />
 
-            <!-- Chat List -->
-            <RowDefinition Height="*" />
+                <!-- Message Send Text box --><!--
+                <RowDefinition Height="Auto" />-->
 
-            <!-- Message Send Text box --><!--
-            <RowDefinition Height="Auto" />-->
+            </Grid.RowDefinitions>
 
-        </Grid.RowDefinitions>
+            <!-- Popup Overlay -->
+            <!--<Border Background="{DynamicResource ForegroundLightBrush}" 
+                    Grid.RowSpan="2"
+                    Panel.ZIndex="1"
+                    Visibility="{Binding AnyPopupVisible, Converter={local:BooleanToVisiblityConverter}, ConverterParameter=True}"
+                    >
+                <Border.InputBindings>
+                    <MouseBinding MouseAction="LeftClick" Command="{Binding PopupClickawayCommand}" />
+                </Border.InputBindings>
+            </Border>-->
 
-        <!-- Popup Overlay -->
-        <!--<Border Background="{DynamicResource ForegroundLightBrush}" 
-                Grid.RowSpan="2"
-                Panel.ZIndex="1"
-                Visibility="{Binding AnyPopupVisible, Converter={local:BooleanToVisiblityConverter}, ConverterParameter=True}"
-                >
-            <Border.InputBindings>
-                <MouseBinding MouseAction="LeftClick" Command="{Binding PopupClickawayCommand}" />
-            </Border.InputBindings>
-        </Border>-->
+            <!-- Title bar -->
+            <Grid Height="400" Grid.Row="0">
+            <Border Background="{StaticResource ForegroundLightBrush}" 
+                            CornerRadius="10"
+                            Padding="2 2 2 2"
+                            Width="750"
+                            Margin="2" Height="400">
 
-        <!-- Title bar -->
-        <Grid Height="400" Grid.Row="0">
+                <!--<Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
 
-            <!--<Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>-->
 
-            </Grid.ColumnDefinitions>-->
-
-            <!-- Title text -->
+                <!-- Title text -->
 
 
-            <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0">             
-                <TextBlock Text="{Binding DisplayTitle}" 
-                       Foreground="{StaticResource ForegroundLightBrush}"
-                       FontSize="{StaticResource FontSizeXLarge}"
-                       FontFamily="{StaticResource LatoRegular}"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center" Margin="315,0,0,0"
-                       />
-                <local:HierarchyItemSelectionControl DataContext="{Binding Client}" FontWeight="ExtraBlack"  />
-                <local:DateTimeControl  DataContext="{Binding TimeStart}" FontWeight="ExtraBlack"  />
-                <local:DateTimeControl  DataContext="{Binding TimeEnd}" FontWeight="ExtraBlack"  />
-            </StackPanel>
-            
+                <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="1">
+                    <TextBlock Text="{Binding DisplayTitle}" 
+                           Foreground="{StaticResource ForegroundLightBrush}"
+                             Background="{StaticResource WordDarkBlueBrush}"  
+                           FontSize="{StaticResource FontSizeXLarge}"
+                           FontFamily="{StaticResource LatoRegular}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" 
+                           />
+                    <local:HierarchyItemSelectionControl DataContext="{Binding Root}" FontWeight="ExtraBlack"  />
+                    <local:HierarchyItemSelectionControl DataContext="{Binding Meter}" FontWeight="ExtraBlack"  />
+                    <local:DateTimeControl  DataContext="{Binding TimeStart}" FontWeight="ExtraBlack"  />
+                    <local:DateTimeControl  DataContext="{Binding TimeEnd}" FontWeight="ExtraBlack"  />
+                </StackPanel>
 
+            </Border>
 
             <!-- Search Overlay -->
-            <Grid Grid.ColumnSpan="2"
-                  local:AnimateSlideInFromRightMarginProperty.Value="{Binding SearchIsOpen}"
+                <Grid Grid.ColumnSpan="2"
+                      local:AnimateSlideInFromRightMarginProperty.Value="{Binding SearchIsOpen}"
 
-                  >
+                      >
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Border Background="{DynamicResource ForegroundLightBrush}"
-                            Grid.Row="1">
-                </Border>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Background="{DynamicResource ForegroundLightBrush}"
+                                Grid.Row="1">
+                    </Border>
 
-                <!-- Close search button -->
-                <!--<Button Style="{StaticResource IconGrowButton}" 
-                        Content="{StaticResource FontAwesomeCloseIcon}"
-                        Command="{Binding  CloseSearchCommand}"
-                        Foreground="{DynamicResource WordOrangeBrush}"
-                        />-->
+                    <!-- Close search button -->
+                    <!--<Button Style="{StaticResource IconGrowButton}" 
+                            Content="{StaticResource FontAwesomeCloseIcon}"
+                            Command="{Binding  CloseSearchCommand}"
+                            Foreground="{DynamicResource WordOrangeBrush}"
+                            />-->
 
-                <!-- Search box -->
-                <TextBox 
-                    Grid.Column="1" 
-                    Tag="Search text..."
-                    local:FocusProperty.Value="{Binding SearchIsOpen}"
-                    Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                    Margin="0 5 5 5"
-                    FontSize="{StaticResource FontSizeRegular}"
-                    >
-                    <TextBox.InputBindings>
-                        <!-- Clear text on Esc -->
-                        <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc" />
-                        <!-- Search on enter -->
-                        <KeyBinding Command="{Binding SearchCommand}" Key="Return" />
-                    </TextBox.InputBindings>
-                </TextBox>
+                    <!-- Search box -->
+                    <TextBox 
+                        Grid.Column="1" 
+                        Tag="Search text..."
+                        local:FocusProperty.Value="{Binding SearchIsOpen}"
+                        Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                        Margin="0 5 5 5"
+                        FontSize="{StaticResource FontSizeRegular}"
+                        >
+                        <TextBox.InputBindings>
+                            <!-- Clear text on Esc -->
+                            <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc" />
+                            <!-- Search on enter -->
+                            <KeyBinding Command="{Binding SearchCommand}" Key="Return" />
+                        </TextBox.InputBindings>
+                    </TextBox>
 
+
+                </Grid>
 
             </Grid>
 
+            <!-- Chat List -->
+
+
+            <!--<local:MeterSelectionControl 
+                Background="{DynamicResource ForegroundLightBrush}"
+                x:Name="MeterSelection" 
+                Grid.Row="1" Loaded="MeterSelection_Loaded" Grid.ColumnSpan="3" 
+                />-->
+
+            <!-- Attachment Menu Popup -->
+            <!--<Border  Background="{DynamicResource ForegroundLightBrush}"
+                   Grid.Row="1"
+                    Panel.ZIndex="2"
+                    VerticalAlignment="Bottom"
+                    HorizontalAlignment="Left"
+                    local:AnimateSlideInFromBottomProperty.Value="{Binding AttachmentMenuVisible}">
+
+                <local:BubbleContent DataContext="{Binding AttachmentMenu}" />
+
+            </Border>-->
+
+            <!-- Message Send Text box -->
+            <!--<Grid Grid.Row="2" 
+                  Panel.ZIndex="3"
+                  MinHeight="50"
+                  MaxHeight="114"
+                  Background="{StaticResource ForegroundLightBrush}"
+                  >
+
+                <Grid.ColumnDefinitions>
+                    --><!-- Attach button --><!--
+                    <ColumnDefinition Width="Auto" />
+
+                    --><!-- Text entry box --><!--
+                    <ColumnDefinition Width="*" />
+
+                    --><!-- Additional buttons --><!--
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>-->
+
+
+
+                <!-- Additional buttons -->
+                <StackPanel Grid.Column="1"
+                            Grid.Row="1"
+                            Orientation="Vertical"
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Center"
+                            Margin="0 0 8 0"
+                            >
+
+                     <!--Emoji button--> 
+                    <Button Style="{StaticResource IconGrowButton}"
+                        Height="{Binding MinHeight, RelativeSource={RelativeSource AncestorType=Grid}}"
+                        Content="{StaticResource FontAwesomeEmojiIcon}"
+                        Foreground="{StaticResource WordOrangeBrush}"
+                        />
+
+                     <!--Send button--> 
+                    <Button Content="Reconcile Bulk Meter"
+                            Padding="8"
+                            IsDefault="True"
+                            Focusable="False"
+                            Command="{Binding SendCommand}"
+                            Background="{StaticResource WordGreenBrush}"
+                            FontSize="{StaticResource FontSizeRegular}"
+                            />
+                    
+                    
+                     <Button 
+                            Style="{StaticResource TextButton}" 
+                            Content="Return to Menu Selection ..." 
+                            HorizontalAlignment="Center" 
+                            Command="{Binding CloseCommand}"
+                            FontSize="{StaticResource FontSizeRegular}"                         
+                            />
+                
+                
+
+                </StackPanel>
+
+            <!--</Grid>-->
+
         </Grid>
-
-        <!-- Chat List -->
-
-
-        <!--<local:MeterSelectionControl 
-            Background="{DynamicResource ForegroundLightBrush}"
-            x:Name="MeterSelection" 
-            Grid.Row="1" Loaded="MeterSelection_Loaded" Grid.ColumnSpan="3" 
-            />-->
-
-        <!-- Attachment Menu Popup -->
-        <!--<Border  Background="{DynamicResource ForegroundLightBrush}"
-               Grid.Row="1"
-                Panel.ZIndex="2"
-                VerticalAlignment="Bottom"
-                HorizontalAlignment="Left"
-                local:AnimateSlideInFromBottomProperty.Value="{Binding AttachmentMenuVisible}">
-
-            <local:BubbleContent DataContext="{Binding AttachmentMenu}" />
-
-        </Border>-->
-
-        <!-- Message Send Text box -->
-        <!--<Grid Grid.Row="2" 
-              Panel.ZIndex="3"
-              MinHeight="50"
-              MaxHeight="114"
-              Background="{StaticResource ForegroundLightBrush}"
-              >
-
-            <Grid.ColumnDefinitions>
-                --><!-- Attach button --><!--
-                <ColumnDefinition Width="Auto" />
-
-                --><!-- Text entry box --><!--
-                <ColumnDefinition Width="*" />
-
-                --><!-- Additional buttons --><!--
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>-->
-
-
-
-            <!-- Additional buttons -->
-            <StackPanel Grid.Column="1"
-                        Grid.Row="1"
-                        Orientation="Vertical"
-                        VerticalAlignment="Top"
-                        HorizontalAlignment="Center"
-                        Margin="0 0 8 0"
-                        >
-
-                 <!--Emoji button--> 
-                <Button Style="{StaticResource IconGrowButton}"
-                    Height="{Binding MinHeight, RelativeSource={RelativeSource AncestorType=Grid}}"
-                    Content="{StaticResource FontAwesomeEmojiIcon}"
-                    Foreground="{StaticResource WordOrangeBrush}"
-                    />
-
-                 <!--Send button--> 
-                <Button Content="Reconcile Bulk Meter"
-                        Padding="8"
-                        IsDefault="True"
-                        Focusable="False"
-                        Command="{Binding SendCommand}"
-                        Background="{StaticResource WordGreenBrush}"
-                        FontSize="{StaticResource FontSizeRegular}"
-                        />
-        <Button 
-                        Style="{StaticResource TextButton}" 
-                        Content="Return to Menu Selection ..." 
-                        HorizontalAlignment="Center" 
-                        Command="{Binding CloseCommand}"
-                        />
-                
-                
-
-            </StackPanel>
-
-        <!--</Grid>-->
-
-    </Grid>
+    </Border>
 </local:BasePage>
 
 

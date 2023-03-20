@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ApiModels\NewFolder1\**" />
+    <EmbeddedResource Remove="ApiModels\NewFolder1\**" />
+    <None Remove="ApiModels\NewFolder1\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Dna.Framework" Version="1.0.7.18" />
     <PackageReference Include="Dna.Framework.AspNet" Version="1.0.7" />
     <PackageReference Include="Fody" Version="6.5.2">
@@ -16,8 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ApiModels\NewFolder1\" />
-    <Folder Include="ApiModels\NewFolder\" />
     <Folder Include="DataModels\Finance\Investment\" />
   </ItemGroup>
 

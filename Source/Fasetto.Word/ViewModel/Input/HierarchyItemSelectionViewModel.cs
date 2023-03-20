@@ -1,8 +1,8 @@
-﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using Fasetto.Word.Core;
+using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using static Fasetto.Word.DI;
 
 namespace Fasetto.Word
 {
@@ -69,6 +69,13 @@ namespace Fasetto.Word
         /// </summary>
         public ICommand SaveCommand { get; set; }
 
+
+        /// <summary>
+        /// The user can select a hierarchy item based on the 
+        /// root value in the application view model
+        /// </summary>
+        public ICommand HierarchyitemSelectCommand { get; set; }
+
         #endregion
 
         #region Constructor 
@@ -82,6 +89,7 @@ namespace Fasetto.Word
             EditCommand = new RelayCommand(Edit);
             CancelCommand = new RelayCommand(Cancel);
             SaveCommand = new RelayCommand(Save);
+            HierarchyitemSelectCommand = new RelayCommand(HierarchyitemSelect);
         }
 
         #endregion
@@ -109,12 +117,24 @@ namespace Fasetto.Word
         }
 
         /// <summary>
+        /// Cancels out of edit mode
+        /// </summary>
+        public void HierarchyitemSelect()
+        {
+            //to do: add a variable for passing KID between parent and child, as well as 
+            ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
+            ViewModelApplication.PopupVisible = true;
+            EditedName = ViewModelApplication.ControlParameter2;
+        }
+
+        /// <summary>
         /// Commits the content and exits out of edit mode
         /// </summary>
         public void Save()
         {
             // Store the result of a commit call
             var result = default(bool);
+            EditedName = EditedName;
 
             // Save currently saved value
             var currentSavedValue = OriginalName;

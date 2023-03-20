@@ -85,7 +85,12 @@ namespace Fasetto.Word
         /// <summary>
         /// The Client for which Bulk Meter reconciliation is to be processed
         /// </summary>
-        public HierarchyItemSelectionViewModel Client { get; set; }
+        public HierarchyItemSelectionViewModel Root { get; set; }
+
+        /// <summary>
+        /// The Client for which Bulk Meter reconciliation is to be processed
+        /// </summary>
+        public HierarchyItemSelectionViewModel Meter { get; set; }
 
         /// <summary>
         /// The GUID for the Bulk Meter for which reconciliation is to be processed
@@ -228,15 +233,26 @@ namespace Fasetto.Word
             //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
             //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
             DisplayTitle = "Bulk Meter Management";
+            BulkMeter = "5249FFEB-6907-46AA-9204-D4527E11F9CE";
 
-            Client = new HierarchyItemSelectionViewModel
+            Root = new HierarchyItemSelectionViewModel
             {
                 Label = "Client",
-                EditedName = mLoadingText,
+                //EditedName = mLoadingText,
+                EditedName = "TEST",
+                OriginalName = "Another Test",
 
                 //CommitAction = SaveFirstNameAsync
             };
 
+            Meter = new HierarchyItemSelectionViewModel
+            {
+                Label = "Meter Name",
+                //EditedName = mLoadingText,
+                EditedName = "TEST",
+                OriginalName = "Another Test",
+                //CommitAction = SaveFirstNameAsync
+            };
 
             TimeStart = new DateTimeViewModel
             {
@@ -305,12 +321,16 @@ namespace Fasetto.Word
         /// </summary>
         public void Send()
         {
-            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             //To do: Lookup to be user rights and available options driven
-            BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
-            ShortName = "Tre Donne";
+            //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
+            if (!ViewModelApplication.ControlParameter3)
 
-            ViewModelApplication.CurrentPopupViewModel = new BulkReconTreeViewModel(BulkMeter, TimeStart.EditedDateTime, TimeEnd.EditedDateTime);
+                //To DO - message user
+               return;
+            ShortName = ViewModelApplication.ControlParameter2;
+
+            ViewModelApplication.CurrentPopupViewModel = new BulkReconTreeViewModel(ViewModelApplication.ControlParameter1, TimeStart.EditedDateTime, TimeEnd.EditedDateTime);
             ((BulkReconTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
             ViewModelApplication.CurrentPopupContent = PopupContent.BulkRecon;
             ViewModelApplication.PopupVisible = true;

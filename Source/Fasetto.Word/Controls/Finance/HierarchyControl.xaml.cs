@@ -53,7 +53,8 @@ namespace Fasetto.Word
             var root = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
             root = ViewModelApplication.ControlParameter;
             mHierarchyTree = new HierarchyTreeViewModel(root);//root);
-
+            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            ViewModelApplication.PopupVisible = false;
             DataContext = mHierarchyTree;
             InitializeComponent();
             ViewModelApplication.CurrentControlViewModel = mHierarchyTree;
