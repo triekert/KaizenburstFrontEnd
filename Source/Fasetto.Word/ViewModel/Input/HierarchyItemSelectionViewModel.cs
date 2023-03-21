@@ -31,7 +31,28 @@ namespace Fasetto.Word
         /// <summary>
         /// GUID representing the primary key of the selected Hierarcy Elements
         /// </summary>
-        public bool EditedKid { get; set; }
+        public string OriginalKid { get; set; }
+
+        /// <summary>
+        /// GUID representing the primary key of the selected Hierarcy Elements
+        /// </summary>
+        public string EditedKid { get; set; }
+
+        /// <summary>
+        /// GUID representing the primary key of the selected Hierarcy Elements
+        /// </summary>
+        public string HierarchyTypeID { get; set; }
+
+        /// <summary>
+        /// GUID representing the primary key of the selected Client
+        /// </summary>
+        public string ClientID { get; set; }
+
+        /// <summary>
+        /// GUID representing the root of the hierarchy if not the main root
+        /// </summary>
+        public string RootID { get; set; }
+
 
         /// <summary>
         /// Indicates if the current text is in edit mode
@@ -48,6 +69,7 @@ namespace Fasetto.Word
         /// Returns true if the commit was successful, or false otherwise.
         /// </summary>
         public Func<Task<bool>> CommitAction { get; set; }
+
 
         #endregion
 
@@ -90,6 +112,18 @@ namespace Fasetto.Word
             CancelCommand = new RelayCommand(Cancel);
             SaveCommand = new RelayCommand(Save);
             HierarchyitemSelectCommand = new RelayCommand(HierarchyitemSelect);
+            //HISVM MviewModel = new HISVM(this);    
+            ViewModelApplication.CurrentControlViewModel = new HierarchyItemSelectionViewModel
+            {
+                RootID = RootID,
+                EditedName = EditedName,
+                OriginalKid = OriginalKid,
+                EditedKid = EditedKid,
+                OriginalName = OriginalName,
+                ClientID = ClientID,
+                HierarchyTypeID = HierarchyTypeID,
+                Label = Label,
+            };
         }
 
         #endregion
@@ -122,9 +156,19 @@ namespace Fasetto.Word
         public void HierarchyitemSelect()
         {
             //to do: add a variable for passing KID between parent and child, as well as 
+
             ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
             ViewModelApplication.PopupVisible = true;
-            EditedName = ViewModelApplication.ControlParameter2;
+
+            RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).RootID;
+            EditedName = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName;
+            OriginalKid = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid;
+            EditedKid = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid;
+            OriginalName = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalName;
+            ClientID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID;
+            HierarchyTypeID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).HierarchyTypeID;
+            Label = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label;
+           
         }
 
         /// <summary>

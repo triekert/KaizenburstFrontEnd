@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Workflow.Activities;
 using static Fasetto.Word.DI;
 
 namespace Fasetto.Word
@@ -19,8 +20,8 @@ namespace Fasetto.Word
 
         #region Public Properties
 
-        //public string ControlTitle { get; set; } = "Title of Control";
-        public DateTime mTimer;
+        //public string ControlTitle  = "Title of Control";
+        public DateTime mTimer { get; set; } =DateTime.Now;
 
         #endregion//Public Properties
 
@@ -32,7 +33,7 @@ namespace Fasetto.Word
         #endregion//Public Commands
 
 
-        private readonly HierarchyTreeViewModel mHierarchyTree;
+        private readonly HierarchyTreeViewModel1 mHierarchyTree;
         private string mSourceCategory;
         private string mSourceCategoryName;
         private string mDestinationCategoryID, mDestinationID,mSourceID,mParentID;
@@ -61,11 +62,11 @@ namespace Fasetto.Word
             }
             else
             root = ViewModelApplication.ControlParameter1;
-            mHierarchyTree = new HierarchyTreeViewModel(root);//root);
+            mHierarchyTree = new HierarchyTreeViewModel1(root);//root);
 
             DataContext = mHierarchyTree;
             InitializeComponent();
-            mTimer = DateTime.Now;
+            //mTimer = DateTime.Now;
             //ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
             //CloseCommand = new RelayCommand(Close);
 
@@ -77,7 +78,7 @@ namespace Fasetto.Word
         /// <param name="root"></param>
         public HierarchySelectionControl(string root)
         {
-            mHierarchyTree = new HierarchyTreeViewModel(root);//root);
+            mHierarchyTree = new HierarchyTreeViewModel1(root);//root);
 
             DataContext = mHierarchyTree;
             InitializeComponent();
@@ -171,7 +172,7 @@ namespace Fasetto.Word
             var timeDiff = (DateTime.Now -mTimer);
             var mMilliSec = timeDiff.TotalMilliseconds;
             mTimer= DateTime.Now;
-            if  (mMilliSec>3500)
+            if  (mMilliSec>5500)
                 { 
                 if (e.ChangedButton == MouseButton.Right)
                     {
@@ -187,8 +188,13 @@ namespace Fasetto.Word
                                     //}
                             }
                 }
+            else
+            {
+            e.Handled = e.Handled;
+            }
             e.Handled = true;
             ViewModelApplication.ControlParameter3 = ViewModelApplication.ControlParameter3;
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName = ViewModelApplication.ControlParameter2;
         }
         /// <summary>
         /// Monitor keyboard for use of Insert key

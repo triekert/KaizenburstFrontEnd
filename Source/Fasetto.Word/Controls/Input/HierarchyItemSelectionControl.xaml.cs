@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using static Fasetto.Word.DI;
 
 namespace Fasetto.Word
 {
@@ -21,6 +22,7 @@ namespace Fasetto.Word
             set => SetValue(LabelWidthProperty, value);
         }
 
+        public HierarchyItemSelectionViewModel mHISVM;
         // Using a DependencyProperty as the backing store for LabelWidth.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty LabelWidthProperty =
             DependencyProperty.Register("LabelWidth2", typeof(GridLength), typeof(TextEntryControl), new PropertyMetadata(GridLength.Auto, LabelWidthChangedCallback));
@@ -34,7 +36,11 @@ namespace Fasetto.Word
         /// </summary>
         public HierarchyItemSelectionControl()
         {
+            //mHISVM = new HierarchyItemSelectionViewModel();
+            //ViewModelApplication.CurrentControlViewModel = mHISVM;
+            //DataContext = mHISVM;
             InitializeComponent();
+
         }
 
         #endregion

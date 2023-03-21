@@ -239,8 +239,10 @@ namespace Fasetto.Word
             {
                 Label = "Client",
                 //EditedName = mLoadingText,
-                EditedName = "TEST",
-                OriginalName = "Another Test",
+                EditedName = "CLient",
+                OriginalName = "Original Client Test",
+                EditedKid = "",
+                HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058"
 
                 //CommitAction = SaveFirstNameAsync
             };
@@ -249,8 +251,10 @@ namespace Fasetto.Word
             {
                 Label = "Meter Name",
                 //EditedName = mLoadingText,
-                EditedName = "TEST",
-                OriginalName = "Another Test",
+                EditedName = "Meter TEST",
+                OriginalName = "Original Meter Test",
+                EditedKid = "",
+                HierarchyTypeID = "8A50E984-9E9F-44F6-9392-875E56A0B7CA",
                 //CommitAction = SaveFirstNameAsync
             };
 
@@ -281,6 +285,12 @@ namespace Fasetto.Word
             TimeEnd.OriginalTime.Content = "00:00";
             TimeEnd.EditedTime.Content = "00:30";
 
+            //ViewModelApplication.ControlParameter =  null;
+            ViewModelApplication.ControlParameter1 = null;
+            ViewModelApplication.ControlParameter2 = null;
+            ViewModelApplication.ControlParameter3 = false;
+            ViewModelApplication.ControlParameter4 = null;
+            ViewModelApplication.ControlParameter5 = null;
             // Create commands
             AttachmentButtonCommand = new RelayCommand(AttachmentButton);
             PopupClickawayCommand = new RelayCommand(PopupClickaway);
