@@ -1,11 +1,9 @@
-﻿using static Fasetto.Word.DI;
-using static Fasetto.Word.Core.CoreDI;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows.Input;
-using Fasetto.Word.Core;
-using System.Security.Cryptography.X509Certificates;
+﻿using Fasetto.Word.Core;
 using System;
+using System.Windows.Forms;
+using System.Windows.Input;
+using static Fasetto.Word.DI;
+
 
 namespace Fasetto.Word
 {
@@ -201,6 +199,11 @@ namespace Fasetto.Word
         public ICommand SendCommand { get; set; }
 
         /// <summary>
+        /// The command for populating client information for search
+        /// </summary>
+        public ICommand PopulateCommand { get; set; }
+
+        /// <summary>
         /// The command for when the user wants to search
         /// </summary>
         public ICommand SearchCommand { get; set; }
@@ -239,10 +242,11 @@ namespace Fasetto.Word
             {
                 Label = "Client",
                 //EditedName = mLoadingText,
-                EditedName = "CLient",
+                EditedName = "Client",
                 OriginalName = "Original Client Test",
-                EditedKid = "",
-                HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058"
+                OriginalKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                EditedKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
 
                 //CommitAction = SaveFirstNameAsync
             };
@@ -251,9 +255,9 @@ namespace Fasetto.Word
             {
                 Label = "Meter Name",
                 //EditedName = mLoadingText,
-                EditedName = "Meter TEST",
+                EditedName = "TD Water Metering",
                 OriginalName = "Original Meter Test",
-                EditedKid = "",
+                EditedKid = "5249FFEB-6907-46AA-9204-D4527E11F9CE",
                 HierarchyTypeID = "8A50E984-9E9F-44F6-9392-875E56A0B7CA",
                 //CommitAction = SaveFirstNameAsync
             };
@@ -295,6 +299,7 @@ namespace Fasetto.Word
             AttachmentButtonCommand = new RelayCommand(AttachmentButton);
             PopupClickawayCommand = new RelayCommand(PopupClickaway);
             SendCommand = new RelayCommand(Send);
+            PopulateCommand = new RelayCommand(Populate);
             SearchCommand = new RelayCommand(Search);
             OpenSearchCommand = new RelayCommand(OpenSearch);
             CloseCommand = new RelayCommand(Close);
@@ -331,23 +336,31 @@ namespace Fasetto.Word
         /// </summary>
         public void Send()
         {
-            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             //To do: Lookup to be user rights and available options driven
             //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
-            if (!ViewModelApplication.ControlParameter3)
+            if (Meter.EditedKid == null)
 
-                //To DO - message user
-               return;
-            ShortName = ViewModelApplication.ControlParameter2;
+            //To DO - message user
+            { MessageBox.Show($"First select a valid BulkMeter to proceed...");
+                return;
+            };
+            ShortName = Meter.EditedName;
 
-            ViewModelApplication.CurrentPopupViewModel = new BulkReconTreeViewModel(ViewModelApplication.ControlParameter1, TimeStart.EditedDateTime, TimeEnd.EditedDateTime);
+            ViewModelApplication.CurrentPopupViewModel = new BulkReconTreeViewModel(Meter.EditedKid, TimeStart.EditedDateTime, TimeEnd.EditedDateTime);
             ((BulkReconTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
             ViewModelApplication.CurrentPopupContent = PopupContent.BulkRecon;
             ViewModelApplication.PopupVisible = true;
-            //ViewModelApplication.CurrentPopupViewModel = new BulkReconlTreeViewModel(BulkMeter, TimeStart.EditedDateTime, TimeEnd.EditedDateTime);
-            //((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
-            //ViewModelApplication.CurrentPopupContent = PopupContent.BulkReconDetail;
-            //ViewModelApplication.PopupVisible = true;
+
+        }
+
+        /// <summary>
+        /// When the user clicks the send button, sends the message
+        /// </summary>
+        public void Populate()
+        {
+            Meter.ClientID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid;
+            Meter.RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).RootID;
         }
 
         /// <summary>

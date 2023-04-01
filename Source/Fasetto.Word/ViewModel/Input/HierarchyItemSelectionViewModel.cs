@@ -26,7 +26,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The current non-commit edited text
         /// </summary>
-        public string EditedName{ get; set; }
+        public string EditedName { get; set; }
 
         /// <summary>
         /// GUID representing the primary key of the selected Hierarcy Elements
@@ -113,17 +113,7 @@ namespace Fasetto.Word
             SaveCommand = new RelayCommand(Save);
             HierarchyitemSelectCommand = new RelayCommand(HierarchyitemSelect);
             //HISVM MviewModel = new HISVM(this);    
-            ViewModelApplication.CurrentControlViewModel = new HierarchyItemSelectionViewModel
-            {
-                RootID = RootID,
-                EditedName = EditedName,
-                OriginalKid = OriginalKid,
-                EditedKid = EditedKid,
-                OriginalName = OriginalName,
-                ClientID = ClientID,
-                HierarchyTypeID = HierarchyTypeID,
-                Label = Label,
-            };
+
         }
 
         #endregion
@@ -156,18 +146,29 @@ namespace Fasetto.Word
         public void HierarchyitemSelect()
         {
             //to do: add a variable for passing KID between parent and child, as well as 
-
-            ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
+            ViewModelApplication.CurrentControlViewModel = new HierarchyItemSelectionViewModel
+            {
+                RootID = RootID,
+                EditedName = EditedName,
+                OriginalKid = OriginalKid,
+                EditedKid = EditedKid,
+                OriginalName = OriginalName,
+                ClientID = ClientID,
+                HierarchyTypeID = HierarchyTypeID,
+                Label = Label,
+            };
             ViewModelApplication.PopupVisible = true;
+            ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
 
-            RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).RootID;
-            EditedName = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName;
-            OriginalKid = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid;
-            EditedKid = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid;
-            OriginalName = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalName;
-            ClientID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID;
-            HierarchyTypeID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).HierarchyTypeID;
-            Label = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label;
+
+            //RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).RootID;
+            //EditedName = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName;
+            //OriginalKid = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid;
+            //EditedKid = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid;
+            //OriginalName = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalName;
+            //ClientID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID;
+            //HierarchyTypeID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).HierarchyTypeID;
+            //Label = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label;
            
         }
 
@@ -178,8 +179,8 @@ namespace Fasetto.Word
         {
             // Store the result of a commit call
             var result = default(bool);
-            EditedName = EditedName;
-
+            EditedName = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName;
+            EditedKid = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid;
             // Save currently saved value
             var currentSavedValue = OriginalName;
 

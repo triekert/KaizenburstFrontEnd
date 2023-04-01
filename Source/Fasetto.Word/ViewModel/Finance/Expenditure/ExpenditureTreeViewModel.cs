@@ -932,7 +932,7 @@ namespace Fasetto.Word
                     return;
                 var result = await WebRequests.PostAsync<ApiResponse<ExpenditureResultListApiModel>>(
                 // Set URL
-                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.PersistExpenditure),
+                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.PersistHierarchy),
                     mPersist,
                     bearerToken: token);
 

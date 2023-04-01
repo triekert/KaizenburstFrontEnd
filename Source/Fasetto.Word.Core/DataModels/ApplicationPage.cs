@@ -55,6 +55,11 @@
         ///Selection of Bulk Meter
         /// </summary>
         MeterSelection = 9,
+
+        /// <summary>
+        ///Inspection of Water and Sewerage Billing
+        /// </summary>
+        SWBilling = 10,
     }
 
 }

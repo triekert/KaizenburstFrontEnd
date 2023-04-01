@@ -8,7 +8,7 @@ namespace Fasetto.Word.Core.ApiModels.Controls
     /// Class representing each individual element of the hierarchy 
     /// </summary>
     /// 
-    public class HierarchyItemSelectApiModel
+    public class ParameterHierarchyItemSelectApiModel
     {
         // <summary>
         /// GUID of Client

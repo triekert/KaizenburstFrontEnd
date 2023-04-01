@@ -189,8 +189,8 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header ="Volume" HeaderStyle="{StaticResource ColumnHeaderStyle}"   SortDirection="Descending" 
-                                    Binding="{Binding  Volume}" />
+                <!--<DataGridTextColumn Header ="Volume" HeaderStyle="{StaticResource ColumnHeaderStyle}"   SortDirection="Descending" 
+                                    Binding="{Binding  Volume}" />-->
                 <DataGridTextColumn Header ="Start Reading" HeaderStyle="{StaticResource ColumnHeaderStyle}"
                                     Binding="{Binding MeterReadingCalc}" />
                 <DataGridTemplateColumn Header="ReadingTimePriorStart" HeaderStyle="{StaticResource ColumnHeaderStyle}">

@@ -79,7 +79,15 @@
         /// <summary>
         /// The route to the PersitHierarchy Api method
         /// </summary>
-        public const string PersistExpenditure = "api/finance/expenditure";
+        public const string GenericHierarchyLookup = "api/finance/GenericHierarchyLookup";
+ 
+
+
+        /// <summary>
+        /// The route to the PersitHierarchy Api method
+        /// </summary>
+        public const string ReturnBillingPeriods = "api/finance/BillingPeriodsLookup";
+
         #endregion
 
 

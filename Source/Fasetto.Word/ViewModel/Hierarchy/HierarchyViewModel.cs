@@ -46,6 +46,11 @@ namespace Fasetto.Word
         /// </summary>
         public string FHierarchyID => mElement.FHierarchyID;
         /// <summary>
+        /// The Identifier of the Client linked to this item
+        /// </summary>
+        public string FClientID => mElement.FClientID;
+
+        /// <summary>
         /// Parent ID  of hiearchy item
         /// </summary>
         public string ParentCategoryID =>mElement.ParentCategoryID;

@@ -147,7 +147,7 @@
                         />
                 
                 <!-- Cancel Button -->
-                <Button Content="{StaticResource FontAwesomeCloseIcon}"
+                <Button Content="{StaticResource  FontAwesomeProjectIcon}"
                         FontFamily="{StaticResource FontAwesome}"
                         local:AnimateFadeInProperty.Value="{Binding Editing}"
                         IsCancel="True"

@@ -76,7 +76,7 @@ namespace Fasetto.Word
         public HierarchyTreeViewModel(string hierarchyTable)
         {
             #region Dummy Root HierarchyListDataModel
-            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+            //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
             mHDML = new HierarchyListDataModel();
             mHDM = new HierarchyDataModel
             {

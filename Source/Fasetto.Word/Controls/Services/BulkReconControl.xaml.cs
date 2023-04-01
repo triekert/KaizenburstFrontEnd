@@ -1,14 +1,10 @@
 ﻿using Fasetto.Word.Core;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel.Design;
 using System.Data;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using static Fasetto.Word.DI;
 
 namespace Fasetto.Word

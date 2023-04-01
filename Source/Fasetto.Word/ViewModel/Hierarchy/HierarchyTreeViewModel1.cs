@@ -1,6 +1,7 @@
 ﻿
 using Dna;
 using Fasetto.Word.Core;
+using Fasetto.Word.Core.ApiModels.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -43,7 +44,7 @@ namespace Fasetto.Word
         public HierarchyListDataModel mHDML;
         public HierarchyResultListApiModel mPersist, mPersistTmp,mOriginal;
         public HierarchyDataModel mHDM;
-        public string mTableName;
+        public ParameterHierarchyItemSelectApiModel mHierarchy;
         public HierarchyElementViewModel mElement;
 
         //IEnumerator<HierarchyManagementViewModel> mMatchingCategoryEnumerator;
@@ -73,7 +74,7 @@ namespace Fasetto.Word
         /// <param name="hierarchyTable"></param>
         /// The hierarchyTable passed through as a paremeter identifies the specific hierarchy set to be retrieved
         /// from persistent s
-        public HierarchyTreeViewModel1(string hierarchyTable)
+        public HierarchyTreeViewModel1(ParameterHierarchyItemSelectApiModel hierarchyparam)
         {
             #region Dummy Root HierarchyListDataModel
             ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
@@ -88,7 +89,7 @@ namespace Fasetto.Word
             };
             mHDML.Add(mHDM);
 
-            mTableName = hierarchyTable;
+            mHierarchy = hierarchyparam;
             #endregion
             //retrieve hierarchy from persistent storage on server
             //To Do: Add mTableName as parameter when calling HiearchyAsync to populate hierarchy
@@ -220,8 +221,8 @@ namespace Fasetto.Word
                     return;
                 var result = await WebRequests.PostAsync<ApiResponse<HierarchyResultListApiModel>>(
                 // Set URL
-                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.ReturnHierarchy),
-                    mTableName,
+                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.GenericHierarchyLookup),
+                    mHierarchy,
                     bearerToken: token);
 
                 // If the response has an error...
@@ -835,7 +836,7 @@ namespace Fasetto.Word
                 IsUnderReview = true,
                 IsNewElement= true,
                 Page = element.Page,
-                FHierarchyID = mTableName,
+                //FHierarchyID = mTableName,
                 //Create new root element if not already existing
                 Root = mRoot
             };

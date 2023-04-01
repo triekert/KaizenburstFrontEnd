@@ -1,4 +1,5 @@
 ﻿using Fasetto.Word.Core;
+using Fasetto.Word.Core.ApiModels.Controls;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -55,13 +56,28 @@ namespace Fasetto.Word
         {
 
             //Set the root of the hierarchy to return the Menu structure
-            var root = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
-            if (!ViewModelApplication.ControlParameter3)
-            { 
-            root = ViewModelApplication.ControlParameter;
+            //var root = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
+            //Use the rootof Clients
+            var root = new ParameterHierarchyItemSelectApiModel();
+            if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Client")
+            {
+                root.FHierarchyID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid ;
+                //root.ClientID = "NULL";
+                //root.HierarchyTypeID = "NULL"; 
             }
             else
-            root = ViewModelApplication.ControlParameter1;
+            { 
+                if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID==null)
+                {
+                    MessageBox.Show($"First select a valid Client to proceed...");
+                    Close();
+                    return;
+                }
+
+                root.ClientID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID;
+                root.HierarchyTypeID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).HierarchyTypeID;
+                //root.FHierarchyID = "NULL"; 
+            }
             mHierarchyTree = new HierarchyTreeViewModel1(root);//root);
 
             DataContext = mHierarchyTree;
@@ -76,7 +92,7 @@ namespace Fasetto.Word
         /// the Overloading of MenuControl() with a parameter that selects the Menu Hierarchy for naviagion by passing the parameter
         /// </summary>
         /// <param name="root"></param>
-        public HierarchySelectionControl(string root)
+        public HierarchySelectionControl(ParameterHierarchyItemSelectApiModel root)
         {
             mHierarchyTree = new HierarchyTreeViewModel1(root);//root);
 
@@ -172,7 +188,7 @@ namespace Fasetto.Word
             var timeDiff = (DateTime.Now -mTimer);
             var mMilliSec = timeDiff.TotalMilliseconds;
             mTimer= DateTime.Now;
-            if  (mMilliSec>5500)
+            if  (mMilliSec>1000)
                 { 
                 if (e.ChangedButton == MouseButton.Right)
                     {
@@ -193,8 +209,7 @@ namespace Fasetto.Word
             e.Handled = e.Handled;
             }
             e.Handled = true;
-            ViewModelApplication.ControlParameter3 = ViewModelApplication.ControlParameter3;
-            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName = ViewModelApplication.ControlParameter2;
+
         }
         /// <summary>
         /// Monitor keyboard for use of Insert key
@@ -306,24 +321,13 @@ namespace Fasetto.Word
             //if (!ViewModelApplication.SideMenuVisible)
             //    return;
       
-             mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
-            if (mDraggedItem == null)
-                return;
-            //Toggle hierarchy navigation 
-            if (!ViewModelApplication.ControlParameter3)
-            { 
-                ViewModelApplication.ControlParameter1 = mDraggedItem.KCategoryID;
-                ViewModelApplication.ControlParameter2 = mDraggedItem.ShortName;
-            }
-            else
-                {
-                    ViewModelApplication.ControlParameter4 = mDraggedItem.KCategoryID;
-                    ViewModelApplication.ControlParameter5= mDraggedItem.ShortName;
-                }
-
-                ViewModelApplication.ControlParameter3 = !ViewModelApplication.ControlParameter3;
-                ViewModelApplication.PopupVisible = false;
-                ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
+            //RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).RootID;
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid      = mDraggedItem.KCategoryID;
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName   = mDraggedItem.ShortName;
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID       = mDraggedItem.FClientID;
+            ViewModelApplication.PopupVisible = false;
+            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
 
 
         }

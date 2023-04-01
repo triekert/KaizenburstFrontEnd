@@ -179,6 +179,9 @@
     <Compile Include="Pages\BulkReconPage.xaml.cs">
       <DependentUpon>BulkReconPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\SWBillingPage.xaml.cs">
+      <DependentUpon>SWBillingPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\MeterSelectionPage.xaml.cs">
       <DependentUpon>MeterSelectionPage.xaml</DependentUpon>
     </Compile>
@@ -245,7 +248,8 @@
     <Compile Include="ViewModel\Input\DateTimeViewModel.cs" />
     <Compile Include="ViewModel\Input\HierarchyItemSelectionViewModel.cs" />
     <Compile Include="ViewModel\Menu\HierarchyPageViewModel .cs" />
-    <Compile Include="ViewModel\Menu\MeterSelectionPageViewModel.cs" />
+    <Compile Include="ViewModel\Services\SWBillingPageViewModel.cs" />
+    <Compile Include="ViewModel\Services\MeterSelectionPageViewModel.cs" />
     <Compile Include="ViewModel\Services\BulkReconDetailTreeViewModel.cs" />
     <Compile Include="ViewModel\Services\BulkReconTreeViewModel.cs" />
     <Compile Include="ViewModel\Services\BulkReconDetailViewModel.cs" />
@@ -402,6 +406,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\BulkReconPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\SWBillingPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
