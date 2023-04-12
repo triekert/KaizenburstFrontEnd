@@ -63,22 +63,29 @@
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center" 
                            />
-                    <local:HierarchyItemSelectionControl DataContext="{Binding Root}" FontWeight="ExtraBlack"  />
+                        <StackPanel MouseEnter="SetHierarchySelection">
+                            <local:HierarchyItemSelectionControl DataContext="{Binding Root}" FontWeight="ExtraBlack"  />
+                        </StackPanel>
 
-                        <Button Style="{StaticResource IconGrowButton}"
+                    <Button 
+                        Style="{StaticResource IconGrowButton}"
                         Height="{Binding MinHeight, RelativeSource={RelativeSource AncestorType=Grid}}"
                         Content="{StaticResource FontAwesomeEmojiIcon}"
                         Foreground="{StaticResource WordOrangeBrush}"
-                        />
-                        <Button 
-                            Style="{StaticResource TextButton}" 
-                            Content="Use Client information in search ..." 
-                            HorizontalAlignment="Center" 
-                            Command="{Binding PopulateCommand}"
-                            FontSize="{StaticResource FontSizeRegular}"                         
-                            />
+                    />
+                    <Button 
+                        Style="{StaticResource TextButton}" 
+                        Content="Use Client information in search ..." 
+                        HorizontalAlignment="Center" 
+                        Command="{Binding PopulateCommand}"
+                        FontSize="{StaticResource FontSizeRegular}"                         
+                    />
+                        <StackPanel MouseEnter="SetHierarchySelectionMeter">
 
-                        <local:HierarchyItemSelectionControl DataContext="{Binding Meter}" FontWeight="ExtraBlack" />
+                            <local:HierarchyItemSelectionControl DataContext="{Binding Meter}" FontWeight="ExtraBlack" />
+                         </StackPanel>
+                    
+                    
                     <local:DateTimeControl  DataContext="{Binding TimeStart}" FontWeight="ExtraBlack"  />
                     <local:DateTimeControl  DataContext="{Binding TimeEnd}" FontWeight="ExtraBlack"  />
                 </StackPanel>

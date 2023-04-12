@@ -103,6 +103,9 @@
     <Compile Include="Controls\Input\DateTimeControl.xaml.cs">
       <DependentUpon>DateTimeControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Input\BillingPeriodComboboxControl.xaml.cs">
+      <DependentUpon>BillingPeriodComboboxControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Input\HierarchyItemSelectionControl.xaml.cs">
       <DependentUpon>HierarchyItemSelectionControl.xaml</DependentUpon>
     </Compile>
@@ -248,6 +251,8 @@
     <Compile Include="ViewModel\Input\DateTimeViewModel.cs" />
     <Compile Include="ViewModel\Input\HierarchyItemSelectionViewModel.cs" />
     <Compile Include="ViewModel\Menu\HierarchyPageViewModel .cs" />
+    <Compile Include="ViewModel\Services\BillingPeriodListViewModel.cs" />
+    <Compile Include="ViewModel\Services\BillingPeriodViewModel.cs" />
     <Compile Include="ViewModel\Services\SWBillingPageViewModel.cs" />
     <Compile Include="ViewModel\Services\MeterSelectionPageViewModel.cs" />
     <Compile Include="ViewModel\Services\BulkReconDetailTreeViewModel.cs" />
@@ -322,6 +327,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Finance\HierarchyElementControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Input\BillingPeriodComboboxControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

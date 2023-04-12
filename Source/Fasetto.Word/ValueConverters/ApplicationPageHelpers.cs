@@ -48,7 +48,7 @@ namespace Fasetto.Word
 
 
                 case ApplicationPage.SWBilling:
-                    return new SWBillingPage(viewModel as MeterSelectionPageViewModel);
+                    return new SWBillingPage(viewModel as SWBillingPageViewModel);
 
                 default:
                     Debugger.Break();
@@ -87,6 +87,9 @@ namespace Fasetto.Word
 
             if (page is BulkReconPage)
                 return ApplicationPage.BulkRecon;
+
+            if (page is SWBillingPage)
+                return ApplicationPage.SWBilling;
 
             // Alert developer of issue
             Debugger.Break();

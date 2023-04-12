@@ -83,7 +83,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The Client for which Bulk Meter reconciliation is to be processed
         /// </summary>
-        public HierarchyItemSelectionViewModel Root { get; set; }
+        public HierarchyItemSelectionViewModel Client { get; set; }
 
 
 
@@ -99,14 +99,14 @@ namespace Fasetto.Word
         public string ShortName { get; set; }
 
         /// <summary>
-        /// The start time for analysis of readings
+        /// The BillingPeriods for the Water and Sewerage Billing analysis
         /// </summary>
-        public DateTimeViewModel TimeStart { get; set; }
+        public BillingPeriodListViewModel BillingPeriod { get; set; }
 
         /// <summary>
-        /// The start time for analysis of readings
+        /// The selected BillingPeriod for the Water and Sewerage Billing analysis
         /// </summary>
-        public DateTimeViewModel TimeEnd { get; set; }
+        public BillingPeriodViewModel SelectedBillingPeriod { get; set; }
 
 
 
@@ -235,7 +235,7 @@ namespace Fasetto.Word
             DisplayTitle = "Water & Sewerage Billing";
             BulkMeter = "5249FFEB-6907-46AA-9204-D4527E11F9CE";
 
-            Root = new HierarchyItemSelectionViewModel
+            Client = new HierarchyItemSelectionViewModel
             {
                 Label = "Client",
                 //EditedName = mLoadingText,
@@ -247,13 +247,17 @@ namespace Fasetto.Word
 
                 //CommitAction = SaveFirstNameAsync
             };
+            ViewModelApplication.CurrentControlViewModel = Client;
 
+            BillingPeriod = new BillingPeriodListViewModel("8A8425E2-5766-4014-8C2F-01BD84DBC370");
+            SelectedBillingPeriod = new BillingPeriodViewModel();
+            BillingPeriod.MSelectedBillingPeriod = SelectedBillingPeriod;
 
             // Create commands
             AttachmentButtonCommand = new RelayCommand(AttachmentButton);
             PopupClickawayCommand = new RelayCommand(PopupClickaway);
             SendCommand = new RelayCommand(Send);
-            //PopulateCommand = new RelayCommand(Populate);
+            PopulateCommand = new RelayCommand(Populate);
             SearchCommand = new RelayCommand(Search);
             OpenSearchCommand = new RelayCommand(OpenSearch);
             CloseCommand = new RelayCommand(Close);
@@ -306,6 +310,14 @@ namespace Fasetto.Word
             ViewModelApplication.CurrentPopupContent = PopupContent.BulkRecon;
             ViewModelApplication.PopupVisible = true;
 
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Populate()
+        {
+            BillingPeriod = new BillingPeriodListViewModel(Client.EditedKid);
         }
 
         /// <summary>
@@ -378,7 +390,7 @@ namespace Fasetto.Word
         { 
         // Close settings menu
         ViewModelApplication.SideMenuVisible = true;
-            ViewModelApplication.CurrentSideMenuViewModel = null;
+            //ViewModelApplication.CurrentSideMenuViewModel = null;
             ViewModelApplication.GoToPage(ApplicationPage.Chat);}
         #endregion
     }

@@ -11,7 +11,7 @@ namespace Fasetto.Word
     /// <summary>
     /// Interaction logic for FinancePage.xaml
     /// </summary>
-    public partial class SWBillingPage : BasePage<MeterSelectionPageViewModel>
+    public partial class SWBillingPage : BasePage<SWBillingPageViewModel>
     {
         #region Constructor
 
@@ -28,7 +28,7 @@ namespace Fasetto.Word
         /// Constructor with specific view model
         /// </summary>
         /// <param name="specificViewModel">The specific view model to use for this page</param>
-        public SWBillingPage(MeterSelectionPageViewModel specificViewModel) : base(specificViewModel)
+        public SWBillingPage(SWBillingPageViewModel specificViewModel) : base(specificViewModel)
         {
             InitializeComponent();
         }
@@ -102,6 +102,12 @@ namespace Fasetto.Word
         private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
         {
 
+        }
+
+
+        private void SetClient(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod = new BillingPeriodListViewModel(((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedKid);
         }
     }
 }

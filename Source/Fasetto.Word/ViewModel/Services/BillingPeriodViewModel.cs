@@ -10,13 +10,13 @@ namespace Fasetto.Word
     /// <summary>
     /// The Hierarchy element as a view model
     /// </summary>
-    public class BulkReconViewModel : BaseViewModel
+    public class BillingPeriodViewModel : BaseViewModel
 
     {
         //#region Data
 
         //public readonly BulkReconViewModel mParent;
-        private readonly BulkReconDataModel mElement;
+        //private readonly BulkReconDataModel mElement;
         //public ObservableCollection<BulkReconViewModel> mChildren;
         //public bool mIsExpanded;
         //public bool mIsSelected;
@@ -26,75 +26,30 @@ namespace Fasetto.Word
         #region Public Properties
 
         /// <summary>
-        /// GUID of BulkMeter 
+        /// String representation of GUID for Billing Period
         /// </summary>
-        public string BulkMeter { get; set; }
-
-
-      
+        public string KBillingPeriodID { get; set; }
 
         /// <summary>
-        ///timestamp of TimeSlot
+        /// Start time of Billing Period
         /// </summary>
-        public DateTime TimeSlotStart { get; set; }
-
+        public DateTime TimeStart { get; set; }
 
         /// <summary>
-        ///Number of meters for which no readings currently received for  TImeSlot
+        /// String representation of GUID for Client owning Billing Period
         /// </summary>
-        public int Missing { get; set; }
+        public string FClientID { get; set; }
 
 
         /// <summary>
-        ///Total number of consumer meters linked to bulk meter
+        /// End time of Billing Period
         /// </summary>
-        public int ChildMeters { get; set; }
-
-
-        /// <summary>
-        ///Consumption recorded/calculated for bulk meter for Timeslot
-        /// </summary>
-        public float VolumeIn { get; set; }
-
-
-        /// <summary>
-        ///Aggregate consumption recorded/calculated on all consumer meters for Timeslot
-        /// </summary>
-        public float VolumeOut { get; set; }
-
-
-        /// <summary>
-        ///Aggregate consumption difference between input and output  for Timeslot
-        /// </summary>
-        public float VolumeDelta { get; set; }
-
-
-        /// <summary>
-        ///Moving average for calculated Delta  for Timeslot
-        /// </summary>
-        public float MovingAvgDelta { get; set; }
-
-
-        /// <summary>
-        ///VolumeDelta expressed as a percentage of VolumeIn  for Timeslot
-        /// </summary>
-        public float PercDelta { get; set; }
-
-        /// <summary>
-        ///name of Category element
-        /// </summary>
-        public string ShortName { get; set; }
-
-        /// <summary>
-        ///description of Category element
-        /// </summary>
-        /// 
-        public string Description { get; set; }
+        public DateTime TimeEnd { get; set; }
 
         /// <summary>
         /// Title of Control
         /// </summary>
-        public string Title { get; set; } = "Bulk Meter Reconciliation";
+        public string Title { get; set; } = "Billing Period Selection";
 
 
         /// <summary>
@@ -128,7 +83,7 @@ namespace Fasetto.Word
         #endregion
         #region Constructors
 
-        public BulkReconViewModel ()
+        public BillingPeriodViewModel ()
 
         {
 

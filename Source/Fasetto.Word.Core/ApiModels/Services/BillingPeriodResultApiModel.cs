@@ -6,7 +6,7 @@ namespace Fasetto.Word.Core
     /// <summary>
     /// Billing periods configured for selected Client on database
     /// </summary>
-    public class BillingPeriodApiModel
+    public class BillingPeriodResultApiModel
     {
         #region Public Properties
      

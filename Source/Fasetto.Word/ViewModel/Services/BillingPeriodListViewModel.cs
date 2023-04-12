@@ -19,7 +19,7 @@ namespace Fasetto.Word
     /// for the TreeView (the FirstGeneration property), a bindable
     /// SearchText property, and the SearchCommand to perform a search.
     /// </summary>
-    public class BulkReconTreeViewModel : BaseViewModel
+    public class BillingPeriodListViewModel : BaseViewModel
 
     {
 
@@ -28,8 +28,12 @@ namespace Fasetto.Word
         /// <summary>
         /// A set of Bulk Meter Recon records for the selected period
         /// </summary>
-        public ObservableCollection<BulkReconViewModel>BulkRecon{ get; set; }
+        public ObservableCollection<BillingPeriodViewModel> BillingPeriodList{ get; set; }
 
+        /// <summary>
+        /// The selected Billing Period view model
+        /// </summary>
+        public BillingPeriodViewModel MSelectedBillingPeriod { get; set; }
 
         //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
 
@@ -37,24 +41,14 @@ namespace Fasetto.Word
 
         #region Data
 
-        //private readonly ReadOnlyCollection<HierarchyViewModel> mFirstGeneration;
-        //protected BulkReconViewModel mRootHierarchyElement;
-        //protected BulkReconViewModel mRootHierarchyElement1;
-        //private readonly ICommand mSearchCommand;
-        public BulkReconListDataModel mBRDML;
-        //public BulkReconResultListApiModel mPersist, mPersistTmp,mOriginal;
-        public BulkReconViewModel mBRVM;
-        public ParameterBulkReconApiModel mRequest;
+        public BillingPeriodViewModel mBPVM;
+        public string mRequest;
         public string mBulkMeter;
+        /// <summary>
+        /// Indicates if the current text is in edit mode
+        /// </summary>
+        public bool Editing { get; set; }
 
-        //public HierarchyElementViewModel mElement;
-
-        //IEnumerator<HierarchyManagementViewModel> mMatchingCategoryEnumerator;
-
-        //public HierarchyManagementTreeViewModel(IEnumerator<HierarchyManagementViewModel> matchingCategoryEnumerator)
-        //{
-        //    MatchingCategoryEnumerator = matchingCategoryEnumerator;
-        //}
 
         private string mSearchText = "", mSearchKCategoryID = string.Empty, mParentCategoryID = string.Empty;
 
@@ -64,8 +58,12 @@ namespace Fasetto.Word
         /// The command to close the settings menu
         /// </summary>
         public ICommand CloseCommand { get; set; }
-        #endregion//Public Commands
 
+        /// <summary>
+        /// Puts the control into edit mode
+        /// </summary>
+        public ICommand EditCommand { get; set; }
+        #endregion//Public Commands
         #region Constructor
         /// <summary>
         /// The HierarchyTreeViewModel is a visual inteface for interacting with hiearchical
@@ -76,15 +74,16 @@ namespace Fasetto.Word
         /// <param name="hierarchyTable"></param>
         /// The hierarchyTable passed through as a paremeter identifies the specific hierarchy set to be retrieved
         /// from persistent s
-        public BulkReconTreeViewModel(string bulkMeter, DateTime timeStart, DateTime timeEnd)
+        public BillingPeriodListViewModel(string client)
         {
             #region Build HierarchyViewCollection
-            BulkRecon = new ObservableCollection<BulkReconViewModel>();
+            BillingPeriodList = new ObservableCollection<BillingPeriodViewModel> {
 
-            mBRVM = new BulkReconViewModel
+             new BillingPeriodViewModel
             {
 
-                ShortName = "Loading...Please be patient",
+                FClientID = "Loading...Please be patient",
+                KBillingPeriodID = "Test1",
                 //TimeSlotStart = new DateTime(2023, 1, 22, 0, 0, 0),
                 //Missing = 3,
                 //ChildMeters = 87,
@@ -92,22 +91,16 @@ namespace Fasetto.Word
                 //VolumeOut = 3215.124F
 
 
-            };
-            BulkRecon.Add(mBRVM);
+            } };
 
-            mRequest = new ParameterBulkReconApiModel
-            { 
-                BulkMeter = bulkMeter,
-                TimeStart = timeStart,
-                TimeEnd = timeEnd
-            };
 
 
             //mTableName = hierarchyTable;
             #endregion
             //retrieve hierarchy from persistent storage on server
             //To Do: Add mTableName as parameter when calling HiearchyAsync to populate hierarchy
-            TaskManager.RunAndForget(BulkReconAsync);
+            mRequest = client;
+            TaskManager.RunAndForget(BillingPeriodAsync);
 
 
             // Get the OptFinHierarchies currently configured - first populate 'root hierarchy' variable with all configured root hierarchy elements currently available
@@ -115,11 +108,22 @@ namespace Fasetto.Word
 
             //UpdateTreeViewElements();
             CloseCommand = new RelayCommand(Close);
+            EditCommand = new RelayCommand(Edit);
             //mSearchCommand = new SearchCategoryTreeCommand(this);
         }
 
 
+        /// <summary>
+        /// Puts the control into edit mode
+        /// </summary>
+        public void Edit()
+        {
+            // Set the edited text to the current value
 
+
+            // Go into edit mode
+            Editing = true;
+        }
 
 
         #endregion // Constructor
@@ -198,7 +202,7 @@ namespace Fasetto.Word
         /// User credentials are used to determine access authorisation
         /// </summary>
         /// <returns></returns>
-        public async Task BulkReconAsync()
+        public async Task BillingPeriodAsync()
         {
             await RunCommandAsync(() => BulkReconBuildIsRunning, async () =>
             {
@@ -217,14 +221,14 @@ namespace Fasetto.Word
                 if (string.IsNullOrEmpty(token))
                     // Then do nothing more
                     return;
-                var result = await WebRequests.PostAsync<ApiResponse<BulkReconResultListApiModel>>(
+                var result = await WebRequests.PostAsync<ApiResponse<BillingPeriodResultListApiModel>>(
                 // Set URL
-                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.ReturnBulkRecon),
+                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.ReturnBillingPeriods),
                     mRequest,
                     bearerToken: token);
 
                 // If the response has an error...
-                if (await result.HandleErrorIfFailedAsync("Bulk Recon retrieval Failed"))
+                if (await result.HandleErrorIfFailedAsync("Billing Period List retrieval Failed"))
                     // We are done
                     return;
 
@@ -241,7 +245,7 @@ namespace Fasetto.Word
                     //mPersist = new BulkReconResultListApiModel();
                     //mPersist.Clone(mOriginal, mPersist);
                     //BulkRecon.Clear();
-                    BulkRecon = new ObservableCollection<BulkReconViewModel>();
+                    BillingPeriodList = new ObservableCollection<BillingPeriodViewModel>();
                     //BulkRecon.Clear();
                     var matches = result.ServerResponse.Response.ToList();
 
@@ -249,23 +253,17 @@ namespace Fasetto.Word
                     foreach (var item in matches)
                     {
 
-                    var mBRVM = new BulkReconViewModel
+                    var mBPVM = new BillingPeriodViewModel
 
                         {
-                            ShortName = item.ShortName,
-                            BulkMeter = item.BulkMeter,
-                            TimeSlotStart = item.TimeSlotStart,
-                            Missing = item.Missing,
-                            ChildMeters = item.ChildMeters,
-                            VolumeIn = item.VolumeIn,
-                            VolumeOut = item.VolumeOut,
-                            VolumeDelta = item.VolumeDelta,
-                            MovingAvgDelta = item.MovingAvgDelta,
-                            PercDelta = item.PercDelta,
-
+                            KBillingPeriodID = item.KBillingPeriodID,
+                            TimeStart = item.TimeStart,
+                            FClientID = item.FClientID,
+                            TimeEnd = item.TimeEnd,
                         };
-                        BulkRecon.Add(mBRVM); 
+                        BillingPeriodList.Add(mBPVM); 
                     }
+
 
                 }
                  catch (Exception e)
@@ -381,7 +379,7 @@ namespace Fasetto.Word
             }
         }
 
-        public IEnumerator<BulkReconViewModel> MatchingCategoryEnumerator { get; private set; }
+        public IEnumerator<BillingPeriodListViewModel> MatchingCategoryEnumerator { get; private set; }
 
         #endregion // SearchText
 
@@ -436,7 +434,7 @@ namespace Fasetto.Word
         #endregion // Search Logic
 
         #region Search Logic //KCategoryID
-        public IEnumerator<BulkReconViewModel> MatchingKCategoryEnumerator { get; private set; }
+        public IEnumerator<BillingPeriodViewModel> MatchingKCategoryEnumerator { get; private set; }
 
         #endregion // SearchKCategoryID
         #region Search Logic //KCategoryID
@@ -477,462 +475,7 @@ namespace Fasetto.Word
         //}
 
         #endregion //Search Logic //KCategoryID
-        #region Tree Manipulation
-        /// <summary>
-        /// Move element from one parent to another
-        /// The calling programme is to ensure that no loops 
-        /// are present where an element becomes its owndescendent
-        /// </summary>
-        /// <param name="mCategoryKId"></param>
-        /// <param name="mParentKId"></param>
-        //public void MoveElement(HierarchyElementViewModel element)
-        //{
-        //    mSearchText = element.KCategoryID;
-        //    mParentCategoryID = element.ParentCategoryID;
-        //    mPersistTmp = new BulkReconResultListApiModel();
-        //    //var sourceElement = from HierarchyDataModel in this
-        //    //                    where KCategoryID
-        //    var matches = mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective <= element.DateDiscontinued).OrderByDescending(x => x.DateEffective).ToList();
-        //    var category = matches.FirstOrDefault();
 
-        //    //
-
-        //    if (category != null)
-        //    //Move the selected element by discontinuing it at the current 'Parent'
-        //    //and adding a new element at the new parent location (all descendants are autotomatically
-        //    //moved)
-          
-        //    {  
-        //        if (category.DateEffective == element.DateEffective)
-        //        {
-        //            //if the change is made to an element not yet committed
-        //            //remove changes made up to this point...
-        //            if (category.DateDiscontinued == element.DateDiscontinued)
-        //            {
-        //            category.IsUnderReview = true;
-        //                category.ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText);
-        //                category.Description = (element.Description.EditedText ?? element.Description.OriginalText);
-        //                //category.FIconID = element.FIconID;
-        //                category.ParentCategoryID = mParentCategoryID;
-        //            }
-        //            else
-        //            { 
-        //            var mPersistElement = new BulkReconResultApiModel
-        //            {
-        //                ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
-        //                Description = (element.Description.EditedText ?? element.Description.OriginalText),
-        //                //FIconID = category.FIconID,
-        //                //Frequency = category.Frequency,
-        //                //FinHierarchyID = category.FinHierarchyID,
-        //                ParentCategoryID = mParentCategoryID,
-        //                DateEffective = element.DateEffective,
-        //                DateDiscontinued=element.DateDiscontinued,
-        //                KCategoryID = element.KCategoryID,
-        //                KChangeID = element.KChangeID,
-        //                IsUnderReview = true,
-        //                IsNewElement = true,
-        //                };
-        //            mPersist.Add(mPersistElement);
-        //            }
-
-
-
-        //        }
-        //        else
-        //        {
-        //        //Doiscontinue the element in the current location
-        //        category.KChangeID = element.KChangeID;
-        //        category.DateDiscontinued = element.DateEffective.AddSeconds(-10);
-        //        category.IsUnderReview = true;
- 
-        //            var mPersistElement = new BulkReconResultApiModel
-        //            {
-        //            ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
-        //            Description = (element.Description.EditedText ?? element.Description.OriginalText),
-        //            FIconID = category.FIconID,
-        //            Frequency = category.Frequency,
-        //            FHierarchyID = category.FHierarchyID,
-        //            ParentCategoryID = mParentCategoryID,
-        //            DateEffective = element.DateEffective,
-        //            DateDiscontinued = element.DateDiscontinued,
-        //            KCategoryID = element.KCategoryID,
-        //            KChangeID = element.KChangeID,
-        //            IsUnderReview = true,
-        //            IsNewElement = true,
-        //            };
-        //            mPersist.Add(mPersistElement);
-        //            //terminate the previous position of the element, and link to the change control
-
-        //        }
-        //        RefreshHierarchy();
-        //        PerformKIdSearch();
-
-        //    return;
-
-        //    }
-        //    return;
-
-        //}
-
-
-
-
-
-
-
-
-
-        /// <summary>
-        /// Copy Hierarchy Element from one location to another (allocate to a different parent Element)
-        /// Simultaneously, copies must be made of all descendents and these 2 must be inserted as descendents
-        /// of the newly copied apex element
-        /// </summary>
-        /// <param name="mCategoryKId"></param>
-        /// <param name="mParentKId"></param>
-        //public void CopyElement(HierarchyElementViewModel element)
-        //{
-        //    try
-        //    {
-        //        //mSearchText = mCategoryKId;
-        //        mParentCategoryID = element.ParentCategoryID;
-        //        mPersistTmp = new BulkReconResultListApiModel();
-        //        mElement = element;
-        //        //mSearchText = element.KCategoryID;
-
-        //        //var sourceElement = from HierarchyDataModel in this
-        //        //                    where KCategoryID
-        //        var matches = from category in mPersist
-        //                      where category.KCategoryID == element.KCategoryID && category.DateDiscontinued == new DateTime(9999,12,31) && category.DateEffective <= DateTime.Today
-
-        //                      select category;
-        //        foreach (var category in matches)
-
-
-        //        {
-        //            //mSearchText = category.ShortName;
-        //            var mPersistElement = new BulkReconResultApiModel
-        //            {
-        //                ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
-        //                Description = (element.Description.EditedText ?? element.Description.OriginalText),
-        //                FIconID = category.FIconID,
-        //                Frequency = category.Frequency,
-        //                FHierarchyID = category.FHierarchyID,
-        //                ParentCategoryID = mParentCategoryID,
-        //                DateEffective = mElement.DateEffective,
-        //                DateDiscontinued = new DateTime(9999, 12, 31),
-        //                KCategoryID = Guid.NewGuid().ToString().ToUpper(),
-        //                KChangeID = mElement.KChangeID,
-        //                IsUnderReview = true,
-        //                IsNewElement = true,
-        //            };
-        //            mPersistTmp.Add(mPersistElement);
-        //            //category.DateDiscontinued = mElement.DateDiscontinued;
-        //            //category.KChangeID = mElement.KChangeID;
-        //            mSearchText = mPersistElement.KCategoryID;
-        //            CopyElement1(element.KCategoryID, mPersistElement.KCategoryID);
-        //        }
-
-        //        mPersist.AddRange(mPersistTmp);
-        //        RefreshHierarchy();
-        //        PerformKIdSearch();
-        //    }
-        //    catch (Exception)
-        //    {
-        //    }
-
-
-        //}
-        ///// <summary>
-        ///// Iterate through all descendants of the primary element being copied
-        ///// and copy and move them to the new Parent structure
-        ///// </summary>
-        ///// <param name="mCategoryKId"></param>
-        ///// <param name="mParentKId"></param>
-        //public void CopyElement1(string mCategoryKId, string mParentKId)
-        //{
-        //    try
-        //    {
-
-        //        //var sourceElement = from HierarchyDataModel in this
-        //        //                    where KCategoryID
-        //        var matches = from category in mPersist
-        //                      where category.ParentCategoryID == mCategoryKId && category.DateDiscontinued == new DateTime(9999,12,31) && category.DateEffective <= (DateTime.Today)
-        //                      select category;
-        //        foreach (var category in matches)
-
-
-        //        {
-        //            var mPersistElement = new BulkReconResultApiModel
-        //            {
-        //                FIconID = category.FIconID,
-        //                Frequency = category.Frequency,
-        //                FHierarchyID = category.FHierarchyID,
-        //                ParentCategoryID = mParentKId,
-        //                KCategoryID = Guid.NewGuid().ToString().ToUpper(),
-        //                ShortName = category.ShortName,
-        //                Description = category.Description,
-        //                DateEffective = mElement.DateEffective,
-        //                DateDiscontinued = new DateTime(9999, 12, 31),
-        //                KChangeID = mElement.KChangeID,
-        //                IsUnderReview = true,
-        //                IsNewElement = true,
-
-        //            };
-        //            mPersistTmp.Add(mPersistElement);
-        //            //category.DateDiscontinued = mElement.DateDiscontinued;
-        //            //category.KChangeID = mElement.KChangeID;
-        //            CopyElement1(category.KCategoryID, mPersistElement.KCategoryID);
-
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //    }
-
-
-        //}
-
-        ///// <summary>
-        ///// Discontinue the selected element with all its descendants
-
-        ///// </summary>
-        ///// <param name="mCategoryKId"></param>
-        ///// <param name="mParentKId"></param>
-        //public void DeleteElement(HierarchyElementViewModel element)
-        //{
-        //    try
-        //    {
-        //        //mSearchText = mCategoryKId;
-        //        var mElement = element as HierarchyElementViewModel;
-
-
-        //        //              select category;
-
- 
-        //        var category = (mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective == element.DateEffective).OrderByDescending(x => x.DateEffective).ToList()).FirstOrDefault();
-        //        var catprev = (mPersist.Where(x => x.KCategoryID == category.KCategoryID && x.DateDiscontinued < category.DateDiscontinued).OrderByDescending(x => x.DateEffective).ToList()).FirstOrDefault();
-        //        //foreach (var category in matches)
-
-
-        //        //var category = categoryset.FirstOrDefault();
-        //        //if the category is currently under review and already reflected on back end then remove from backend
-        //        if (category.IsUnderReview)
-        //        //If element has not yet been persisted, just remove from the data set
-        //        {
-        //            //if the node being discontinued was linked to another node during the same transaction
-        //            //restore the other node to previous condition
-        //            if (catprev != null)
-        //            {
-        //                catprev.DateDiscontinued = category.DateDiscontinued;
-        //                mSearchText = catprev.KCategoryID;
-        //            }
-        //            if (category.IsNewElement)
-        //            {
-        //                //If changes have not yet been persisted on database, remove the relevant nodes from the front end
-        //                //var catNode = mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective == element.DateEffective);
-        //                mPersistTmp = new BulkReconResultListApiModel();
-        //                foreach (var catno in mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective == element.DateEffective))
-        //                    mPersistTmp.Add(catno);
-        //                mPersist.Remove(mPersistTmp, mPersist);
-        //                if (catprev == null)
-
-        //                    DeleteElement1(element.KCategoryID,mElement);
-        //            }
-        //            else
-        //            {
-        //                category.IsDeleteElement = true;
-        //                if (catprev == null)
-        //                    DeleteElement1(element.KCategoryID,mElement);
-        //            }
-        //        }
-        //        //    //mSearchText = category.ShortName;
-        //        //if item is already under review, delete the changed stuff
-        //        else 
-        //        { 
-        //        category.DateDiscontinued = mElement.DateDiscontinued;
-        //        mSearchText = mElement.KCategoryID;
-        //        category.IsUnderReview = true;
-        //        DeleteElement1(mElement.KCategoryID,mElement);
-        //        }
-
-        //        //}
-
-
-        //        RefreshHierarchy();
-        //        PerformKIdSearch();
-        //    }
-        //    catch (Exception)
-        //    {
-        //    }
-
-
-        //}
-        ///// <summary>
-        ///// Iterate through all descendants of the primary element being copied
-        ///// and copy and move them to the new Parent structure
-        ///// </summary>
-        ///// <param name="mCategoryKId"></param>
-        ///// <param name="mParentKId"></param>
-        //public void DeleteElement1(string mCategoryKId, HierarchyElementViewModel element)
-        //{
-        //    var mElement = element as HierarchyElementViewModel;
-        //    var catprev = (mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective == element.DateEffective).OrderByDescending(x => x.DateEffective).ToList()).FirstOrDefault();
-        //    try
-        //    {
-
-        //        //var sourceElement = from HierarchyDataModel in this
-        //        //                    where KCategoryID
-
-        //        var matches = from category in mPersist
-        //                      where category.ParentCategoryID == mCategoryKId
-        //                      select category;
-        //        foreach (var category in matches)
-
-
-        //        {
-        //            catprev = (mPersist.Where(x => x.KCategoryID == category.KCategoryID && x.DateDiscontinued < category.DateDiscontinued).OrderByDescending(x => x.DateEffective).ToList()).FirstOrDefault();
-        //            if (catprev != null)
-        //            {
-        //                catprev.DateDiscontinued = category.DateDiscontinued;
-        //                mSearchText = catprev.KCategoryID;
-        //            }
-        //            //foreach (var catprev)
-        //            if (category.IsUnderReview)
-        //        //If element has not yet been persisted, just remove from the data set
-        //            { 
-
-        //                if (category.IsNewElement)
-        //                {
-        //                //If changes have not yet been persisted on database, remove the relevant nodes from the front end
-        //                     //var catNode = mPersist.Where(x => x.KCategoryID == element.KCategoryID && x.DateEffective == element.DateEffective);
-        //                    mPersistTmp = new BulkReconResultListApiModel();
-        //                    foreach(var catno in mPersist.Where(x => x.KCategoryID == category.KCategoryID && x.DateEffective == category.DateEffective))
-        //                    mPersistTmp.Add(catno);
-        //                    mPersist.Remove(mPersistTmp, mPersist);
-        //                    if (catprev == null)
-        //                        DeleteElement1(category.KCategoryID,mElement);
-        //                }
-        //                else
-        //                  category.IsDeleteElement = true;
-        //                    if (catprev == null)
-        //                    DeleteElement1(category.KCategoryID, mElement);
-
-        //            }
-        //            category.DateDiscontinued = mElement.DateDiscontinued;
-        //            category.IsUnderReview = true;
-        //            DeleteElement1(category.KCategoryID,mElement);
-
-        //            //}
-
-
-
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //    }
-
-
-        //}
-
-        ///// <summary>
-        ///// Add a new element to the Hierarchy Tree
-        ///// The calling programme is to generate a GUID for the new element
-        ///// </summary>
-        ///// <param name="mNewElement"></param>
-        //public void AddElement(HierarchyElementViewModel element)
-        //{
-        //    mSearchText = element.KCategoryID;
-        //    //Gemerate GUID for root of new hierarchy element
-        //    var mRoot = element.Root.EditedText == element.Root.OriginalText ? Guid.NewGuid().ToString().ToUpper() : element.Root.EditedText;
-        //    var mPersistElement = new BulkReconResultApiModel
-        //    {
-        //        ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
-        //        Description = (element.Description.EditedText ?? element.Description.OriginalText),
-        //        ParentCategoryID = element.ParentCategoryID,
-        //        DateEffective = element.DateEffective.AddSeconds(-10),
-        //        DateDiscontinued = element.DateDiscontinued,
-        //        KCategoryID = element.KCategoryID,
-        //        KChangeID = element.KChangeID,
-        //        IsUnderReview = true,
-        //        IsNewElement= true,
-        //        Page = element.Page,
-        //        FHierarchyID = mTableName,
-        //        //Create new root element if not already existing
-        //        Root = mRoot
-        //    };
-        //    mPersist.Add(mPersistElement);
-
-
-        //    RefreshHierarchy();
-        //    PerformKIdSearch();
-        //    //TO DO: Add code to create root element of hierarchy when creating a new hierarchy type menu item
-        //    //if page == 'Hierarchy', create new element guid(), use hierarchy name +description, parent = 00000000
-
-        //}
-
-        ///// <summary>
-        ///// Edit element in hiearchy tree
-
-        ///// </summary>
-        ///// <param name="element"></param>
-        //public void EditElement(HierarchyElementViewModel element)
-        //{
-        //    mSearchText = element.KCategoryID;
-
-        //    var matches = from category in mPersist
-        //                  where category.KCategoryID == element.KCategoryID && category.DateDiscontinued == new DateTime(9999,12,31)// && (category.DateEffective <= element.DateDiscontinued)
-        //                  select category;
-        //     foreach(var category in matches)
-        //        //if this is a newly added element, just update the instance
-        //        if (category.ShortName != (element.ShortName.EditedText ?? element.ShortName.OriginalText) || category.Description != (element.Description.EditedText ?? element.Description.OriginalText)
-        //                || category.DateEffective != element.DateEffective||category.Page != element.Page|| category.Root != (element.Root.EditedText ?? element.Description.OriginalText))
-        //        { 
-        //            if (category.DateEffective == element.DateEffective)
-        //            category.KChangeID = element.KChangeID;
-        //            category.IsUnderReview = true;
-        //            category.ShortName = element.ShortName.EditedText ?? element.ShortName.OriginalText;
-        //            category.Description = element.Description.EditedText ?? element.Description.OriginalText;
-        //            category.Page = element.Page;
-        //            category.Root = element.Root.EditedText ?? element.Root.OriginalText;
-        //            mSearchText = category.KCategoryID;
-
-        //        }
-        //        else
-        //        {
-        //            category.DateDiscontinued =  element.DateEffective.AddSeconds(-10);
-        //            category.KChangeID = element.KChangeID;
-        //            category.IsUnderReview = true;
-
-        //            var mPersistElement = new BulkReconResultApiModel
-        //            {
-        //                ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
-        //                Description = (element.Description.EditedText ?? element.Description.OriginalText),
-        //                ParentCategoryID = element.ParentCategoryID,
-        //                DateDiscontinued = element.DateDiscontinued,
-        //                DateEffective = element.DateEffective,
-        //                Page = element.Page,
-        //                Root = (element.Root.EditedText ?? element.Root.OriginalText),
-        //            //Unique ID for change element
-        //                KCategoryID = element.KCategoryID,
-        //                IsUnderReview = true,
-        //                IsNewElement = true,
-        //                FHierarchyID = category.FHierarchyID,
-        //                KChangeID = element.KChangeID
-        //            };
-        //            mPersist.Add(mPersistElement);
-
-        //           mSearchText = mPersistElement.KCategoryID;
-        //        }
- 
-        //            RefreshHierarchy();
-        //            PerformKIdSearch();
-        //            return;
-
-
-        //}
-
-        #endregion //Tree Manipulation
 
         public void Close()
         {
@@ -944,48 +487,7 @@ namespace Fasetto.Word
 
         }
 
-        /// <summary>
-        /// Persist all items changed or added on hierarchy to back end database. Depending on stage
-        /// of change control, changes may be forwarded for recommendation or finally approved and implemented
-        /// on back end
-        /// </summary>
-        //public async Task PersistHierarchyChangesAsync()
-        //{
-        //    await PersistHierarchyAsync();
-        //    Close();
-        //}
-        //public async Task PersistHierarchyAsync()
-        //{
-        //    await RunCommandAsync(() => BulkReconBuildIsRunning, async () =>
-        //    {
 
-        //        // Store single transcient instance of client data store
-        //        var scopedClientDataStore = ClientDataStore;
-
-        //        // Update values from local cache
-        //        // Get the user token
-        //        var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
-        //        // Call the server and attempt to register with the provided credentials
-        //        // If we don't have a token (then not logged in...)
-        //        if (string.IsNullOrEmpty(token))
-        //            // Then do nothing more
-        //            return;
-        //        var result = await WebRequests.PostAsync<ApiResponse<BulkReconResultListApiModel>>(
-        //        // Set URL
-        //            RouteHelpers.GetAbsoluteRoute(ApiRoutes.PersistHierarchy),
-        //            mPersist,
-        //            bearerToken: token);
-
-        //        // If the response has an error...
-        //        if (await result.HandleErrorIfFailedAsync("Hierarchy retrieval Failed"))
-        //            // We are done
-        //            return;
-
-        //        // return to menu
-
-
-        //    });
-        //}
 
 
 

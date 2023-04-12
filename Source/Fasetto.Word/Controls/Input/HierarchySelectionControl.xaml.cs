@@ -265,6 +265,7 @@ namespace Fasetto.Word
         {
             // Close settings menu
             ViewModelApplication.PopupVisible = false;
+            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
 
 
         }
@@ -324,7 +325,8 @@ namespace Fasetto.Word
             mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
             //RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).RootID;
             ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid      = mDraggedItem.KCategoryID;
-            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName   = mDraggedItem.ShortName;
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName     = mDraggedItem.ShortName;
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalName   = mDraggedItem.ShortName;
             ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID       = mDraggedItem.FClientID;
             ViewModelApplication.PopupVisible = false;
             ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;

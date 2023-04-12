@@ -128,10 +128,10 @@ namespace Fasetto.Word
         /// <summary>
         /// Make provision for another control parameter that could be passed through to adjust a control
         /// </summary>
-        public string ControlParameter1 { get; set; }
+        public object ControlParameter1 { get; set; }
 
         /// <summary>
-        /// Make provision for a nother control parameter  for communication betwween parent and child
+        /// Make provision for another control parameter  for communication betwween parent and child
         /// </summary>
         public string ControlParameter2 { get; set; }
 

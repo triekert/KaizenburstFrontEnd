@@ -1,9 +1,7 @@
-﻿using static Fasetto.Word.DI;
-using static Fasetto.Word.Core.CoreDI;
-using System.Collections.ObjectModel;
+﻿using Fasetto.Word.Core;
 using System.Linq;
 using System.Windows.Input;
-using Fasetto.Word.Core;
+using static Fasetto.Word.DI;
 
 namespace Fasetto.Word
 {

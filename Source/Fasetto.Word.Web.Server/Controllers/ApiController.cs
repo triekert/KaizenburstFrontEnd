@@ -895,6 +895,82 @@ namespace Fasetto.Word.Web.Server
 
 
         }
+
+
+        [Route(ApiRoutes.ReturnBillingPeriods)]
+        public async Task<ApiResponse> ReturnBillingPeriodsAsync([FromBody] string model)
+
+        {
+            #region Get User
+
+            // Get the current user
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            // If we have no user...
+            if (user == null)
+                return new ApiResponse
+                {
+                    // TODO: Localization
+                    ErrorMessage = "User not found"
+                };
+
+            #endregion
+
+            #region sql query
+
+
+
+            var SqlString = "EXEC [Services].[spGetBillingPeriods] 	 @fClientID =  '" + model + "'" ;
+            ;
+            try
+            {
+                // Try and run the task
+                var dataset = await GetDataSetAsync(SqlString);
+                var dt = dataset.Tables[0];
+                var billingPeriodResultListApiModel = new BillingPeriodResultListApiModel();
+                var results = billingPeriodResultListApiModel;
+
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    var u = new BillingPeriodResultApiModel
+                    {
+                        KBillingPeriodID = row[1].ToString(),
+                        TimeStart = (DateTime)row[2],
+                        FClientID = row[3].ToString(),
+                        TimeEnd = (DateTime)row[4],
+
+
+                    };
+                    results.Add(u);
+
+                }
+
+                return new ApiResponse<BillingPeriodResultListApiModel>
+                {
+
+                    Response = results
+                };
+            #endregion sql query
+
+
+            }
+            catch (Exception ex)
+            {
+                // Log error
+                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                // Throw it as normal
+                throw;
+            }
+
+
+
+
+        }
+
+
+
         #endregion Services
 
         #endregion Services
@@ -1226,6 +1302,7 @@ namespace Fasetto.Word.Web.Server
             {
                 foreach (var row in results)
                 {
+
                     para[0].Value = row.ShortName;
                     para[1].Value = row.Description;
                     para[2].Value = new Guid(row.KCategoryID);
@@ -1247,7 +1324,7 @@ namespace Fasetto.Word.Web.Server
                     else
                         para[6].Value = Convert.ToDateTime("9999/12/31 00:00:00");
 
-                    if (row.KChangeID != null)
+                    if (row.KChangeID != null && row.KChangeID != "" )
                     { para[7].Value = new Guid(row.KChangeID); }
                     else
                         para[7].Value = new Guid();

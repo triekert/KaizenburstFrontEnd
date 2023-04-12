@@ -45,14 +45,14 @@ namespace Fasetto.Word
                 // Finance
                 case SideMenuContent.Finance:
                     /// <summary>
-                    /// An instance of the current Hiearchy control
+                    /// An instance of the current Finance Hierarchy control
                     /// </summary>
                     var mFinanceMenuControl = new MenuControl("7E669DCA-D356-43F0-BB64-5DF6D1499C99");
                     return mFinanceMenuControl;//mChatListControl;
 
                 case SideMenuContent.Menu:
                     /// <summary>
-                    /// An instance of the current Hiearchy control
+                    /// An instance of the current Hierarchy control
                     /// </summary>
                     var mMenuMenuControl = new MenuControl();
                     return mMenuMenuControl;//mChatListControl;

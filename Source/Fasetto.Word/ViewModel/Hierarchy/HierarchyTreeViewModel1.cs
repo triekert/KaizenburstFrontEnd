@@ -916,9 +916,8 @@ namespace Fasetto.Word
         public void Close()
         {
             // Close settings menu
-            ViewModelApplication.SideMenuVisible = true;
-            ViewModelApplication.CurrentSideMenuViewModel = null;
-            ViewModelApplication.GoToPage(ApplicationPage.Chat);
+            ViewModelApplication.PopupVisible = false;
+            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
 
 
         }
@@ -931,6 +930,7 @@ namespace Fasetto.Word
         public async Task PersistHierarchyChangesAsync()
         {
             await PersistHierarchyAsync();
+            //ViewModelApplication.CurrentPageViewModel
             Close();
         }
         public async Task PersistHierarchyAsync()

@@ -145,31 +145,33 @@ namespace Fasetto.Word
         /// </summary>
         public void HierarchyitemSelect()
         {
-            //to do: add a variable for passing KID between parent and child, as well as 
-            ViewModelApplication.CurrentControlViewModel = new HierarchyItemSelectionViewModel
-            {
-                RootID = RootID,
-                EditedName = EditedName,
-                OriginalKid = OriginalKid,
-                EditedKid = EditedKid,
-                OriginalName = OriginalName,
-                ClientID = ClientID,
-                HierarchyTypeID = HierarchyTypeID,
-                Label = Label,
-            };
+            ////to do: add a variable for passing KID between parent and child, as well as 
+            //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
+            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName = EditedName;
+            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).RootID = RootID;
+            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid = OriginalKid;
+            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid = EditedKid;
+            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalName = OriginalName;
+            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID = ClientID;
+            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).HierarchyTypeID = HierarchyTypeID;
+            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label = Label;
+            //ViewModelApplication.CurrentControlViewModel = new HierarchyItemSelectionViewModel
+            //{
+            //    RootID = RootID,
+            //    EditedName = EditedName,
+            //    OriginalKid = OriginalKid,
+            //    EditedKid = EditedKid,
+            //    OriginalName = OriginalName,
+            //    ClientID = ClientID,
+            //    HierarchyTypeID = HierarchyTypeID,
+            //    Label = Label,
+            //};
             ViewModelApplication.PopupVisible = true;
             ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
+            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
 
 
-            //RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).RootID;
-            //EditedName = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName;
-            //OriginalKid = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid;
-            //EditedKid = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid;
-            //OriginalName = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalName;
-            //ClientID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID;
-            //HierarchyTypeID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).HierarchyTypeID;
-            //Label = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label;
-           
+
         }
 
         /// <summary>
@@ -181,6 +183,7 @@ namespace Fasetto.Word
             var result = default(bool);
             EditedName = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName;
             EditedKid = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid;
+
             // Save currently saved value
             var currentSavedValue = OriginalName;
 

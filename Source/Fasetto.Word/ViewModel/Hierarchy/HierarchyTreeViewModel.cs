@@ -916,7 +916,10 @@ namespace Fasetto.Word
         {
             // Close settings menu
             ViewModelApplication.SideMenuVisible = true;
-            ViewModelApplication.CurrentSideMenuViewModel = null;
+            TaskManager.RunAndForget(((HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel).HierarchyAsync);
+            //ViewModelApplication.CurrentSideMenuViewModel = null;
+            //TaskManager.RunAndForget(HierarchyAsync);
+ 
             ViewModelApplication.GoToPage(ApplicationPage.Chat);
 
 

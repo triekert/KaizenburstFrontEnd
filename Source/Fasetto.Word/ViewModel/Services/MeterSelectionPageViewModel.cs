@@ -243,20 +243,21 @@ namespace Fasetto.Word
                 Label = "Client",
                 //EditedName = mLoadingText,
                 EditedName = "Client",
-                OriginalName = "Original Client Test",
+                OriginalName = "Client Lookup",
                 OriginalKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
                 EditedKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
                 HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
 
                 //CommitAction = SaveFirstNameAsync
             };
+            ViewModelApplication.CurrentControlViewModel = Root;
 
             Meter = new HierarchyItemSelectionViewModel
             {
                 Label = "Meter Name",
                 //EditedName = mLoadingText,
                 EditedName = "TD Water Metering",
-                OriginalName = "Original Meter Test",
+                OriginalName = "Original Meter Selection",
                 EditedKid = "5249FFEB-6907-46AA-9204-D4527E11F9CE",
                 HierarchyTypeID = "8A50E984-9E9F-44F6-9392-875E56A0B7CA",
                 //CommitAction = SaveFirstNameAsync
@@ -304,6 +305,7 @@ namespace Fasetto.Word
             OpenSearchCommand = new RelayCommand(OpenSearch);
             CloseCommand = new RelayCommand(Close);
             ClearSearchCommand = new RelayCommand(ClearSearch);
+            //ViewModelApplication.CurrentControlViewModel = null;
 
             // Make a default menu
             //AttachmentMenu = new ChatAttachmentPopupMenuViewModel();
@@ -359,8 +361,12 @@ namespace Fasetto.Word
         /// </summary>
         public void Populate()
         {
-            Meter.ClientID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid;
-            Meter.RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).RootID;
+            Meter.ClientID = Root.EditedKid;
+            Meter.RootID = Root.RootID;
+
+            ViewModelApplication.CurrentControlViewModel = Meter;
+            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+            //ViewModelApplication.CurrentPageViewModel = Meter;
         }
 
         /// <summary>
@@ -424,8 +430,8 @@ namespace Fasetto.Word
         { 
         // Close settings menu
         ViewModelApplication.SideMenuVisible = true;
-            ViewModelApplication.CurrentSideMenuViewModel = null;
-            ViewModelApplication.GoToPage(ApplicationPage.Chat);}
+        //ViewModelApplication.CurrentSideMenuViewModel = null;
+        ViewModelApplication.GoToPage(ApplicationPage.Chat);}
         #endregion
     }
 }

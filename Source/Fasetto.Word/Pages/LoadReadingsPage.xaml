@@ -57,7 +57,7 @@
 
                     <Button 
                         Style="{StaticResource TextButton}" 
-                        Content="Return to Hierarchy window..." 
+                        Content="Return to Menu Selection..." 
                         HorizontalAlignment="Center" 
                         Command="{Binding CloseCommand}"
                         />
