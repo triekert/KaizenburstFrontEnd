@@ -126,8 +126,11 @@
                 <ComboBox MinWidth="90"
                                       MaxDropDownHeight="400"
                                       ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                       SelectedItem="{Binding MSelectedBillingPeriod}"                          
                                       ItemsSource="{Binding BillingPeriodList}" IsDropDownOpen="False" 
-                                        SelectedItem="{Binding MSelectedBillingPeriod}">
+
+                          
+                          >
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">

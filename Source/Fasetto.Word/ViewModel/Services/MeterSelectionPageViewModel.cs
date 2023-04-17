@@ -196,7 +196,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The command for when the user clicks the send button
         /// </summary>
-        public ICommand SendCommand { get; set; }
+        public ICommand ReconcileCommand { get; set; }
 
         /// <summary>
         /// The command for populating client information for search
@@ -299,7 +299,7 @@ namespace Fasetto.Word
             // Create commands
             AttachmentButtonCommand = new RelayCommand(AttachmentButton);
             PopupClickawayCommand = new RelayCommand(PopupClickaway);
-            SendCommand = new RelayCommand(Send);
+            ReconcileCommand = new RelayCommand(Reconcile);
             PopulateCommand = new RelayCommand(Populate);
             SearchCommand = new RelayCommand(Search);
             OpenSearchCommand = new RelayCommand(OpenSearch);
@@ -336,7 +336,7 @@ namespace Fasetto.Word
         /// <summary>
         /// When the user clicks the send button, sends the message
         /// </summary>
-        public void Send()
+        public void Reconcile()
         {
             ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             //To do: Lookup to be user rights and available options driven

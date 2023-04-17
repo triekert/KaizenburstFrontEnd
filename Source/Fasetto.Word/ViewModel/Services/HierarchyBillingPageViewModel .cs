@@ -1,25 +1,15 @@
 ﻿using Fasetto.Word.Core;
-using System;
-using System.Windows.Forms;
+using System.Linq;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
-
 
 namespace Fasetto.Word
 {
     /// <summary>
     /// A view model for managing hierarchies 
     /// </summary>
-    public class SWBillingPageViewModel : BaseViewModel
+    public class HierarchyBillingPageViewModel : BaseViewModel
     {
-        #region Private Members
-
-        /// <summary>
-        /// The text to show while loading text
-        /// </summary>
-        private string mLoadingText = "...";
-
-        #endregion
         #region Protected Members
 
         /// <summary>
@@ -43,7 +33,7 @@ namespace Fasetto.Word
         /// </summary>
         protected bool mSearchIsOpen;
 
-        public HierarchyTreeViewModel mViewModel;
+        public HierarchyTreeViewModel mViewModel ;
         #endregion
 
         #region Public Properties
@@ -79,38 +69,6 @@ namespace Fasetto.Word
         /// The title of this chat list
         /// </summary>
         public string DisplayTitle { get; set; }
-
-        /// <summary>
-        /// The Client for which Bulk Meter reconciliation is to be processed
-        /// </summary>
-        public HierarchyItemSelectionViewModel Client { get; set; }
-
-
-
-        /// <summary>
-        /// The GUID for the Bulk Meter for which reconciliation is to be processed
-        /// </summary>
-        public string BulkMeter { get; set; }
-
-
-        /// <summary>
-        /// The Name for the Bulk Meter for which reconciliation is to be processed
-        /// </summary>
-        public string ShortName { get; set; }
-
-        /// <summary>
-        /// The BillingPeriods for the Water and Sewerage Billing analysis
-        /// </summary>
-        public BillingPeriodListViewModel BillingPeriod { get; set; }
-
-        /// <summary>
-        /// The selected BillingPeriod for the Water and Sewerage Billing analysis
-        /// </summary>
-        public BillingPeriodViewModel SelectedBillingPeriod { get; set; }
-
-
-
-
 
         /// <summary>
         /// True to show the attachment menu, false to hide it
@@ -193,12 +151,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The command for when the user clicks the send button
         /// </summary>
-        public ICommand SWBillingCommand { get; set; }
-
-        /// <summary>
-        /// The command for populating client information for search
-        /// </summary>
-        public ICommand PopulateCommand { get; set; }
+        public ICommand SendCommand { get; set; }
 
         /// <summary>
         /// The command for when the user wants to search
@@ -213,7 +166,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The command for when the user wants to close to search dialog
         /// </summary>
-        public ICommand CloseCommand { get; set; }
+        public ICommand CloseSearchCommand { get; set; }
 
         /// <summary>
         /// The command for when the user wants to clear the search text
@@ -227,40 +180,19 @@ namespace Fasetto.Word
         /// <summary>
         /// Default constructor
         /// </summary>
-        public SWBillingPageViewModel()
+        public HierarchyBillingPageViewModel()
         {
             //Populate screen title
             //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
             //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
-            DisplayTitle = "Water & Sewerage Billing";
-            BulkMeter = "5249FFEB-6907-46AA-9204-D4527E11F9CE";
-
-            Client = new HierarchyItemSelectionViewModel
-            {
-                Label = "Client",
-                //EditedName = mLoadingText,
-                EditedName = "Selected Client",
-                OriginalName = "Root Client Organisation",
-                OriginalKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
-                EditedKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
-                HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
-
-                //CommitAction = SaveFirstNameAsync
-            };
-            ViewModelApplication.CurrentControlViewModel = Client;
-
-            BillingPeriod = new BillingPeriodListViewModel(Client.OriginalKid);
-            SelectedBillingPeriod = new BillingPeriodViewModel();
-            BillingPeriod.MSelectedBillingPeriod = SelectedBillingPeriod;
-
+            DisplayTitle = "Hierarchy Tree Management";
             // Create commands
             AttachmentButtonCommand = new RelayCommand(AttachmentButton);
             PopupClickawayCommand = new RelayCommand(PopupClickaway);
-            SWBillingCommand = new RelayCommand(SWBilling);
-            PopulateCommand = new RelayCommand(Populate);
+            SendCommand = new RelayCommand(Send);
             SearchCommand = new RelayCommand(Search);
             OpenSearchCommand = new RelayCommand(OpenSearch);
-            CloseCommand = new RelayCommand(Close);
+            CloseSearchCommand = new RelayCommand(CloseSearch);
             ClearSearchCommand = new RelayCommand(ClearSearch);
 
             // Make a default menu
@@ -292,45 +224,39 @@ namespace Fasetto.Word
         /// <summary>
         /// When the user clicks the send button, sends the message
         /// </summary>
-        public void SWBilling()
+        public void Send()
         {
-            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-            //To do: Lookup to be user rights and available options driven
-            //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
-            if (SelectedBillingPeriod.KBillingPeriodID == null)
+            mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            var results = mViewModel.mPersist.Where(x => x.IsUnderReview|| x.IsDeleteElement).ToList();
+            var mPersistElement = new HierarchyResultApiModel();
+            //var results = mViewModel.mPersist.OrderBy(x => x.ShortName).ToList();
+            if (results.Count > 0)
+                //mViewModel.mPersistTmp = (HierarchyResultApiModel)results;
+                //ToDo:Where a new hierarchy is referred to in the a new menu item, Create the root element for this new hierarchy
 
-            //To DO - message user
-            {
-                MessageBox.Show($"First select a valid Billing Period to proceed...");
-                return;
-            };
-            //ShortName = Meter.EditedName;
+                results = mViewModel.mPersist.Where(x => (x.IsNewElement) & x.Page == "Hierarchy").ToList();
+                if (results.Count > 0)
+                { 
+                //mViewModel.mPersist.AddRange(results);
+                    foreach (var row in results)
 
-            //ViewModelApplication.CurrentPopupViewModel = new HierarchyBillingTreeViewModel(SelectedBillingPeriod.KBillingPeriodID);
-            //((HierarchyBillingTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Water & Sewerage Billing : FROM " + SelectedBillingPeriod.TimeStart.ToString("d/MM/yyyy")
-            //    + " TO " + SelectedBillingPeriod.TimeEnd.ToString("d/MM/yyyy");
-            ViewModelApplication.CurrentPopupContent = PopupContent.SWBilling;
-            ViewModelApplication.PopupVisible = true;
-
+                        {
+                        mPersistElement.DateDiscontinued = row.DateDiscontinued;
+                        mPersistElement.DateEffective = row.DateEffective;
+                        mPersistElement.ShortName = row.ShortName;
+                        mPersistElement.Description = row.Description;
+                        mPersistElement.KCategoryID = row.Root;
+                        mPersistElement.Page = row.Page;
+                        mPersistElement.IsNewElement = row.IsNewElement;
+                        mPersistElement.IsUnderReview = row.IsUnderReview;
+                        mPersistElement.ParentCategoryID = "00000000-0000-0000-0000-000000000000";
+                        mPersistElement.FHierarchyID = row.Root;
+                        }
+                        mViewModel.mPersist.Add(mPersistElement);
+                        
+                }
+                _ = mViewModel.PersistHierarchyChangesAsync();
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void Populate()
-        {
-            BillingPeriod = new BillingPeriodListViewModel(Client.EditedKid);
-            BillingPeriod.MSelectedBillingPeriod = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod;
-        }
-
-        /// <summary>
-        /// When the user clicks the send button, sends the message
-        /// </summary>
-        //public void Populate()
-        //{
-        //    Meter.ClientID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid;
-        //    Meter.RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).RootID;
-        //}
 
         /// <summary>
         /// Searches the current message list and filters the view
@@ -343,7 +269,7 @@ namespace Fasetto.Word
             //    return;
 
             // If we have no search text, or no items
-            if (string.IsNullOrEmpty(SearchText))
+            if (string.IsNullOrEmpty(SearchText) )
             {
                 // Make filtered list the same
 
@@ -359,10 +285,10 @@ namespace Fasetto.Word
             //    Items.Where(item => item.Message.ToLower().Contains(SearchText)));
 
             // Set last search text
-            mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
-            mViewModel.SearchText = SearchText;
-            mViewModel.PerformSearch();
-            //mViewModel.RefreshHierarchy();           
+                mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+                mViewModel.SearchText = SearchText;
+                mViewModel.PerformSearch();
+                //mViewModel.RefreshHierarchy();           
             mLastSearchText = SearchText;
         }
 
@@ -389,12 +315,8 @@ namespace Fasetto.Word
         /// <summary>
         /// Closes the search dialog
         /// </summary>
-        public void Close()
-        { 
-        // Close settings menu
-        ViewModelApplication.SideMenuVisible = true;
-            //ViewModelApplication.CurrentSideMenuViewModel = null;
-            ViewModelApplication.GoToPage(ApplicationPage.Chat);}
+        public void CloseSearch() => SearchIsOpen = false;
+
         #endregion
     }
 }

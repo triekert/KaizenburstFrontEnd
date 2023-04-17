@@ -160,7 +160,7 @@
                             Padding="8"
                             IsDefault="True"
                             Focusable="False"
-                            Command="{Binding SendCommand}"
+                            Command="{Binding ReconcileCommand}"
                             Background="{StaticResource WordGreenBrush}"
                             FontSize="{StaticResource FontSizeRegular}"
                             />

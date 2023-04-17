@@ -58,7 +58,14 @@
         /// <summary>
         /// Hierarchy Selection Control
         /// </summary>
-        HierarchyItemSelection = 10
+        HierarchyItemSelection = 10,
+
+
+
+        /// <summary>
+        /// Hierarchy Selection Control
+        /// </summary>
+        SWBilling = 11
 
     }
 }

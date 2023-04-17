@@ -55,6 +55,11 @@ namespace Fasetto.Word
                     var mHierarchyItemSelection = new HierarchySelectionControl();
                     return mHierarchyItemSelection;
 
+
+                case PopupContent.SWBilling:
+                    var mSWBillingControl = new SWBillingControl();
+                    return mSWBillingControl;
+
                 // Unknown
                 default:
                     return "No UI yet, sorry :)";

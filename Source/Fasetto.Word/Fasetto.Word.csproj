@@ -154,6 +154,7 @@
     <Compile Include="Controls\Services\BulkMeterSelectionControl.cs">
       <DependentUpon>BulkMeterSelectionControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Services\SWBillingControl.xaml.cs" />
     <Compile Include="Controls\Services\MeterSelectionControl.xaml.cs" />
     <Compile Include="Controls\SettingsControl.xaml.cs">
       <DependentUpon>SettingsControl.xaml</DependentUpon>
@@ -181,6 +182,9 @@
     </Compile>
     <Compile Include="Pages\BulkReconPage.xaml.cs">
       <DependentUpon>BulkReconPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\HierarchyBillingPage.xaml.cs">
+      <DependentUpon>HierarchyBillingPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\SWBillingPage.xaml.cs">
       <DependentUpon>SWBillingPage.xaml</DependentUpon>
@@ -253,6 +257,9 @@
     <Compile Include="ViewModel\Menu\HierarchyPageViewModel .cs" />
     <Compile Include="ViewModel\Services\BillingPeriodListViewModel.cs" />
     <Compile Include="ViewModel\Services\BillingPeriodViewModel.cs" />
+    <Compile Include="ViewModel\Services\HierarchyBillingPageViewModel .cs" />
+    <Compile Include="ViewModel\Services\HierarchyBillingTreeViewModel.cs" />
+    <Compile Include="ViewModel\Services\HierarchyBillingViewModel.cs" />
     <Compile Include="ViewModel\Services\SWBillingPageViewModel.cs" />
     <Compile Include="ViewModel\Services\MeterSelectionPageViewModel.cs" />
     <Compile Include="ViewModel\Services\BulkReconDetailTreeViewModel.cs" />
@@ -386,6 +393,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Services\SWBillingControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Services\MeterSelectionControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -415,6 +426,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\BulkReconPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\HierarchyBillingPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

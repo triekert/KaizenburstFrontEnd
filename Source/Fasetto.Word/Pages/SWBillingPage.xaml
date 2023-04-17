@@ -171,11 +171,11 @@
                         />
 
                      <!--Send button--> 
-                    <Button Content="Reconcile Bulk Meter"
+                    <Button Content="Retrieve Water and Sewerage Billing Detail"
                             Padding="8"
                             IsDefault="True"
                             Focusable="False"
-                            Command="{Binding SendCommand}"
+                            Command="{Binding SWBillingCommand}"
                             Background="{StaticResource WordGreenBrush}"
                             FontSize="{StaticResource FontSizeRegular}"
                             />

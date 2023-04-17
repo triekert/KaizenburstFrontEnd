@@ -121,7 +121,10 @@ namespace Fasetto.Word
             // Set the edited text to the current value
 
 
-            // Go into edit mode
+            //Go into edit mode
+            MSelectedBillingPeriod = MSelectedBillingPeriod;
+            ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod.MSelectedBillingPeriod = MSelectedBillingPeriod;
+            ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod = MSelectedBillingPeriod;
             Editing = true;
         }
 
@@ -480,6 +483,7 @@ namespace Fasetto.Word
         public void Close()
         {
             // Close settings menu
+
 
             ViewModelApplication.PopupVisible = false;
 

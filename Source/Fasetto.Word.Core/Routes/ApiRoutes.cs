@@ -97,14 +97,14 @@
         /// </summary>
         /// 
         public const string LoadReadings = "api/Services/LoadReadings";
-        //public const string LoadReadings = "api.netqedge.com/v1?From=2022-10-19T18%3A13%3A31.001&To=2022-10-19T20%3A13%3A31.000";
+
 
         /// <summary>
         /// The route to the accessing of Recon Data for Bulk Water Meters
         /// </summary>
         /// 
         public const string ReturnBulkRecon = "api/Services/BulkRecon";
-        //public const string LoadReadings = "api.netqedge.com/v1?From=2022-10-19T18%3A13%3A31.001&To=2022-10-19T20%3A13%3A31.000";
+
 
 
         /// <summary>
@@ -113,7 +113,18 @@
         /// 
        
         public const string ReturnReconDetail = "api/Services/ReconDetail";
-        //public const string LoadReadings = "api.netqedge.com/v1?From=2022-10-19T18%3A13%3A31.001&To=2022-10-19T20%3A13%3A31.000";
+
+
+        /// <summary>
+        /// The route to the accessing of Detail Water Meter readings 
+        /// </summary>
+        /// 
+
+        public const string ReturnSWBilling = "api/Services/SWBilling";
+        
+
+
+
         #endregion
     }
 }

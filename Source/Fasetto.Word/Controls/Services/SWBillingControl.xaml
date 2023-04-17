@@ -1,0 +1,249 @@
+﻿<UserControl x:Class="Fasetto.Word.SWBillingControl" 
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" 
+             xmlns:local="clr-namespace:Fasetto.Word"             
+             d:DesignHeight="300" d:DesignWidth="300">
+    <DockPanel>
+        <!-- SEARCH AREA -->
+        <Border 
+         DockPanel.Dock="Bottom" 
+         BorderBrush="#FFE22626" 
+         BorderThickness="2,0,2,2">
+
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#33000000" Offset="0" />
+                    <GradientStop Color="#11A49090" Offset="1" />
+                </LinearGradientBrush>
+            </Border.Background>
+
+            <StackPanel 
+                HorizontalAlignment="Stretch" 
+                Margin="0,0,10,0" 
+                Orientation="Horizontal"
+                >
+                <TextBox 
+                      x:Name="searchTextBox"
+                      KeyDown="SearchTextBox_KeyDown"
+                      Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                      Width ="225" FontSize="18" TextWrapping="Wrap" RenderTransformOrigin="0.1,0.616" AutomationProperties.HelpText="Begin entering name...."
+                    >
+                    <TextBox.InputBindings>
+                        <!--Clear text on Esc-->
+                        <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc" />
+                        <!--Search on enter-->
+                        <KeyBinding Command="{Binding SearchCommand}" Key="Return" />
+                    </TextBox.InputBindings>
+                </TextBox>
+
+                <Button Style="{StaticResource IconGrowButton}" 
+                        Content="{StaticResource FontAwesomeSearchIcon}"
+                        Command="{Binding SearchCommand}"
+                        Padding="4" Background="{DynamicResource WordOrangeBrush}" Height="40" Width="60" RenderTransformOrigin="1.221,0.593" AutomationProperties.HelpText="Search for items in the hierarchy" 
+                      >
+                    <Button.Foreground>
+                        <SolidColorBrush Color="{DynamicResource ForegroundLight}"/>
+                    </Button.Foreground>
+                    <!--<Button.ToolTip>
+                        <ToolTip Placement="Mouse"
+
+                             Opened="ToolTip_Opened"
+
+                             Closed="ToolTip_Closed">Login with the entered credentials</ToolTip>
+                    </Button.ToolTip>-->
+                </Button>
+            </StackPanel>
+        </Border>
+        <Border 
+         DockPanel.Dock="Top" 
+         BorderBrush="#FF734444" 
+         BorderThickness="1,0,1,1">
+
+
+            <Grid>
+
+                <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+
+                <!--Settings Title-->
+
+                <Grid  Grid.Row ="0"  Height="20" Margin="0 0 0 2">
+
+
+                    <!--Back button-->
+
+                    <Button Style="{StaticResource IconGrowButton}"
+                    Height="40"
+                    Content="{StaticResource FontAwesomeArrowLeftIcon}"
+                    FontFamily="{StaticResource FontAwesome}"
+                    Foreground="{StaticResource ForegroundDarkBrush}"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Command="{Binding CloseCommand}" IsCancel="True"
+                    />
+
+
+                    <!--Settings header-->
+
+                    <TextBlock FontSize="{StaticResource FontSizeLarge}"
+
+                       Foreground="{StaticResource ForegroundVeryDarkBrush}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center">
+                
+             <!--Tree icon--> 
+            
+                <Run FontFamily="{StaticResource FontAwesome}"
+                     Text="{StaticResource FontAwesomeProjectIcon}"                     
+                     Foreground="{StaticResource WordOrangeBrush}" />
+                
+             <!--Settings text--> 
+            
+                <Run Text="{Binding ControlTitle}"
+                     Foreground="{DynamicResource WordDarkBlueBrush}"
+                     FontFamily="{DynamicResource LatoBold}" Background="{DynamicResource BackgroundVeryLightBrush}" />
+                    </TextBlock>
+
+
+                    
+                </Grid>
+            </Grid>
+        </Border>
+
+        <ScrollViewer x:Name="scrollViewer"  Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
+
+            <StackPanel Grid.IsSharedSizeScope="True" Orientation="Vertical">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30"/>
+
+                        <!--<ColumnDefinition Width="150" />-->
+                        <ColumnDefinition SharedSizeGroup="NameColumn" />
+                        <!--<ColumnDefinition Width="150"/>-->
+                        <ColumnDefinition SharedSizeGroup="DecriptionColumn" />
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="80" />
+
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock  Grid.Column ="1" Width="150"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Name" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+
+                    <TextBlock  Grid.Column ="2" Width="150"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Description" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                    <TextBlock  Grid.Column ="3" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Total kL" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                    <TextBlock  Grid.Column ="4" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="WaterCost" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                    <TextBlock  Grid.Column ="5" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="SewerCost" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                    <TextBlock  Grid.Column ="6" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="TotalCost" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                    <TextBlock  Grid.Column ="7" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="DateStart" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                    <TextBlock  Grid.Column ="8" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="ReadingStart" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                    <TextBlock  Grid.Column ="9" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="DateEnd" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+
+                </Grid>
+ 
+
+            <TreeView 
+              ItemsSource="{Binding FirstGeneration}" 
+              TreeViewItem.Selected="TreeView_Selected"            
+              Name="tvParameters">
+
+                <TreeView.Template>
+                    <ControlTemplate>
+                        <Border BorderBrush="{TemplateBinding BorderBrush}"  BorderThickness="{TemplateBinding BorderThickness}"  SnapsToDevicePixels="true">
+                            <ItemsPresenter/>
+                        </Border>
+                    </ControlTemplate>
+                </TreeView.Template>
+
+                <!--AllowDrop="True"  MouseDown="TreeView_MouseDown"  Drop="TreeView_Drop" MouseMove="TreeView_MouseMove">-->
+
+                <TreeView.ItemContainerStyle>
+                    <!-- 
+            This Style binds a TreeViewItem to a HierarchyViewModel. 
+            -->
+                    
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                        <Setter Property="AllowDrop"  Value="True"/>
+                        <Setter Property="FontWeight" Value="Normal" />
+                        <EventSetter Event="DragOver"  Handler="TreeView_DragOver"/>
+                        <EventSetter Event="Drop" Handler="TreeView_Drop"/>
+                        <EventSetter Event= "MouseDown" Handler="TreeView_MouseDown"/>
+                        <EventSetter Event="PreviewMouseLeftButtonDown" Handler="TreeView_PreviewMouseLeftButtonDown" />
+                        <EventSetter Event="KeyDown" Handler="TreeView_KeyBoard"/>
+                        <EventSetter Event="MouseMove" Handler="TreeView_MouseMove"/>
+                        <EventSetter Event="MouseDoubleClick" Handler="TreeView_MouseDoubleClick"/>
+                        <!--<EventSetter Event="MouseEnter" Handler="TreeView_MouseEnter"/>
+                        <EventSetter Event="MouseLeave" Handler="TreeView_MouseLeave"/>-->
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="FontWeight" Value="UltraBold" />
+                                <Setter Property="Foreground" Value="Darkred"/>
+                                <!--<Setter Property="Cursor" Value="Hand"/>-->
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+
+                <TreeView.ItemTemplate>
+
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"  Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="10"/>
+
+                                        <!--<ColumnDefinition Width="150" />-->
+                                        <ColumnDefinition SharedSizeGroup="NameColumn" />
+                                        <ColumnDefinition SharedSizeGroup="DecriptionColumn" />
+                                        <!--<ColumnDefinition Width="150" />-->
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="80" />
+                                    </Grid.ColumnDefinitions>
+
+
+
+                                <TextBlock Grid.Column ="1" Width="150"  HorizontalAlignment="Right"  TextWrapping="WrapWithOverflow" Text="{Binding ShortName}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                <!--<TextBlock Text="  "/>-->
+                     
+                                <TextBlock  Grid.Column ="2" Width="150"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding Description}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                <TextBlock  Grid.Column ="3" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding TotalConsumption}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                <TextBlock  Grid.Column ="4" Width="80"  HorizontalAlignment="Left"    TextWrapping="WrapWithOverflow" Text="{Binding WaterCost}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                <TextBlock  Grid.Column ="5" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding SewerCost}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                <TextBlock  Grid.Column ="6" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding TotalCost}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                <TextBlock  Grid.Column ="7" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding TimeStart,StringFormat=dd/MM/yyyy}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                <TextBlock  Grid.Column ="8" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding StartReading}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                <TextBlock  Grid.Column ="9" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding TimeEnd,StringFormat=dd/MM/yyyy}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+
+                            </Grid>
+                        
+                        </StackPanel>
+          
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+            </StackPanel>
+        </ScrollViewer>
+
+    </DockPanel>
+</UserControl>
+

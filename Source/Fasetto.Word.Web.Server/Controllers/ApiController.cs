@@ -935,10 +935,10 @@ namespace Fasetto.Word.Web.Server
                 {
                     var u = new BillingPeriodResultApiModel
                     {
-                        KBillingPeriodID = row[1].ToString(),
-                        TimeStart = (DateTime)row[2],
-                        FClientID = row[3].ToString(),
-                        TimeEnd = (DateTime)row[4],
+                        KBillingPeriodID = row[0].ToString(),
+                        TimeStart = (DateTime)row[1],
+                        FClientID = row[2].ToString(),
+                        TimeEnd = (DateTime)row[3],
 
 
                     };
@@ -970,6 +970,86 @@ namespace Fasetto.Word.Web.Server
         }
 
 
+
+        [Route(ApiRoutes.ReturnSWBilling)]
+        public async Task<ApiResponse> ReturnSWBillingAsync([FromBody] string model)
+
+        {
+            #region Get User
+
+            // Get the current user
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            // If we have no user...
+            if (user == null)
+                return new ApiResponse
+                {
+                    // TODO: Localization
+                    ErrorMessage = "User not found"
+                };
+
+            #endregion
+
+            #region sql query
+
+
+
+            var SqlString = "EXEC [Services].[spGetSWConsumerBilling] 	 @fBillingPeriodID =  '" + model + "'" ;
+            ;
+            try
+            {
+                // Try and run the task
+                var dataset = await GetDataSetAsync(SqlString);
+                var dt = dataset.Tables[0];
+                var results = new HierarchyBillingResultListApiModel();
+                //var results = billingPeriodResultListApiModel;
+
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    var u = new HierarchyBillingResultApiModel
+                    {
+                        ShortName = row[0].ToString(),
+                        Description = row[1].ToString(),
+                        KCategoryID = row[2].ToString(),
+                        ParentCategoryID = row[3].ToString(),
+                        DateEffective = (DateTime)row[4],
+                        DateDiscontinued = (DateTime)row[5],
+                        TotalConsumption = (decimal)row[6],
+                        WaterCost = (decimal)row[7],
+                        SewerCost = (decimal)row[8],
+                        TotalCost = (decimal)row[9],
+                        TimeStart = (DateTime)row[10],
+                        Startreading = (decimal)row[11],
+                        TimeEnd = (DateTime)row[12],
+                        Endreading = (decimal)row[13],
+                    };
+                    results.Add(u);
+
+                }
+
+                return new ApiResponse<HierarchyBillingResultListApiModel>
+                {
+
+                    Response = results
+                };
+            #endregion sql query
+
+
+            }
+            catch (Exception)
+            {
+                // Log error
+                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                // Throw it as normal
+                throw;
+            }
+
+
+
+
+        }
 
         #endregion Services
 

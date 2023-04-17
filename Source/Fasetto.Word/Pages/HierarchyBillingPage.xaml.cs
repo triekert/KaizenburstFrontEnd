@@ -11,14 +11,14 @@ namespace Fasetto.Word
     /// <summary>
     /// Interaction logic for FinancePage.xaml
     /// </summary>
-    public partial class SWBillingPage : BasePage<SWBillingPageViewModel>
+    public partial class HierarchyBillingPage : BasePage<HierarchyBillingPageViewModel>
     {
         #region Constructor
 
         /// <summary>s
         /// Default constructor
         /// </summary>
-        public SWBillingPage() : base()
+        public HierarchyBillingPage() : base()
         {
             //InitializeComponent();
             ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
@@ -28,7 +28,7 @@ namespace Fasetto.Word
         /// Constructor with specific view model
         /// </summary>
         /// <param name="specificViewModel">The specific view model to use for this page</param>
-        public SWBillingPage(SWBillingPageViewModel specificViewModel) : base(specificViewModel)
+        public HierarchyBillingPage(HierarchyBillingPageViewModel specificViewModel) : base(specificViewModel)
         {
             InitializeComponent();
         }
@@ -40,20 +40,29 @@ namespace Fasetto.Word
         /// <summary>
         /// Fired when the view model changes
         /// </summary>
-        //protected override void OnViewModelChanged()
-        //{
-        //    // Make sure UI exists first
-        //    if (MeterSelection == null)
-        //        return;
+        protected override void OnViewModelChanged()
+        {
+            // Make sure UI exists first
+            if (Hierarchy == null)
+                return;
 
-        //    // Fade in chat message list
-        //    var storyboard = new Storyboard();
-        //    storyboard.AddFadeIn(1, from: true);
-        //    storyboard.Begin(MeterSelection);
+            // Fade in chat message list
+            var storyboard = new Storyboard();
+            storyboard.AddFadeIn(1, from: true);
+            storyboard.Begin(Hierarchy);
 
-        //    // Make the message box focused
-        //    //MessageText.Focus();
-        //}
+
+            //if (MeterSelection == null)
+            //    return;
+
+            //// Fade in chat message list
+            //var storyboard = new Storyboard();
+            //storyboard.AddFadeIn(1, from: true);
+            //storyboard.Begin(MeterSelection);
+
+            // Make the message box focused
+            //MessageText.Focus();
+        }
 
         #endregion
 
@@ -94,21 +103,14 @@ namespace Fasetto.Word
             }
         }
 
+        private void Hierarchy_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+
+        }
+
         private void MeterSelection_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
 
-        }
-
-        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-
-        }
-
-
-        private void SetClient(object sender, System.Windows.RoutedEventArgs e)
-        {
-            //((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod = new BillingPeriodListViewModel(((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedKid);
-            //((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod.MSelectedBillingPeriod = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod;
         }
     }
 }
