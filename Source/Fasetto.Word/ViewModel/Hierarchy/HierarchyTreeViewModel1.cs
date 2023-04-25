@@ -917,7 +917,7 @@ namespace Fasetto.Word
         {
             // Close settings menu
             ViewModelApplication.PopupVisible = false;
-            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
 
 
         }

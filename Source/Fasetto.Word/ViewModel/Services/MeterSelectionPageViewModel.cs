@@ -432,6 +432,7 @@ namespace Fasetto.Word
         ViewModelApplication.SideMenuVisible = true;
         //ViewModelApplication.CurrentSideMenuViewModel = null;
         ViewModelApplication.GoToPage(ApplicationPage.Chat);}
+
         #endregion
     }
 }

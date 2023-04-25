@@ -588,8 +588,11 @@ namespace Fasetto.Word
             mAddElementViewModel.CopyNodeButtonText = null;
             mAddElementViewModel.MoveNodeButtonText = null;
             mAddElementViewModel.HeadingText = "Update Selected Element";
-            
+
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            //ViewModelApplication.CurrentPopupViewModel = null;
+            //ViewModelApplication.CurrentPopupContent = PopupContent.SWBilling;
+            ////ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
         }

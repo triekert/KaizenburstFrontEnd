@@ -319,8 +319,10 @@ namespace Fasetto.Word
         /// </summary>
         public void Populate()
         {
-            BillingPeriod = new BillingPeriodListViewModel(Client.EditedKid);
-            BillingPeriod.MSelectedBillingPeriod = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod;
+            BillingPeriod = new BillingPeriodListViewModel(Client.EditedKid)
+            {
+                MSelectedBillingPeriod = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod
+            };
         }
 
         /// <summary>
@@ -394,7 +396,9 @@ namespace Fasetto.Word
         // Close settings menu
         ViewModelApplication.SideMenuVisible = true;
             //ViewModelApplication.CurrentSideMenuViewModel = null;
-            ViewModelApplication.GoToPage(ApplicationPage.Chat);}
+            ViewModelApplication.GoToPage(ApplicationPage.Chat);
+            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+         }
         #endregion
     }
 }

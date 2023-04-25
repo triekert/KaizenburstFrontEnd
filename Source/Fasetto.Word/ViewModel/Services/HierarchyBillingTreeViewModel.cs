@@ -76,7 +76,7 @@ namespace Fasetto.Word
         public HierarchyBillingTreeViewModel(string hierarchyTable)
         {
             #region Dummy Root HierarchyBillingListDataModel
-            //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
             mHDML = new HierarchyBillingListDataModel();
             mHDM = new HierarchyBillingDataModel
             {
@@ -266,7 +266,10 @@ namespace Fasetto.Word
             //build a tree view, always starting with the root element, which is also the classification for the hierarchy
             mHDML.AddRange(ExpandHierarchyData(mPersist, "00000000-0000-0000-0000-000000000000", "Root"));
             //Refresh the tree view title with the current name of the root element
-            ControlTitle = (mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ShortName;
+            ControlTitle = ((HierarchyBillingTreeViewModel)ViewModelApplication.CurrentControlViewModel).ControlTitle = "Water & Sewerage Billing : FROM " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeStart.ToString("d/MM/yyyy")
+            + " TO " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeEnd.ToString("d/MM/yyyy") + " FOR " +
+
+            (mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ShortName;
 
             //var matches = mPersist.OrderBy(x => x.DateEffective).ToList();
             //foreach (var category in matches)
@@ -469,7 +472,7 @@ namespace Fasetto.Word
         {
             // Close settings menu
             ViewModelApplication.PopupVisible = false;
-            TaskManager.RunAndForget(((HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel).HierarchyAsync);
+            //TaskManager.RunAndForget(((HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel).HierarchyAsync);
             //ViewModelApplication.CurrentSideMenuViewModel = null;
             //TaskManager.RunAndForget(HierarchyAsync);
  

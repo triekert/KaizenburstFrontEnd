@@ -53,10 +53,9 @@ namespace Fasetto.Word
             root = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.KBillingPeriodID;
             mHierarchyTree = new HierarchyBillingTreeViewModel(root);//root);
 
+            ViewModelApplication.CurrentPopupViewModel = mHierarchyTree;
             ViewModelApplication.CurrentControlViewModel = mHierarchyTree;
-            ((HierarchyBillingTreeViewModel)ViewModelApplication.CurrentControlViewModel).ControlTitle = "Water & Sewerage Billing : FROM " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeStart.ToString("d/MM/yyyy")
-            + " TO " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeEnd.ToString("d/MM/yyyy");
-            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = false;
             DataContext = mHierarchyTree;
             InitializeComponent();
@@ -124,11 +123,11 @@ namespace Fasetto.Word
             //mSource =(TreeViewItem)sender;
             if (e.ChangedButton == MouseButton.Left)
             {
-                
+                ViewModelApplication.CurrentSideMenuViewModel =  ViewModelApplication.CurrentSideMenuViewModel;
                 if (((TreeViewItem)sender).IsSelected  && (((TreeViewItem)sender).IsExpanded ||(((HierarchyBillingViewModel)((TreeViewItem)sender).DataContext).Children.Count() == 0)))
                 {
 
-                    //e.Handled = true;
+                    e.Handled = true;
                     //EditHierarchyElement();
                 }
                 //
