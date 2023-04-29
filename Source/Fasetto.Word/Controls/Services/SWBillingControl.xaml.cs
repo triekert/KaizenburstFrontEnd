@@ -153,7 +153,7 @@ namespace Fasetto.Word
             {
                 if (((TreeViewItem)sender).IsSelected)
                 {
-                    AddHierarchyElement();
+                    AddAdjustment();
                 }
             }
             else
@@ -518,6 +518,20 @@ namespace Fasetto.Word
 
         #endregion // Search Logic
         #region Element manipulation
+
+        /// <summary>
+        /// Use Popup View to add a Hierarchy Element
+        /// </summary>
+        private void AddAdjustment()
+        {
+            //Prepopulate
+            mDraggedItem = (HierarchyBillingViewModel)tvParameters.SelectedItem;
+            if (mDraggedItem == null)
+                return;
+            ViewModelApplication.PopupVisible = true;
+            //ViewModelApplication.SettingsMenuVisible = true;
+        }
+
         /// <summary>
         /// Use Popup View to add a Hierarchy Element
         /// </summary>
@@ -527,41 +541,42 @@ namespace Fasetto.Word
             mDraggedItem = (HierarchyBillingViewModel)tvParameters.SelectedItem;
             if (mDraggedItem == null)
                 return;
-            var results = mHierarchyTree.mPersist.Where(x => x.KCategoryID == mDraggedItem.ParentCategoryID).OrderBy(x => x.ShortName).ToList();
-            var mPage = "";
-            //if (results.Count > 0)
-            // mPage = results.FirstOrDefault().Page;
-            var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-            mAddElementViewModel.ShortName.OriginalText = "New Element Name";
-            mAddElementViewModel.Description.OriginalText = "Description of New Element";
-            mAddElementViewModel.ShortName.EditedText = "New Element Name";
-            mAddElementViewModel.Description.EditedText = "Description of New Element";
-            //if (mPage == "Hierarchy")
-            //    mAddElementViewModel.Page = mPage;
-            //else
-            //    mAddElementViewModel.Page = "";
-            mAddElementViewModel.Root.OriginalText = "Element Root";
-            mAddElementViewModel.Root.EditedText = "Element Root";
-            //mAddElementViewModel.IsMenuItem = mDraggedItem.IsMenuItem;
-            mAddElementViewModel.ParentShortName = mDraggedItem.ShortName;
-            mAddElementViewModel.ParentCategoryID = mDraggedItem.KCategoryID;
-            mAddElementViewModel.KCategoryID = Guid.NewGuid().ToString().ToUpper();
-            mAddElementViewModel.DateEffective = DateTime.Today;
-            mAddElementViewModel.DateDiscontinued = new DateTime(9999,12,31);
-            mAddElementViewModel.AddNodeButtonText = "Add new Hierarchy Element";
-            mAddElementViewModel.EditNodeButtonText = null;
-            mAddElementViewModel.DeleteNodeButtonText = null;
-            mAddElementViewModel.CopyNodeButtonText = null;
-            mAddElementViewModel.MoveNodeButtonText = null;
+            //var results = mHierarchyTree.mPersist.Where(x => x.KCategoryID == mDraggedItem.ParentCategoryID).OrderBy(x => x.ShortName).ToList();
+            //var mPage = "";
+            ////if (results.Count > 0)
+            //// mPage = results.FirstOrDefault().Page;
+            //var mAddElementViewModel = (HierarchyBillingViewModel)ViewModelApplication.CurrentPopupViewModel;
+            //mAddElementViewModel.ShortName.OriginalText = "New Element Name";
+            //mAddElementViewModel.Description.OriginalText = "Description of New Element";
+            //mAddElementViewModel.ShortName.EditedText = "New Element Name";
+            //mAddElementViewModel.Description.EditedText = "Description of New Element";
+            ////if (mPage == "Hierarchy")
+            ////    mAddElementViewModel.Page = mPage;
+            ////else
+            ////    mAddElementViewModel.Page = "";
+            //mAddElementViewModel.Root.OriginalText = "Element Root";
+            //mAddElementViewModel.Root.EditedText = "Element Root";
+            ////mAddElementViewModel.IsMenuItem = mDraggedItem.IsMenuItem;
+            //mAddElementViewModel.ParentShortName = mDraggedItem.ShortName;
+            //mAddElementViewModel.ParentCategoryID = mDraggedItem.KCategoryID;
+            //mAddElementViewModel.KCategoryID = Guid.NewGuid().ToString().ToUpper();
+            //mAddElementViewModel.DateEffective = DateTime.Today;
+            //mAddElementViewModel.DateDiscontinued = new DateTime(9999,12,31);
+            //mAddElementViewModel.AddNodeButtonText = "Add new Hierarchy Element";
+            //mAddElementViewModel.EditNodeButtonText = null;
+            //mAddElementViewModel.DeleteNodeButtonText = null;
+            //mAddElementViewModel.CopyNodeButtonText = null;
+            //mAddElementViewModel.MoveNodeButtonText = null;
 
-            mAddElementViewModel.HeadingText= "Add new Hierarchy Element";
+            //mAddElementViewModel.HeadingText= "Add new Hierarchy Element";
             
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
         }
+
         /// <summary>
-        /// Use Popup view to edit existing Hiearchy Element
+        /// Use Popup view to edit existing Hierarchy Element
         /// </summary>
         private void EditHierarchyElement()
         {

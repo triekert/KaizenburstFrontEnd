@@ -994,7 +994,7 @@ namespace Fasetto.Word.Web.Server
 
 
 
-            var SqlString = "EXEC [Services].[spGetSWConsumerBilling] 	 @fBillingPeriodID =  '" + model + "'" ;
+            var SqlString = "EXEC [Services].[spGetSWConsumerBilling1] 	 @fBillingPeriodID =  '" + model + "'" ;
             ;
             try
             {
@@ -1023,6 +1023,30 @@ namespace Fasetto.Word.Web.Server
                         Startreading = (decimal)row[11],
                         TimeEnd = (DateTime)row[12],
                         Endreading = (decimal)row[13],
+                        DatePeriodStart = (DateTime)row[14],
+                        DatePeriodEnd = (DateTime)row[15],
+                        Volume = (decimal)row[16],
+                        VolumePredicted = (decimal)row[17],
+                        ThresholdW = (decimal)row[18],
+                        Basew = (decimal)row[19],
+                        Tariffw = (decimal)row[20],
+                        CostWater = (decimal)row[21],
+                        ThresholdS = (decimal)row[22],
+                        Bases = (decimal)row[23],
+                        Tariffs = (decimal)row[24],
+                        CostSewer = (decimal)row[25]                        ,
+                        DatePeriodStartN = (DateTime)row[26]                        ,
+                        DatePeriodEndN = (DateTime)row[27]                        ,
+                        VolumeN = (decimal)row[28]                        ,
+                        VolumePredictedN = (decimal)row[29],
+                        ThresholdWN = (decimal)row[30],
+                        BasewN = (decimal)row[31],
+                        TariffwN = (decimal)row[32],
+                        CostWaterN = (decimal)row[33],
+                        ThresholdSN = (decimal)row[34],
+                        BasesN = (decimal)row[35]                        ,
+                        TariffsN = (decimal)row[36],
+                        CostSewerN = (decimal)row[37]
                     };
                     results.Add(u);
 

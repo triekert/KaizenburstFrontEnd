@@ -99,6 +99,126 @@ namespace Fasetto.Word
         /// </summary>
         public decimal Endreading => mElement.Endreading;
 
+        /// <summary>
+        /// Start of period relevant to first Calendar month
+        /// </summary>
+        public DateTime DatePeriodStart => mElement.DatePeriodStart;
+
+        /// <summary>
+        ///END of period relevant to first Calendar month
+        /// </summary>
+        public DateTime DatePeriodEnd => mElement.DatePeriodEnd;
+
+        /// <summary>
+        /// Total Water Consumption for period In first Calendar month
+        /// </summary>
+        public decimal Volume => mElement.Endreading;
+
+        /// <summary>
+        /// Calculated/Predicted Water Consumption for whole first Calendar month
+        /// </summary>
+        public decimal VolumePredicted => mElement.VolumePredicted;
+
+        /// <summary>
+        /// Threshold level of water consumption linked to base cost in next variable
+        /// </summary>
+        public decimal ThresholdW => mElement.ThresholdW;
+
+        /// <summary>
+        /// Base cost for sewerage corresponding to threshold
+        /// </summary>
+        public decimal Basew => mElement.Basew;
+
+        /// <summary>
+        /// Tariff per each unit exceeding base
+        /// </summary>
+        public decimal Tariffw => mElement.Tariffw;
+
+        /// <summary>
+        /// Pro rata cost of water for billing period portion in month
+        /// </summary>
+        public decimal CostWater => mElement.CostWater;
+
+        /// <summary>
+        /// Threshold level of water(sewer) consumption linked to base cost in next variable
+        /// </summary>
+        public decimal ThresholdS => mElement.ThresholdS;
+
+        /// <summary>
+        /// Base cost for sewerage corresponding to threshold
+        /// </summary>
+        public decimal Bases => mElement.Bases;
+
+        /// <summary>
+        /// Tariff per each unit exceeding base
+        /// </summary>
+        public decimal Tariffs => mElement.Tariffs;
+
+        /// <summary>
+        /// Pro rata cost of Sewerage for billing period portion in month
+        /// </summary>
+        public decimal CostSewer => mElement.CostSewer;
+
+        /// <summary>
+        /// Start of period relevant to first Calendar month
+        /// </summary>
+        public DateTime DatePeriodStartN => mElement.DatePeriodStartN;
+
+        /// <summary>
+        ///END of period relevant to first Calendar month
+        /// </summary>
+        public DateTime DatePeriodEndN => mElement.DatePeriodEndN;
+
+        /// <summary>
+        /// Total Water Consumption for period In first Calendar month
+        /// </summary>
+        public decimal VolumeN => mElement.VolumeN;
+
+        /// <summary>
+        /// Calculated/Predicted Water Consumption for whole first Calendar month
+        /// </summary>
+        public decimal VolumePredictedN => mElement.VolumePredictedN;
+
+        /// <summary>
+        /// Threshold level of water consumption linked to base cost in next variable
+        /// </summary>
+        public decimal ThresholdWN => mElement.ThresholdWN;
+
+        /// <summary>
+        /// Base cost for sewerage corresponding to threshold
+        /// </summary>
+        public decimal BasewN => mElement.BasewN;
+
+        /// <summary>
+        /// Tariff per each unit exceeding base
+        /// </summary>
+        public decimal TariffwN => mElement.TariffwN;
+
+        /// <summary>
+        /// Pro rata cost of water for billing period portion in month
+        /// </summary>
+        public decimal CostWaterN => mElement.CostWaterN;
+
+        /// <summary>
+        /// Threshold level of water(sewer) consumption linked to base cost in next variable
+        /// </summary>
+        public decimal ThresholdSN => mElement.ThresholdSN;
+
+        /// <summary>
+        /// Base cost for sewerage corresponding to threshold
+        /// </summary>
+        public decimal BasesN => mElement.BasesN;
+
+        /// <summary>
+        /// Tariff per each unit exceeding base
+        /// </summary>
+        public decimal TariffsN => mElement.TariffsN;
+
+        /// <summary>
+        /// Pro rata cost of Sewerage for billing period portion in month
+        /// </summary>
+        public decimal CostSewerN => mElement.CostSewerN;
+
 
         /// <summary>
         /// A list of all children containd inside this item
