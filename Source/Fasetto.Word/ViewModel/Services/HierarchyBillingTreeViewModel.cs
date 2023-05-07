@@ -229,7 +229,7 @@ namespace Fasetto.Word
                     // We are done
                     return;
 
-                // OK successfully registered (and logged in)... now get aprpropriate tree view data
+                // OK successfully registered (and logged in)... now get appropriate tree view data
                 //for now; keep a snapshot of persisted data
                 mOriginal = result.ServerResponse.Response;
                 ;
@@ -268,7 +268,6 @@ namespace Fasetto.Word
             //Refresh the tree view title with the current name of the root element
             ControlTitle = ((HierarchyBillingTreeViewModel)ViewModelApplication.CurrentControlViewModel).ControlTitle = "Water & Sewerage Billing : FROM " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeStart.ToString("d/MM/yyyy")
             + " TO " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeEnd.ToString("d/MM/yyyy") + " FOR " +
-
             (mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ShortName;
 
             //var matches = mPersist.OrderBy(x => x.DateEffective).ToList();
@@ -351,6 +350,8 @@ namespace Fasetto.Word
                     BasesN = item.BasesN,
                     TariffsN = item.TariffsN,
                     CostSewerN = item.CostSewerN,
+                    Adjustment = item.Adjustment,
+                    AdjustmentN = item.AdjustmentN,
 
 
                     //TotalConsumption = item.TotalConsumption,

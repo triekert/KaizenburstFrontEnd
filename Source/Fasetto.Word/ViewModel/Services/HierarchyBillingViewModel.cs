@@ -219,6 +219,17 @@ namespace Fasetto.Word
         /// </summary>
         public decimal CostSewerN => mElement.CostSewerN;
 
+        /// <summary>
+        ///Adjustment related to the portion of consumption in the first month
+        /// </summary>
+        public decimal Adjustment => mElement.Adjustment;
+
+
+        /// <summary>
+        ///Adjustment related to the portion of consumption in the Next month
+        /// </summary>
+        public decimal AdjustmentN => mElement.AdjustmentN;
+
 
         /// <summary>
         /// A list of all children containd inside this item

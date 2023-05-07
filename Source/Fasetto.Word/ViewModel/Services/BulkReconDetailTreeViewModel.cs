@@ -49,6 +49,9 @@ namespace Fasetto.Word
         public string mBulkMeter;
         public DateTime mTimeStart;
         public DateTime mTimeEnd;
+        /// <summary>
+        /// Store View Model of current popup to allow reverse navigation
+        /// </summary>
         public object PriorPopupViewModel { get; set; }
         //public HierarchyElementViewModel mElement;
 
@@ -979,7 +982,7 @@ namespace Fasetto.Word
         //    await RunCommandAsync(() => BulkReconBuildIsRunning, async () =>
         //    {
 
-        //        // Store single transcient instance of client data store
+        //        // Store single transient instance of client data store
         //        var scopedClientDataStore = ClientDataStore;
 
         //        // Update values from local cache

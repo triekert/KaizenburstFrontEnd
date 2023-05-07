@@ -1,5 +1,6 @@
 ﻿using Fasetto.Word.Core;
 using System;
+using System.Activities.Expressions;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -51,6 +52,7 @@ namespace Fasetto.Word
 
             var root = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
             root = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.KBillingPeriodID;
+            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
             mHierarchyTree = new HierarchyBillingTreeViewModel(root);//root);
 
             ViewModelApplication.CurrentPopupViewModel = mHierarchyTree;
@@ -528,6 +530,21 @@ namespace Fasetto.Word
             mDraggedItem = (HierarchyBillingViewModel)tvParameters.SelectedItem;
             if (mDraggedItem == null)
                 return;
+            var mCurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+
+            //var mSWAdjustViewModel = new SWAdjustViewModel();
+
+            ViewModelApplication.CurrentPopupContent = PopupContent.SWAdjust;
+            var MAdjustmentVM = (SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel;
+            MAdjustmentVM.PriorPopupViewModel = mCurrentPopupViewModel;
+            MAdjustmentVM.KCategoryID = mDraggedItem.KCategoryID;
+            MAdjustmentVM.DateAdjustment = mDraggedItem.DatePeriodStart;
+            MAdjustmentVM.DateStart = mDraggedItem.DatePeriodStart;
+            MAdjustmentVM.DateEnd = mDraggedItem.DatePeriodEndN;
+            MAdjustmentVM.HeadingText = MAdjustmentVM.HeadingText + mDraggedItem.ShortName;
+            
+
+            //ViewModelApplication.CurrentPopupViewModel = mSWAdjustViewModel;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
         }

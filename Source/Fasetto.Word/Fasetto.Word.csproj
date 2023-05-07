@@ -154,6 +154,9 @@
     <Compile Include="Controls\Services\BulkMeterSelectionControl.cs">
       <DependentUpon>BulkMeterSelectionControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Services\SWAdjustControl.cs">
+      <DependentUpon>SWAdjustControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Services\SWBillingControl.xaml.cs" />
     <Compile Include="Controls\Services\MeterSelectionControl.xaml.cs" />
     <Compile Include="Controls\SettingsControl.xaml.cs">
@@ -260,6 +263,7 @@
     <Compile Include="ViewModel\Services\HierarchyBillingPageViewModel .cs" />
     <Compile Include="ViewModel\Services\HierarchyBillingTreeViewModel.cs" />
     <Compile Include="ViewModel\Services\HierarchyBillingViewModel.cs" />
+    <Compile Include="ViewModel\Services\SWAdjustViewModel.cs" />
     <Compile Include="ViewModel\Services\SWBillingPageViewModel.cs" />
     <Compile Include="ViewModel\Services\MeterSelectionPageViewModel.cs" />
     <Compile Include="ViewModel\Services\BulkReconDetailTreeViewModel.cs" />
@@ -390,6 +394,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Services\BulkMeterSelectionControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Services\SWAdjustControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

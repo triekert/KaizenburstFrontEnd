@@ -24,7 +24,7 @@ namespace Fasetto.Word.Core
 
 
         /// <summary>
-        ///Number of meters for which no readings currently received for  TImeSlot
+        ///Number of meters for which no readings currently received for  TimeSlot
         /// </summary>
         public int Missing { get; set; }
 

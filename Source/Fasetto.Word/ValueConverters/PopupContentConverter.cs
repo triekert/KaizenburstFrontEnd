@@ -60,6 +60,11 @@ namespace Fasetto.Word
                     var mSWBillingControl = new SWBillingControl();
                     return mSWBillingControl;
 
+
+                case PopupContent.SWAdjust:
+                    var mSWAdjustControl = new SWAdjustControl();
+                    return mSWAdjustControl;
+
                 // Unknown
                 default:
                     return "No UI yet, sorry :)";

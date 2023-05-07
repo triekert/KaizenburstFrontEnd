@@ -26,6 +26,10 @@
 
             </Grid.RowDefinitions>
 
+			<Grid.ColumnDefinitions>
+				
+			</Grid.ColumnDefinitions>
+
             <!-- Popup Overlay -->
             <!--<Border Background="{DynamicResource ForegroundLightBrush}" 
                     Grid.RowSpan="2"

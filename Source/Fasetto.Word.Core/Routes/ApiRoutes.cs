@@ -116,12 +116,18 @@
 
 
         /// <summary>
-        /// The route to the accessing of Detail Water Meter readings 
+        /// The route to the accessing of S&W Billing information 
         /// </summary>
         /// 
 
         public const string ReturnSWBilling = "api/Services/SWBilling";
-        
+
+        /// <summary>
+        /// The route to the accessing of Detail Water Meter readings 
+        /// </summary>
+        /// 
+
+        public const string BillingPeriodAdjustment = "api/Services/BillingPeriodAdjustment";
 
 
 

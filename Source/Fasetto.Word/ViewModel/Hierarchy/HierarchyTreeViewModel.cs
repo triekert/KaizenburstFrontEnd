@@ -919,7 +919,7 @@ namespace Fasetto.Word
             TaskManager.RunAndForget(((HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel).HierarchyAsync);
             //ViewModelApplication.CurrentSideMenuViewModel = null;
             //TaskManager.RunAndForget(HierarchyAsync);
- 
+
             ViewModelApplication.GoToPage(ApplicationPage.Chat);
 
 

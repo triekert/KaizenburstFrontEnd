@@ -65,7 +65,14 @@
         /// <summary>
         /// Hierarchy Selection Control
         /// </summary>
-        SWBilling = 11
+        SWBilling = 11,
+
+
+
+        /// <summary>
+        /// Hierarchy Selection Control
+        /// </summary>
+        SWAdjust = 12
 
     }
 }

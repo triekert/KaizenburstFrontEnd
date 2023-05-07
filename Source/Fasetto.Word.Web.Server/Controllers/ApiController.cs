@@ -578,7 +578,7 @@ namespace Fasetto.Word.Web.Server
 
 
         #region Services
-         #region LoadReadings
+        #region LoadReadings
         /// <summary>
         /// Retrieves meter readings from Client API and updates database
         /// </summary>
@@ -714,8 +714,9 @@ namespace Fasetto.Word.Web.Server
 
                 return new ApiResponse();
         }
-            #endregion
         #endregion
+        #endregion LoadReadings
+        #region BulkRecon
         #region ReturnBulkRecon
         /// <summary>
         /// Retrieves aggregate  water consumption of Bulk and serviced consumer meters
@@ -895,7 +896,10 @@ namespace Fasetto.Word.Web.Server
 
 
         }
-
+        #endregion BulkReconDetail
+        #endregion BulkRecon
+        #region Billing
+        #region BillingPeriods
 
         [Route(ApiRoutes.ReturnBillingPeriods)]
         public async Task<ApiResponse> ReturnBillingPeriodsAsync([FromBody] string model)
@@ -969,8 +973,8 @@ namespace Fasetto.Word.Web.Server
 
         }
 
-
-
+        #endregion BillingPeriods
+        #region BillingDetail
         [Route(ApiRoutes.ReturnSWBilling)]
         public async Task<ApiResponse> ReturnSWBillingAsync([FromBody] string model)
 
@@ -994,7 +998,7 @@ namespace Fasetto.Word.Web.Server
 
 
 
-            var SqlString = "EXEC [Services].[spGetSWConsumerBilling1] 	 @fBillingPeriodID =  '" + model + "'" ;
+            var SqlString = "EXEC [Services].[spGetSWConsumerBilling1] 	 @fBillingPeriodID =  '" + model + "'";
             ;
             try
             {
@@ -1034,19 +1038,21 @@ namespace Fasetto.Word.Web.Server
                         ThresholdS = (decimal)row[22],
                         Bases = (decimal)row[23],
                         Tariffs = (decimal)row[24],
-                        CostSewer = (decimal)row[25]                        ,
-                        DatePeriodStartN = (DateTime)row[26]                        ,
-                        DatePeriodEndN = (DateTime)row[27]                        ,
-                        VolumeN = (decimal)row[28]                        ,
+                        CostSewer = (decimal)row[25],
+                        DatePeriodStartN = (DateTime)row[26],
+                        DatePeriodEndN = (DateTime)row[27],
+                        VolumeN = (decimal)row[28],
                         VolumePredictedN = (decimal)row[29],
                         ThresholdWN = (decimal)row[30],
                         BasewN = (decimal)row[31],
                         TariffwN = (decimal)row[32],
                         CostWaterN = (decimal)row[33],
                         ThresholdSN = (decimal)row[34],
-                        BasesN = (decimal)row[35]                        ,
+                        BasesN = (decimal)row[35],
                         TariffsN = (decimal)row[36],
-                        CostSewerN = (decimal)row[37]
+                        CostSewerN = (decimal)row[37],
+                        Adjustment= (decimal)row[38],
+                        AdjustmentN= (decimal)row[40],
                     };
                     results.Add(u);
 
@@ -1057,11 +1063,11 @@ namespace Fasetto.Word.Web.Server
 
                     Response = results
                 };
-            #endregion sql query
+                #endregion sql query
 
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // Log error
                 //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
@@ -1070,30 +1076,106 @@ namespace Fasetto.Word.Web.Server
                 throw;
             }
 
-
-
-
         }
-
-        #endregion Services
-
-        #endregion Services
-
-
-
-        #region Hierarchy
-
+        #endregion BillingDetail
+        #region BillingPeriodAdjustment
         /// <summary>
-        /// Returns Hierarchy for Navigation
+        /// Retrieves aggregate  water consumption of Bulk and serviced consumer meters
         /// </summary>
         /// <param name="model">The search credentials</param>
         /// <returns>
-        ///     Returns a list of hiearchy items if successful, 
+        ///     Returns the water consumption per selected Bulk Metr and period if successful, 
         ///     otherwise returns the error reasons for the failure
         /// </returns>
 
+        [Route(ApiRoutes.BillingPeriodAdjustment)]
+        public async Task<ApiResponse> BillingPeriodAdjustmentAsync([FromBody] ParameterBillingAdjustmentApiModel model)
 
-        [Route(ApiRoutes.ReturnHierarchy)]
+        {
+            #region Get User
+
+            // Get the current user
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            // If we have no user...
+            if (user == null)
+                return new ApiResponse
+                {
+                    // TODO: Localization
+                    ErrorMessage = "User not found"
+                };
+
+            #endregion Get User
+
+            #region sql query
+
+            var para = new SqlParameter[4];
+            para[0] = new SqlParameter("@fPropertyID", SqlDbType.UniqueIdentifier);
+            para[1] = new SqlParameter("@fBillingPeriodID", SqlDbType.UniqueIdentifier);
+            para[2] = new SqlParameter("@DateStart", SqlDbType.DateTime);
+            para[3] = new SqlParameter("@Adjustment", SqlDbType.Int);
+
+
+
+
+
+            var SqlString = "UPDATE [Services].[Billing] SET Adjustment = @Adjustment WHERE fPropertyID = @fPropertyID AND DatePeriodStart = @DateStart AND fBillingPeriodID = @fBillingPeriodID";
+
+            //populate adjustment value and identifier fiels
+            para[0].Value = new Guid(model.KCategoryID);
+            para[1].Value = new Guid(model.KBillingPeriodID);
+            para[2].Value = model.DateStart;
+            para[3].Value = model.Adjustment;
+
+
+            try
+
+            {
+                // Try and run the task
+                _ = await ExecuteAsync(SqlString, para);
+                #endregion sql query      
+            }
+
+            catch (Exception ex)
+            {
+                // Log error
+                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                // Throw it as normal
+                throw;
+            }
+            var results = new HierarchyResultListApiModel();
+            return new ApiResponse<HierarchyResultListApiModel>
+            {
+                Response = results
+            };
+        }
+
+
+     #endregion BillingPeriodAdjustment
+
+
+
+    #endregion Billing
+    //#endregion Services
+
+    #endregion Services
+
+
+
+    #region Hierarchy
+
+    /// <summary>
+    /// Returns Hierarchy for Navigation
+    /// </summary>
+    /// <param name="model">The search credentials</param>
+    /// <returns>
+    ///     Returns a list of hiearchy items if successful, 
+    ///     otherwise returns the error reasons for the failure
+    /// </returns>
+
+
+    [Route(ApiRoutes.ReturnHierarchy)]
 
         public async Task<ApiResponse<HierarchyResultListApiModel>> ReturnHierarchyAsync([FromBody]string model)
         {

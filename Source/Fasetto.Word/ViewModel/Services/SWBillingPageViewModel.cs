@@ -294,7 +294,7 @@ namespace Fasetto.Word
         /// </summary>
         public void SWBilling()
         {
-            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             //To do: Lookup to be user rights and available options driven
             //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
             if (SelectedBillingPeriod.KBillingPeriodID == null)
@@ -304,8 +304,19 @@ namespace Fasetto.Word
                 MessageBox.Show($"First select a valid Billing Period to proceed...");
                 return;
             };
+            //
+            //if (SelectedBillingPeriod.KBillingPeriodID != ((HierarchyBillingTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBillingPeriod)
+            //{ ViewModelApplication.CurrentPopupContent = PopupContent.AddElement; };
+            //
             //ShortName = Meter.EditedName;
+            if ((ViewModelApplication.CurrentPopupViewModel).GetType().Name == "HierarchyBillingTreeViewModel")
+            {
+                if (SelectedBillingPeriod.KBillingPeriodID != ((HierarchyBillingTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBillingPeriod)
+                { ViewModelApplication.CurrentPopupContent = PopupContent.AddElement; 
+                };
+            };
 
+            var MType = (ViewModelApplication.CurrentPopupViewModel).GetType().Name;
             //ViewModelApplication.CurrentPopupViewModel = new HierarchyBillingTreeViewModel(SelectedBillingPeriod.KBillingPeriodID);
             //((HierarchyBillingTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Water & Sewerage Billing : FROM " + SelectedBillingPeriod.TimeStart.ToString("d/MM/yyyy")
             //    + " TO " + SelectedBillingPeriod.TimeEnd.ToString("d/MM/yyyy");
@@ -392,13 +403,15 @@ namespace Fasetto.Word
         /// Closes the search dialog
         /// </summary>
         public void Close()
-        { 
-        // Close settings menu
-        ViewModelApplication.SideMenuVisible = true;
+        {
+            // Close settings menu
+            //ViewModelApplication.SideMenuVisible = true;
             //ViewModelApplication.CurrentSideMenuViewModel = null;
+            ViewModelApplication.PopupVisible = false;
             ViewModelApplication.GoToPage(ApplicationPage.Chat);
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-         }
+            ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+        }
         #endregion
     }
 }
