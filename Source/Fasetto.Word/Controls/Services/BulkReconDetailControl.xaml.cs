@@ -105,18 +105,22 @@ namespace Fasetto.Word
             {
                 //_ = (BulkReconViewModel)(BulkRecon.SelectedItems).OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault()).TimeSlotStart;
                 ViewModelApplication.PopupVisible = false;
+                var cellInfos = BulkReconDetail.SelectedCells;
+                var tempst = cellInfos[0].Column.Header;
+                var tempBR = new ObservableCollection<BulkReconDetailViewModel>();
+                foreach (var tBR in cellInfos)
+                    tempBR.Add((BulkReconDetailViewModel)tBR.Item);
 
-                var  tempBR = new ObservableCollection<BulkReconDetailViewModel>();
-                foreach (var tBR in BulkReconDetail.SelectedItems)
-                    tempBR.Add((BulkReconDetailViewModel)tBR);
                 var TimeStart=tempBR.OrderBy(x=>x.TimeStart).ToList().FirstOrDefault().TimeStart;
                 var TimeEnd = tempBR.OrderByDescending(x => x.TimeEnd).ToList().FirstOrDefault().TimeEnd;
                 var BulkMeter = tempBR.OrderByDescending(x => x.TimeStart).ToList().FirstOrDefault().BulkMeter;
                 var ShortName = tempBR.OrderByDescending(x => x.TimeStart).ToList().FirstOrDefault().ShortName;
+                var mDateReference = ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).DateReference.EditedDateTime;
 
                 //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
 
-                ViewModelApplication.CurrentPopupViewModel = new BulkReconDetailTreeViewModel(BulkMeter, TimeStart, TimeEnd);
+                ViewModelApplication.CurrentPopupViewModel = new BulkReconDetailTreeViewModel(BulkMeter, TimeStart, TimeEnd,
+                    ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODStart, ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODEnd,mDateReference);
 
                 ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
                 var mCurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
@@ -147,14 +151,21 @@ namespace Fasetto.Word
             var prematch = tempBR.Where(x => x.BulkMeter == ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBulkMeter).ToList();
             var mBulkReading = tempBR.Where(x => x.BulkMeter == ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBulkMeter).ToList().FirstOrDefault().Volume;
             var matches = tempBR.Where(x => x.BulkMeter != ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBulkMeter).ToList();
-            var mConsumerReading = 0.00;
+            decimal mConsumerReading = 0;
             foreach (var category in matches)
-                mConsumerReading += category.Volume;
+                mConsumerReading +=category.Volume;
             var timeDiff = (((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTimeEnd - ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTimeStart);
-            var mHrs =timeDiff.TotalHours;
-            var mDifference = mBulkReading - mConsumerReading;
+            var mHrs = (decimal)timeDiff.TotalHours;
+
+            if ((decimal)(((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODEnd-((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODStart) !=0)
+
+            { mHrs = (((decimal)(((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODEnd - ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODStart)) +1) / 24 * mHrs;
+            
+            };
+
+         var mDifference = mBulkReading - mConsumerReading;
             var mDiscrepancyRate = Math.Round((mDifference / mHrs),2);
-            MessageBox.Show($"Volume through bulk: {mBulkReading} \n Aggregate consumer volume:  {mConsumerReading}\n Volume difference:  {mDifference} \n Mismatch Rate per Hour: {mDiscrepancyRate}");
+            MessageBox.Show($"Volume through bulk: {mBulkReading} \n Aggregate consumer volume:  {mConsumerReading}\n Volume difference:  {mDifference}\n Hours of Consumption: {Math.Round(mHrs,2)} \n Mismatch Rate per Hour: {mDiscrepancyRate}");
         }
         private void TreeView_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {

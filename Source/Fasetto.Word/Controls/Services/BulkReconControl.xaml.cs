@@ -96,15 +96,29 @@ namespace Fasetto.Word
                 //_ = (BulkReconViewModel)(BulkRecon.SelectedItems).OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault()).TimeSlotStart;
                 //ViewModelApplication.PopupVisible = false;
                 //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+                var cellInfos = BulkRecon.SelectedCells;
+                var tempst = cellInfos[0].Column.Header;
+                //var tempBR = new ObservableCollection<BulkReconViewModel>();
+                //
+                //    //foreach (var tBR in BulkRecon.SelectedItems)
+                //    tempBR.Add((BulkReconViewModel)tBR.Item);
+
+
                 var tempBR = new ObservableCollection<BulkReconViewModel>();
-                foreach (var tBR in BulkRecon.SelectedItems)
-                    tempBR.Add((BulkReconViewModel)tBR);
+                //foreach (var tBR in BulkRecon.SelectedItems)
+                foreach (var tBR in cellInfos)
+                    tempBR.Add((BulkReconViewModel)tBR.Item);
                 var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
                 var mTimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart.AddMinutes(30);
                 var mBulkMeter = tempBR.OrderByDescending(x => x.BulkMeter).ToList().FirstOrDefault().BulkMeter;
                 var ShortName = tempBR.OrderByDescending(x => x.ShortName).ToList().FirstOrDefault().ShortName;
+                var mTODStart = ((BulkReconTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODStart;
+                var mTODEnd = ((BulkReconTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODEnd;
+                var mDateReference = ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).DateReference.EditedDateTime;
+                //TO DO
 
-                ViewModelApplication.CurrentPopupViewModel = new BulkReconDetailTreeViewModel(mBulkMeter, mTimeStart, mTimeEnd);
+                ViewModelApplication.CurrentPopupViewModel = new BulkReconDetailTreeViewModel(mBulkMeter, mTimeStart, mTimeEnd,
+                   mTODStart, mTODEnd,mDateReference);
 
                 ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
                 ViewModelApplication.PopupVisible = false;
@@ -119,8 +133,9 @@ namespace Fasetto.Word
         private void DataGridRow_MouseRightClick(object sender, MouseButtonEventArgs e)
         {
             var tempBR = new ObservableCollection<BulkReconViewModel>();
-            foreach (var tBR in BulkRecon.SelectedItems)
+            foreach (var tBR in BulkRecon.ItemsSource)
                 tempBR.Add((BulkReconViewModel)tBR);
+
             var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
             var mTimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart.AddMinutes(30);
             MessageBox.Show($" timeslot ends at {mTimeEnd}", $" The timeslot selected starts at {mTimeStart}");

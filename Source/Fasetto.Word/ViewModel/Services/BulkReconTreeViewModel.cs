@@ -46,7 +46,8 @@ namespace Fasetto.Word
         public BulkReconViewModel mBRVM;
         public ParameterBulkReconApiModel mRequest;
         public string mBulkMeter;
-
+        public int mTODStart;
+        public int mTODEnd;
         //public HierarchyElementViewModel mElement;
 
         //IEnumerator<HierarchyManagementViewModel> mMatchingCategoryEnumerator;
@@ -76,7 +77,7 @@ namespace Fasetto.Word
         /// <param name="hierarchyTable"></param>
         /// The hierarchyTable passed through as a paremeter identifies the specific hierarchy set to be retrieved
         /// from persistent s
-        public BulkReconTreeViewModel(string bulkMeter, DateTime timeStart, DateTime timeEnd)
+        public BulkReconTreeViewModel(string bulkMeter, DateTime timeStart, DateTime timeEnd, int TODStart, int TODEnd,DateTime dateReference)
         {
             #region Build HierarchyViewCollection
             BulkRecon = new ObservableCollection<BulkReconViewModel>();
@@ -99,14 +100,20 @@ namespace Fasetto.Word
             { 
                 BulkMeter = bulkMeter,
                 TimeStart = timeStart,
-                TimeEnd = timeEnd
+                TimeEnd = timeEnd,
+                DateReference = dateReference,
+                TODStart = TODStart,
+                TODEnd = TODEnd,
             };
 
 
             //mTableName = hierarchyTable;
             #endregion
             //retrieve hierarchy from persistent storage on server
-            //To Do: Add mTableName as parameter when calling HiearchyAsync to populate hierarchy
+            //To Do: Add mTableName as parameter when calling HierarchyAsync to populate hierarchy
+
+            mTODStart = TODStart;
+            mTODEnd = TODEnd;
             TaskManager.RunAndForget(BulkReconAsync);
 
 

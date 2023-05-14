@@ -105,7 +105,7 @@
         <DataGrid x:Name="BulkRecon" Grid.Row="3"  ItemsSource="{Binding BulkRecon}" 
                   HeadersVisibility="All" RenderTransformOrigin="0.5,0.5"       GridLinesVisibility="None" 
                     AutoGenerateColumns="False" AlternatingRowBackground="Aqua"
-                    SelectionMode="Extended" SelectionUnit="FullRow"  VerticalAlignment="Center"  HorizontalAlignment="Center" HorizontalContentAlignment="Center"
+                    SelectionMode="Extended" SelectionUnit="Cell"  VerticalAlignment="Center"  HorizontalAlignment="Center" HorizontalContentAlignment="Center"
                   >
             <!--<DataGrid.ColumnHeaderStyle>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
@@ -143,13 +143,13 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header ="Bulk Reading" HeaderStyle="{StaticResource ColumnHeaderStyle}"
+                <DataGridTextColumn Header ="Volume In" HeaderStyle="{StaticResource ColumnHeaderStyle}"
                                     Binding="{Binding VolumeIn}"/>
-                <DataGridTextColumn Header ="Consumed" HeaderStyle="{StaticResource ColumnHeaderStyle}"
+                <DataGridTextColumn Header ="Volume Out" HeaderStyle="{StaticResource ColumnHeaderStyle}"
                                     Binding="{Binding VolumeOut}"/>
-                <DataGridTextColumn Header ="Mismatch" HeaderStyle="{StaticResource ColumnHeaderStyle}" 
+                <DataGridTextColumn Header ="Delta" HeaderStyle="{StaticResource ColumnHeaderStyle}" 
                                     Binding="{Binding VolumeDelta}"/>
-                <DataGridTextColumn Header ="MovingAvgDelta" HeaderStyle="{StaticResource ColumnHeaderStyle}"
+                <DataGridTextColumn Header ="MovAvgDelta" HeaderStyle="{StaticResource ColumnHeaderStyle}"
                                     Binding="{Binding  MovingAvgDelta}"/>
                 <DataGridTextColumn Header ="Perc Delta" HeaderStyle="{StaticResource ColumnHeaderStyle}"
                                     Binding="{Binding PercDelta}"/>

@@ -142,7 +142,7 @@
         <DataGrid x:Name="BulkReconDetail" Grid.Row="3"  ItemsSource="{Binding BulkReconDetail}" 
                   HeadersVisibility="All" RenderTransformOrigin="0.5,0.5"                    
                     AutoGenerateColumns="False" AlternatingRowBackground="Aqua"
-                    SelectionMode="Single" SelectionUnit="FullRow"                                 
+                    SelectionMode="Single" SelectionUnit="Cell"                                 
                   >
 
             <DataGrid.Resources>
@@ -166,7 +166,7 @@
                                     />
 
 
-                <DataGridTemplateColumn Header="TimeStart" HeaderStyle="{StaticResource ColumnHeaderStyle}" >
+                <DataGridTemplateColumn Header="PrdStart" HeaderStyle="{StaticResource ColumnHeaderStyle}" >
 
                         
                     <DataGridTemplateColumn.CellTemplate>
@@ -175,7 +175,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="TimeEnd" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                <DataGridTemplateColumn Header="PrdEnd" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Path=TimeEnd,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>

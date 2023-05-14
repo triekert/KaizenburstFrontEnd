@@ -25,6 +25,25 @@ namespace Fasetto.Word.Core
         ///End Time for reconciliaition data
         /// </summary>
         public DateTime TimeEnd { get; set; }
+
+        /// <summary>
+        ///Start time for retrieving TOD data
+        /// </summary>
+        public int TODStart { get; set; }
+
+
+        /// <summary>
+        ///End time for retrieving TOD data
+        /// </summary>
+        public int TODEnd { get; set; }
+
+        /// <summary>
+        ///Reference date for doing calculations
+        ///- any changes that are time sensitive will be adjusted
+        ///to reflect the values for that date
+        /// </summary>
+        public DateTime DateReference { get; set; }
+
     }
 
 }

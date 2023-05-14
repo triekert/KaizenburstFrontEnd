@@ -47,7 +47,7 @@ namespace Fasetto.Word
         /// <summary>
         ///Consumption for meter over defined period
         /// </summary>
-        public float Volume { get; set; }
+        public decimal Volume { get; set; }
 
         /// <summary>
         ///Meter reading (calculated) for start of measurement period

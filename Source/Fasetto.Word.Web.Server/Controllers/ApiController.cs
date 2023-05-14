@@ -837,7 +837,7 @@ namespace Fasetto.Word.Web.Server
 
 
 
-            var SqlString = "EXEC [Services].[spCalculateVarianceChildReadingsMaster]	 @BulkPropertyID =  '" + model.BulkMeter + "' ,  @DateStart =' " + model.TimeStart.ToString() + "',  @DateEnd = '" + model.TimeEnd.ToString() + "'";
+            var SqlString = "EXEC [Services].[spCalculateVarianceChildReadingsMaster]	 @BulkPropertyID =  '" + model.BulkMeter + "' ,  @DateStart =' " + model.TimeStart.ToString() + "',  @DateEnd = '" + model.TimeEnd.ToString() + "',  @TODStart = '" + model.TODStart.ToString() + "',  @TODEnd = '" + model.TODEnd.ToString() + "',  @fDateReference = '" + model.DateReference.ToString() + "'";
             ;
             try
             {
@@ -855,7 +855,7 @@ namespace Fasetto.Word.Web.Server
                         BulkMeter = row[1].ToString(),
                         ShortName = row[2].ToString(),
                         TimeStart = (DateTime)row[3],
-                        Volume = (float)row[5],
+                        Volume = (decimal)row[5],
                         MeterReadingCalc = (float)row[14],
                         ReadingTimePrior = (DateTime)row[6],
                         ReadingPrior = (float)row[7],
@@ -1047,12 +1047,12 @@ namespace Fasetto.Word.Web.Server
                         BasewN = (decimal)row[31],
                         TariffwN = (decimal)row[32],
                         CostWaterN = (decimal)row[33],
-                        ThresholdSN = (decimal)row[34],
-                        BasesN = (decimal)row[35],
-                        TariffsN = (decimal)row[36],
-                        CostSewerN = (decimal)row[37],
-                        Adjustment= (decimal)row[38],
-                        AdjustmentN= (decimal)row[40],
+                        ThresholdSN = (decimal)row[36],
+                        BasesN = (decimal)row[37],
+                        TariffsN = (decimal)row[38],
+                        CostSewerN = (decimal)row[39],
+                        Adjustment= (decimal)row[40],
+                        AdjustmentN= (decimal)row[41],
                     };
                     results.Add(u);
 

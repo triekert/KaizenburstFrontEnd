@@ -49,6 +49,8 @@ namespace Fasetto.Word
         public string mBulkMeter;
         public DateTime mTimeStart;
         public DateTime mTimeEnd;
+        public int mTODStart;
+        public int mTODEnd;
         /// <summary>
         /// Store View Model of current popup to allow reverse navigation
         /// </summary>
@@ -82,7 +84,7 @@ namespace Fasetto.Word
         /// <param name="hierarchyTable"></param>
         /// The hierarchyTable passed through as a paremeter identifies the specific hierarchy set to be retrieved
         /// from persistent s
-        public BulkReconDetailTreeViewModel(string bulkMeter, DateTime timeStart, DateTime timeEnd)
+        public BulkReconDetailTreeViewModel(string bulkMeter, DateTime timeStart, DateTime timeEnd, int TODStart, int TODEnd, DateTime dateReference)
         {
             #region Build BulkReconDetailCollection
 
@@ -106,7 +108,11 @@ namespace Fasetto.Word
             { 
                 BulkMeter = bulkMeter,
                 TimeStart = timeStart,
-                TimeEnd = timeEnd
+                TimeEnd = timeEnd,
+                TODStart= TODStart,
+                TODEnd= TODEnd,
+                DateReference=dateReference,
+
             };
 
 
@@ -117,6 +123,9 @@ namespace Fasetto.Word
             mBulkMeter = bulkMeter;
             mTimeStart = timeStart;
             mTimeEnd = timeEnd;
+            mTODStart = TODStart;
+            mTODEnd = TODEnd;
+            //DateReference = dateReference,
             PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
             TaskManager.RunAndForget(BulkReconDetailAsync);
 

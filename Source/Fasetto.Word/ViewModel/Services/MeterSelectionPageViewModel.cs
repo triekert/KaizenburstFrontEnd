@@ -112,7 +112,10 @@ namespace Fasetto.Word
         public DateTimeViewModel TimeEnd { get; set; }
 
 
-
+        /// <summary>
+        /// The start time for analysis of readings
+        /// </summary>
+        public DateTimeViewModel DateReference { get; set; }
 
 
         /// <summary>
@@ -198,6 +201,11 @@ namespace Fasetto.Word
         /// </summary>
         public ICommand ReconcileCommand { get; set; }
 
+
+        /// <summary>
+        /// The command for when the user clicks the send button
+        /// </summary>
+        public ICommand ReconcileTODCommand { get; set; }
         /// <summary>
         /// The command for populating client information for search
         /// </summary>
@@ -274,7 +282,7 @@ namespace Fasetto.Word
                 //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
             };
             TimeStart.OriginalTime.Content = "00:00";
-            TimeStart.EditedTime.Content = "00:30";
+            TimeStart.EditedTime.Content = "00:00";
 
 
             TimeEnd = new DateTimeViewModel
@@ -288,7 +296,20 @@ namespace Fasetto.Word
                 //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
             };
             TimeEnd.OriginalTime.Content = "00:00";
-            TimeEnd.EditedTime.Content = "00:30";
+            TimeEnd.EditedTime.Content = "00:00";
+
+            DateReference = new DateTimeViewModel
+            {
+                Label = "Calculation reference date",
+                OriginalDateTime = DateTime.Now,
+                EditedDateTime = DateTime.Now,
+                OriginalTime = new System.Windows.Controls.ComboBoxItem(),
+                EditedTime = new System.Windows.Controls.ComboBoxItem(),
+                //(DateTime.Now.AddHours(-1)).ToShortTimeString(),
+                //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
+            };
+            TimeEnd.OriginalTime.Content = "00:00";
+            TimeEnd.EditedTime.Content = "00:00";
 
             //ViewModelApplication.ControlParameter =  null;
             ViewModelApplication.ControlParameter1 = null;
@@ -300,6 +321,7 @@ namespace Fasetto.Word
             AttachmentButtonCommand = new RelayCommand(AttachmentButton);
             PopupClickawayCommand = new RelayCommand(PopupClickaway);
             ReconcileCommand = new RelayCommand(Reconcile);
+            ReconcileTODCommand = new RelayCommand(ReconcileTOD);
             PopulateCommand = new RelayCommand(Populate);
             SearchCommand = new RelayCommand(Search);
             OpenSearchCommand = new RelayCommand(OpenSearch);
@@ -348,13 +370,53 @@ namespace Fasetto.Word
                 return;
             };
             ShortName = Meter.EditedName;
+            //Make start time and end time equal to overload sql call
+            //var t1 = TimeEnd.EditedDateTime.ToString("yyyy/MM/dd");
+            //var t2 = TimeStart.EditedDateTime.Hour.ToString("00");
+            //var t3 = $"{TimeEnd.EditedDateTime.ToString("yyyy/MM/dd")}{" "}{TimeStart.EditedDateTime.Hour.ToString()}{":00:00"}";
+            //TimeEnd.EditedDateTime = DateTime.Parse(t3);
+            //TimeEnd.EditedDateTime = DateTime.Parse($"{TimeEnd.EditedDateTime.ToString("yyyy/MM/dd")}{" "}{TimeStart.EditedDateTime.Hour.ToString("00")}{":00:00"}");
 
-            ViewModelApplication.CurrentPopupViewModel = new BulkReconTreeViewModel(Meter.EditedKid, TimeStart.EditedDateTime, TimeEnd.EditedDateTime);
+            ViewModelApplication.CurrentPopupViewModel = new BulkReconTreeViewModel(Meter.EditedKid, TimeStart.EditedDateTime, 
+                DateTime.Parse($"{TimeEnd.EditedDateTime.ToString("yyyy/MM/dd")}{" "}{TimeStart.EditedDateTime.Hour.ToString("00")}{":00:00"}"), 0,0,DateReference.EditedDateTime);
             ((BulkReconTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
             ViewModelApplication.CurrentPopupContent = PopupContent.BulkRecon;
             ViewModelApplication.PopupVisible = true;
 
         }
+
+        /// <summary>
+        /// When the user clicks the send button, sends the message
+        /// </summary>
+        public void ReconcileTOD()
+        {
+            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            //To do: Lookup to be user rights and available options driven
+            //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
+            if (Meter.EditedKid == null)
+
+            //To DO - message user
+            {
+                MessageBox.Show($"First select a valid BulkMeter to proceed...");
+                return;
+            };
+            if (TimeEnd.EditedDateTime.Hour <= TimeStart.EditedDateTime.Hour)
+
+            //To DO - message user
+            {
+                MessageBox.Show($"Make Start Time of Day less that End Time of Day");
+                return;
+            };
+
+            ShortName = Meter.EditedName;
+            TimeEnd.EditedDateTime = TimeEnd.EditedDateTime.AddHours(TimeStart.EditedDateTime.Hour).AddMinutes(TimeStart.EditedDateTime.Minute);
+            ViewModelApplication.CurrentPopupViewModel = new BulkReconTreeViewModel(Meter.EditedKid, TimeStart.EditedDateTime, TimeEnd.EditedDateTime,TimeStart.EditedDateTime.Hour,TimeEnd.EditedDateTime.Hour, DateReference.EditedDateTime);
+            ((BulkReconTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+            ViewModelApplication.CurrentPopupContent = PopupContent.BulkRecon;
+            ViewModelApplication.PopupVisible = true;
+
+        }
+
 
         /// <summary>
         /// When the user clicks the send button, sends the message

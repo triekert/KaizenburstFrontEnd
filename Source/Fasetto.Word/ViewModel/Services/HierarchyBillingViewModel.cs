@@ -112,7 +112,7 @@ namespace Fasetto.Word
         /// <summary>
         /// Total Water Consumption for period In first Calendar month
         /// </summary>
-        public decimal Volume => mElement.Endreading;
+        public decimal Volume => mElement.Volume;
 
         /// <summary>
         /// Calculated/Predicted Water Consumption for whole first Calendar month
