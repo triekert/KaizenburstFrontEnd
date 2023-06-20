@@ -123,14 +123,21 @@
         public const string ReturnSWBilling = "api/Services/SWBilling";
 
         /// <summary>
-        /// The route to the accessing of Detail Water Meter readings 
+        /// The route to the accessing of Detail Water Meter readings (aggregated)
         /// </summary>
         /// 
 
         public const string BillingPeriodAdjustment = "api/Services/BillingPeriodAdjustment";
 
 
+        /// <summary>
+        /// The route to the accessing of Detail Water Meter readings (drill down)
+        /// </summary>
+        /// 
 
+        public const string ReturnMeterReading = "api/Services/MeterReading";
+
+  
         #endregion
     }
 }

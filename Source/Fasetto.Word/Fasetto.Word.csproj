@@ -110,6 +110,7 @@
       <DependentUpon>HierarchyItemSelectionControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Input\HierarchySelectionControl.xaml.cs" />
+    <Compile Include="Controls\Services\WaterReadingControl.xaml .cs" />
     <Compile Include="Controls\Services\BulkReconDetailControl.xaml.cs" />
     <Compile Include="Controls\Services\BulkReconControl.xaml.cs" />
     <Compile Include="Controls\BubbleContent.xaml.cs">
@@ -212,6 +213,7 @@
     <Compile Include="ValueConverters\PopupContentConverter.cs" />
     <Compile Include="ValueConverters\TimeToStringConverter.cs" />
     <Compile Include="ViewModel\Application\Design\FinanceSelectionDesignModel.cs" />
+    <Compile Include="ViewModel\Services\WaterReadingTreeViewModel.cs" />
     <Compile Include="ViewModel\FinancePageViewModel.cs" />
     <Compile Include="ViewModel\Finance\Expenditure\Design\HierarchyElementDesignModel.cs" />
     <Compile Include="Pages\BasePage.cs" />
@@ -260,6 +262,7 @@
     <Compile Include="ViewModel\Menu\HierarchyPageViewModel .cs" />
     <Compile Include="ViewModel\Services\BillingPeriodListViewModel.cs" />
     <Compile Include="ViewModel\Services\BillingPeriodViewModel.cs" />
+    <Compile Include="ViewModel\Services\WaterReadinglViewModel .cs" />
     <Compile Include="ViewModel\Services\HierarchyBillingPageViewModel .cs" />
     <Compile Include="ViewModel\Services\HierarchyBillingTreeViewModel.cs" />
     <Compile Include="ViewModel\Services\HierarchyBillingViewModel.cs" />
@@ -382,6 +385,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Finance\FinanceSelectionControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Services\WaterReadingControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -577,6 +584,9 @@
     <Resource Include="Images\Samples\rusty.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CsvHelper">
+      <Version>30.0.1</Version>
+    </PackageReference>
     <PackageReference Include="Fody">
       <Version>6.6.4</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>

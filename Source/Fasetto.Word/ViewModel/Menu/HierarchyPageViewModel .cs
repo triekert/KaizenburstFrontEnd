@@ -227,7 +227,11 @@ namespace Fasetto.Word
         public void Send()
         {
             mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
-            var results = mViewModel.mPersist.Where(x => x.IsUnderReview|| x.IsDeleteElement).ToList();
+            if (mViewModel.mPersist == null)
+            {
+                return;
+            }
+            var results = mViewModel.mPersist.Where(x => x.IsUnderReview || x.IsDeleteElement).ToList();
             var mPersistElement = new HierarchyResultApiModel();
             //var results = mViewModel.mPersist.OrderBy(x => x.ShortName).ToList();
             if (results.Count > 0)
@@ -235,27 +239,27 @@ namespace Fasetto.Word
                 //ToDo:Where a new hierarchy is referred to in the a new menu item, Create the root element for this new hierarchy
 
                 results = mViewModel.mPersist.Where(x => (x.IsNewElement) & x.Page == "Hierarchy").ToList();
-                if (results.Count > 0)
-                { 
+            if (results.Count > 0)
+            {
                 //mViewModel.mPersist.AddRange(results);
-                    foreach (var row in results)
+                foreach (var row in results)
 
-                        {
-                        mPersistElement.DateDiscontinued = row.DateDiscontinued;
-                        mPersistElement.DateEffective = row.DateEffective;
-                        mPersistElement.ShortName = row.ShortName;
-                        mPersistElement.Description = row.Description;
-                        mPersistElement.KCategoryID = row.Root;
-                        mPersistElement.Page = row.Page;
-                        mPersistElement.IsNewElement = row.IsNewElement;
-                        mPersistElement.IsUnderReview = row.IsUnderReview;
-                        mPersistElement.ParentCategoryID = "00000000-0000-0000-0000-000000000000";
-                        mPersistElement.FHierarchyID = row.Root;
-                        }
-                        mViewModel.mPersist.Add(mPersistElement);
-                        
+                {
+                    mPersistElement.DateDiscontinued = row.DateDiscontinued;
+                    mPersistElement.DateEffective = row.DateEffective;
+                    mPersistElement.ShortName = row.ShortName;
+                    mPersistElement.Description = row.Description;
+                    mPersistElement.KCategoryID = row.Root;
+                    mPersistElement.Page = row.Page;
+                    mPersistElement.IsNewElement = row.IsNewElement;
+                    mPersistElement.IsUnderReview = row.IsUnderReview;
+                    mPersistElement.ParentCategoryID = "00000000-0000-0000-0000-000000000000";
+                    mPersistElement.FHierarchyID = row.Root;
                 }
-                _ = mViewModel.PersistHierarchyChangesAsync();
+                mViewModel.mPersist.Add(mPersistElement);
+
+            }
+            _ = mViewModel.PersistHierarchyChangesAsync();
         }
 
         /// <summary>

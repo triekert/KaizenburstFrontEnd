@@ -63,6 +63,22 @@ namespace Fasetto.Word.Core
         /// </summary>
         public float PercDelta { get; set; }
 
+
+
+        /// <summary>
+        ///30 day moving average of mismatch per hour
+        /// </summary>
+        public float MonthTotMvgAvg { get; set; }
+
+
+
+        /// <summary>
+        ///30 day moving average of mismatch for timeslot
+        /// </summary>
+        public float MonthSlotMvgAvg { get; set; }
+
+
+
         /// <summary>
         ///name of Category element
         /// </summary>

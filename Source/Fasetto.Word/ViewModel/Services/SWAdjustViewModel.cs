@@ -310,14 +310,15 @@ namespace Fasetto.Word
             var MDateAdj = ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateAdjustment;
             MAPI = new ParameterBillingAdjustmentApiModel
             {
-                KBillingPeriodID = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.KBillingPeriodID,
-                KCategoryID = ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).KCategoryID,
-                Adjustment = Convert.ToDecimal(((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).Adjustment.EditedText),
+                FBillingPeriodID = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.KBillingPeriodID,
+                FPropertyID = ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).KCategoryID,
+                Adjustment = Convert.ToDecimal(((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).Adjustment.EditedText)/1000,
                 DateStart = ((MDateAdj.Month ==
-                            ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateStart.Month) ? 
-                            ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateStart:
-                            new DateTime(MDateAdj.Year,MDateAdj.Month,1))
-
+                            ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateStart.Month) ?
+                            ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateStart :
+                            new DateTime(MDateAdj.Year, MDateAdj.Month, 1)),
+                DateEffective = DateTime.Now,
+                FChangeID = new Guid().ToString(),
             };
 
         //    mElementViewModel.Description.OriginalText = null;

@@ -18,7 +18,7 @@ namespace Fasetto.Word
     /// <summary>
     /// Interaction logic for HierarchyManagementControl.xaml
     /// </summary>
-    public partial class BulkReconDetailControl : UserControl
+    public partial class WaterReadingControl : UserControl
     {
 
         #region Public Properties
@@ -60,7 +60,7 @@ namespace Fasetto.Word
 
         //[Obsolete]
         //public HierarchyManagementControl(HierarchyManagementTreeDataModel hierarchyManagementTreeDataModel)
-        public BulkReconDetailControl()
+        public WaterReadingControl()
         {
 
             //var root = "1C225789-3938-4480-86CB-071863DC5D33";
@@ -156,7 +156,8 @@ namespace Fasetto.Word
                 mConsumerReading +=category.Volume;
             var timeDiff = (((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTimeEnd - ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTimeStart);
             var mHrs = (decimal)timeDiff.TotalHours;
-            if (timeDiff.TotalHours > 24)
+
+            if ((decimal)(((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODEnd-((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODStart) !=0)
 
             { mHrs = (((decimal)(((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODEnd - ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODStart)) +1) / 24 * mHrs;
             

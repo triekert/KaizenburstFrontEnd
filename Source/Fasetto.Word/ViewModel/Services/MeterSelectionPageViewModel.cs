@@ -370,6 +370,9 @@ namespace Fasetto.Word
                 return;
             };
             ShortName = Meter.EditedName;
+            TimeEnd.OriginalDateTime = TimeEnd.EditedDateTime;
+            TimeStart.OriginalDateTime = TimeStart.EditedDateTime;
+
             //Make start time and end time equal to overload sql call
             //var t1 = TimeEnd.EditedDateTime.ToString("yyyy/MM/dd");
             //var t2 = TimeStart.EditedDateTime.Hour.ToString("00");
@@ -380,7 +383,9 @@ namespace Fasetto.Word
             ViewModelApplication.CurrentPopupViewModel = new BulkReconTreeViewModel(Meter.EditedKid, TimeStart.EditedDateTime, 
                 DateTime.Parse($"{TimeEnd.EditedDateTime.ToString("yyyy/MM/dd")}{" "}{TimeStart.EditedDateTime.Hour.ToString("00")}{":00:00"}"), 0,0,DateReference.EditedDateTime);
             ((BulkReconTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.CurrentPopupContent = PopupContent.BulkRecon;
+
             ViewModelApplication.PopupVisible = true;
 
         }
@@ -402,14 +407,16 @@ namespace Fasetto.Word
             };
             if (TimeEnd.EditedDateTime.Hour <= TimeStart.EditedDateTime.Hour)
 
-            //To DO - message user
+
             {
                 MessageBox.Show($"Make Start Time of Day less that End Time of Day");
                 return;
             };
 
             ShortName = Meter.EditedName;
-            TimeEnd.EditedDateTime = TimeEnd.EditedDateTime.AddHours(TimeStart.EditedDateTime.Hour).AddMinutes(TimeStart.EditedDateTime.Minute);
+            //TimeEnd.EditedDateTime = TimeEnd.EditedDateTime.AddHours(TimeEnd.EditedDateTime.Hour).AddMinutes(TimeEnd.EditedDateTime.Minute);
+            TimeEnd.OriginalDateTime = TimeEnd.EditedDateTime;
+            TimeStart.OriginalDateTime = TimeStart.EditedDateTime;
             ViewModelApplication.CurrentPopupViewModel = new BulkReconTreeViewModel(Meter.EditedKid, TimeStart.EditedDateTime, TimeEnd.EditedDateTime,TimeStart.EditedDateTime.Hour,TimeEnd.EditedDateTime.Hour, DateReference.EditedDateTime);
             ((BulkReconTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
             ViewModelApplication.CurrentPopupContent = PopupContent.BulkRecon;

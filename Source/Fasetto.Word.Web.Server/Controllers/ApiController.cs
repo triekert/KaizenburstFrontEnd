@@ -578,7 +578,7 @@ namespace Fasetto.Word.Web.Server
 
 
         #region Services
-        #region LoadReadings
+            #region LoadReadings
         /// <summary>
         /// Retrieves meter readings from Client API and updates database
         /// </summary>
@@ -775,6 +775,8 @@ namespace Fasetto.Word.Web.Server
                     VolumeDelta = (float)row[7],
                     MovingAvgDelta = (float)row[8],
                     PercDelta = (float)row[9],
+                    MonthTotMvgAvg = (float)row[10],
+                    MonthSlotMvgAvg = (float)row[11],
                     };
                     results.Add(u);
 
@@ -785,7 +787,7 @@ namespace Fasetto.Word.Web.Server
 
                     Response = results
                 };
-                #endregion /Get User
+                #endregion SQL Query
 
 
             }
@@ -806,7 +808,7 @@ namespace Fasetto.Word.Web.Server
 
         #region ReturnReconDetail   
         /// <summary>
-        /// Retrieves individual readings for consumer meters
+        /// Retrieves individual readings for consumer meters (aggregated)
         /// </summary>
         /// <param name="model">Parameter API for retrieval of info</param>
         /// <returns>
@@ -897,12 +899,91 @@ namespace Fasetto.Word.Web.Server
 
         }
         #endregion BulkReconDetail
-        #endregion BulkRecon
-        #region Billing
-        #region BillingPeriods
+        #region MeterReading
+        /// <summary>
+        /// Retrieves individual readings for consumer meters (detail readings for period selectd)
+        /// </summary>
+        /// <param name="model">Parameter API for retrieval of info</param>
+        /// <returns>
+        ///     Returns the water consumption per selected Consumer meter and period if successful, 
+        ///     otherwise returns the error reasons for the failure
+        /// </returns>
 
-        [Route(ApiRoutes.ReturnBillingPeriods)]
-        public async Task<ApiResponse> ReturnBillingPeriodsAsync([FromBody] string model)
+        [Route(ApiRoutes.ReturnMeterReading)]
+        public async Task<ApiResponse> ReturnMeterReadingAsync([FromBody] ParameterMeterReadingApiModel model)
+
+        {
+            #region Get User
+
+            // Get the current user
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            // If we have no user...
+            if (user == null)
+                return new ApiResponse
+                {
+                    // TODO: Localization
+                    ErrorMessage = "User not found"
+                };
+
+            #endregion
+
+            #region sql query
+
+
+
+            var SqlString = "EXEC [Services].[spGetMeterReadings]  @PropertyID = '" + model.PropertyID + "',@TimeStart = '" + model.TimeStart + "',@TimeEnd = '" + model.TimeEnd + "',@MeterType = '" + model.MeterType + "',@fDateReference = '" + model.DateReference + "'";
+            ;
+            try
+            {
+                // Try and run the task
+                var dataset = await GetDataSetAsync(SqlString);
+                var dt = dataset.Tables[0];
+                var meterConsumptionResultListApiModel = new MeterConsumptionResultListApiModel();
+                var results = meterConsumptionResultListApiModel;
+
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    var u = new MeterConsumptionResultApiModel
+                    {
+                        Erf = row[1].ToString(),
+                        Customer = row[2].ToString(),
+                        Timestart = (DateTime)row[3],
+                        Volume = (decimal)row[5],
+                        MeterReading = (decimal)row[4],
+
+                    };
+                    results.Add(u);
+
+                }
+
+                return new ApiResponse<MeterConsumptionResultListApiModel>
+                {
+
+                    Response = results
+                };
+                #endregion sql query
+
+
+            }
+            catch (Exception ex)
+            {
+                // Log error
+                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                // Throw it as normal
+                throw;
+            }
+         }
+
+            #endregion MeterReading
+            #endregion BulkRecon
+            #region Billing
+            #region BillingPeriods
+
+            [Route(ApiRoutes.ReturnBillingPeriods)]
+            public async Task<ApiResponse> ReturnBillingPeriodsAsync([FromBody] string model)
 
         {
             #region Get User
@@ -1109,30 +1190,18 @@ namespace Fasetto.Word.Web.Server
 
             #region sql query
 
-            var para = new SqlParameter[4];
-            para[0] = new SqlParameter("@fPropertyID", SqlDbType.UniqueIdentifier);
-            para[1] = new SqlParameter("@fBillingPeriodID", SqlDbType.UniqueIdentifier);
-            para[2] = new SqlParameter("@DateStart", SqlDbType.DateTime);
-            para[3] = new SqlParameter("@Adjustment", SqlDbType.Int);
 
 
+            var SqlString = "EXEC [Services].[spAddBillingAdjustment]	 @fPropertyID =  '" + model.FPropertyID + "' ,  @fBillingPeriodID = '" + model.FBillingPeriodID + "' " +
+                ",@TimePeriodStart =' " + model.DateStart.ToString() + "',  @Adjustment = '" + model.Adjustment.ToString() + "',  @DateEffective = '" + model.DateEffective.ToString() + "',  @fChangeID = '" + model.FChangeID + "'";
 
-
-
-            var SqlString = "UPDATE [Services].[Billing] SET Adjustment = @Adjustment WHERE fPropertyID = @fPropertyID AND DatePeriodStart = @DateStart AND fBillingPeriodID = @fBillingPeriodID";
-
-            //populate adjustment value and identifier fiels
-            para[0].Value = new Guid(model.KCategoryID);
-            para[1].Value = new Guid(model.KBillingPeriodID);
-            para[2].Value = model.DateStart;
-            para[3].Value = model.Adjustment;
 
 
             try
 
             {
                 // Try and run the task
-                _ = await ExecuteAsync(SqlString, para);
+                _ = await ExecuteAsync(SqlString);
                 #endregion sql query      
             }
 
@@ -1157,7 +1226,7 @@ namespace Fasetto.Word.Web.Server
 
 
     #endregion Billing
-    //#endregion Services
+
 
     #endregion Services
 
@@ -1669,8 +1738,11 @@ namespace Fasetto.Word.Web.Server
 
         // RETURN DATASET
         public Task<DataSet> GetDataSetAsync(string sSQL, params SqlParameter[] parameters)
+
             {
                 return Task.Run(() =>
+
+
                 {
                     using (var newConnection = new SqlConnection(Configuration["ConnectionStrings:DefaultConnection"]))
                     using (var mySQLAdapter = new SqlDataAdapter(sSQL, newConnection))
@@ -1679,7 +1751,7 @@ namespace Fasetto.Word.Web.Server
                         if (parameters != null) mySQLAdapter.SelectCommand.Parameters.AddRange(parameters);
 
                         var myDataSet = new DataSet();
-                        mySQLAdapter.Fill(myDataSet);
+                        _ = mySQLAdapter.Fill(myDataSet);
                         return myDataSet;
                     }
                 });

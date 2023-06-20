@@ -11,10 +11,10 @@ namespace Fasetto.Word.Core
     public class ParameterBillingAdjustmentApiModel
     {
         //string representation of GUID for Property requiring adjustment
-        public string KCategoryID { get; set; }
+        public string FPropertyID { get; set; }
 
         //string representation of GUID for Property requiring adjustment
-        public string KBillingPeriodID { get; set; }
+        public string FBillingPeriodID { get; set; }
 
 
        /// <summary>
@@ -30,10 +30,16 @@ namespace Fasetto.Word.Core
         public decimal Adjustment { get; set; }
 
 
+
         /// <summary>
-        ///Adjustment related to the portion of consumption in the Next month
+        /// The effective date for this adjustment
         /// </summary>
-        public decimal AdjustmentN { get; set; }
+        public DateTime DateEffective { get; set; }
+
+
+        //string representation of GUID for Change request linked to adjustment
+        public string FChangeID { get; set; }
+
 
     }
 

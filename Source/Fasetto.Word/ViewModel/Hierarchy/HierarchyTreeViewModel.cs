@@ -299,7 +299,7 @@ namespace Fasetto.Word
             //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued == new DateTime(9999,12,31,0,0,0) && !x.IsDeleteElement ).OrderBy(x=>x.ShortName).ToList();//
             //To do:  accept a date parameter to retroactively modify hierarchy data
             //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued >  DateTime.Today && !x.IsDeleteElement).OrderBy(x => x.ShortName).ToList();//
-            var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued > DateTime.Today && !x.IsDeleteElement).OrderBy(x => (x.ShortName.ParseInt())).ThenBy(x => x.ShortName).ToList();//
+            var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Now && x.DateDiscontinued > DateTime.Now && !x.IsDeleteElement).OrderBy(x => (x.ShortName.ParseInt())).ThenBy(x => x.ShortName).ToList();//
             // Hierarchy cannot be expanded
             if (children.Count() == 0)
                 return new HierarchyListDataModel();

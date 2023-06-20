@@ -14,7 +14,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridColumnHeader">
-                        <Label Foreground="Blue" FontWeight="ExtraBlack" Background="AntiqueWhite" FontFamily="Lato Black" Content="{TemplateBinding Content}"
+                        <Label Foreground="DarkRed" FontWeight="ExtraBlack" Background="BurlyWood" FontFamily="Lato Heavy" FontSize="20" Content="{TemplateBinding Content}"
                                HorizontalAlignment="Stretch" HorizontalContentAlignment ="Center"  VerticalAlignment="Center"  />
                     </ControlTemplate>
                 </Setter.Value>
@@ -104,8 +104,8 @@
 
         <DataGrid x:Name="BulkRecon" Grid.Row="3"  ItemsSource="{Binding BulkRecon}" 
                   HeadersVisibility="All" RenderTransformOrigin="0.5,0.5"       GridLinesVisibility="None" 
-                    AutoGenerateColumns="False" AlternatingRowBackground="Aqua"
-                    SelectionMode="Extended" SelectionUnit="Cell"  VerticalAlignment="Center"  HorizontalAlignment="Center" HorizontalContentAlignment="Center"
+                    AutoGenerateColumns="False" AlternatingRowBackground="Beige" 
+                    SelectionMode="Extended" SelectionUnit="Cell"  VerticalAlignment="Center"  HorizontalAlignment="Center" HorizontalContentAlignment="Center"  CanUserAddRows="False"
                   >
             <!--<DataGrid.ColumnHeaderStyle>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
@@ -114,16 +114,31 @@
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
                 </Style>
             </DataGrid.ColumnHeaderStyle>-->
-
+            
             <DataGrid.Resources>
                 <Style TargetType="DataGridRow">
                     <EventSetter Event ="MouseDoubleClick"  Handler="DataGridRow_MouseDoubleClick"/>
                     <EventSetter Event ="KeyDown"  Handler="DataGridRow_KeyDown"/>
                     <EventSetter Event ="PreviewMouseRightButtonDown"  Handler="DataGridRow_MouseRightClick"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    <Setter Property="Background" Value ="Cyan"/>
+ 
+                    <!--Setting highlight-->
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding State}" Value="State1">
+                                <Setter Property="Background" Value="Red"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding State}" Value="State2">
+                                <Setter Property="Background" Value="Orange"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    <!--Setting highlight-->
+
                 </Style>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
-                </Style>
+                 </Style>
+                
             </DataGrid.Resources>
 
             <DataGrid.Columns>
@@ -153,7 +168,12 @@
                                     Binding="{Binding  MovingAvgDelta}"/>
                 <DataGridTextColumn Header ="Perc Delta" HeaderStyle="{StaticResource ColumnHeaderStyle}"
                                     Binding="{Binding PercDelta}"/>
+                <DataGridTextColumn Header ="30dTotAvg" HeaderStyle="{StaticResource ColumnHeaderStyle}"
+                                    Binding="{Binding  MonthTotMvgAvg}"/>
+                <DataGridTextColumn Header ="30dSlotAvg" HeaderStyle="{StaticResource ColumnHeaderStyle}"
+                                    Binding="{Binding MonthSlotMvgAvg}"/>                
             </DataGrid.Columns>
+            
 
 
         </DataGrid>
