@@ -84,9 +84,16 @@
 
 
         /// <summary>
-        /// The route to the PersitHierarchy Api method
+        /// The route to the PersistHierarchy Api method
         /// </summary>
         public const string ReturnBillingPeriods = "api/finance/BillingPeriodsLookup";
+
+
+
+        /// <summary>
+        /// The route to the Transaction Api method
+        /// </summary>
+        public const string ReturnTransaction = "api/finance/Transaction";
 
         #endregion
 

@@ -164,19 +164,19 @@ namespace Fasetto.Word
         #endregion
         #region Constructors
 
-        public BulkReconDetailViewModel()
+        //public BulkReconDetailViewModel()
 
-        {
-            CloseCommand = new RelayCommand(Close);
-        }
+        //{
+        //    CloseCommand = new RelayCommand(Close);
+        //}
 
-        public void Close()
-        {
-            // Close settings menu
-            ViewModelApplication.CurrentPopupViewModel = null;
-            ViewModelApplication.PopupVisible = false;
+        //public void Close()
+        //{
+        //    // Close settings menu
+        //    ViewModelApplication.CurrentPopupViewModel = null;
+        //    ViewModelApplication.PopupVisible = false;
 
-        }
+        //}
 
 
         #endregion // Constructors

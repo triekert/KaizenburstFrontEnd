@@ -237,7 +237,7 @@ namespace Fasetto.Word
 
             Client = new HierarchyItemSelectionViewModel
             {
-                Label = "Client",
+                Label = "Select Client",
                 //EditedName = mLoadingText,
                 EditedName = "Selected Client",
                 OriginalName = "Root Client Organisation",

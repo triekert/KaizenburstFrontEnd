@@ -60,6 +60,12 @@
         ///Inspection of Water and Sewerage Billing
         /// </summary>
         SWBilling = 10,
+
+
+        /// <summary>
+        ///Management of captured transactions
+        /// </summary>
+        Transactions = 11,
     }
 
 }

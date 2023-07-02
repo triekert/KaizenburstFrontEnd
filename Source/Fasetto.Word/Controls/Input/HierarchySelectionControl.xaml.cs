@@ -59,7 +59,7 @@ namespace Fasetto.Word
             //var root = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
             //Use the rootof Clients
             var root = new ParameterHierarchyItemSelectApiModel();
-            if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Client")
+            if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Client")
             {
                 root.FHierarchyID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid ;
                 //root.ClientID = "NULL";

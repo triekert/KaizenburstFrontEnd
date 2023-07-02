@@ -46,9 +46,11 @@ namespace Fasetto.Word
                 case ApplicationPage.MeterSelection:
                     return new MeterSelectionPage(viewModel as MeterSelectionPageViewModel);
 
-
                 case ApplicationPage.SWBilling:
                     return new SWBillingPage(viewModel as SWBillingPageViewModel);
+
+                case ApplicationPage.Transactions:
+                    return new TransactionSelectionPage(viewModel as TransactionSelectionPageViewModel);
 
                 default:
                     Debugger.Break();
@@ -90,6 +92,9 @@ namespace Fasetto.Word
 
             if (page is SWBillingPage)
                 return ApplicationPage.SWBilling;
+
+            if (page is TransactionSelectionPage)
+                 return ApplicationPage.Transactions;
 
             // Alert developer of issue
             Debugger.Break();

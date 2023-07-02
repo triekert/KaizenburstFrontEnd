@@ -100,6 +100,8 @@
     <Compile Include="AttachedProperties\NoFrameHistory.cs" />
     <Compile Include="AttachedProperties\PasswordBoxAttachedProperties.cs" />
     <Compile Include="AttachedProperties\TextEntryWidthMatcherProperty.cs" />
+    <Compile Include="Controls\Finance\TransactionDetailControl.xaml.cs" />
+    <Compile Include="Controls\Finance\TransactionControl.xaml.cs" />
     <Compile Include="Controls\Input\DateTimeControl.xaml.cs">
       <DependentUpon>DateTimeControl.xaml</DependentUpon>
     </Compile>
@@ -190,6 +192,9 @@
     <Compile Include="Pages\HierarchyBillingPage.xaml.cs">
       <DependentUpon>HierarchyBillingPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\TransactionSelectionPage.xaml.cs">
+      <DependentUpon>TransactionSelectionPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\SWBillingPage.xaml.cs">
       <DependentUpon>SWBillingPage.xaml</DependentUpon>
     </Compile>
@@ -213,6 +218,11 @@
     <Compile Include="ValueConverters\PopupContentConverter.cs" />
     <Compile Include="ValueConverters\TimeToStringConverter.cs" />
     <Compile Include="ViewModel\Application\Design\FinanceSelectionDesignModel.cs" />
+    <Compile Include="ViewModel\Finance\TransactionDetailTreeViewModel.cs" />
+    <Compile Include="ViewModel\Finance\TransactionDetailViewModel.cs" />
+    <Compile Include="ViewModel\Finance\TransactionTreeViewModel.cs" />
+    <Compile Include="ViewModel\Finance\TransactionViewModel.cs" />
+    <Compile Include="ViewModel\Finance\Expenditure\TransactionSelectionPageViewModel.cs" />
     <Compile Include="ViewModel\Services\WaterReadingTreeViewModel.cs" />
     <Compile Include="ViewModel\FinancePageViewModel.cs" />
     <Compile Include="ViewModel\Finance\Expenditure\Design\HierarchyElementDesignModel.cs" />
@@ -332,6 +342,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Finance\TransactionDetailControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Finance\TransactionControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Finance\ExpenditureControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -445,6 +463,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\HierarchyBillingPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\TransactionSelectionPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

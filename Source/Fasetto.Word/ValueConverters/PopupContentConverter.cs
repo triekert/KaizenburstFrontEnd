@@ -65,6 +65,12 @@ namespace Fasetto.Word
                     var mSWAdjustControl = new SWAdjustControl();
                     return mSWAdjustControl;
 
+
+
+                case PopupContent.Transaction:
+                    var mTransactionControl = new TransactionControl();
+                    return mTransactionControl;
+
                 // Unknown
                 default:
                     return "No UI yet, sorry :)";

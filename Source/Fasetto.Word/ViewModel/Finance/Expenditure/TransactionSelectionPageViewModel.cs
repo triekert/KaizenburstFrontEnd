@@ -10,7 +10,7 @@ namespace Fasetto.Word
     /// <summary>
     /// A view model for managing hierarchies 
     /// </summary>
-    public class MeterSelectionPageViewModel : BaseViewModel
+    public class TransactionSelectionPageViewModel : BaseViewModel
     {
         #region Private Members
 
@@ -238,12 +238,12 @@ namespace Fasetto.Word
         /// <summary>
         /// Default constructor
         /// </summary>
-        public MeterSelectionPageViewModel()
+        public TransactionSelectionPageViewModel()
         {
             //Populate screen title
             //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
             //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
-            DisplayTitle = "Bulk Meter Management";
+            DisplayTitle = "Financial Transaction Management";
             BulkMeter = "5249FFEB-6907-46AA-9204-D4527E11F9CE";
 
             Root = new HierarchyItemSelectionViewModel
@@ -260,20 +260,20 @@ namespace Fasetto.Word
             };
             ViewModelApplication.CurrentControlViewModel = Root;
 
-            Meter = new HierarchyItemSelectionViewModel
-            {
-                Label = "Meter Name",
-                //EditedName = mLoadingText,
-                EditedName = "TD Water Metering",
-                OriginalName = "Original Meter Selection",
-                EditedKid = "5249FFEB-6907-46AA-9204-D4527E11F9CE",
-                HierarchyTypeID = "8A50E984-9E9F-44F6-9392-875E56A0B7CA",
-                //CommitAction = SaveFirstNameAsync
-            };
+            //Meter = new HierarchyItemSelectionViewModel
+            //{
+            //    Label = "Meter Name",
+            //    //EditedName = mLoadingText,
+            //    EditedName = "TD Water Metering",
+            //    OriginalName = "Original Meter Selection",
+            //    EditedKid = "5249FFEB-6907-46AA-9204-D4527E11F9CE",
+            //    HierarchyTypeID = "8A50E984-9E9F-44F6-9392-875E56A0B7CA",
+            //    //CommitAction = SaveFirstNameAsync
+            //};
 
             TimeStart = new DateTimeViewModel
             {
-                Label = "Period Start",
+                Label = "Month Start",
                 OriginalDateTime = DateTime.Now.AddDays(-1),
                 EditedDateTime = DateTime.Now.AddDays(-1),
                 OriginalTime = new System.Windows.Controls.ComboBoxItem(),
@@ -287,7 +287,7 @@ namespace Fasetto.Word
 
             TimeEnd = new DateTimeViewModel
             {
-                Label = "Period End",
+                Label = "Month End",
                 OriginalDateTime = DateTime.Now,
                 EditedDateTime = DateTime.Now,
                 OriginalTime = new System.Windows.Controls.ComboBoxItem(),
@@ -321,7 +321,6 @@ namespace Fasetto.Word
             AttachmentButtonCommand = new RelayCommand(AttachmentButton);
             PopupClickawayCommand = new RelayCommand(PopupClickaway);
             ReconcileCommand = new RelayCommand(Reconcile);
-            ReconcileTODCommand = new RelayCommand(ReconcileTOD);
             PopulateCommand = new RelayCommand(Populate);
             SearchCommand = new RelayCommand(Search);
             OpenSearchCommand = new RelayCommand(OpenSearch);
@@ -363,13 +362,13 @@ namespace Fasetto.Word
             ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             //To do: Lookup to be user rights and available options driven
             //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
-            if (Meter.EditedKid == null)
+            if (Root.EditedKid == null)
 
             //To DO - message user
-            { MessageBox.Show($"First select a valid BulkMeter to proceed...");
+            { MessageBox.Show($"First select a valid Transaction Client to proceed...");
                 return;
             };
-            ShortName = Meter.EditedName;
+            ShortName = Root.EditedName;
             TimeEnd.OriginalDateTime = TimeEnd.EditedDateTime;
             TimeStart.OriginalDateTime = TimeStart.EditedDateTime;
 
@@ -380,49 +379,18 @@ namespace Fasetto.Word
             //TimeEnd.EditedDateTime = DateTime.Parse(t3);
             //TimeEnd.EditedDateTime = DateTime.Parse($"{TimeEnd.EditedDateTime.ToString("yyyy/MM/dd")}{" "}{TimeStart.EditedDateTime.Hour.ToString("00")}{":00:00"}");
 
-            ViewModelApplication.CurrentPopupViewModel = new BulkReconTreeViewModel(Meter.EditedKid, TimeStart.EditedDateTime, 
-                DateTime.Parse($"{TimeEnd.EditedDateTime.ToString("yyyy/MM/dd")}{" "}{TimeStart.EditedDateTime.Hour.ToString("00")}{":00:00"}"), 0,0,DateReference.EditedDateTime);
-            ((BulkReconTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+            ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(Root.EditedKid, TimeStart.EditedDateTime, 
+                TimeEnd.EditedDateTime);
+            ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail: " + ShortName;
+            //force a reload of the BulkRecon Control
             ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-            ViewModelApplication.CurrentPopupContent = PopupContent.BulkRecon;
+            ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;
 
             ViewModelApplication.PopupVisible = true;
 
         }
 
-        /// <summary>
-        /// When the user clicks the send button, sends the message
-        /// </summary>
-        public void ReconcileTOD()
-        {
-            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-            //To do: Lookup to be user rights and available options driven
-            //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
-            if (Meter.EditedKid == null)
-
-            //To DO - message user
-            {
-                MessageBox.Show($"First select a valid BulkMeter to proceed...");
-                return;
-            };
-            if (TimeEnd.EditedDateTime.Hour <= TimeStart.EditedDateTime.Hour)
-
-
-            {
-                MessageBox.Show($"Make Start Time of Day less that End Time of Day");
-                return;
-            };
-
-            ShortName = Meter.EditedName;
-            //TimeEnd.EditedDateTime = TimeEnd.EditedDateTime.AddHours(TimeEnd.EditedDateTime.Hour).AddMinutes(TimeEnd.EditedDateTime.Minute);
-            TimeEnd.OriginalDateTime = TimeEnd.EditedDateTime;
-            TimeStart.OriginalDateTime = TimeStart.EditedDateTime;
-            ViewModelApplication.CurrentPopupViewModel = new BulkReconTreeViewModel(Meter.EditedKid, TimeStart.EditedDateTime, TimeEnd.EditedDateTime,TimeStart.EditedDateTime.Hour,TimeEnd.EditedDateTime.Hour, DateReference.EditedDateTime);
-            ((BulkReconTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
-            ViewModelApplication.CurrentPopupContent = PopupContent.BulkRecon;
-            ViewModelApplication.PopupVisible = true;
-
-        }
+ 
 
 
         /// <summary>

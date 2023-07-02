@@ -63,16 +63,28 @@
 
 
         /// <summary>
-        /// Hierarchy Selection Control
+        ///Sewerage and Water Billing calculations
         /// </summary>
         SWBilling = 11,
 
 
 
         /// <summary>
-        /// Hierarchy Selection Control
+        /// Adjustment to SW calculations
         /// </summary>
-        SWAdjust = 12
+        SWAdjust = 12,
 
-    }
+
+
+        /// <summary>
+        /// Adjustment to SW calculations
+        /// </summary>
+        Transaction = 13,
+
+
+
+        /// <summary>
+        /// Adjustment to SW calculations
+        /// </summary>
+        TransactionDetail = 14    }
 }
