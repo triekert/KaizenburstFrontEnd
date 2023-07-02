@@ -46,12 +46,12 @@ namespace Fasetto.Word
         //public BulkReconListDataModel mBRDML;
         //public BulkReconResultListApiModel mPersist, mPersistTmp,mOriginal;
         //public BulkReconViewModel mBRVM;
-        public ParameterBulkReconApiModel mRequest;
-        public string mBulkMeter;
-        public DateTime mTimeStart;
-        public DateTime mTimeEnd;
-        public int mTODStart;
-        public int mTODEnd;
+        //public ParameterBulkReconApiModel mRequest;
+        //public string mBulkMeter;
+        //public DateTime mTimeStart;
+        //public DateTime mTimeEnd;
+        //public int mTODStart;
+        //public int mTODEnd;
         /// <summary>
         /// Store View Model of current popup to allow reverse navigation
         /// </summary>

@@ -105,7 +105,7 @@ namespace Fasetto.Word
         /// <summary>
         /// Title of Control
         /// </summary>
-        public string Title { get; set; } = "Financial Transactions";
+        public string Title { get; set; } = "Transaction Allocation";
 
 
         /// <summary>
