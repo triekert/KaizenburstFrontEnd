@@ -13,15 +13,15 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridColumnHeader">
-                        <Label Foreground="Blue" FontWeight="ExtraBlack" Background="AntiqueWhite" FontFamily="Lato Black" Content="{TemplateBinding Content}"
-                               HorizontalAlignment="Stretch" HorizontalContentAlignment ="Center"  VerticalAlignment="Center"  />
+                        <Label Foreground="DarkRed" FontWeight="ExtraBlack" Background="BurlyWood" FontFamily="Lato Heavy" FontSize="20" Content="{TemplateBinding Content}"
+                               HorizontalAlignment="Stretch" HorizontalContentAlignment ="Left"  VerticalAlignment="Center"   />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
         <!--<sys:String x:Key="colCell">dynamic string...</sys:String>
-        <Style x:Key="ColumnCellStyle" TargetType="{x:Type}" >
-            <Setter Property="CellStyle">
+        <Style x:Key="ColumnCellStyle" TargetType="{x:Type DataGridCellsPresenter}" >
+            <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridTextColumn">
                         <Label Foreground="black" FontWeight="UltraBold" Background="AntiqueWhite" FontFamily="Arial" Content="{TemplateBinding Content}"
@@ -31,7 +31,6 @@
             </Setter>
         </Style>-->
     </UserControl.Resources>
-
     <DockPanel>
         <!-- SEARCH AREA -->
         <Border 
@@ -46,41 +45,7 @@
                 </LinearGradientBrush>
             </Border.Background>
 
-            <!--<StackPanel 
-                HorizontalAlignment="Stretch" 
-                Margin="0,0,10,0" 
-                Orientation="Horizontal"
-                >
-                <TextBox 
-                      x:Name="searchTextBox"
-                      KeyDown="SearchTextBox_KeyDown"
-                      Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                      Width="200" Height="43" FontSize="18" TextWrapping="Wrap" RenderTransformOrigin="0.1,0.616" AutomationProperties.HelpText="Begin entering name...."
-                    >
-                    <TextBox.InputBindings>
-                        --><!--Clear text on Esc--><!--
-                        <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc" />
-                        --><!--Search on enter--><!--
-                        <KeyBinding Command="{Binding SearchCommand}" Key="Return" />
-                    </TextBox.InputBindings>
-                </TextBox>
-                <Button Style="{StaticResource IconGrowButton}" 
-                        Content="{StaticResource FontAwesomeSearchIcon}"
-                        Command="{Binding SearchCommand}"
-                        Padding="4" Background="{DynamicResource WordOrangeBrush}" Height="43" Width="88" RenderTransformOrigin="1.221,0.593" AutomationProperties.HelpText="Search for items in the hierarchy" 
-                      >
-                    <Button.Foreground>
-                        <SolidColorBrush Color="{DynamicResource ForegroundLight}"/>
-                    </Button.Foreground>
-                    --><!--<Button.ToolTip>
-                        <ToolTip Placement="Mouse"
 
-                             Opened="ToolTip_Opened"
-
-                             Closed="ToolTip_Closed">Login with the entered credentials</ToolTip>
-                    </Button.ToolTip>--><!--
-                </Button>
-            </StackPanel>-->
         </Border>
         <Border 
          DockPanel.Dock="Top" 
@@ -88,7 +53,6 @@
          BorderThickness="1,0,1,1">
 
             <Grid>
-
 
 
                 <!--Settings Title-->
@@ -137,111 +101,88 @@
             </Grid>
         </Border>
 
-
-
-        <DataGrid x:Name="BulkReconDetail" Grid.Row="3"  ItemsSource="{Binding BulkReconDetail}" 
-                  HeadersVisibility="All" RenderTransformOrigin="0.5,0.5"                    
-                    AutoGenerateColumns="False" AlternatingRowBackground="Aqua"
-                    SelectionMode="Single" SelectionUnit="Cell"                                 
+        <DataGrid x:Name="TransactionDetail" Grid.Row="3"  ItemsSource="{Binding TransactionDetail}" 
+                  HeadersVisibility="All" RenderTransformOrigin="0.5,0.5"       GridLinesVisibility="None" 
+                    AutoGenerateColumns="False" AlternatingRowBackground="Beige" 
+                    SelectionMode="Single" SelectionUnit="FullRow"  VerticalAlignment="Center"  HorizontalAlignment="Center" HorizontalContentAlignment="Center"  CanUserAddRows="False"
                   >
+            <!--<DataGrid.ColumnHeaderStyle>
+                <Style TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="FontWeight"  Value="ExtraBold" />
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                </Style>
+            </DataGrid.ColumnHeaderStyle>-->
 
             <DataGrid.Resources>
                 <Style TargetType="DataGridRow">
                     <EventSetter Event ="MouseDoubleClick"  Handler="DataGridRow_MouseDoubleClick"/>
                     <EventSetter Event ="KeyDown"  Handler="DataGridRow_KeyDown"/>
                     <EventSetter Event ="PreviewMouseRightButtonDown"  Handler="DataGridRow_MouseRightClick"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    <Setter Property="Background" Value ="Cyan"/>
+
+                    <!--Setting highlight-->
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding State}" Value="State1">
+                            <Setter Property="Background" Value="Red"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding State}" Value="State2">
+                            <Setter Property="Background" Value="Orange"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                    <!--Setting highlight-->
+
                 </Style>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
                 </Style>
+
             </DataGrid.Resources>
 
             <DataGrid.Columns>
                 <!--<DataGridTextColumn Header ="Bulk Meter" FontWeight="Bold"
                                     Binding="{Binding ShortName}"/>-->
-
-
-                <DataGridTextColumn Header ="Meter Name" HeaderStyle="{StaticResource ColumnHeaderStyle}"
-                                    Binding="{Binding  ShortName}" 
-                                    />
-
-
-                <DataGridTemplateColumn Header="PrdStart" HeaderStyle="{StaticResource ColumnHeaderStyle}" >
-
-                        
+                <DataGridTemplateColumn Header="Trans Date" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=TimeStart,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Path=Posted_Date,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="PrdEnd" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                <DataGridTemplateColumn Header="Transaction Description" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=TimeEnd,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Volume" HeaderStyle="{StaticResource ColumnHeaderStyle}" SortMemberPath="Volume">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Path=Volume}" Foreground="Crimson" FontSize="12" FontWeight="UltraBold" FontFamily="arial" VerticalAlignment="Center"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <!--<DataGridTextColumn Header ="Volume" HeaderStyle="{StaticResource ColumnHeaderStyle}"   SortDirection="Descending" 
-                                    Binding="{Binding  Volume}" />-->
-                <DataGridTextColumn Header ="Start Reading" HeaderStyle="{StaticResource ColumnHeaderStyle}"
-                                    Binding="{Binding MeterReadingCalc}" />
-                <DataGridTemplateColumn Header="ReadingTimePriorStart" HeaderStyle="{StaticResource ColumnHeaderStyle}">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Path=ReadingTimePrior,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
+                            <TextBlock Margin="5" TextWrapping="Wrap"  Width="200" Text="{Binding Path= Description}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTextColumn Header ="ReadingPriorStart"   HeaderStyle="{StaticResource ColumnHeaderStyle}"
-                                     Binding="{Binding  ReadingPrior}"/>
-                <DataGridTemplateColumn Header="ReadingTimeAfterStart" SortMemberPath=" ReadingTimeNext" HeaderStyle="{StaticResource ColumnHeaderStyle}" >
+                <DataGridTemplateColumn Header="Transaction Value" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path= ReadingTimeNext,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
+                            <TextBlock Margin="5" Width="100" Text="{Binding Path= TransAmount,StringFormat=C,ConverterCulture='en-ZA'}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <!--<DataGridTextColumn Header ="ReadingTimeAfterStart" HeaderStyle="{StaticResource ColumnHeaderStyle}"
-                                    Binding="{Binding ReadingTimeNext}" />-->
-                <DataGridTextColumn Header ="ReadingAfterStart" HeaderStyle="{StaticResource ColumnHeaderStyle}"
-                                    Binding="{Binding  ReadingNext}"/>
+                <DataGridTemplateColumn Header="Transaction Category" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="5" TextWrapping="Wrap"  Width="200" Text="{Binding Path= ShortName}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Assigned Value" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="5" Width="100" Text="{Binding Path=ActualAmount,StringFormat=C,ConverterCulture='en-ZA'}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
-                <!--<DataGridTextColumn Header ="TimeEnd" HeaderStyle="{StaticResource ColumnHeaderStyle}"
-                                    Binding="{Binding TimeEnd}"/>-->
-                <DataGridTextColumn Header ="EndReading" HeaderStyle="{StaticResource ColumnHeaderStyle}"
-                                    Binding="{Binding MeterReadingCalcE}" />
-                <DataGridTemplateColumn Header="ReadingTimeBeforeEnd" HeaderStyle="{StaticResource ColumnHeaderStyle}">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Path=ReadingTimePriorE,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <!--<DataGridTextColumn Header ="ReadingTimeAfterEnd" HeaderStyle="{StaticResource ColumnHeaderStyle}"
-                                    Binding="{Binding ReadingTimePriorE}"/>-->
-                <DataGridTextColumn Header ="ReadingPriorE" HeaderStyle="{StaticResource ColumnHeaderStyle}"
-                                    Binding="{Binding  ReadingPriorE}"/>
-                <DataGridTemplateColumn Header="ReadingTimeAfterEnd" HeaderStyle="{StaticResource ColumnHeaderStyle}">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Path=ReadingTimeNextE ,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <!--<DataGridTextColumn Header ="ReadingTimeAfterEnd" HeaderStyle="{StaticResource ColumnHeaderStyle}"
-                                    Binding="{Binding ReadingTimeNextE }"/>-->
-                <DataGridTextColumn Header ="ReadingAfterEnd" HeaderStyle="{StaticResource ColumnHeaderStyle}"
-                                    Binding="{Binding ReadingNextE}"/>              
+
             </DataGrid.Columns>
+
 
 
         </DataGrid>

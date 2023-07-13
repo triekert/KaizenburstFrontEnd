@@ -247,7 +247,7 @@ namespace Fasetto.Word
 
                 //CommitAction = SaveFirstNameAsync
             };
-            ViewModelApplication.CurrentControlViewModel = Client;
+
 
             BillingPeriod = new BillingPeriodListViewModel(Client.OriginalKid);
             SelectedBillingPeriod = new BillingPeriodViewModel();
@@ -297,6 +297,8 @@ namespace Fasetto.Word
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             //To do: Lookup to be user rights and available options driven
             //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
+            if (SelectedBillingPeriod == null)
+            { var Nm = (ViewModelApplication.CurrentPopupViewModel).GetType().Name; };
             if (SelectedBillingPeriod.KBillingPeriodID == null)
 
             //To DO - message user

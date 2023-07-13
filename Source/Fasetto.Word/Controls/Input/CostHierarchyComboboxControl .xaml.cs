@@ -9,7 +9,7 @@ namespace Fasetto.Word
     /// <summary>
     /// Interaction logic for TextEntryControl.xaml
     /// </summary>
-    public partial class BillingPeriodComboboxControl : UserControl
+    public partial class CostHierarchyComboboxControl : UserControl
     {
         #region Dependency Properties
 
@@ -22,7 +22,7 @@ namespace Fasetto.Word
             set => SetValue(LabelWidthProperty, value);
         }
 
-        //public BillingPeriodListViewModel mBPVM;
+        //public CostHierarchyListViewModel mBPVM;
         // Using a DependencyProperty as the backing store for LabelWidth.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty LabelWidthProperty =
             DependencyProperty.Register("LabelWidth3", typeof(GridLength), typeof(TextEntryControl), new PropertyMetadata(GridLength.Auto, LabelWidthChangedCallback));
@@ -34,9 +34,9 @@ namespace Fasetto.Word
         /// <summary>
         /// Default constructor
         /// </summary>
-        public BillingPeriodComboboxControl()
+        public CostHierarchyComboboxControl()
         {
-            //var mBPLVM = new BillingPeriodListViewModel("8A8425E2-5766-4014-8C2F-01BD84DBC370");
+            //var mBPLVM = new CostHierarchyListViewModel("8A8425E2-5766-4014-8C2F-01BD84DBC370");
             //ViewModelApplication.CurrentControlViewModel = mBPLVM;
             //DataContext = mBPLVM;
             InitializeComponent();
@@ -57,7 +57,7 @@ namespace Fasetto.Word
             try
             {
                 // Set the column definition width to the new value
-                (d as BillingPeriodComboboxControl).LabelColumnDefinition.Width = (GridLength)e.NewValue;
+                (d as CostHierarchyComboboxControl).LabelColumnDefinition.Width = (GridLength)e.NewValue;
             }
 
             // Making ex available for developer on break
@@ -68,7 +68,7 @@ namespace Fasetto.Word
                 // Make developer aware of potential issue
                 Debugger.Break();
 
-                (d as BillingPeriodComboboxControl).LabelColumnDefinition.Width = GridLength.Auto;
+                (d as CostHierarchyComboboxControl).LabelColumnDefinition.Width = GridLength.Auto;
             }
         }
 
@@ -77,8 +77,8 @@ namespace Fasetto.Word
         private void ComboBox_Selected(object sender, RoutedEventArgs e)
         {
 
-            ((BillingPeriodListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedBillingPeriod = (BillingPeriodViewModel)((ComboBox)sender).SelectedItem;
-                ((BillingPeriodListViewModel)ViewModelApplication.CurrentControlViewModel).Edit();
+            ((CostHierarchyListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedCostHierarchy = (CostHierarchyViewModel)((ComboBox)sender).SelectedItem;
+                ((CostHierarchyListViewModel)ViewModelApplication.CurrentControlViewModel).Edit();
             
         }
     }

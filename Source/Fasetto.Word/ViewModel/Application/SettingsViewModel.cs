@@ -271,7 +271,7 @@ namespace Fasetto.Word
             // Lock this command to ignore any other requests while processing
             await RunCommandAsync(() => SettingsLoading, async () =>
             {
-                // Store single transcient instance of client data store
+                // Store single transient instance of client data store
                 var scopedClientDataStore = ClientDataStore;
 
                 // Update values from local cache

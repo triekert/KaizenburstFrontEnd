@@ -29,17 +29,17 @@ namespace Fasetto.Word
         public string EditedName { get; set; }
 
         /// <summary>
-        /// GUID representing the primary key of the selected Hierarcy Elements
+        /// GUID representing the primary key of the selected Hierarchy Elements
         /// </summary>
         public string OriginalKid { get; set; }
 
         /// <summary>
-        /// GUID representing the primary key of the selected Hierarcy Elements
+        /// GUID representing the primary key of the selected Hierarchy Elements
         /// </summary>
         public string EditedKid { get; set; }
 
         /// <summary>
-        /// GUID representing the primary key of the selected Hierarcy Elements
+        /// GUID representing the primary key of the selected Hierarchy Elements
         /// </summary>
         public string HierarchyTypeID { get; set; }
 
@@ -127,6 +127,8 @@ namespace Fasetto.Word
         {
             // Set the edited text to the current value
             EditedName = OriginalName;
+            EditedKid = OriginalKid;
+
 
             // Go into edit mode
             Editing = true;
@@ -141,7 +143,7 @@ namespace Fasetto.Word
         }
 
         /// <summary>
-        /// Cancels out of edit mode
+        /// Replaces Original Hierarchy Element values with the newly selected set of values
         /// </summary>
         public void HierarchyitemSelect()
         {
@@ -184,8 +186,10 @@ namespace Fasetto.Word
             EditedName = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName;
             EditedKid = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid;
 
+
             // Save currently saved value
             var currentSavedValue = OriginalName;
+            var OriginalSavedKID = OriginalKid;
 
             RunCommandAsync(() => Working, async () =>
             {
@@ -195,6 +199,7 @@ namespace Fasetto.Word
                 // Commit the changed text
                 // So we can see it while it is working
                 OriginalName = EditedName;
+                OriginalKid = EditedKid;
 
                 // Try and do the work
                 result = CommitAction == null ? true : await CommitAction();
@@ -208,6 +213,7 @@ namespace Fasetto.Word
                 {
                     // Restore original value
                     OriginalName = currentSavedValue;
+                    OriginalKid = currentSavedValue;
 
                     // Go back into edit mode
                     Editing = true;

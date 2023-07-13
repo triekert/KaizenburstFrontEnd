@@ -126,6 +126,7 @@ namespace Fasetto.Word
             ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod.MSelectedBillingPeriod = MSelectedBillingPeriod;
             ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod = MSelectedBillingPeriod;
             Editing = true;
+            //ViewModelApplication.CurrentControlViewModel
         }
 
 
@@ -201,7 +202,7 @@ namespace Fasetto.Word
         #endregion //Properties
 
         /// <summary>
-        /// Return Hierarchy of interest from Object persistance infrastructure
+        /// Return Hierarchy of interest from Object persistence infrastructure
         /// User credentials are used to determine access authorisation
         /// </summary>
         /// <returns></returns>
@@ -210,7 +211,7 @@ namespace Fasetto.Word
             await RunCommandAsync(() => BulkReconBuildIsRunning, async () =>
             {
 
-                // Store single transcient instance of client data store
+                // Store single transient instance of client data store
                 var scopedClientDataStore = ClientDataStore;
                 //
                 //return;
@@ -235,7 +236,7 @@ namespace Fasetto.Word
                     // We are done
                     return;
 
-                // OK successfully registered (and logged in)... now get aprpropriate tree view data
+                // OK successfully registered (and logged in)... now get appropriate tree view data
                 //for now; keep a snapshot of persisted data
                 //mOriginal = result.ServerResponse.Response;
 
@@ -278,90 +279,68 @@ namespace Fasetto.Word
             });
         }
 
-        /// <summary>
-        /// Method to refresh element Hierarchy
-        /// -used when elements of the treefiew are being manipulated on the front end
-        /// </summary>
-        //public void RefreshHierarchy()
-        //{
 
-        //    mBRDML.Clear();
-        //    //build a tree view, always starting with the root element, which is also the classification for the hierarchy
-        //    mBRDML.AddRange(ExpandHierarchyData(mPersist, "00000000-0000-0000-0000-000000000000", "Root"));
-        //    //Refresh the tree view title with the current name of the root element
-        //    ControlTitle = (mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ShortName;
-
-        //    var matches = mPersist.OrderBy(x => x.DateEffective).ToList();
-        //    foreach (var category in matches)
-        //    { category.ParentShortName = matches.First(x => x.ParentCategoryID == category.ParentCategoryID).ShortName; }
-        //    //Update the viewModel with the returned values
-
-        //    //UpdateTreeViewElements();
-
-
-        //    //}
-        //}
 
 
 
         /// <summary>
-        /// This funtion builds a hierarchy of elements based on a
+        /// This function builds a hierarchy of elements based on a
         /// a Hierarchy result returned when querying a database structure
         /// on which the hierarchy structures are persisted
         /// </summary>
         /// <param name="results"></param>
         /// This is a class of <HierarchyResultListApiModel></HierarchyResultListApiModel>
         /// <param name="KCategoryID"></param>
-        /// the ID of the parent for finding descendants is passsed through as a string
+        /// the ID of the parent for finding descendants is passed through as a string
         /// <returns></returns>
-        private BulkReconListDataModel ExpandHierarchyData(BulkReconResultListApiModel results, string KCategoryID, string mParentShortName)
-        {
-            //mPersist = results;
-            // Find all children
-            var TempDate = new DateTime(9999, 12, 31, 0, 0, 0);
-            //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued == new DateTime(9999,12,31,0,0,0) && !x.IsDeleteElement ).OrderBy(x=>x.ShortName).ToList();//
-            //To do:  accept a date parameter to retroactively modify hierarchy data
-            //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued >  DateTime.Today && !x.IsDeleteElement).OrderBy(x => x.ShortName).ToList();//
-            var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued > DateTime.Today && !x.IsDeleteElement).OrderBy(x => (x.ShortName.ParseInt())).ThenBy(x => x.ShortName).ToList();//
-            // Hierarchy cannot be expanded
-            if (children.Count() == 0)
-                return new BulkReconListDataModel();
-            //...otherwise, return all descendants recursively
-            var elements = new BulkReconListDataModel();
-            foreach (var item in children)
-            {
-                var ud1 = new BulkReconDataModel
-                {
-                    //var u = hierarchyDataModel;
-                    ShortName = item.ShortName,
-                    //Description = item.Description,
-                    //Card = item.Card,
-                    //Frequency = item.Frequency,
-                    //KCategoryID = item.KCategoryID,
-                    //ParentCategoryID = item.ParentCategoryID,
-                    //ParentShortName = mParentShortName,
-                    //DateEffective = item.DateEffective,
-                    //DateDiscontinued = item.DateDiscontinued,
-                    //KChangeID = item.KChangeID,
-                    //IsUnderReview = item.IsUnderReview,
-                    //Page = item.Page,
-                    //Root = item.Root,
-                    //IsMenuItem = item.IsMenuItem,
+        //private BulkReconListDataModel ExpandHierarchyData(BulkReconResultListApiModel results, string KCategoryID, string mParentShortName)
+        //{
+        //    //mPersist = results;
+        //    // Find all children
+        //    var TempDate = new DateTime(9999, 12, 31, 0, 0, 0);
+        //    //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued == new DateTime(9999,12,31,0,0,0) && !x.IsDeleteElement ).OrderBy(x=>x.ShortName).ToList();//
+        //    //To do:  accept a date parameter to retroactively modify hierarchy data
+        //    //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued >  DateTime.Today && !x.IsDeleteElement).OrderBy(x => x.ShortName).ToList();//
+        //    var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued > DateTime.Today && !x.IsDeleteElement).OrderBy(x => (x.ShortName.ParseInt())).ThenBy(x => x.ShortName).ToList();//
+        //    // Hierarchy cannot be expanded
+        //    if (children.Count() == 0)
+        //        return new BulkReconListDataModel();
+        //    //...otherwise, return all descendants recursively
+        //    var elements = new BulkReconListDataModel();
+        //    foreach (var item in children)
+        //    {
+        //        var ud1 = new BulkReconDataModel
+        //        {
+        //            //var u = hierarchyDataModel;
+        //            ShortName = item.ShortName,
+        //            //Description = item.Description,
+        //            //Card = item.Card,
+        //            //Frequency = item.Frequency,
+        //            //KCategoryID = item.KCategoryID,
+        //            //ParentCategoryID = item.ParentCategoryID,
+        //            //ParentShortName = mParentShortName,
+        //            //DateEffective = item.DateEffective,
+        //            //DateDiscontinued = item.DateDiscontinued,
+        //            //KChangeID = item.KChangeID,
+        //            //IsUnderReview = item.IsUnderReview,
+        //            //Page = item.Page,
+        //            //Root = item.Root,
+        //            //IsMenuItem = item.IsMenuItem,
 
 
-                    //To Do: make provision to add Icons to make the UI more intuitive and attractive
-                    //FIconID = item.FIconID,
-                    //Children = new BulkReconListDataModel()
-                };
-                //ud1.Children = ExpandHierarchyData(results, ud1.KCategoryID, ud1.ShortName);
-                //elements.Add(ud1);
-            }
-            //var matches = elements.OrderBy(x => x.DateEffective).ToList();
-            //foreach(var category in matches)
-            //    { category.ParentShortName = matches.First(x=>x.ParentCategoryID == category.ParentCategoryID).ShortName; }
+        //            //To Do: make provision to add Icons to make the UI more intuitive and attractive
+        //            //FIconID = item.FIconID,
+        //            //Children = new BulkReconListDataModel()
+        //        };
+        //        //ud1.Children = ExpandHierarchyData(results, ud1.KCategoryID, ud1.ShortName);
+        //        //elements.Add(ud1);
+        //    }
+        //    //var matches = elements.OrderBy(x => x.DateEffective).ToList();
+        //    //foreach(var category in matches)
+        //    //    { category.ParentShortName = matches.First(x=>x.ParentCategoryID == category.ParentCategoryID).ShortName; }
 
-            return elements;
-        }
+        //    return elements;
+        //}
 
         #region SearchText
 

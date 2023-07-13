@@ -86,9 +86,14 @@ namespace Fasetto.Word
         public HierarchyItemSelectionViewModel Root { get; set; }
 
         /// <summary>
-        /// The Client for which Bulk Meter reconciliation is to be processed
+        /// The CostHierarchys for the Water and Sewerage Billing analysis
         /// </summary>
-        public HierarchyItemSelectionViewModel Meter { get; set; }
+        public CostHierarchyListViewModel CostHierarchy { get; set; }
+
+        /// <summary>
+        /// The selected CostHierarchy for the Water and Sewerage Billing analysis
+        /// </summary>
+        public CostHierarchyViewModel SelectedCostHierarchy { get; set; }
 
         /// <summary>
         /// The GUID for the Bulk Meter for which reconciliation is to be processed
@@ -258,7 +263,7 @@ namespace Fasetto.Word
 
                 //CommitAction = SaveFirstNameAsync
             };
-            ViewModelApplication.CurrentControlViewModel = Root;
+            //ViewModelApplication.CurrentControlViewModel = Root;
 
             //Meter = new HierarchyItemSelectionViewModel
             //{
@@ -298,18 +303,24 @@ namespace Fasetto.Word
             TimeEnd.OriginalTime.Content = "00:00";
             TimeEnd.EditedTime.Content = "00:00";
 
-            DateReference = new DateTimeViewModel
-            {
-                Label = "Calculation reference date",
-                OriginalDateTime = DateTime.Now,
-                EditedDateTime = DateTime.Now,
-                OriginalTime = new System.Windows.Controls.ComboBoxItem(),
-                EditedTime = new System.Windows.Controls.ComboBoxItem(),
-                //(DateTime.Now.AddHours(-1)).ToShortTimeString(),
-                //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
-            };
-            TimeEnd.OriginalTime.Content = "00:00";
-            TimeEnd.EditedTime.Content = "00:00";
+            //DateReference = new DateTimeViewModel
+            //{
+            //    Label = "Calculation reference date",
+            //    OriginalDateTime = DateTime.Now,
+            //    EditedDateTime = DateTime.Now,
+            //    OriginalTime = new System.Windows.Controls.ComboBoxItem(),
+            //    EditedTime = new System.Windows.Controls.ComboBoxItem(),
+            //    //(DateTime.Now.AddHours(-1)).ToShortTimeString(),
+            //    //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
+            //};
+            //TimeEnd.OriginalTime.Content = "00:00";
+            //TimeEnd.EditedTime.Content = "00:00";
+
+            CostHierarchy = new CostHierarchyListViewModel(Root.OriginalKid);
+            SelectedCostHierarchy = new CostHierarchyViewModel();
+            CostHierarchy.MSelectedCostHierarchy = SelectedCostHierarchy;
+
+
 
             //ViewModelApplication.ControlParameter =  null;
             ViewModelApplication.ControlParameter1 = null;
@@ -398,12 +409,10 @@ namespace Fasetto.Word
         /// </summary>
         public void Populate()
         {
-            Meter.ClientID = Root.EditedKid;
-            Meter.RootID = Root.RootID;
-
-            ViewModelApplication.CurrentControlViewModel = Meter;
-            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
-            //ViewModelApplication.CurrentPageViewModel = Meter;
+            CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
+            {
+                MSelectedCostHierarchy = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedCostHierarchy
+            };
         }
 
         /// <summary>

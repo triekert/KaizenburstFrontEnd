@@ -107,6 +107,7 @@ namespace Fasetto.Word
         private void SetHierarchySelection(object sender, System.Windows.RoutedEventArgs e)
         {
             ViewModelApplication.CurrentControlViewModel = ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
+
         }
         private void SetHierarchySelectionMeter(object sender, System.Windows.RoutedEventArgs e)
         {

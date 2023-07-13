@@ -652,413 +652,6 @@ namespace Fasetto.Word.Web.Server
 
         }
         #endregion ReturnTransactions
-
-        #endregion Financials
-
-
-        #region Services
-        #region LoadReadings
-        /// <summary>
-        /// Retrieves meter readings from Client API and updates database
-        /// </summary>
-        /// <param name="model">The search credentials</param>
-        /// <returns>
-        ///     Returns a list of hiearchy items if successful, 
-        ///     otherwise returns the error reasons for the failure
-        /// </returns>
-
-        [Route(ApiRoutes.LoadReadings)]
-        public async Task<ApiResponse> ReturnMeterReadingsAsync([FromBody] string model)
-        {
-
-            #region Get User
-
-            // Get the current user
-            var user = await mUserManager.GetUserAsync(HttpContext.User);
-
-            // If we have no user...
-            if (user == null)
-                return new ApiResponse
-                {
-                    // TODO: Localization
-                    ErrorMessage = "User not found"
-                };
-
-            #endregion
-            //First build webrequest to query API client and retrieve <List> of <Reading.
-            #region sql query
-
-
-            var para = new SqlParameter[3];
-            para[0] = new SqlParameter("@ID", SqlDbType.VarChar);
-            para[1] = new SqlParameter("@Date", SqlDbType.DateTime);
-            para[2] = new SqlParameter("@Reading", SqlDbType.Decimal);
-
-            var SqlString = "EXEC  [Services].[spDateForMeterCursor] @fClientID = NULL, @DateStart = NULL, @DateEnd = NULL";
-
-            try
-            {
-                // Try and run the task
-                var dataset = await GetDataSetAsync(SqlString);
-                var dt = dataset.Tables[0];
-                var hierarchyResultListApiModel = new HierarchyResultListApiModel();
-                var results = hierarchyResultListApiModel;
-
-
-                foreach (DataRow row1 in dt.Rows)
-                {
-                    try
-                    {
-                        var param = (string)(row1[0]);
-                        param = "https://api.netqedge.com/v1" + param;
-                        //For testing a specific subset of data via api   2022-11-27 20:54:47.000
-                        //param = "https://api.netqedge.com/v1?From=2022-12-16%2000%3A00%3A00&To=2022-12-16%2012%3A30%3A00";
-                        var serverResponse = default(HttpWebResponse);
-                        serverResponse = await Get2Async(param);
-
-                        var result1 = serverResponse.CreateWebRequestResult<WaterReading>();
-                        if (result1.RawServerResponse != null)
-                        {       // Deserialize raw response
-                                //var myObject = JsonConvert.DeserializeObject<WaterReading>(result1.RawServerResponse);
-
-
-                            var ObjOrderList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<WaterReading>>(result1.RawServerResponse);
-
-
-                            foreach (var site in ObjOrderList)
-                            {
-                                foreach (var row in site.Readings)
-                                {
-                                    para[0].Value = row.DeviceId;
-                                    para[1].Value = Convert.ToDateTime(row.timestamp);
-                                    para[2].Value = Convert.ToDecimal(row.Value);
-                                    //var dateTime = Convert.ToDateTime(row.timestamp.Substring(0, 18).Replace("T", " "));
-                                    //para[1].Value = dateTime;
-                                    try
-                                    {
-                                        // Try and run the task
-
-                                        SqlString = "UPDATE [Services].[MeterReading] SET MeterReading = @Reading FROM [Services].[MeterReading] mr (NOLOCK)LEFT OUTER JOIN [Services].[Meter] m (NOLOCK)ON mr.fMeterID = m.[kMeterId]" +
-                                         " WHERE  m.[Reference]= @Id  AND mr.Date = @Date  AND NOT MeterReading = @Reading";
-
-                                        //TO DO: When running the query below from the server, the system updates a reading for a different meter but the same timestamp...
-                                        //When running that same query directly on the database, the update (error) does not occur??? why
-                                        //DECLARE @Date datetime = '2022-10-27 02:45:04',@Id nvarchar = 'C53AE8',@Reading decimal (10,3) =320.576
-                                        //                                    UPDATE[Services].[MeterReading]
-                                        //SET MeterReading = @Reading FROM[Services].[MeterReading] mr(NOLOCK)LEFT OUTER JOIN[Services].[Meter] m(NOLOCK)ON mr.fMeterID = m.[kMeterId] AND m.[Reference]= @Id WHERE mr.Date = @Date AND NOT MeterReading = @Reading
-                                        _ = await ExecuteAsync(SqlString, para);
-                                        SqlString = "INSERT INTO [Services].[MeterReading]([Date],[MeterReading],[fMeterID]) SELECT @Date,@Reading,m.[kMeterId]FROM [Services].[Meter] m (NOLOCK)LEFT OUTER JOIN [Services].[MeterReading]" +
-                                                           " mr (NOLOCK)ON mr.Date = @Date  AND mr.MeterReading = @Reading AND mr.fMeterID = m.[kMeterId]WHERE m.[Reference]= @Id AND mr.MeterReading IS NULL";
-                                        _ = await ExecuteAsync(SqlString, para);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        // Log error
-                                        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
-
-                                        // Throw it as normal
-                                        throw;
-                                    }
-                                }
-                            }
-
-                        }
-                        else
-                        {
-                            return new ApiResponse();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        // Log error
-                        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
-
-                        // Throw it as normal
-                        throw;
-                    }
-
-                }
-
-
-            }
-
-                    catch (Exception ex)
-                    {
-                        // Log error
-                        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
-
-                        // Throw it as normal
-                        throw;
-                    }
-
-                return new ApiResponse();
-        }
-        #endregion
-        #endregion LoadReadings
-        #region BulkRecon
-        #region ReturnBulkRecon
-        /// <summary>
-        /// Retrieves aggregate  water consumption of Bulk and serviced consumer meters
-        /// </summary>
-        /// <param name="model">The search credentials</param>
-        /// <returns>
-        ///     Returns the water consumption per selected Bulk Metr and period if successful, 
-        ///     otherwise returns the error reasons for the failure
-        /// </returns>
-
-        [Route(ApiRoutes.ReturnBulkRecon)]
-        public async Task<ApiResponse> ReturnBulkReadingAsync([FromBody] ParameterBulkReconApiModel model)
-
-        {
-            #region Get User
-
-            // Get the current user
-            var user = await mUserManager.GetUserAsync(HttpContext.User);
-
-            // If we have no user...
-            if (user == null)
-                return new ApiResponse
-                {
-                    // TODO: Localization
-                    ErrorMessage = "User not found"
-                };
-
-            #endregion Get User
-
-            #region sql query
-
-
-
-            var SqlString = "EXEC  [Services].[spBulkMeterRecon]		@fPropertyID =  '" +model.BulkMeter+"' ,  @DateStart =' " + model.TimeStart.ToString() + "',  @DateEnd = '" + model.TimeEnd.ToString() + "'";
-;
-            try
-            {
-                // Try and run the task
-                var dataset = await GetDataSetAsync(SqlString);
-                var dt = dataset.Tables[0];
-                var bulkReconResultListApiModel = new BulkReconResultListApiModel();
-                var results = bulkReconResultListApiModel;
-
-
-                foreach (DataRow row in dt.Rows)
-                {
-                    var u = new BulkReconResultApiModel
-                    {
-                    BulkMeter =row[0].ToString(),
-                    ShortName  = (string)row[1],
-                    TimeSlotStart =(DateTime)row[2],
-                    Missing=(int)row[3],
-                    ChildMeters=(int)row[4],
-                    VolumeIn = (float)row[5],
-                    VolumeOut = (float)row[6],
-                    VolumeDelta = (float)row[7],
-                    MovingAvgDelta = (float)row[8],
-                    PercDelta = (float)row[9],
-                    MonthTotMvgAvg = (float)row[10],
-                    MonthSlotMvgAvg = (float)row[11],
-                    };
-                    results.Add(u);
-
-                }
-
-                return new ApiResponse<BulkReconResultListApiModel>
-                {
-
-                    Response = results
-                };
-                #endregion SQL Query
-
-
-            }
-            catch (Exception ex)
-            {
-                // Log error
-                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
-
-                // Throw it as normal
-                throw;
-            }
-
-
-
-
-        }
-        #endregion ReturnBulkRecon
-
-        #region ReturnReconDetail   
-        /// <summary>
-        /// Retrieves individual readings for consumer meters (aggregated)
-        /// </summary>
-        /// <param name="model">Parameter API for retrieval of info</param>
-        /// <returns>
-        ///     Returns the water consumption per selected Bulk Metr and period if successful, 
-        ///     otherwise returns the error reasons for the failure
-        /// </returns>
-
-        [Route(ApiRoutes.ReturnReconDetail)]
-        public async Task<ApiResponse> ReturnReconDetailAsync([FromBody] ParameterBulkReconApiModel model)
-
-        {
-            #region Get User
-
-            // Get the current user
-            var user = await mUserManager.GetUserAsync(HttpContext.User);
-
-            // If we have no user...
-            if (user == null)
-                return new ApiResponse
-                {
-                    // TODO: Localization
-                    ErrorMessage = "User not found"
-                };
-
-            #endregion
-
-            #region sql query
-
-
-
-            var SqlString = "EXEC [Services].[spCalculateVarianceChildReadingsMaster]	 @BulkPropertyID =  '" + model.BulkMeter + "' ,  @DateStart =' " + model.TimeStart.ToString() + "',  @DateEnd = '" + model.TimeEnd.ToString() + "',  @TODStart = '" + model.TODStart.ToString() + "',  @TODEnd = '" + model.TODEnd.ToString() + "',  @fDateReference = '" + model.DateReference.ToString() + "'";
-            ;
-            try
-            {
-                // Try and run the task
-                var dataset = await GetDataSetAsync(SqlString);
-                var dt = dataset.Tables[0];
-                var bulkReconDetailResultListApiModel = new BulkReconDetailResultListApiModel();
-                var results = bulkReconDetailResultListApiModel;
-
-
-                foreach (DataRow row in dt.Rows)
-                {
-                    var u = new BulkReconDetailResultApiModel
-                    {
-                        BulkMeter = row[1].ToString(),
-                        ShortName = row[2].ToString(),
-                        TimeStart = (DateTime)row[3],
-                        Volume = (decimal)row[5],
-                        MeterReadingCalc = (float)row[14],
-                        ReadingTimePrior = (DateTime)row[6],
-                        ReadingPrior = (float)row[7],
-                        ReadingTimeNext = (DateTime)row[8],
-                        ReadingNext = (float)row[9],
-                        TimeEnd = (DateTime)row[4],
-                        MeterReadingCalcE = (float)row[15],
-                        ReadingTimePriorE = (DateTime)row[10],
-                        ReadingPriorE = (float)row[11],
-                        ReadingTimeNextE = (DateTime)row[12],
-                        ReadingNextE = (float)row[13],
-
-
-                    };
-                    results.Add(u);
-
-                }
-
-                return new ApiResponse<BulkReconDetailResultListApiModel>
-                {
-
-                    Response = results
-                };
-                #endregion sql query
-
-
-            }
-            catch (Exception ex)
-            {
-                // Log error
-                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
-
-                // Throw it as normal
-                throw;
-            }
-
-
-
-
-        }
-        #endregion BulkReconDetail
-        #region MeterReading
-        /// <summary>
-        /// Retrieves individual readings for consumer meters (detail readings for period selectd)
-        /// </summary>
-        /// <param name="model">Parameter API for retrieval of info</param>
-        /// <returns>
-        ///     Returns the water consumption per selected Consumer meter and period if successful, 
-        ///     otherwise returns the error reasons for the failure
-        /// </returns>
-
-        [Route(ApiRoutes.ReturnMeterReading)]
-        public async Task<ApiResponse> ReturnMeterReadingAsync([FromBody] ParameterMeterReadingApiModel model)
-
-        {
-            #region Get User
-
-            // Get the current user
-            var user = await mUserManager.GetUserAsync(HttpContext.User);
-
-            // If we have no user...
-            if (user == null)
-                return new ApiResponse
-                {
-                    // TODO: Localization
-                    ErrorMessage = "User not found"
-                };
-
-            #endregion
-
-            #region sql query
-
-
-
-            var SqlString = "EXEC [Services].[spGetMeterReadings]  @PropertyID = '" + model.PropertyID + "',@TimeStart = '" + model.TimeStart + "',@TimeEnd = '" + model.TimeEnd + "',@MeterType = '" + model.MeterType + "',@fDateReference = '" + model.DateReference + "'";
-            ;
-            try
-            {
-                // Try and run the task
-                var dataset = await GetDataSetAsync(SqlString);
-                var dt = dataset.Tables[0];
-                var meterConsumptionResultListApiModel = new MeterConsumptionResultListApiModel();
-                var results = meterConsumptionResultListApiModel;
-
-
-                foreach (DataRow row in dt.Rows)
-                {
-                    var u = new MeterConsumptionResultApiModel
-                    {
-                        Erf = row[1].ToString(),
-                        Customer = row[2].ToString(),
-                        Timestart = (DateTime)row[3],
-                        Volume = (decimal)row[5],
-                        MeterReading = (decimal)row[4],
-
-                    };
-                    results.Add(u);
-
-                }
-
-                return new ApiResponse<MeterConsumptionResultListApiModel>
-                {
-
-                    Response = results
-                };
-                #endregion sql query
-
-
-            }
-            catch (Exception ex)
-            {
-                // Log error
-                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
-
-                // Throw it as normal
-                throw;
-            }
-         }
-
-            #endregion MeterReading
-            #endregion BulkRecon
-            #region Billing
             #region BillingPeriods
 
             [Route(ApiRoutes.ReturnBillingPeriods)]
@@ -1134,9 +727,10 @@ namespace Fasetto.Word.Web.Server
         }
 
         #endregion BillingPeriods
-        #region BillingDetail
-        [Route(ApiRoutes.ReturnSWBilling)]
-        public async Task<ApiResponse> ReturnSWBillingAsync([FromBody] string model)
+        #region RootPerClientAndType
+
+        [Route(ApiRoutes.ReturnRootPerClientAndType)]
+        public async Task<ApiResponse> ReturnRootPerClientAndTypeAsync([FromBody] ParameterGenericRootApiModel model)
 
         {
             #region Get User
@@ -1158,67 +752,33 @@ namespace Fasetto.Word.Web.Server
 
 
 
-            var SqlString = "EXEC [Services].[spGetSWConsumerBilling1] 	 @fBillingPeriodID =  '" + model + "'";
+            var SqlString = "EXEC [Admin].[spGetHierarchyRootsPerClientAndType] 	 @fClientID =  '" + model.ClientID + "',@fHierarchyTypeID = '" + model.HierarchyTypeID + "'"; ;
             ;
             try
             {
                 // Try and run the task
                 var dataset = await GetDataSetAsync(SqlString);
                 var dt = dataset.Tables[0];
-                var results = new HierarchyBillingResultListApiModel();
-                //var results = billingPeriodResultListApiModel;
+                var costHierarchyResultListApiModel = new CostHierarchyResultListApiModel();
+                var results = costHierarchyResultListApiModel;
 
 
                 foreach (DataRow row in dt.Rows)
                 {
-                    var u = new HierarchyBillingResultApiModel
+                    var u = new CostHierarchyResultApiModel
                     {
-                        ShortName = row[0].ToString(),
-                        Description = row[1].ToString(),
-                        KCategoryID = row[2].ToString(),
-                        ParentCategoryID = row[3].ToString(),
-                        DateEffective = (DateTime)row[4],
-                        DateDiscontinued = (DateTime)row[5],
-                        TotalConsumption = (decimal)row[6],
-                        WaterCost = (decimal)row[7],
-                        SewerCost = (decimal)row[8],
-                        TotalCost = (decimal)row[9],
-                        TimeStart = (DateTime)row[10],
-                        Startreading = (decimal)row[11],
-                        TimeEnd = (DateTime)row[12],
-                        Endreading = (decimal)row[13],
-                        DatePeriodStart = (DateTime)row[14],
-                        DatePeriodEnd = (DateTime)row[15],
-                        Volume = (decimal)row[16],
-                        VolumePredicted = (decimal)row[17],
-                        ThresholdW = (decimal)row[18],
-                        Basew = (decimal)row[19],
-                        Tariffw = (decimal)row[20],
-                        CostWater = (decimal)row[21],
-                        ThresholdS = (decimal)row[22],
-                        Bases = (decimal)row[23],
-                        Tariffs = (decimal)row[24],
-                        CostSewer = (decimal)row[25],
-                        DatePeriodStartN = (DateTime)row[26],
-                        DatePeriodEndN = (DateTime)row[27],
-                        VolumeN = (decimal)row[28],
-                        VolumePredictedN = (decimal)row[29],
-                        ThresholdWN = (decimal)row[30],
-                        BasewN = (decimal)row[31],
-                        TariffwN = (decimal)row[32],
-                        CostWaterN = (decimal)row[33],
-                        ThresholdSN = (decimal)row[36],
-                        BasesN = (decimal)row[37],
-                        TariffsN = (decimal)row[38],
-                        CostSewerN = (decimal)row[39],
-                        Adjustment= (decimal)row[40],
-                        AdjustmentN= (decimal)row[41],
+                        KCategoryID = row[0].ToString(),
+                        ShortName = row[1].ToString(),
+                        FClientID = row[2].ToString(),
+
+
+
                     };
                     results.Add(u);
 
                 }
 
-                return new ApiResponse<HierarchyBillingResultListApiModel>
+                return new ApiResponse<CostHierarchyResultListApiModel>
                 {
 
                     Response = results
@@ -1236,82 +796,593 @@ namespace Fasetto.Word.Web.Server
                 throw;
             }
 
+
+
+
         }
-        #endregion BillingDetail
-        #region BillingPeriodAdjustment
-        /// <summary>
-        /// Retrieves aggregate  water consumption of Bulk and serviced consumer meters
-        /// </summary>
-        /// <param name="model">The search credentials</param>
-        /// <returns>
-        ///     Returns the water consumption per selected Bulk Metr and period if successful, 
-        ///     otherwise returns the error reasons for the failure
-        /// </returns>
 
-        [Route(ApiRoutes.BillingPeriodAdjustment)]
-        public async Task<ApiResponse> BillingPeriodAdjustmentAsync([FromBody] ParameterBillingAdjustmentApiModel model)
+        #endregion RootPerClientAndType
 
-        {
-            #region Get User
 
-            // Get the current user
-            var user = await mUserManager.GetUserAsync(HttpContext.User);
+        #endregion Financials
 
-            // If we have no user...
-            if (user == null)
-                return new ApiResponse
+
+        #region Services
+            #region LoadReadings
+            /// <summary>
+            /// Retrieves meter readings from Client API and updates database
+            /// </summary>
+            /// <param name="model">The search credentials</param>
+            /// <returns>
+            ///     Returns a list of hiearchy items if successful, 
+            ///     otherwise returns the error reasons for the failure
+            /// </returns>
+
+            [Route(ApiRoutes.LoadReadings)]
+            public async Task<ApiResponse> ReturnMeterReadingsAsync([FromBody] string model)
+            {
+
+                #region Get User
+
+                // Get the current user
+                var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+                // If we have no user...
+                if (user == null)
+                    return new ApiResponse
+                    {
+                        // TODO: Localization
+                        ErrorMessage = "User not found"
+                    };
+
+                #endregion
+                //First build webrequest to query API client and retrieve <List> of <Reading.
+                #region sql query
+
+
+                var para = new SqlParameter[3];
+                para[0] = new SqlParameter("@ID", SqlDbType.VarChar);
+                para[1] = new SqlParameter("@Date", SqlDbType.DateTime);
+                para[2] = new SqlParameter("@Reading", SqlDbType.Decimal);
+
+                var SqlString = "EXEC  [Services].[spDateForMeterCursor] @fClientID = NULL, @DateStart = NULL, @DateEnd = NULL";
+
+                try
                 {
-                    // TODO: Localization
-                    ErrorMessage = "User not found"
-                };
-
-            #endregion Get User
-
-            #region sql query
+                    // Try and run the task
+                    var dataset = await GetDataSetAsync(SqlString);
+                    var dt = dataset.Tables[0];
+                    var hierarchyResultListApiModel = new HierarchyResultListApiModel();
+                    var results = hierarchyResultListApiModel;
 
 
+                    foreach (DataRow row1 in dt.Rows)
+                    {
+                        try
+                        {
+                            var param = (string)(row1[0]);
+                            param = "https://api.netqedge.com/v1" + param;
+                            //For testing a specific subset of data via api   2022-11-27 20:54:47.000
+                            //param = "https://api.netqedge.com/v1?From=2022-12-16%2000%3A00%3A00&To=2022-12-16%2012%3A30%3A00";
+                            var serverResponse = default(HttpWebResponse);
+                            serverResponse = await Get2Async(param);
 
-            var SqlString = "EXEC [Services].[spAddBillingAdjustment]	 @fPropertyID =  '" + model.FPropertyID + "' ,  @fBillingPeriodID = '" + model.FBillingPeriodID + "' " +
-                ",@TimePeriodStart =' " + model.DateStart.ToString() + "',  @Adjustment = '" + model.Adjustment.ToString() + "',  @DateEffective = '" + model.DateEffective.ToString() + "',  @fChangeID = '" + model.FChangeID + "'";
+                            var result1 = serverResponse.CreateWebRequestResult<WaterReading>();
+                            if (result1.RawServerResponse != null)
+                            {       // Deserialize raw response
+                                    //var myObject = JsonConvert.DeserializeObject<WaterReading>(result1.RawServerResponse);
 
 
+                                var ObjOrderList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<WaterReading>>(result1.RawServerResponse);
 
-            try
 
-            {
-                // Try and run the task
-                _ = await ExecuteAsync(SqlString);
-                #endregion sql query      
+                                foreach (var site in ObjOrderList)
+                                {
+                                    foreach (var row in site.Readings)
+                                    {
+                                        para[0].Value = row.DeviceId;
+                                        para[1].Value = Convert.ToDateTime(row.timestamp);
+                                        para[2].Value = Convert.ToDecimal(row.Value);
+                                        //var dateTime = Convert.ToDateTime(row.timestamp.Substring(0, 18).Replace("T", " "));
+                                        //para[1].Value = dateTime;
+                                        try
+                                        {
+                                            // Try and run the task
+
+                                            SqlString = "UPDATE [Services].[MeterReading] SET MeterReading = @Reading FROM [Services].[MeterReading] mr (NOLOCK)LEFT OUTER JOIN [Services].[Meter] m (NOLOCK)ON mr.fMeterID = m.[kMeterId]" +
+                                             " WHERE  m.[Reference]= @Id  AND mr.Date = @Date  AND NOT MeterReading = @Reading";
+
+                                            //TO DO: When running the query below from the server, the system updates a reading for a different meter but the same timestamp...
+                                            //When running that same query directly on the database, the update (error) does not occur??? why
+                                            //DECLARE @Date datetime = '2022-10-27 02:45:04',@Id nvarchar = 'C53AE8',@Reading decimal (10,3) =320.576
+                                            //                                    UPDATE[Services].[MeterReading]
+                                            //SET MeterReading = @Reading FROM[Services].[MeterReading] mr(NOLOCK)LEFT OUTER JOIN[Services].[Meter] m(NOLOCK)ON mr.fMeterID = m.[kMeterId] AND m.[Reference]= @Id WHERE mr.Date = @Date AND NOT MeterReading = @Reading
+                                            _ = await ExecuteAsync(SqlString, para);
+                                            SqlString = "INSERT INTO [Services].[MeterReading]([Date],[MeterReading],[fMeterID]) SELECT @Date,@Reading,m.[kMeterId]FROM [Services].[Meter] m (NOLOCK)LEFT OUTER JOIN [Services].[MeterReading]" +
+                                                               " mr (NOLOCK)ON mr.Date = @Date  AND mr.MeterReading = @Reading AND mr.fMeterID = m.[kMeterId]WHERE m.[Reference]= @Id AND mr.MeterReading IS NULL";
+                                            _ = await ExecuteAsync(SqlString, para);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            // Log error
+                                            //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                                            // Throw it as normal
+                                            throw;
+                                        }
+                                    }
+                                }
+
+                            }
+                            else
+                            {
+                                return new ApiResponse();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            // Log error
+                            //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                            // Throw it as normal
+                            throw;
+                        }
+
+                    }
+
+
+                }
+
+                        catch (Exception ex)
+                        {
+                            // Log error
+                            //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                            // Throw it as normal
+                            throw;
+                        }
+
+                    return new ApiResponse();
             }
+            #endregion
+            #endregion LoadReadings
+            #region BulkRecon
+            #region ReturnBulkRecon
+            /// <summary>
+            /// Retrieves aggregate  water consumption of Bulk and serviced consumer meters
+            /// </summary>
+            /// <param name="model">The search credentials</param>
+            /// <returns>
+            ///     Returns the water consumption per selected Bulk Metr and period if successful, 
+            ///     otherwise returns the error reasons for the failure
+            /// </returns>
 
-            catch (Exception ex)
+            [Route(ApiRoutes.ReturnBulkRecon)]
+            public async Task<ApiResponse> ReturnBulkReadingAsync([FromBody] ParameterBulkReconApiModel model)
+
             {
-                // Log error
-                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+                #region Get User
 
-                // Throw it as normal
-                throw;
+                // Get the current user
+                var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+                // If we have no user...
+                if (user == null)
+                    return new ApiResponse
+                    {
+                        // TODO: Localization
+                        ErrorMessage = "User not found"
+                    };
+
+                #endregion Get User
+
+                #region sql query
+
+
+
+                var SqlString = "EXEC  [Services].[spBulkMeterRecon]		@fPropertyID =  '" +model.BulkMeter+"' ,  @DateStart =' " + model.TimeStart.ToString() + "',  @DateEnd = '" + model.TimeEnd.ToString() + "'";
+    ;
+                try
+                {
+                    // Try and run the task
+                    var dataset = await GetDataSetAsync(SqlString);
+                    var dt = dataset.Tables[0];
+                    var bulkReconResultListApiModel = new BulkReconResultListApiModel();
+                    var results = bulkReconResultListApiModel;
+
+
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        var u = new BulkReconResultApiModel
+                        {
+                        BulkMeter =row[0].ToString(),
+                        ShortName  = (string)row[1],
+                        TimeSlotStart =(DateTime)row[2],
+                        Missing=(int)row[3],
+                        ChildMeters=(int)row[4],
+                        VolumeIn = (float)row[5],
+                        VolumeOut = (float)row[6],
+                        VolumeDelta = (float)row[7],
+                        MovingAvgDelta = (float)row[8],
+                        PercDelta = (float)row[9],
+                        MonthTotMvgAvg = (float)row[10],
+                        MonthSlotMvgAvg = (float)row[11],
+                        };
+                        results.Add(u);
+
+                    }
+
+                    return new ApiResponse<BulkReconResultListApiModel>
+                    {
+
+                        Response = results
+                    };
+                    #endregion SQL Query
+
+
+                }
+                catch (Exception ex)
+                {
+                    // Log error
+                    //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                    // Throw it as normal
+                    throw;
+                }
+
+
+
+
             }
-            var results = new HierarchyResultListApiModel();
-            return new ApiResponse<HierarchyResultListApiModel>
+            #endregion ReturnBulkRecon
+
+            #region ReturnReconDetail   
+            /// <summary>
+            /// Retrieves individual readings for consumer meters (aggregated)
+            /// </summary>
+            /// <param name="model">Parameter API for retrieval of info</param>
+            /// <returns>
+            ///     Returns the water consumption per selected Bulk Metr and period if successful, 
+            ///     otherwise returns the error reasons for the failure
+            /// </returns>
+
+            [Route(ApiRoutes.ReturnReconDetail)]
+            public async Task<ApiResponse> ReturnReconDetailAsync([FromBody] ParameterBulkReconApiModel model)
+
             {
-                Response = results
-            };
-        }
+                #region Get User
+
+                // Get the current user
+                var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+                // If we have no user...
+                if (user == null)
+                    return new ApiResponse
+                    {
+                        // TODO: Localization
+                        ErrorMessage = "User not found"
+                    };
+
+                #endregion
+
+                #region sql query
 
 
-     #endregion BillingPeriodAdjustment
+
+                var SqlString = "EXEC [Services].[spCalculateVarianceChildReadingsMaster]	 @BulkPropertyID =  '" + model.BulkMeter + "' ,  @DateStart =' " + model.TimeStart.ToString() + "',  @DateEnd = '" + model.TimeEnd.ToString() + "',  @TODStart = '" + model.TODStart.ToString() + "',  @TODEnd = '" + model.TODEnd.ToString() + "',  @fDateReference = '" + model.DateReference.ToString() + "'";
+                ;
+                try
+                {
+                    // Try and run the task
+                    var dataset = await GetDataSetAsync(SqlString);
+                    var dt = dataset.Tables[0];
+                    var bulkReconDetailResultListApiModel = new BulkReconDetailResultListApiModel();
+                    var results = bulkReconDetailResultListApiModel;
+
+
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        var u = new BulkReconDetailResultApiModel
+                        {
+                            BulkMeter = row[1].ToString(),
+                            ShortName = row[2].ToString(),
+                            TimeStart = (DateTime)row[3],
+                            Volume = (decimal)row[5],
+                            MeterReadingCalc = (float)row[14],
+                            ReadingTimePrior = (DateTime)row[6],
+                            ReadingPrior = (float)row[7],
+                            ReadingTimeNext = (DateTime)row[8],
+                            ReadingNext = (float)row[9],
+                            TimeEnd = (DateTime)row[4],
+                            MeterReadingCalcE = (float)row[15],
+                            ReadingTimePriorE = (DateTime)row[10],
+                            ReadingPriorE = (float)row[11],
+                            ReadingTimeNextE = (DateTime)row[12],
+                            ReadingNextE = (float)row[13],
+
+
+                        };
+                        results.Add(u);
+
+                    }
+
+                    return new ApiResponse<BulkReconDetailResultListApiModel>
+                    {
+
+                        Response = results
+                    };
+                    #endregion sql query
+
+
+                }
+                catch (Exception ex)
+                {
+                    // Log error
+                    //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                    // Throw it as normal
+                    throw;
+                }
 
 
 
-    #endregion Billing
+
+            }
+            #endregion BulkReconDetail
+            #region MeterReading
+            /// <summary>
+            /// Retrieves individual readings for consumer meters (detail readings for period selectd)
+            /// </summary>
+            /// <param name="model">Parameter API for retrieval of info</param>
+            /// <returns>
+            ///     Returns the water consumption per selected Consumer meter and period if successful, 
+            ///     otherwise returns the error reasons for the failure
+            /// </returns>
+
+            [Route(ApiRoutes.ReturnMeterReading)]
+            public async Task<ApiResponse> ReturnMeterReadingAsync([FromBody] ParameterMeterReadingApiModel model)
+
+            {
+                #region Get User
+
+                // Get the current user
+                var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+                // If we have no user...
+                if (user == null)
+                    return new ApiResponse
+                    {
+                        // TODO: Localization
+                        ErrorMessage = "User not found"
+                    };
+
+                #endregion
+
+                #region sql query
 
 
-    #endregion Services
+
+                var SqlString = "EXEC [Services].[spGetMeterReadings]  @PropertyID = '" + model.PropertyID + "',@TimeStart = '" + model.TimeStart + "',@TimeEnd = '" + model.TimeEnd + "',@MeterType = '" + model.MeterType + "',@fDateReference = '" + model.DateReference + "'";
+                ;
+                try
+                {
+                    // Try and run the task
+                    var dataset = await GetDataSetAsync(SqlString);
+                    var dt = dataset.Tables[0];
+                    var meterConsumptionResultListApiModel = new MeterConsumptionResultListApiModel();
+                    var results = meterConsumptionResultListApiModel;
+
+
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        var u = new MeterConsumptionResultApiModel
+                        {
+                            Erf = row[1].ToString(),
+                            Customer = row[2].ToString(),
+                            Timestart = (DateTime)row[3],
+                            Volume = (decimal)row[5],
+                            MeterReading = (decimal)row[4],
+
+                        };
+                        results.Add(u);
+
+                    }
+
+                    return new ApiResponse<MeterConsumptionResultListApiModel>
+                    {
+
+                        Response = results
+                    };
+                    #endregion sql query
+
+
+                }
+                catch (Exception ex)
+                {
+                    // Log error
+                    //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                    // Throw it as normal
+                    throw;
+                }
+             }
+
+                #endregion MeterReading
+                #endregion BulkRecon
+            #region Billing
+                #region BillingDetail
+                [Route(ApiRoutes.ReturnSWBilling)]
+                public async Task<ApiResponse> ReturnSWBillingAsync([FromBody] string model)
+
+                {
+                    #region Get User
+
+                    // Get the current user
+                    var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+                    // If we have no user...
+                    if (user == null)
+                        return new ApiResponse
+                        {
+                            // TODO: Localization
+                            ErrorMessage = "User not found"
+                        };
+
+                    #endregion
+
+                    #region sql query
 
 
 
-         #region Hierarchy
+                    var SqlString = "EXEC [Services].[spGetSWConsumerBilling1] 	 @fBillingPeriodID =  '" + model + "'";
+                    ;
+                    try
+                    {
+                        // Try and run the task
+                        var dataset = await GetDataSetAsync(SqlString);
+                        var dt = dataset.Tables[0];
+                        var results = new HierarchyBillingResultListApiModel();
+                        //var results = billingPeriodResultListApiModel;
+
+
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            var u = new HierarchyBillingResultApiModel
+                            {
+                                ShortName = row[0].ToString(),
+                                Description = row[1].ToString(),
+                                KCategoryID = row[2].ToString(),
+                                ParentCategoryID = row[3].ToString(),
+                                DateEffective = (DateTime)row[4],
+                                DateDiscontinued = (DateTime)row[5],
+                                TotalConsumption = (decimal)row[6],
+                                WaterCost = (decimal)row[7],
+                                SewerCost = (decimal)row[8],
+                                TotalCost = (decimal)row[9],
+                                TimeStart = (DateTime)row[10],
+                                Startreading = (decimal)row[11],
+                                TimeEnd = (DateTime)row[12],
+                                Endreading = (decimal)row[13],
+                                DatePeriodStart = (DateTime)row[14],
+                                DatePeriodEnd = (DateTime)row[15],
+                                Volume = (decimal)row[16],
+                                VolumePredicted = (decimal)row[17],
+                                ThresholdW = (decimal)row[18],
+                                Basew = (decimal)row[19],
+                                Tariffw = (decimal)row[20],
+                                CostWater = (decimal)row[21],
+                                ThresholdS = (decimal)row[22],
+                                Bases = (decimal)row[23],
+                                Tariffs = (decimal)row[24],
+                                CostSewer = (decimal)row[25],
+                                DatePeriodStartN = (DateTime)row[26],
+                                DatePeriodEndN = (DateTime)row[27],
+                                VolumeN = (decimal)row[28],
+                                VolumePredictedN = (decimal)row[29],
+                                ThresholdWN = (decimal)row[30],
+                                BasewN = (decimal)row[31],
+                                TariffwN = (decimal)row[32],
+                                CostWaterN = (decimal)row[33],
+                                ThresholdSN = (decimal)row[36],
+                                BasesN = (decimal)row[37],
+                                TariffsN = (decimal)row[38],
+                                CostSewerN = (decimal)row[39],
+                                Adjustment= (decimal)row[40],
+                                AdjustmentN= (decimal)row[41],
+                            };
+                            results.Add(u);
+
+                        }
+
+                        return new ApiResponse<HierarchyBillingResultListApiModel>
+                        {
+
+                            Response = results
+                        };
+                        #endregion sql query
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log error
+                        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                        // Throw it as normal
+                        throw;
+                    }
+
+                }
+                #endregion BillingDetail
+                #region BillingPeriodAdjustment
+                /// <summary>
+                /// Retrieves aggregate  water consumption of Bulk and serviced consumer meters
+                /// </summary>
+                /// <param name="model">The search credentials</param>
+                /// <returns>
+                ///     Returns the water consumption per selected Bulk Metr and period if successful, 
+                ///     otherwise returns the error reasons for the failure
+                /// </returns>
+
+                [Route(ApiRoutes.BillingPeriodAdjustment)]
+                public async Task<ApiResponse> BillingPeriodAdjustmentAsync([FromBody] ParameterBillingAdjustmentApiModel model)
+
+                {
+                    #region Get User
+
+                    // Get the current user
+                    var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+                    // If we have no user...
+                    if (user == null)
+                        return new ApiResponse
+                        {
+                            // TODO: Localization
+                            ErrorMessage = "User not found"
+                        };
+
+                    #endregion Get User
+
+                    #region sql query
+
+
+
+                    var SqlString = "EXEC [Services].[spAddBillingAdjustment]	 @fPropertyID =  '" + model.FPropertyID + "' ,  @fBillingPeriodID = '" + model.FBillingPeriodID + "' " +
+                        ",@TimePeriodStart =' " + model.DateStart.ToString() + "',  @Adjustment = '" + model.Adjustment.ToString() + "',  @DateEffective = '" + model.DateEffective.ToString() + "',  @fChangeID = '" + model.FChangeID + "'";
+
+
+
+                    try
+
+                    {
+                        // Try and run the task
+                        _ = await ExecuteAsync(SqlString);
+                        #endregion sql query      
+                    }
+
+                    catch (Exception ex)
+                    {
+                        // Log error
+                        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                        // Throw it as normal
+                        throw;
+                    }
+                    var results = new HierarchyResultListApiModel();
+                    return new ApiResponse<HierarchyResultListApiModel>
+                    {
+                        Response = results
+                    };
+                }
+
+
+             #endregion BillingPeriodAdjustment
+            #endregion Billing
+        #endregion Services
+
+
+
+        #region Hierarchy
 
         /// <summary>
         /// Returns Hierarchy for Navigation

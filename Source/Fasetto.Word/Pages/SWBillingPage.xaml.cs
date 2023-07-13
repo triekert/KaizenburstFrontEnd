@@ -30,6 +30,7 @@ namespace Fasetto.Word
         /// <param name="specificViewModel">The specific view model to use for this page</param>
         public SWBillingPage(SWBillingPageViewModel specificViewModel) : base(specificViewModel)
         {
+            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
             InitializeComponent();
         }
 
@@ -109,6 +110,14 @@ namespace Fasetto.Word
         {
             //((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod = new BillingPeriodListViewModel(((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedKid);
             //((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod.MSelectedBillingPeriod = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod;
+            ViewModelApplication.CurrentControlViewModel = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod;
+            ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Populate();
         }
+        private void SetHierarchySelection(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ViewModelApplication.CurrentControlViewModel =  ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
+
+        }
+
     }
 }

@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Fasetto.Word
 {
@@ -30,11 +31,11 @@ namespace Fasetto.Word
         #endregion//Public Commands
 
 
-        public bool BulkReconBuildIsRunning { get; set; }
-        private BulkReconDataModel mBulkReconItem;
-        private BulkReconListDataModel mBulkRecon = new BulkReconListDataModel();
-        public BulkReconResultListApiModel mBulkReconApi = new BulkReconResultListApiModel();
-        public BulkReconDetailTreeViewModel mBulkReconDetailTreeView;
+        public bool TransactionBuildIsRunning { get; set; }
+        //private BulkReconDataModel mBulkReconItem;
+        //private BulkReconListDataModel mBulkRecon = new BulkReconListDataModel();
+        //public BulkReconResultListApiModel mBulkReconApi = new BulkReconResultListApiModel();
+        public TransactionDetailTreeViewModel mTransactionDetailTreeView;
         //public BulkReconListDataModel mBRDML;
         private string mTableName;
 
@@ -59,10 +60,10 @@ namespace Fasetto.Word
         {
 
             //var root = "1C225789-3938-4480-86CB-071863DC5D33";
-            var mReturnBulkReconDetail = (BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
-            //mBulkReconDetailTreeView = new BulkReconDetailTreeViewModel("5249FFEB-6907-46AA-9204-D4527E11F9CE", mReturnBulkReconDetail.TimeStart, mReturnBulkReconDetail.TimeEnd);
-            DataContext = mReturnBulkReconDetail;
-            //ViewModelApplication.CurrentPopupViewModel = new BulkReconDetailTreeViewModel();
+            var mReturnTransactionDetail = (TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
+            //mTransactionDetailTreeView = new TransactionDetailTreeViewModel("5249FFEB-6907-46AA-9204-D4527E11F9CE", mReturnTransactionDetail.TimeStart, mReturnTransactionDetail.TimeEnd);
+            DataContext = mReturnTransactionDetail;
+            //ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel();
 
             InitializeComponent();
 
@@ -90,40 +91,48 @@ namespace Fasetto.Word
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var row = sender as DataGridRow;
-            var bulkReconDetailRec = row.DataContext as BulkReconDetailViewModel;
-            MessageBox.Show($"The timeslot selected is {bulkReconDetailRec.TimeStart}") ;
+            var TransactionDetailRec = row.DataContext as TransactionDetailViewModel;
+            //MessageBox.Show($"The timeslot selected is {TransactionDetailRec.TimeStart}") ;
         }
 
         private void DataGridRow_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                //_ = (BulkReconViewModel)(BulkRecon.SelectedItems).OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault()).TimeSlotStart;
+  
                 ViewModelApplication.PopupVisible = false;
-                var cellInfos = BulkReconDetail.SelectedCells;
-                var tempst = cellInfos[0].Column.Header;
-                var tempBR = new ObservableCollection<BulkReconDetailViewModel>();
-                foreach (var tBR in cellInfos)
-                    tempBR.Add((BulkReconDetailViewModel)tBR.Item);
+                var MKFinTranID = ((TransactionDetailViewModel)TransactionDetail.SelectedItem).KFinTranID;
+                var RawTable = TransactionDetail.Items;
+                //var PriorPopup = 
+                    //((TransactionTreeViewModel)((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).Trans_action.Add();
 
-                var TimeStart=tempBR.OrderBy(x=>x.TimeStart).ToList().FirstOrDefault().TimeStart;
-                var TimeEnd = tempBR.OrderByDescending(x => x.TimeEnd).ToList().FirstOrDefault().TimeEnd;
-                var BulkMeter = tempBR.OrderByDescending(x => x.TimeStart).ToList().FirstOrDefault().BulkMeter;
-                var ShortName = tempBR.OrderByDescending(x => x.TimeStart).ToList().FirstOrDefault().ShortName;
-                var mDateReference = ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).DateReference.EditedDateTime;
+                //link cost category to transaction or portion thereof
 
+                //var tempBR = new ObservableCollection<TransactionDetailViewModel>();
+                //foreach (var tBR in cellInfos)
+                //    tempBR.Add((TransactionDetailViewModel)tBR.Item);
+
+                //var TimeStart=tempBR.OrderBy(x=>x.TimeStart).ToList().FirstOrDefault().TimeStart;
+                //var TimeEnd = tempBR.OrderByDescending(x => x.TimeEnd).ToList().FirstOrDefault().TimeEnd;
+                //var BulkMeter = tempBR.OrderByDescending(x => x.TimeStart).ToList().FirstOrDefault().BulkMeter;
+                //var ShortName = tempBR.OrderByDescending(x => x.TimeStart).ToList().FirstOrDefault().ShortName;
+                //var mDateReference = ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).DateReference.EditedDateTime;
+
+                ////ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+
+                //ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(BulkMeter, TimeStart, TimeEnd,
+                //    ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODStart, ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODEnd,mDateReference);
+
+                //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+                //var mCurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                ////New popup is only activated if name differs from current popup (irrespective of view model content)
                 //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+                //ViewModelApplication.CurrentPopupViewModel =  mCurrentPopupViewModel;
+                //ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+                //ViewModelApplication.PopupVisible = true;
 
-                ViewModelApplication.CurrentPopupViewModel = new BulkReconDetailTreeViewModel(BulkMeter, TimeStart, TimeEnd,
-                    ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODStart, ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODEnd,mDateReference);
+                //var Trans = ((TransactionTreeViewModel)PriorPopup).Trans_action;
 
-                ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
-                var mCurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
-                //New popup is only activated if name differs from current popup (irrespective of view model content)
-                ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-                ViewModelApplication.CurrentPopupViewModel =  mCurrentPopupViewModel;
-                ViewModelApplication.CurrentPopupContent = PopupContent.BulkReconDetail;
-                ViewModelApplication.PopupVisible = true;
             }
         }
         private void BulkRecon_OnSelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
@@ -139,27 +148,27 @@ namespace Fasetto.Word
         /// <param name="e"></param>
         private void DataGridRow_MouseRightClick(object sender, MouseButtonEventArgs e)
         {
-            var tempBR = new ObservableCollection<BulkReconDetailViewModel>();
-            foreach (var tBR in BulkReconDetail.ItemsSource)
-                tempBR.Add((BulkReconDetailViewModel)tBR);
-            var mmBulk = ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBulkMeter; //5249ffeb-6907-46aa-9204-d4527e11f9ce
-            var prematch = tempBR.Where(x => x.BulkMeter == ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBulkMeter).ToList();
-            var mBulkReading = tempBR.Where(x => x.BulkMeter == ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBulkMeter).ToList().FirstOrDefault().Volume;
-            var matches = tempBR.Where(x => x.BulkMeter != ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBulkMeter).ToList();
-            decimal mConsumerReading = 0;
-            foreach (var category in matches)
-                mConsumerReading +=category.Volume;
-            var timeDiff = (((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTimeEnd - ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTimeStart);
-            var mHrs = (decimal)timeDiff.TotalHours;
-            if (timeDiff.TotalHours > 24)
+         //   var tempBR = new ObservableCollection<TransactionDetailViewModel>();
+         //   foreach (var tBR in TransactionDetail.ItemsSource)
+         //       tempBR.Add((TransactionDetailViewModel)tBR);
+         //   var mmBulk = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBulkMeter; //5249ffeb-6907-46aa-9204-d4527e11f9ce
+         //   var prematch = tempBR.Where(x => x.BulkMeter == ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBulkMeter).ToList();
+         //   var mBulkReading = tempBR.Where(x => x.BulkMeter == ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBulkMeter).ToList().FirstOrDefault().Volume;
+         //   var matches = tempBR.Where(x => x.BulkMeter != ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBulkMeter).ToList();
+         //   decimal mConsumerReading = 0;
+         //   foreach (var category in matches)
+         //       mConsumerReading +=category.Volume;
+         //   var timeDiff = (((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTimeEnd - ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTimeStart);
+         //   var mHrs = (decimal)timeDiff.TotalHours;
+         //   if (timeDiff.TotalHours > 24)
 
-            { mHrs = (((decimal)(((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODEnd - ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODStart)) +1) / 24 * mHrs;
+         //   { mHrs = (((decimal)(((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODEnd - ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODStart)) +1) / 24 * mHrs;
             
-            };
+         //   };
 
-         var mDifference = mBulkReading - mConsumerReading;
-            var mDiscrepancyRate = Math.Round((mDifference / mHrs),2);
-            MessageBox.Show($"Volume through bulk: {mBulkReading} \n Aggregate consumer volume:  {mConsumerReading}\n Volume difference:  {mDifference}\n Hours of Consumption: {Math.Round(mHrs,2)} \n Mismatch Rate per Hour: {mDiscrepancyRate}");
+         //var mDifference = mBulkReading - mConsumerReading;
+         //   var mDiscrepancyRate = Math.Round((mDifference / mHrs),2);
+         //   MessageBox.Show($"Volume through bulk: {mBulkReading} \n Aggregate consumer volume:  {mConsumerReading}\n Volume difference:  {mDifference}\n Hours of Consumption: {Math.Round(mHrs,2)} \n Mismatch Rate per Hour: {mDiscrepancyRate}");
         }
         private void TreeView_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {

@@ -72,6 +72,11 @@
                             <local:HierarchyItemSelectionControl DataContext="{Binding Root}" FontWeight="ExtraBlack"  />
                         </StackPanel>
 
+
+                        <StackPanel MouseEnter="SetClient">
+                            <local:CostHierarchyComboboxControl DataContext="{Binding CostHierarchy}" FontWeight="ExtraBlack"  />
+                        </StackPanel>
+                        
                         <Button 
                         Style="{StaticResource IconGrowButton}"
                         Height="{Binding MinHeight, RelativeSource={RelativeSource AncestorType=Grid}}"

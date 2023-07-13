@@ -104,16 +104,22 @@ namespace Fasetto.Word
 
         }
 
+        private void SetClient(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+            ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Populate();
+        }
+
         private void SetHierarchySelection(object sender, System.Windows.RoutedEventArgs e)
         {
             ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
         }
-        private void SetHierarchySelectionMeter(object sender, System.Windows.RoutedEventArgs e)
-        {
+        //private void SetHierarchySelectionMeter(object sender, System.Windows.RoutedEventArgs e)
+        //{
 
-            ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Meter.ClientID =  ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root.EditedKid;
-            ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Meter.RootID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root.RootID;
-            ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Meter;
-        }
+        //    ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Meter.ClientID =  ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root.EditedKid;
+        //    ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Meter.RootID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root.RootID;
+        //    ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Meter;
+        //}
     }
 }

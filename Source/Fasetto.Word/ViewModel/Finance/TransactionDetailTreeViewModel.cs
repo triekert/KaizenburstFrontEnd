@@ -92,19 +92,19 @@ namespace Fasetto.Word
             TransactionDetail = new ObservableCollection<TransactionDetailViewModel>();
 
 
-            var TDVM = new TransactionDetailViewModel
-            {
+            //var TDVM = new TransactionDetailViewModel
+            //{
 
-                ShortName = "Loading...Please be patient",
-                //TimeSlotStart = new DateTime(2023, 1, 22, 0, 0, 0),
-                //Missing = 3,
-                //ChildMeters = 87,
-                //VolumeIn = 3145.342F,
-                //VolumeOut = 3215.124F
+            //    ShortName = "Loading...Please be patient",
+            //    //TimeSlotStart = new DateTime(2023, 1, 22, 0, 0, 0),
+            //    //Missing = 3,
+            //    //ChildMeters = 87,
+            //    //VolumeIn = 3145.342F,
+            //    //VolumeOut = 3215.124F
 
 
-            };
-            TransactionDetail.Add(TDVM);
+            //};
+            //TransactionDetail.Add(TDVM);
 
             var matches = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_action.Where(x => x.KFinTranID == mKFinTranID).ToList();
 
@@ -126,7 +126,7 @@ namespace Fasetto.Word
 
 
                 };
-                TransactionDetail.Add(TDVM);
+                TransactionDetail.Add(mTDVM);
             }
   
             PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
@@ -972,7 +972,8 @@ namespace Fasetto.Word
             else
             {
 
-                ViewModelApplication.CurrentPopupContent = PopupContent.BulkRecon;}
+                ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;
+            }
 
             ViewModelApplication.PopupVisible = true;
 

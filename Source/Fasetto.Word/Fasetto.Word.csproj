@@ -100,8 +100,14 @@
     <Compile Include="AttachedProperties\NoFrameHistory.cs" />
     <Compile Include="AttachedProperties\PasswordBoxAttachedProperties.cs" />
     <Compile Include="AttachedProperties\TextEntryWidthMatcherProperty.cs" />
+    <Compile Include="Controls\Finance\ManageClassificationControl.cs">
+      <DependentUpon>ManageClassificationControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Finance\TransactionDetailControl.xaml.cs" />
     <Compile Include="Controls\Finance\TransactionControl.xaml.cs" />
+    <Compile Include="Controls\Input\CostHierarchyComboboxControl .xaml.cs">
+      <DependentUpon>CostHierarchyComboboxControl .xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Input\DateTimeControl.xaml.cs">
       <DependentUpon>DateTimeControl.xaml</DependentUpon>
     </Compile>
@@ -218,11 +224,14 @@
     <Compile Include="ValueConverters\PopupContentConverter.cs" />
     <Compile Include="ValueConverters\TimeToStringConverter.cs" />
     <Compile Include="ViewModel\Application\Design\FinanceSelectionDesignModel.cs" />
+    <Compile Include="ViewModel\Finance\ManageClassificationViewModel.cs" />
     <Compile Include="ViewModel\Finance\TransactionDetailTreeViewModel.cs" />
     <Compile Include="ViewModel\Finance\TransactionDetailViewModel.cs" />
     <Compile Include="ViewModel\Finance\TransactionTreeViewModel.cs" />
     <Compile Include="ViewModel\Finance\TransactionViewModel.cs" />
     <Compile Include="ViewModel\Finance\Expenditure\TransactionSelectionPageViewModel.cs" />
+    <Compile Include="ViewModel\Input\CostHierarchyListViewModel.cs" />
+    <Compile Include="ViewModel\Input\CostHierarchyViewModel .cs" />
     <Compile Include="ViewModel\Services\WaterReadingTreeViewModel.cs" />
     <Compile Include="ViewModel\FinancePageViewModel.cs" />
     <Compile Include="ViewModel\Finance\Expenditure\Design\HierarchyElementDesignModel.cs" />
@@ -270,8 +279,8 @@
     <Compile Include="ViewModel\Input\DateTimeViewModel.cs" />
     <Compile Include="ViewModel\Input\HierarchyItemSelectionViewModel.cs" />
     <Compile Include="ViewModel\Menu\HierarchyPageViewModel .cs" />
-    <Compile Include="ViewModel\Services\BillingPeriodListViewModel.cs" />
-    <Compile Include="ViewModel\Services\BillingPeriodViewModel.cs" />
+    <Compile Include="ViewModel\Input\BillingPeriodListViewModel.cs" />
+    <Compile Include="ViewModel\Input\BillingPeriodViewModel.cs" />
     <Compile Include="ViewModel\Services\WaterReadinglViewModel .cs" />
     <Compile Include="ViewModel\Services\HierarchyBillingPageViewModel .cs" />
     <Compile Include="ViewModel\Services\HierarchyBillingTreeViewModel.cs" />
@@ -342,6 +351,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Finance\ManageClassificationControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Finance\TransactionDetailControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -359,6 +372,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Finance\HierarchyElementControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Input\CostHierarchyComboboxControl .xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -65,7 +65,12 @@
                            VerticalAlignment="Center" 
                            />
                     <!--Button to update-->
-                        <local:HierarchyItemSelectionControl DataContext="{Binding Client}" FontWeight="ExtraBlack" />
+
+                        <StackPanel MouseEnter="SetHierarchySelection">
+                            <local:HierarchyItemSelectionControl DataContext="{Binding Client}" FontWeight="ExtraBlack"  />
+                        </StackPanel>
+
+                        <!--<local:HierarchyItemSelectionControl DataContext="{Binding Client}" FontWeight="ExtraBlack" />-->
                             <Button 
                             Style="{StaticResource TextButton}" 
                             Content="Use Client information in search ..." 

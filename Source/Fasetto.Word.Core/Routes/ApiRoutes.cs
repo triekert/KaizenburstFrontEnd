@@ -89,6 +89,12 @@
         public const string ReturnBillingPeriods = "api/finance/BillingPeriodsLookup";
 
 
+        /// <summary>
+        /// The route to the PersistHierarchy Api method
+        /// </summary>
+        public const string ReturnRootPerClientAndType = "api/admin/ReturnRootPerClientAndType";
+
+
 
         /// <summary>
         /// The route to the Transaction Api method

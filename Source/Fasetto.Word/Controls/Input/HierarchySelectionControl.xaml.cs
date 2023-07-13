@@ -328,6 +328,7 @@ namespace Fasetto.Word
             ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName     = mDraggedItem.ShortName;
             ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalName   = mDraggedItem.ShortName;
             ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID       = mDraggedItem.FClientID;
+            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
             ViewModelApplication.PopupVisible = false;
             ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
 

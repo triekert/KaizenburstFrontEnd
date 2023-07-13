@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -110,12 +111,13 @@ namespace Fasetto.Word
                 //var tempT = new TransactionViewModel();
 
                 ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(MKFinTranID);
+                ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Allocation " ;
 
                 //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
-                //ViewModelApplication.PopupVisible = false;
-                ////ViewModelApplication.CurrentPopupContent = Null;
-                //ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
-                //ViewModelApplication.PopupVisible = true;
+                ViewModelApplication.PopupVisible = false;
+                //ViewModelApplication.CurrentPopupContent = Null;
+                ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+                ViewModelApplication.PopupVisible = true;
 
 
 
