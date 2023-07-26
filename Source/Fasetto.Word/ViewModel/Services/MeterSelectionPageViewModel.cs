@@ -501,7 +501,10 @@ namespace Fasetto.Word
         // Close settings menu
         ViewModelApplication.SideMenuVisible = true;
         //ViewModelApplication.CurrentSideMenuViewModel = null;
-        ViewModelApplication.GoToPage(ApplicationPage.Chat);}
+        ViewModelApplication.GoToPage(ApplicationPage.Chat);
+        ViewModelApplication.CurrentControlViewModel = null;
+        ViewModelApplication.CurrentPopupViewModel = null;
+        }
 
         #endregion
     }

@@ -324,7 +324,7 @@ namespace Fasetto.Word
             // Close settings menu
             //var mHierarchyBillingTreeViewModel = ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             //var mHierarchyBillingTreeViewModel = ViewModelApplication.CurrentPopupViewModel;
-            ViewModelApplication.CurrentPopupContent = PopupContent.SWBilling;
+            //ViewModelApplication.CurrentPopupContent = PopupContent.SWBilling;
 
             //ViewModelApplication.CurrentPopupViewModel = mHierarchyBillingTreeViewModel;
             ViewModelApplication.PopupVisible = true;
@@ -342,26 +342,26 @@ namespace Fasetto.Word
 
             //var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
             ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
-            var MDateAdj = ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateAdjustment;
-            MAPI = new ParameterBillingAdjustmentApiModel
-            {
-                FBillingPeriodID = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.KBillingPeriodID,
-                FPropertyID = ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).KCategoryID,
-                Adjustment = Convert.ToDecimal(((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).Adjustment.EditedText)/1000,
-                DateStart = ((MDateAdj.Month ==
-                            ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateStart.Month) ?
-                            ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateStart :
-                            new DateTime(MDateAdj.Year, MDateAdj.Month, 1)),
-                DateEffective = DateTime.Now,
-                FChangeID = new Guid().ToString(),
-            };
+            //var MDateAdj = ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateAdjustment;
+            //MAPI = new ParameterBillingAdjustmentApiModel
+            //{
+            //    FBillingPeriodID = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.KBillingPeriodID,
+            //    FPropertyID = ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).KCategoryID,
+            //    Adjustment = Convert.ToDecimal(((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).Adjustment.EditedText)/1000,
+            //    DateStart = ((MDateAdj.Month ==
+            //                ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateStart.Month) ?
+            //                ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateStart :
+            //                new DateTime(MDateAdj.Year, MDateAdj.Month, 1)),
+            //    DateEffective = DateTime.Now,
+            //    FChangeID = new Guid().ToString(),
+            //};
 
         //    mElementViewModel.Description.OriginalText = null;
         //    mElementViewModel.Description.OriginalText = null;
         //}
         //mViewModel.AddElement(mElementViewModel);
         //ViewModelApplication.PopupVisible = false;
-        TaskManager.RunAndForget(BillingPeriodAdjustAsync);
+        //TaskManager.RunAndForget(BillingPeriodAdjustAsync);
             Close();
         }
         public async Task BillingPeriodAdjustAsync()
