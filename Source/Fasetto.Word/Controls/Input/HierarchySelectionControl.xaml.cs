@@ -59,26 +59,31 @@ namespace Fasetto.Word
             //var root = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
             //Use the rootof Clients
             var root = new ParameterHierarchyItemSelectApiModel();
-            if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Client")
-            {
-                root.FHierarchyID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid ;
-                //root.ClientID = "NULL";
-                //root.HierarchyTypeID = "NULL"; 
-            }
-            else
-            { 
-                if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID==null)
-                {
-                    MessageBox.Show($"First select a valid Client to proceed...");
-                    Close();
-                    return;
-                }
 
-                root.ClientID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID;
-                root.HierarchyTypeID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).HierarchyTypeID;
-                //root.FHierarchyID = "NULL"; 
-            }
+            //if ((ViewModelApplication.CurrentControlViewModel).GetType().Name == "HierarchyItemSelectionViewModel")
+            //{ 
+                if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Client")
+                {
+                    root.FHierarchyID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid ;
+                    //root.ClientID = "NULL";
+                    //root.HierarchyTypeID = "NULL"; 
+                }
+                else
+                { 
+                    if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID==null)
+                    {
+                        MessageBox.Show($"First select a valid Client to proceed...");
+                        Close();
+                        return;
+                    }
+
+                    root.ClientID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID;
+                    root.HierarchyTypeID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).HierarchyTypeID;
+                    //root.FHierarchyID = "NULL"; 
+                }
+            //}
             mHierarchyTree = new HierarchyTreeViewModel1(root);//root);
+
 
             DataContext = mHierarchyTree;
             InitializeComponent();

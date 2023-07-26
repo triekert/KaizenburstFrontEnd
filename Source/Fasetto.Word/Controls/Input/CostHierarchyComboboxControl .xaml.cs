@@ -74,12 +74,29 @@ namespace Fasetto.Word
 
         #endregion
 
-        private void ComboBox_Selected(object sender, RoutedEventArgs e)
+        private void ComboBox1_Selected(object sender, RoutedEventArgs e)
         {
+            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+            //var Test2 = ((CostHierarchyViewModel)((ComboBox)sender).SelectedItem).KCategoryID;
+            //if (((CostHierarchyViewModel)((ComboBox)sender).SelectedItem).KCategoryID == "Test1")
+            //{ return; }
+            var Test3 = ((ComboBox)sender).SelectedItem;
+            if (Test3 == null) {
+//                MessageBox.Show(
+                 
+//                    "to the selected Client",
+//                    "No cost structures currently linked",
 
-            ((CostHierarchyListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedCostHierarchy = (CostHierarchyViewModel)((ComboBox)sender).SelectedItem;
-                ((CostHierarchyListViewModel)ViewModelApplication.CurrentControlViewModel).Edit();
-            
+//                    MessageBoxButton.OK,   MessageBoxImage.Information
+//);
+
+                return; }
+            //((CostHierarchyListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedCostHierarchy = (CostHierarchyViewModel)((ComboBox)sender).SelectedItem;
+            ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy = (CostHierarchyViewModel)((ComboBox)sender).SelectedItem;
+
+            ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).Edit();
+            ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
+
         }
     }
 }

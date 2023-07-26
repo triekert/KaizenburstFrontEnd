@@ -767,9 +767,9 @@ namespace Fasetto.Word.Web.Server
                 {
                     var u = new CostHierarchyResultApiModel
                     {
-                        KCategoryID = row[0].ToString(),
-                        ShortName = row[1].ToString(),
-                        FClientID = row[2].ToString(),
+                        KCategoryID = row[2].ToString(),
+                        ShortName = row[0].ToString(),
+                        //FClientID = row[2].ToString(),
 
 
 

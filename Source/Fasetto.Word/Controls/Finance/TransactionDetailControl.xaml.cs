@@ -2,6 +2,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Dynamic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -101,27 +102,17 @@ namespace Fasetto.Word
             {
   
                 ViewModelApplication.PopupVisible = false;
-                var MKFinTranID = ((TransactionDetailViewModel)TransactionDetail.SelectedItem).KFinTranID;
-                var RawTable = TransactionDetail.Items;
-                //var PriorPopup = 
-                    //((TransactionTreeViewModel)((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).Trans_action.Add();
+                var MSelected = (TransactionDetailViewModel)TransactionDetail.SelectedItem;
+                var RawTable = TransactionDetail.Items.SourceCollection;
+                var tempTDList = new ObservableCollection<TransactionDetailViewModel>();
+                foreach (var tBR in RawTable)
+                    tempTDList.Add((TransactionDetailViewModel)tBR);
 
-                //link cost category to transaction or portion thereof
+                ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
 
-                //var tempBR = new ObservableCollection<TransactionDetailViewModel>();
-                //foreach (var tBR in cellInfos)
-                //    tempBR.Add((TransactionDetailViewModel)tBR.Item);
-
-                //var TimeStart=tempBR.OrderBy(x=>x.TimeStart).ToList().FirstOrDefault().TimeStart;
-                //var TimeEnd = tempBR.OrderByDescending(x => x.TimeEnd).ToList().FirstOrDefault().TimeEnd;
-                //var BulkMeter = tempBR.OrderByDescending(x => x.TimeStart).ToList().FirstOrDefault().BulkMeter;
-                //var ShortName = tempBR.OrderByDescending(x => x.TimeStart).ToList().FirstOrDefault().ShortName;
-                //var mDateReference = ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).DateReference.EditedDateTime;
-
-                ////ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-
-                //ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(BulkMeter, TimeStart, TimeEnd,
-                //    ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODStart, ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODEnd,mDateReference);
+                ViewModelApplication.CurrentPopupViewModel = new ManageClassificationViewModel(tempTDList, MSelected);
+                ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
 
                 //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
                 //var mCurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
@@ -129,7 +120,7 @@ namespace Fasetto.Word
                 //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
                 //ViewModelApplication.CurrentPopupViewModel =  mCurrentPopupViewModel;
                 //ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
-                //ViewModelApplication.PopupVisible = true;
+                ViewModelApplication.PopupVisible = true;
 
                 //var Trans = ((TransactionTreeViewModel)PriorPopup).Trans_action;
 

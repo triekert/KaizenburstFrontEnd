@@ -127,6 +127,8 @@ namespace Fasetto.Word
 
 
             //Go into edit mode
+            ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+            //((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Populate();
             MSelectedCostHierarchy = MSelectedCostHierarchy;
             //((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.MSelectedCostHierarchy = MSelectedCostHierarchy;
             //((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedCostHierarchy = MSelectedCostHierarchy;

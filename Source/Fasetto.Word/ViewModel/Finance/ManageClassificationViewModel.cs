@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
 using static Fasetto.Word.Core.CoreDI;
+using System.Collections.ObjectModel;
+
 namespace Fasetto.Word
 {
     public class ManageClassificationViewModel : BaseViewModel
@@ -20,9 +22,16 @@ namespace Fasetto.Word
 
         #region Public Properties
         /// <summary>
-        /// Field containing Adjustment to be mode
+        /// Field containing actual allocation  of the total transaction to the selected cost category
         /// </summary>
-        public TextEntryViewModel Adjustment { get; set; }
+        public TextEntryViewModel Allocation { get; set; }
+
+        /// <summary>
+        /// The Cost category to be used for the allocation
+        /// </summary>
+        public HierarchyItemSelectionViewModel Category { get; set; }
+
+
 
         ///// <summary>
         ///// Description of hierarchy item
@@ -178,9 +187,23 @@ namespace Fasetto.Word
         public ICommand CloseCommand { get; set; }
 
         /// <summary>
-        /// The command to add a new node and return to hierarchy navigation
+        /// The command to add a new classification and allocation to the transaction
+        /// If the allocation exceeds the 'unprocessed' balance, it will be taken from the remaining classification
         /// </summary>
-        public ICommand AddAdjustmentCommand { get; set; }
+        public ICommand AddClassificationCommand { get; set; }
+        /// <summary>
+        /// The command to edit an existing classification (and allocation) of a transaction
+        /// If the amount allocated differs from the unallocated amount and one other classification remains, the balance is allocated to that one
+        /// otherwise the balance is allocated to 'unprocessed'
+        /// </summary>
+        public ICommand EditClassificationCommand { get; set; }
+
+         /// <summary>
+        /// The command to remove a classification from the transaction, if only one classification remains the previous allocation reverts to that classification
+        /// otherwise the amount is allocated to 'unprocessed'
+        /// </summary>
+        public ICommand DeleteClassificationCommand { get; set; }
+        public ObservableCollection<TransactionDetailViewModel> Source { get; }
 
         /// <summary>
         /// The command to edit the selected node and return to hierarchy navigation
@@ -207,16 +230,28 @@ namespace Fasetto.Word
         /// <summary>
         /// Default constructor
         /// </summary>
-        public ManageClassificationViewModel()
+        public ManageClassificationViewModel(ObservableCollection<TransactionDetailViewModel> source, TransactionDetailViewModel selected)
         {
             // Create Node Name
-            Adjustment = new TextEntryViewModel
+            Allocation = new TextEntryViewModel
             {
-                Label = "Adjustment in Litres",
+                Label = "Allocation",
                 OriginalText = "0",
                 //CommitAction = SaveFirstNameAsync
             };
 
+            Category = new HierarchyItemSelectionViewModel
+            {
+                Label = "Select Client",
+                //EditedName = mLoadingText,
+                EditedName = "Selected Client",
+                OriginalName = selected.ShortName,
+                OriginalKid = selected.KCategoryID,
+                EditedKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
+
+                //CommitAction = SaveFirstNameAsync
+            };
             // Create Node Description
             //Description = new TextEntryViewModel
             //{
@@ -241,20 +276,20 @@ namespace Fasetto.Word
             ParentShortName = "Parent Node";
 
             // Heading to be displayed on control
-            HeadingText = "Add Adjustment to Water Consumption for :";
+            HeadingText = "Manage classification of selected transaction :";
 
 
 
             // Create commands
             CloseCommand = new RelayCommand(Close);
-            AddAdjustmentCommand = new RelayCommand(AddAdjustment);
-            //EditNodeCommand = new RelayCommand(EditNode);
-            //DeleteNodeCommand = new RelayCommand(DeleteNode);
-            //CopyNodeCommand = new RelayCommand(CopyNode);
-            //MoveNodeCommand = new RelayCommand(MoveNode);
+            AddClassificationCommand = new RelayCommand(AddClassification);
+            EditClassificationCommand = new RelayCommand(AddClassification);
+            DeleteClassificationCommand = new RelayCommand(AddClassification);
+
 
             // TODO: Get from localization
             AdjustmentButtonText = "Add Adjustment to Water Consumption for :";
+            Source = source;
         }
         //private void TreeView_KeyBoard(object sender, KeyboardEventArgs e)
         //{
@@ -300,7 +335,7 @@ namespace Fasetto.Word
         /// <summary>
         /// Used tp insert a new node with the currently selected node as parent
         /// </summary>
-        public void AddAdjustment()
+        public void AddClassification()
         {
             // Update billing record on database
             //TO DO: Integrate with change management, requiring approval of adjustment before committing...

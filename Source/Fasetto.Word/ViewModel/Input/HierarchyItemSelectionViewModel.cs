@@ -71,6 +71,12 @@ namespace Fasetto.Word
         public Func<Task<bool>> CommitAction { get; set; }
 
 
+        /// <summary>
+        /// The action to run when initiating the control.
+        /// Returns true if the commit was successful, or false otherwise.
+        /// </summary>
+        public Func<Task<bool>> PrepareAction { get; set; }
+
         #endregion
 
         #region Public Commands
@@ -112,6 +118,7 @@ namespace Fasetto.Word
             CancelCommand = new RelayCommand(Cancel);
             SaveCommand = new RelayCommand(Save);
             HierarchyitemSelectCommand = new RelayCommand(HierarchyitemSelect);
+            ViewModelApplication.CurrentControlViewModel = this;
             //HISVM MviewModel = new HISVM(this);    
 
         }
@@ -125,6 +132,7 @@ namespace Fasetto.Word
         /// </summary>
         public void Edit()
         {
+            var result = default(bool);
             // Set the edited text to the current value
             EditedName = OriginalName;
             EditedKid = OriginalKid;
@@ -132,6 +140,36 @@ namespace Fasetto.Word
 
             // Go into edit mode
             Editing = true;
+            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+            RunCommandAsync(() => Working, async () =>
+            {
+                // While working, come out of edit mode
+                //Editing = false;
+
+                // Commit the changed text
+                // So we can see it while it is working
+                //OriginalName = EditedName;
+                //OriginalKid = EditedKid;
+
+                // Try and do the work
+                result = PrepareAction == null ? true : await PrepareAction();
+
+            }).ContinueWith(t =>
+            {
+                // If we succeeded...
+                // Nothing to do
+                // If we fail...
+                //if (!result)
+                //{
+                //    // Restore original value
+                //    OriginalName = currentSavedValue;
+                //    OriginalKid = currentSavedValue;
+
+                //    // Go back into edit mode
+                //    Editing = true;
+                //}
+            });
+
         }
 
         /// <summary>
@@ -198,8 +236,8 @@ namespace Fasetto.Word
 
                 // Commit the changed text
                 // So we can see it while it is working
-                OriginalName = EditedName;
-                OriginalKid = EditedKid;
+                //OriginalName = EditedName;
+                //OriginalKid = EditedKid;
 
                 // Try and do the work
                 result = CommitAction == null ? true : await CommitAction();

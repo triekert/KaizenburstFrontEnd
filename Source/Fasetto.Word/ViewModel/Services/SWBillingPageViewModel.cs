@@ -1,7 +1,9 @@
 ﻿using Fasetto.Word.Core;
-using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
+using static Fasetto.Word.DI;
+using static Dna.FrameworkDI;
 using static Fasetto.Word.DI;
 
 
@@ -107,6 +109,16 @@ namespace Fasetto.Word
         /// The selected BillingPeriod for the Water and Sewerage Billing analysis
         /// </summary>
         public BillingPeriodViewModel SelectedBillingPeriod { get; set; }
+
+        /// <summary>
+        /// Indicates if the email is current being saved
+        /// </summary>
+        public bool ClientIsSaving { get; set; }
+
+        /// <summary>
+        /// Saves the current email to the server
+        /// </summary>
+        public ICommand SaveClientCommand { get; set; }
 
 
 
@@ -262,6 +274,7 @@ namespace Fasetto.Word
             OpenSearchCommand = new RelayCommand(OpenSearch);
             CloseCommand = new RelayCommand(Close);
             ClearSearchCommand = new RelayCommand(ClearSearch);
+            //SaveClientCommand = new RelayCommand(async () => await SaveClientAsync());
 
             // Make a default menu
             //AttachmentMenu = new ChatAttachmentPopupMenuViewModel();
@@ -339,17 +352,30 @@ namespace Fasetto.Word
         }
 
         /// <summary>
-        /// When the user clicks the send button, sends the message
+        /// Saves the new Email to the server
         /// </summary>
-        //public void Populate()
+        /// <returns>Returns true if successful, false otherwise</returns>
+        //public async Task<bool> SaveClientAsync()
         //{
-        //    Meter.ClientID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid;
-        //    Meter.RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).RootID;
+            // Lock this command to ignore any other requests while processing
+            //return await RunCommandAsync(() => ClientIsSaving, async () =>
+            //{
+            //    // Update the Email value on the server...
+            //    return await UpdateUserCredentialsValueAsync(
+            //        // Display name
+            //        "Email",
+            //        // Update the email
+            //        (credentials) => credentials.Email,
+            //        // To new value
+            //        Client.OriginalName,
+            //        // Set Api model value
+            //        (apiModel, value) => apiModel.Email = value
+            //        );
+
+            //}
+            //);
         //}
 
-        /// <summary>
-        /// Searches the current message list and filters the view
-        /// </summary>
         public void Search()
         {
             // Make sure we don't re-search the same text

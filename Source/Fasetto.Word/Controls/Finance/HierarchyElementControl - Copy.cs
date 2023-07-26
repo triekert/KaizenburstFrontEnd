@@ -8,21 +8,21 @@ namespace Fasetto.Word
     /// <summary>
     /// Interaction logic for SettingsControl.xaml
     /// </summary>
-    public partial class ManageClassificationControl : UserControl
+    public partial class HierarchyElementControl : UserControl
     {/// <summary>
      /// This User Control is always linked to the popup component of the ApplicationViewModel
      /// </summary>
-        public ManageClassificationControl()
+        public HierarchyElementControl()
         {
             InitializeComponent();
 
 
             // Set data context to settings view model
-            //ViewModelApplication.CurrentPopupViewModel = new ManageClassificationViewModel();
+            ViewModelApplication.CurrentPopupViewModel = new HierarchyElementViewModel();
             //if (ViewModelApplication.AddElementViewModel == null)
             //    DataContext = new HierarchyElementViewModel();
             //else
-            DataContext = (ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel;
+            DataContext = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
           
 
         }

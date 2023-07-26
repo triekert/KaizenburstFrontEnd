@@ -267,6 +267,7 @@ namespace Fasetto.Word
                 EditedName = "TD Water Metering",
                 OriginalName = "Original Meter Selection",
                 EditedKid = "5249FFEB-6907-46AA-9204-D4527E11F9CE",
+                //hard coded for hierarchy type linked to water meters
                 HierarchyTypeID = "8A50E984-9E9F-44F6-9392-875E56A0B7CA",
                 //CommitAction = SaveFirstNameAsync
             };

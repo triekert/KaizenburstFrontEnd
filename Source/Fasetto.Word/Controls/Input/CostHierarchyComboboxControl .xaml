@@ -128,7 +128,8 @@
                                       ScrollViewer.VerticalScrollBarVisibility="Auto"
                                       SelectedItem="{Binding MSelectedCostHierarchy}"                          
                                       ItemsSource="{Binding CostHierarchyList}" IsDropDownOpen="False" 
-                                      SelectionChanged="ComboBox_Selected"
+                                      SelectionChanged="ComboBox1_Selected"
+                                      SelectedValue="Combobox1_Selected"
 
                           
                           >

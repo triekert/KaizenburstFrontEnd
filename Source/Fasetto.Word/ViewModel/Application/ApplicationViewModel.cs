@@ -291,7 +291,9 @@ namespace Fasetto.Word
             ViewModelApplication.ControlParameter = root;
             //convert from string to the appropriate Enum Application Page
             var applicationPage = (ApplicationPage)Enum.Parse(typeof(ApplicationPage), page);
+
             ViewModelApplication.GoToPage(applicationPage);
+            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
             //CurrentSideMenuContent = SideMenuContent.Menu;
 
             //ViewModelApplication.GoToPage(ApplicationPage.Hierarchy);

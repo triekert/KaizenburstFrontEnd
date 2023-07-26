@@ -23,7 +23,7 @@
         /// <summary>
         /// A list of finance menu options for KaizenBurst
         /// </summary>
-       Finance = 4,
+        Finance = 4,
 
         /// <summary>
         /// Form for editing User settings
@@ -77,14 +77,27 @@
 
 
         /// <summary>
-        /// Adjustment to SW calculations
+        /// Return transactions for selected period
         /// </summary>
         Transaction = 13,
 
 
 
         /// <summary>
-        /// Adjustment to SW calculations
+        /// Drill down into specific transaction
         /// </summary>
-        TransactionDetail = 14    }
+        TransactionDetail = 14,
+
+
+
+
+        /// <summary>
+        /// Manage classification of a transaction
+        /// </summary>
+        Classify = 15
+
+
+    }
+
+
 }

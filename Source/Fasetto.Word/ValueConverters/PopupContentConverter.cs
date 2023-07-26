@@ -79,6 +79,13 @@ namespace Fasetto.Word
                     return mTransactionDetailControl;
 
 
+
+
+                case PopupContent.Classify:
+                    var mManageClassificationControl = new ManageClassificationControl();
+                    return mManageClassificationControl;
+
+
                 // Unknown
                 default:
                     return "No UI yet, sorry :)";

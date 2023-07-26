@@ -68,14 +68,14 @@
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center" 
                            />
-                        <StackPanel MouseEnter="SetHierarchySelection">
+                        <!--<StackPanel MouseEnter="SetHierarchySelection">-->
                             <local:HierarchyItemSelectionControl DataContext="{Binding Root}" FontWeight="ExtraBlack"  />
-                        </StackPanel>
+                        <!--</StackPanel>-->
 
 
-                        <StackPanel MouseEnter="SetClient">
+                        <!--<StackPanel MouseEnter="SetClient">-->
                             <local:CostHierarchyComboboxControl DataContext="{Binding CostHierarchy}" FontWeight="ExtraBlack"  />
-                        </StackPanel>
+                        <!--</StackPanel>-->
                         
                         <Button 
                         Style="{StaticResource IconGrowButton}"

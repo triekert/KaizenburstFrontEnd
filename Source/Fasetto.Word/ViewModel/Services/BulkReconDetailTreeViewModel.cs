@@ -1,14 +1,11 @@
 ﻿
 using Dna;
 using Fasetto.Word.Core;
-using Fasetto.Word.Core.ApiModels.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;

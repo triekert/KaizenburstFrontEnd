@@ -53,6 +53,7 @@ namespace Fasetto.Word
         //public int mTODStart;
         //public int mTODEnd;
         /// <summary>
+        /// 
         /// Store View Model of current popup to allow reverse navigation
         /// </summary>
         public object PriorPopupViewModel { get; set; }

@@ -73,5 +73,10 @@ namespace Fasetto.Word
         }
 
         #endregion
+
+        private void EditButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

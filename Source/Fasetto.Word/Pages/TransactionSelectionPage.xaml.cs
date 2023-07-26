@@ -21,7 +21,7 @@ namespace Fasetto.Word
         public TransactionSelectionPage() : base()
         {
             //InitializeComponent();
-            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+
         }
 
         /// <summary>
@@ -30,6 +30,8 @@ namespace Fasetto.Word
         /// <param name="specificViewModel">The specific view model to use for this page</param>
         public TransactionSelectionPage(TransactionSelectionPageViewModel specificViewModel) : base(specificViewModel)
         {
+
+            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
             InitializeComponent();
         }
 
@@ -106,6 +108,7 @@ namespace Fasetto.Word
 
         private void SetClient(object sender, System.Windows.RoutedEventArgs e)
         {
+
             ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
             ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Populate();
         }
@@ -113,6 +116,11 @@ namespace Fasetto.Word
         private void SetHierarchySelection(object sender, System.Windows.RoutedEventArgs e)
         {
             ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
+            ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
+            //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+            //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
+
+
         }
         //private void SetHierarchySelectionMeter(object sender, System.Windows.RoutedEventArgs e)
         //{

@@ -1,5 +1,7 @@
 ﻿using Fasetto.Word.Core;
 using System;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
@@ -187,6 +189,12 @@ namespace Fasetto.Word
             }
         }
 
+
+        /// <summary>
+        /// Indicates if the Cost Hierarchy Search is currently being loaded
+        /// </summary>
+        public bool CostHierarchySrchIsSaving { get; set; }
+
         #endregion
 
         #region Public Commands
@@ -236,6 +244,15 @@ namespace Fasetto.Word
         /// </summary>
         public ICommand ClearSearchCommand { get; set; }
 
+        /// <summary>
+        /// The command to initialise the relevant cost hierarchy search
+        /// </summary>
+        public ICommand InitialiseCostHCommand { get; set; }
+
+        /// <summary>
+        /// The command to iniitalise the search for clients
+        /// </summary>
+        public ICommand InitialiseClientSrchCommand { get; set; }
         #endregion
 
         #region Constructor
@@ -260,10 +277,12 @@ namespace Fasetto.Word
                 OriginalKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
                 EditedKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
                 HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
+                CommitAction = InitialiseCostHAsync,
+                PrepareAction = ClientSrchAsync,
 
                 //CommitAction = SaveFirstNameAsync
             };
-            //ViewModelApplication.CurrentControlViewModel = Root;
+            ViewModelApplication.CurrentControlViewModel = Root;
 
             //Meter = new HierarchyItemSelectionViewModel
             //{
@@ -323,11 +342,11 @@ namespace Fasetto.Word
 
 
             //ViewModelApplication.ControlParameter =  null;
-            ViewModelApplication.ControlParameter1 = null;
-            ViewModelApplication.ControlParameter2 = null;
-            ViewModelApplication.ControlParameter3 = false;
-            ViewModelApplication.ControlParameter4 = null;
-            ViewModelApplication.ControlParameter5 = null;
+            //ViewModelApplication.ControlParameter1 = null;
+            //ViewModelApplication.ControlParameter2 = null;
+            //ViewModelApplication.ControlParameter3 = false;
+            //ViewModelApplication.ControlParameter4 = null;
+            //ViewModelApplication.ControlParameter5 = null;
             // Create commands
             AttachmentButtonCommand = new RelayCommand(AttachmentButton);
             PopupClickawayCommand = new RelayCommand(PopupClickaway);
@@ -337,6 +356,8 @@ namespace Fasetto.Word
             OpenSearchCommand = new RelayCommand(OpenSearch);
             CloseCommand = new RelayCommand(Close);
             ClearSearchCommand = new RelayCommand(ClearSearch);
+            InitialiseCostHCommand = new RelayCommand(async () => await InitialiseCostHAsync());
+            InitialiseClientSrchCommand = new RelayCommand(async () => await ClientSrchAsync());
             //ViewModelApplication.CurrentControlViewModel = null;
 
             // Make a default menu
@@ -373,13 +394,31 @@ namespace Fasetto.Word
             ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             //To do: Lookup to be user rights and available options driven
             //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
-            if (Root.EditedKid == null)
+            if (ViewModelApplication.CurrentControlViewModel ==null)
+            { return; }
 
-            //To DO - message user
-            { MessageBox.Show($"First select a valid Transaction Client to proceed...");
+            //if ((ViewModelApplication.CurrentControlViewModel).GetType().Name != "CostHierarchyListViewModel")
+            //{ return; }
+
+            var Test3 = ((CostHierarchyViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.MSelectedCostHierarchy).KCategoryID;
+            if (Test3 == null)
+            {
+                System.Windows.MessageBox.Show(
+                    "No cost structures has been selected",
+                    "for the selected Client",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+
                 return;
-            };
-            ShortName = Root.EditedName;
+            }
+            //if (((CostHierarchyListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedCostHierarchy.KCategoryID == null)
+
+            ////To DO - message user
+            //{
+            //    System.Windows.MessageBox.Show($"First select a valid Transaction Client to proceed...");
+            //    return;
+            //};
+            ShortName = ((CostHierarchyViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.MSelectedCostHierarchy).ShortName;
             TimeEnd.OriginalDateTime = TimeEnd.EditedDateTime;
             TimeStart.OriginalDateTime = TimeStart.EditedDateTime;
 
@@ -390,7 +429,7 @@ namespace Fasetto.Word
             //TimeEnd.EditedDateTime = DateTime.Parse(t3);
             //TimeEnd.EditedDateTime = DateTime.Parse($"{TimeEnd.EditedDateTime.ToString("yyyy/MM/dd")}{" "}{TimeStart.EditedDateTime.Hour.ToString("00")}{":00:00"}");
 
-            ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(Root.EditedKid, TimeStart.EditedDateTime, 
+            ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(Test3, TimeStart.EditedDateTime, 
                 TimeEnd.EditedDateTime);
             ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail: " + ShortName;
             //force a reload of the BulkRecon Control
@@ -468,6 +507,42 @@ namespace Fasetto.Word
         /// Opens the search dialog
         /// </summary>
         public void OpenSearch() => SearchIsOpen = true;
+
+        
+        /// <summary>
+        /// Initialises the Cost Hierarchy Search
+        /// </summary>
+        /// <returns>Returns true if successful, false otherwise</returns>
+        public async Task<bool> InitialiseCostHAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+            return await RunCommandAsync(() => CostHierarchySrchIsSaving, async () =>
+            {
+
+                ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
+                {
+                    MSelectedCostHierarchy = new CostHierarchyViewModel()
+            };
+                ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                return true;
+            });
+        }
+
+
+        /// <summary>
+        /// Initialises the Client Search
+        /// </summary>
+        /// <returns>Returns true if successful, false otherwise</returns>
+        public async Task<bool> ClientSrchAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+            return await RunCommandAsync(() => CostHierarchySrchIsSaving, async () =>
+            {
+
+                ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
+                return true;
+            });
+        }
 
         /// <summary>
         /// Closes the search dialog
