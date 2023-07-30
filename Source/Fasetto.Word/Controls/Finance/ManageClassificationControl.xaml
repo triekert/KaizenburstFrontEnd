@@ -94,11 +94,28 @@
                             local:TextEntryWidthMatcherProperty.Value="True">
                     <StackPanel Grid.Column="1"
                             local:TextEntryWidthMatcherProperty.Value="True">
-
+                        
+                        <StackPanel Orientation="Horizontal" Grid.Column="1" 
+                                    local:TextEntryWidthMatcherProperty.Value="True" d:IsHidden="True">
+                            <TextBlock  Text ="Date of Transaction : " FontFamily="{StaticResource LatoRegular}" 
+                                           Padding="10 10 10 10" FontWeight="Bold"/>
+                            <TextBlock  Text ="{Binding TransactionDate}" FontFamily="{StaticResource LatoRegular}" 
+                                    Padding="10 10 10 10" FontWeight="Bold"/>                    
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical" Grid.Column="1" 
+                                    local:TextEntryWidthMatcherProperty.Value="True" d:IsHidden="True">
+                            <TextBlock  Text ="Transaction Description: " FontFamily="{StaticResource LatoRegular}" 
+                                           Padding="10 10 10 10" FontWeight="Bold"/>
+                            <TextBlock  Text ="{Binding TransactionDetail}" FontFamily="{StaticResource LatoRegular}" 
+                                    Padding="10 10 10 10" FontWeight="Bold"/>                    
+                        </StackPanel>
                         <local:TextEntryControl DataContext="{Binding Allocation}" FontWeight="ExtraBlack"  />
 
                         <!--<StackPanel MouseEnter="SetHierarchySelection">-->
-                        <local:HierarchyItemSelectionControl DataContext="{Binding Root}" FontWeight="ExtraBlack"  />
+                        <local:HierarchyItemSelectionControl DataContext="{Binding Category}" FontWeight="ExtraBlack"  />
+                        <!--<StackPanel MouseEnter="SetHierarchySelection">-->
+ 
+                        <!--</StackPanel>-->
                         <!--</StackPanel>-->
 
                     </StackPanel>
@@ -106,13 +123,7 @@
 
 
 
-                    <StackPanel Orientation="Horizontal" Grid.Column="1" 
-                                local:TextEntryWidthMatcherProperty.Value="True" d:IsHidden="True">
-                        <TextBlock  Text ="Date of Adjustment " FontFamily="{StaticResource LatoRegular}" 
-                                       Padding="10 10 10 10" FontWeight="Bold"/>
 
-
-                    </StackPanel>
 
 
 

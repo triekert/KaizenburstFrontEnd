@@ -39,9 +39,14 @@ namespace Fasetto.Word
         public string EditedKid { get; set; }
 
         /// <summary>
-        /// GUID representing the primary key of the selected Hierarchy Elements
+        /// GUID representing the primary key of the type of hierarchy represented by a hierarchy of elements
         /// </summary>
         public string HierarchyTypeID { get; set; }
+
+        /// <summary>
+        /// GUID representing the primary key of the root of a hierarchy of elements
+        /// </summary>
+        public string HierarchyID { get; set; }
 
         /// <summary>
         /// GUID representing the primary key of the selected Client
@@ -63,6 +68,11 @@ namespace Fasetto.Word
         /// Indicates if the current control is pending an update (in progress)
         /// </summary>
         public bool Working { get; set; }
+
+        /// <summary>
+        /// Store View Model of current popup to allow reverse navigation
+        /// </summary>
+        public object PriorPopupViewModel { get; set; }
 
         /// <summary>
         /// The action to run when saving the text.
@@ -156,18 +166,7 @@ namespace Fasetto.Word
 
             }).ContinueWith(t =>
             {
-                // If we succeeded...
-                // Nothing to do
-                // If we fail...
-                //if (!result)
-                //{
-                //    // Restore original value
-                //    OriginalName = currentSavedValue;
-                //    OriginalKid = currentSavedValue;
 
-                //    // Go back into edit mode
-                //    Editing = true;
-                //}
             });
 
         }
@@ -185,27 +184,6 @@ namespace Fasetto.Word
         /// </summary>
         public void HierarchyitemSelect()
         {
-            ////to do: add a variable for passing KID between parent and child, as well as 
-            //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
-            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName = EditedName;
-            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).RootID = RootID;
-            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid = OriginalKid;
-            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid = EditedKid;
-            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalName = OriginalName;
-            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID = ClientID;
-            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).HierarchyTypeID = HierarchyTypeID;
-            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label = Label;
-            //ViewModelApplication.CurrentControlViewModel = new HierarchyItemSelectionViewModel
-            //{
-            //    RootID = RootID,
-            //    EditedName = EditedName,
-            //    OriginalKid = OriginalKid,
-            //    EditedKid = EditedKid,
-            //    OriginalName = OriginalName,
-            //    ClientID = ClientID,
-            //    HierarchyTypeID = HierarchyTypeID,
-            //    Label = Label,
-            //};
             ViewModelApplication.PopupVisible = true;
             ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
             ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;

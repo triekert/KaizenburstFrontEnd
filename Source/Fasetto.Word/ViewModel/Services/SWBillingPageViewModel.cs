@@ -433,12 +433,10 @@ namespace Fasetto.Word
         public void Close()
         {
             // Close settings menu
-            //ViewModelApplication.SideMenuVisible = true;
-            //ViewModelApplication.CurrentSideMenuViewModel = null;
-            ViewModelApplication.PopupVisible = false;
             ViewModelApplication.GoToPage(ApplicationPage.Chat);
-            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-            ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            ViewModelApplication.CurrentControlViewModel = null;
+            ViewModelApplication.CurrentPopupViewModel = null;
+            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement; ;
         }
         #endregion
     }

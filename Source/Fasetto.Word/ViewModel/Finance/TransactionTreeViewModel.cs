@@ -403,7 +403,7 @@ namespace Fasetto.Word
         {
             // Close settings menu
 
-            //var mType = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel.GetType().Name;
+            var mType = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel.GetType().Name;
             //ViewModelApplication.CurrentPopupViewModel = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             //var TransactionTreeViewModel = ViewModelApplication.CurrentPopupViewModel;
             ViewModelApplication.PopupVisible = false;
@@ -412,7 +412,9 @@ namespace Fasetto.Word
             //ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
             //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
             ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
-
+            //TO DO: Map PopupViewModel to PopupContent with converter
+            //ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
+            ViewModelApplication.CurrentPopupViewModel = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             //ViewModelApplication.PopupVisible = true;
 
 

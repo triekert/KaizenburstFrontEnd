@@ -267,6 +267,7 @@ namespace Fasetto.Word
             //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
             DisplayTitle = "Financial Transaction Management";
             BulkMeter = "5249FFEB-6907-46AA-9204-D4527E11F9CE";
+            ViewModelApplication.CurrentControlViewModel=ViewModelApplication.CurrentControlViewModel;
 
             Root = new HierarchyItemSelectionViewModel
             {
@@ -282,7 +283,7 @@ namespace Fasetto.Word
 
                 //CommitAction = SaveFirstNameAsync
             };
-            ViewModelApplication.CurrentControlViewModel = Root;
+            //ViewModelApplication.CurrentControlViewModel = Root;
 
             //Meter = new HierarchyItemSelectionViewModel
             //{
@@ -340,13 +341,6 @@ namespace Fasetto.Word
             CostHierarchy.MSelectedCostHierarchy = SelectedCostHierarchy;
 
 
-
-            //ViewModelApplication.ControlParameter =  null;
-            //ViewModelApplication.ControlParameter1 = null;
-            //ViewModelApplication.ControlParameter2 = null;
-            //ViewModelApplication.ControlParameter3 = false;
-            //ViewModelApplication.ControlParameter4 = null;
-            //ViewModelApplication.ControlParameter5 = null;
             // Create commands
             AttachmentButtonCommand = new RelayCommand(AttachmentButton);
             PopupClickawayCommand = new RelayCommand(PopupClickaway);
@@ -551,8 +545,12 @@ namespace Fasetto.Word
         { 
         // Close settings menu
         ViewModelApplication.SideMenuVisible = true;
-        //ViewModelApplication.CurrentSideMenuViewModel = null;
-        ViewModelApplication.GoToPage(ApplicationPage.Chat);}
+            //ViewModelApplication.CurrentSideMenuViewModel = null;
+
+            ViewModelApplication.CurrentControlViewModel = null;
+            ViewModelApplication.CurrentPopupViewModel = null;
+            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement; ;
+            ViewModelApplication.GoToPage(ApplicationPage.Chat);}
 
         #endregion
     }

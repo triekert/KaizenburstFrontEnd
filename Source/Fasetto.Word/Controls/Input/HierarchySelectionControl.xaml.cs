@@ -24,6 +24,11 @@ namespace Fasetto.Word
         //public string ControlTitle  = "Title of Control";
         public DateTime mTimer { get; set; } =DateTime.Now;
 
+        /// <summary>
+        /// Store View Model of current popup to allow reverse navigation
+        /// </summary>
+        public object PriorPopupViewModel { get; set; }
+
         #endregion//Public Properties
 
         #region Public Commands
@@ -79,11 +84,14 @@ namespace Fasetto.Word
 
                     root.ClientID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID;
                     root.HierarchyTypeID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).HierarchyTypeID;
+                    root.FHierarchyID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).HierarchyID;
+
                     //root.FHierarchyID = "NULL"; 
                 }
             //}
             mHierarchyTree = new HierarchyTreeViewModel1(root);//root);
-
+            //PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            //ViewModelApplication.CurrentPopupViewModel = this;
 
             DataContext = mHierarchyTree;
             InitializeComponent();
@@ -198,16 +206,17 @@ namespace Fasetto.Word
                 if (e.ChangedButton == MouseButton.Right)
                     {
                      RunSelectedItem();
-                        //e.Handled = true;
-                    }
+                    e.Handled = true;
+                }
                     else
                         if (e.ChangedButton == MouseButton.Left )
                             {
                                 //if (((TreeViewItem)sender).IsSelected)
                                 //    {
                                         RunSelectedItem();
-                                    //}
-                            }
+                    e.Handled = true;
+                    //}
+                }
                 }
             else
             {
@@ -229,7 +238,10 @@ namespace Fasetto.Word
  
                     if (Keyboard.IsKeyDown(Key.Enter))
                 {
-                    RunSelectedItem();
+
+                ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+
+                RunSelectedItem();
                     e.Handled = true;
 
                 }
@@ -334,10 +346,21 @@ namespace Fasetto.Word
             ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalName   = mDraggedItem.ShortName;
             ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID       = mDraggedItem.FClientID;
             ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
-            ViewModelApplication.PopupVisible = false;
-            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            //ViewModelApplication.PopupVisible = false;
+            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
 
+            if (ViewModelApplication.CurrentPopupViewModel == null || (ViewModelApplication.CurrentPopupViewModel.GetType().Name != "ManageClassificationViewModel"))
+            {
+                ViewModelApplication.PopupVisible = false;
+                ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            }
+            else
+            {
+                ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                ViewModelApplication.PopupVisible = true;
+            }
 
+            //return;
         }
  
   

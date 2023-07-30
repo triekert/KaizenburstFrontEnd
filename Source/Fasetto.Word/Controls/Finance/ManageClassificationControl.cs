@@ -22,8 +22,7 @@ namespace Fasetto.Word
             //if (ViewModelApplication.AddElementViewModel == null)
             //    DataContext = new HierarchyElementViewModel();
             //else
-            DataContext = (ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel;
-          
+            DataContext = (ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel;          
 
         }
         

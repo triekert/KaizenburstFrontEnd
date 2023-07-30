@@ -2,9 +2,11 @@
 using Dna;
 using Fasetto.Word.Core;
 using Fasetto.Word.Core.ApiModels.Controls;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -76,8 +78,29 @@ namespace Fasetto.Word
         /// from persistent s
         public HierarchyTreeViewModel1(ParameterHierarchyItemSelectApiModel hierarchyparam)
         {
+            //decimal.TryParse("R1 452,32", NumberStyles.Number, new CultureInfo("fr-FR"), out var newDecimal);
+            //decimal.TryParse("R1 452,32", NumberStyles.Number, CultureInfo.CurrentCulture, out var newDecimal1);
+            //decimal.TryParse("1452.32", NumberStyles.Number, new CultureInfo("fr-FR"), out var newDecimal2);
+            //decimal.TryParse("1452.32",  out var newDecimal3);
+            //decimal.TryParse("1452.32", NumberStyles.Number, new CultureInfo("fr-FR"), out var newDecimal4);
+            //decimal.TryParse("R1 452,32", NumberStyles.Number, new CultureInfo("en-ZA"), out var newDecimal5);
+            //decimal.TryParse("1 452,32", NumberStyles.Number, new CultureInfo("en-ZA"), out var newDecimal6);
+            //decimal.TryParse("1 452,32", NumberStyles.Number, new CultureInfo("en-ZA"), out var newDecimal7);
+            //decimal.TryParse("1452,32", NumberStyles.Number, new CultureInfo("en-ZA"), out var newDecimal8);
+            //decimal.TryParse("1 452,32", NumberStyles.Number, new CultureInfo("en-UK"), out var newDecimal9);
+            //decimal.TryParse("1452.32", NumberStyles.Number, new CultureInfo("fr-FR"), out var newDecimal0);
+            //decimal.TryParse("R 1452.32", NumberStyles.Currency, new CultureInfo("en-ZA"), out var newDecimala);
+            //decimal.TryParse("R1 452,32", NumberStyles.Currency, new CultureInfo("en-ZA"), out var newDecimalb);
+            //decimal.TryParse("R1 452,32", NumberStyles.Currency, new CultureInfo("en-ZA"), out var newDecimalc);
+            //decimal.TryParse("1452,32", NumberStyles.Number, new CultureInfo("en-ZA"), out var newDecimalv);
+
+            ////decimal.Parse(, CultureInfo.CurrentCulture)
             #region Dummy Root HierarchyListDataModel
             ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+
+
+
+
             mHDML = new HierarchyListDataModel();
             mHDM = new HierarchyDataModel
             {
@@ -230,7 +253,7 @@ namespace Fasetto.Word
                     // We are done
                     return;
 
-                // OK successfully registered (and logged in)... now get aprpropriate tree view data
+                // OK successfully registered (and logged in)... now get appropriate tree view data
                 //for now; keep a snapshot of persisted data
                 mOriginal = result.ServerResponse.Response;
                 ;

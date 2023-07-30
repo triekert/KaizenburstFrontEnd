@@ -108,7 +108,7 @@ namespace Fasetto.Word
                 foreach (var tBR in RawTable)
                     tempTDList.Add((TransactionDetailViewModel)tBR);
 
-                ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+                //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
 
                 ViewModelApplication.CurrentPopupViewModel = new ManageClassificationViewModel(tempTDList, MSelected);
                 ViewModelApplication.CurrentPopupContent = PopupContent.Classify;

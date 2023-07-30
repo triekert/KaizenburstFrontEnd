@@ -1,11 +1,13 @@
 ﻿using Dna;
 using Fasetto.Word.Core;
 using System;
+using System.Activities.Expressions;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
-using static Fasetto.Word.Core.CoreDI;
-using System.Collections.ObjectModel;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Fasetto.Word
 {
@@ -33,26 +35,6 @@ namespace Fasetto.Word
 
 
 
-        ///// <summary>
-        ///// Description of hierarchy item
-        ///// </summary>
-        //public TextEntryViewModel Description { get; set; }
-        ///// <summary>
-        ///// Page linked to  hierarchy item
-        ///// </summary>
-        //public string Page { get; set; }
-
-        ///// <summary>
-        ///// Page modifier linked to  menu item - in the case of Hierarchies, this is the 
-        ///// </summary>
-        //public TextEntryViewModel Root { get; set; }
-        ///// <summary>
-        ///// Property to indicate whether this element is a Menu Item or not..
-        ///// </summary>
-        //public bool IsMenuItem { get; set; }
-        ///// <summary>
-        ///// The Identifier of this hierarchy item
-        ///// </summary>
         public string KCategoryID { get; set; }
 
         /// <summary>
@@ -89,7 +71,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The text for the add Node button
         /// </summary>
-        public string AdjustmentButtonText { get; set; }
+        public string AddClassificationButtonText { get; set; }
         /// <summary>
         /// The text for the Edit Node button
         /// </summary>
@@ -114,6 +96,18 @@ namespace Fasetto.Word
         public string HeadingText { get; set; }
 
         /// <summary>
+        /// The date of the transaction
+        /// </summary>
+        /// 
+        public string TransactionDate { get; set; }
+
+        /// <summary>
+        /// The text for the full transaction description
+        /// </summary>
+        /// 
+        public string TransactionDetail { get; set; }
+
+        /// <summary>
         /// API parameter model
         /// </summary>
         /// 
@@ -121,37 +115,27 @@ namespace Fasetto.Word
 
 
 
+
+        /// <summary>
+        /// The action to run when saving the text.
+        /// Returns true if the commit was successful, or false otherwise.
+        /// </summary>
+        public Func<Task<bool>> CommitAction { get; set; }
+
+
+
         #region Transactional Properties
+
+        /// <summary>
+        /// Indicates if the Cost Hierarchy Search is currently being loaded
+        /// </summary>
+        public bool CostClassificationIsSaving { get; set; }
 
         /// <summary>
         /// Indicates if the node is being saved
         /// </summary>
         public bool NodeSaving { get; set; }
 
-            /// <summary>
-            /// Indicates if the first name is being saved
-            /// </summary>
-            public bool FirstNameIsSaving { get; set; }
-
-            /// <summary>
-            /// Indicates if the last name is current being saved
-            /// </summary>
-            public bool LastNameIsSaving { get; set; }
-
-            /// <summary>
-            /// Indicates if the username is current being saved
-            /// </summary>
-            public bool UsernameIsSaving { get; set; }
-
-            /// <summary>
-            /// Indicates if the email is current being saved
-            /// </summary>
-            public bool EmailIsSaving { get; set; }
-
-            /// <summary>
-            /// Indicates if the password is current being changed
-            /// </summary>
-            public bool PasswordIsChanging { get; set; }
 
             /// <summary>
             /// Indicates if the settings details are currently being loaded
@@ -168,11 +152,25 @@ namespace Fasetto.Word
             /// </summary>
             public bool IsRunning { get; set; }
 
-        /// <summary>
-        /// Store View Model of current popup to allow reverse navigation
-        /// </summary>
-        public object PriorPopupViewModel { get; set; }
+            /// <summary>
+            /// Store View Model of current popup to allow reverse navigation
+            /// </summary>
+            public object PriorPopupViewModel { get; set; }
 
+        /// <summary>
+        /// All allocations linked to the selected transaction
+        /// </summary>
+        public ObservableCollection<TransactionDetailViewModel> Source { get; }
+
+        /// <summary>
+        /// The selected allocation
+        /// </summary>
+        public TransactionDetailViewModel Selected { get; }
+
+        /// <summary>
+        /// The selected allocation
+        /// </summary>
+        public TransactionDetailViewModel New1 { get; set; }
 
         #endregion
 
@@ -203,26 +201,11 @@ namespace Fasetto.Word
         /// otherwise the amount is allocated to 'unprocessed'
         /// </summary>
         public ICommand DeleteClassificationCommand { get; set; }
-        public ObservableCollection<TransactionDetailViewModel> Source { get; }
 
-        /// <summary>
-        /// The command to edit the selected node and return to hierarchy navigation
-        /// </summary>
-        //public ICommand EditNodeCommand { get; set; }
 
-        ///// <summary>
-        ///// The command to delete the selected node and return to hierarchy navigation
-        ///// </summary>
-        //public ICommand DeleteNodeCommand { get; set; }
-        ///// <summary>
-        ///// The command to edit the selected node and return to hierarchy navigation
-        ///// </summary>
-        //public ICommand MoveNodeCommand { get; set; }
 
-        ///// <summary>
-        ///// The command to delete the selected node and return to hierarchy navigation
-        ///// </summary>
-        //public ICommand CopyNodeCommand { get; set; }
+
+
         #endregion
 
         #region Constructor
@@ -236,48 +219,30 @@ namespace Fasetto.Word
             Allocation = new TextEntryViewModel
             {
                 Label = "Allocation",
-                OriginalText = "0",
+                OriginalText = selected.ActualAmount.ToString("C", CultureInfo.CurrentCulture),
                 //CommitAction = SaveFirstNameAsync
             };
 
             Category = new HierarchyItemSelectionViewModel
             {
-                Label = "Select Client",
+                Label = "Select Cost Category",
                 //EditedName = mLoadingText,
-                EditedName = "Selected Client",
+                EditedName = "Selected Category",
                 OriginalName = selected.ShortName,
                 OriginalKid = selected.KCategoryID,
                 EditedKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
-                HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
+                ClientID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root.EditedKid,
+                //HierarchyTypeID = ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).f,
+                HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
 
-                //CommitAction = SaveFirstNameAsync
+                CommitAction = AddClassificationAsync
             };
-            // Create Node Description
-            //Description = new TextEntryViewModel
-            //{
-            //    Label = "Node Description",
-            //    OriginalText = mLoadingText,
-            //    //CommitAction = SaveLastNameAsync
-            //};
-            //Page = "Login";
 
-            //// Create Node Description
-            //Root = new TextEntryViewModel
-            //{
-            //    Label = "Page Modifer",
-            //OriginalText = mLoadingText,
-            //    //CommitAction = SaveLastNameAsync
-            //};
 
-            // Display unique identifier for new node
-            KCategoryID = "132AB-AF1245-941QW"; 
 
-            // Display parent node name
-            ParentShortName = "Parent Node";
+            TransactionDate = (selected.Posted_Date).ToString();
 
-            // Heading to be displayed on control
-            HeadingText = "Manage classification of selected transaction :";
-
+            TransactionDetail = selected.Description;
 
 
             // Create commands
@@ -288,8 +253,10 @@ namespace Fasetto.Word
 
 
             // TODO: Get from localization
-            AdjustmentButtonText = "Add Adjustment to Water Consumption for :";
+            AddClassificationButtonText = "Manage Transaction Classification:";
             Source = source;
+            Selected= selected;
+            PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
         }
         //private void TreeView_KeyBoard(object sender, KeyboardEventArgs e)
         //{
@@ -322,14 +289,39 @@ namespace Fasetto.Word
         public void Close()
         {
             // Close settings menu
-            //var mHierarchyBillingTreeViewModel = ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+            var mHierarchyBillingTreeViewModel = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             //var mHierarchyBillingTreeViewModel = ViewModelApplication.CurrentPopupViewModel;
             //ViewModelApplication.CurrentPopupContent = PopupContent.SWBilling;
 
-            //ViewModelApplication.CurrentPopupViewModel = mHierarchyBillingTreeViewModel;
-            ViewModelApplication.PopupVisible = true;
+            ViewModelApplication.CurrentPopupViewModel = mHierarchyBillingTreeViewModel;
+
+            ViewModelApplication.PopupVisible = false;
 
 
+        }
+
+
+
+        /// <summary>
+        /// Initialises the Cost Hierarchy Search
+        /// </summary>
+        /// <returns>Returns true if successful, false otherwise</returns>
+        public async Task<bool> AddClassificationAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+
+            return await RunCommandAsync(() => CostClassificationIsSaving, async () =>
+            {
+
+                ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                //((ManageClassificationViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
+                //{
+                //    MSelectedCostHierarchy = new CostHierarchyViewModel()
+                //};
+                //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                return true;
+            });
         }
 
         /// <summary>
@@ -337,11 +329,29 @@ namespace Fasetto.Word
         /// </summary>
         public void AddClassification()
         {
-            // Update billing record on database
-            //TO DO: Integrate with change management, requiring approval of adjustment before committing...
+
+            decimal.TryParse(Allocation.EditedText, NumberStyles.Currency, CultureInfo.CurrentCulture, out var IntAmnt);
+            if (IntAmnt > Selected.ActualAmount) { IntAmnt = Selected.ActualAmount; }
+             New1 = new TransactionDetailViewModel
+            {
+                Posted_Date = Selected.Posted_Date,
+                Month = Selected.Month,
+                Description = Selected.Description,
+                TransAmount = Selected.TransAmount,
+                ActualAmount = IntAmnt,
+                ShortName = Category.EditedName,
+                KCategoryID = Category.EditedKid,
+                KFinActualID = Selected.KFinActualID,
+                KFinTranID = Selected.KFinTranID,
+            };
+
 
             //var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
             ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+
+
+
+
             //var MDateAdj = ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateAdjustment;
             //MAPI = new ParameterBillingAdjustmentApiModel
             //{
@@ -419,119 +429,7 @@ namespace Fasetto.Word
 
             });
         }
-        ///// <summary>
-        ///// Used tp insert a new node with the currently selected node as parent
-        ///// </summary>
-        //public void AddNode()
-        //{
-        //    // Close settings menu
-
-        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
-        //    var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-        //    if (mElementViewModel.Description.OriginalText == "Description of New Element" || mElementViewModel.Description.EditedText == "Description of New Element") 
-        //        { mElementViewModel.Description.OriginalText = null;
-        //        mElementViewModel.Description.OriginalText = null;
-        //    }
-        //    mViewModel.AddElement(mElementViewModel);
-        //    ViewModelApplication.PopupVisible = false;
-        //}
-
-        ///// <summary>
-        ///// Used tp edit the currently selected node 
-        ///// </summary>
-        //public void EditNode()
-        //{
-        //    // Close settings menu
-        //    //var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel;
-        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
-        //    var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-        //    mViewModel.EditElement(mElementViewModel);
-        //    ViewModelApplication.PopupVisible = false;
-        //}
-
-
-        ///// <summary>
-        ///// Used tp edit the currently selected node 
-        ///// </summary>
-        //public void DeleteNode()
-        //{
-        //    // Close settings menu
-        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
-        //    var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-        //    //Set discontinuation time to time of deletion
-        //    mElementViewModel.DateDiscontinued = DateTime.Today; 
-        //    mViewModel.DeleteElement(mElementViewModel);
-
-        //    ViewModelApplication.PopupVisible = false;
-        //}
-
-        ///// <summary>
-        ///// Used tp edit the currently selected node 
-        ///// </summary>
-        //public void MoveNode()
-        //{
-        //    // Close settings menu
-        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
-        //    var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-        //    mViewModel.MoveElement(mElementViewModel);
-        //    if (mElementViewModel.Description.OriginalText == "Description of New Element" && mElementViewModel.Description.EditedText == "Description of New Element")
-        //    {
-        //        mElementViewModel.Description.OriginalText = null;
-        //        mElementViewModel.Description.OriginalText = null;
-        //    }
-        //    ViewModelApplication.PopupVisible = false;
-        //}
-
-
-        ///// <summary>
-        ///// Used tp edit the currently selected node 
-        ///// </summary>
-        //public void CopyNode()
-        //{
-        //    // Close settings menu
-        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
-        //    var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-        //    mViewModel.CopyElement(mElementViewModel);
-        //    ViewModelApplication.PopupVisible = false;
-        //}
-
-
-        /// <summary>
-        /// Clears any data specific to the current user
-        /// </summary>
-        //public void ClearUserData()
-        //{
-        //    // Clear all view models containing the users info
-        //    FirstName.OriginalText = mLoadingText;
-        //    LastName.OriginalText = mLoadingText;
-        //    Username.OriginalText = mLoadingText;
-        //    Email.OriginalText = mLoadingText;
-        //}
-
-
-
-        /// <summary>
-        /// Saves the new First Name to the server
-        /// </summary>
-        /// <returns>Returns true if successful, false otherwise</returns>
-        //public async Task<bool> SaveFirstNameAsync()
-        //{
-        //    // Lock this command to ignore any other requests while processing
-        //    return await RunCommandAsync(() => FirstNameIsSaving, async () =>
-        //    {
-        //        // Update the First Name value on the server...
-        //        return await UpdateUserCredentialsValueAsync(
-        //            // Display name
-        //            "First Name",
-        //            // Update the first name
-        //            (credentials) => credentials.FirstName,
-        //            // To new value
-        //            FirstName.OriginalText,
-        //            // Set Api model value
-        //            (apiModel, value) => apiModel.FirstName = value
-        //            );
-        //    });
-        //}
+       
 
 
         #endregion
