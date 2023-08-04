@@ -477,7 +477,7 @@ namespace Fasetto.Word
 
             if (category != null)
             //Move the selected element by discontinuing it at the current 'Parent'
-            //and adding a new element at the new parent location (all descendants are autotomatically
+            //and adding a new element at the new parent location (all descendants are automatically
             //moved)
           
             {  

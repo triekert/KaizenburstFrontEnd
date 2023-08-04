@@ -102,11 +102,11 @@ namespace Fasetto.Word
             {
   
                 ViewModelApplication.PopupVisible = false;
-                var MSelected = (TransactionDetailViewModel)TransactionDetail.SelectedItem;
+                var MSelected = (TransactionViewModel)TransactionDetail.SelectedItem;
                 var RawTable = TransactionDetail.Items.SourceCollection;
-                var tempTDList = new ObservableCollection<TransactionDetailViewModel>();
+                var tempTDList = new ObservableCollection<TransactionViewModel>();
                 foreach (var tBR in RawTable)
-                    tempTDList.Add((TransactionDetailViewModel)tBR);
+                    tempTDList.Add((TransactionViewModel)tBR);
 
                 //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
 

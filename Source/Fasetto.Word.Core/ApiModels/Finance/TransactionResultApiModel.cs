@@ -90,10 +90,18 @@ namespace Fasetto.Word.Core
 
 
 
-        ///// <summary>
-        ////sub categories that are also categories in themself
-        ///// </summary>
-        //public List<BulkReconDataModel> Children { get; set; }
+        /// <summary>
+        /// Flag for record management - "d", remove existing
+        /// "a" add a new record
+        /// "c" change allocation and/or value on existing record
+        /// --could use an enumerator, but as there are only 3 values, just use fixed values
+        /// --if an audit trail is required for changing allocations, the full change management functionality
+        /// 
+        /// </summary>
+        /// 
+
+        public string ChangeType { get; set;}
+
 
         #endregion       
     }

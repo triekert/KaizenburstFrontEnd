@@ -30,7 +30,7 @@ namespace Fasetto.Word
         /// <summary>
         /// A set of Bulk Meter Recon records for the selected period
         /// </summary>
-        public ObservableCollection<TransactionDetailViewModel>TransactionDetail{ get; set; }
+        public ObservableCollection<TransactionViewModel>TransactionDetail{ get; set; }
 
 
         //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
@@ -90,7 +90,7 @@ namespace Fasetto.Word
         {
             #region Build TransactionDetailCollection
 
-            TransactionDetail = new ObservableCollection<TransactionDetailViewModel>();
+            TransactionDetail = new ObservableCollection<TransactionViewModel>();
 
 
             //var TDVM = new TransactionDetailViewModel
@@ -112,7 +112,7 @@ namespace Fasetto.Word
             foreach (var item in matches)
             {
 
-                var mTDVM = new TransactionDetailViewModel
+                var mTDVM = new TransactionViewModel
 
                 {
                     Posted_Date = item.Posted_Date,

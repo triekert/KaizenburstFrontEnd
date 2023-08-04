@@ -1,7 +1,10 @@
 ﻿
 using Dna;
+using EnvDTE;
 using Fasetto.Word.Core;
 using System;
+using System.Activities.Expressions;
+using System.Activities.Statements;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace Fasetto.Word
 {
@@ -27,7 +31,7 @@ namespace Fasetto.Word
         /// A set of Bulk Meter Recon records for the selected period
         /// </summary>
         public ObservableCollection<TransactionViewModel>Trans_action{ get; set; }
-
+        public ObservableCollection<TransactionViewModel> OrgTransaction { get; set; }
 
         //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
 
@@ -40,7 +44,7 @@ namespace Fasetto.Word
         //protected TransactionViewModel mRootHierarchyElement1;
         //private readonly ICommand mSearchCommand;
         public TransactionListDataModel mTDML;
-        //public TransactionResultListApiModel mPersist, mPersistTmp,mOriginal;
+        public TransactionResultListApiModel mPersist,mChange;
         public TransactionViewModel mTVM;
         public ParameterTransactionApiModel mRequest;
         public string mClient;
@@ -246,7 +250,11 @@ namespace Fasetto.Word
                     //mPersist.Clone(mOriginal, mPersist);
                     //Transaction.Clear();
                     Trans_action = new ObservableCollection<TransactionViewModel>();
+                    OrgTransaction = new ObservableCollection<TransactionViewModel>();
+
                     //Transaction.Clear();
+                    mPersist = result.ServerResponse.Response;
+                    mChange = new TransactionResultListApiModel();
                     var matches = result.ServerResponse.Response.ToList();
 
 
@@ -269,6 +277,7 @@ namespace Fasetto.Word
 
                     };
                         Trans_action.Add(mTVM); 
+                        OrgTransaction.Add(mTVM);//create original for reference
                     }
 
                 }
@@ -403,18 +412,46 @@ namespace Fasetto.Word
         {
             // Close settings menu
 
-            var mType = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel.GetType().Name;
-            //ViewModelApplication.CurrentPopupViewModel = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
-            //var TransactionTreeViewModel = ViewModelApplication.CurrentPopupViewModel;
+            //Call API to persist changes if any...
+
+            var UpPersist = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_action;
+            var OPersist = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).OrgTransaction;
+            //create record set of CRUD members of mPersist based on changes appearing in Trans_act -> Delete, Add and change flags
+
             ViewModelApplication.PopupVisible = false;
 
+            //var changes = from updt in UpPersist
+            //              join on orgn in OPersist
+            //              where updt.KFinActualID == orgn.KFinActualID
+            // select updt
+            var results =
+            from t1 in UpPersist
+            from t2 in OPersist.Where(x => t1.KFinActualID == x.KFinActualID && x.KCategoryID == t1.KCategoryID)
+                            //.DefaultIfEmpty()
+            select new { t1.KFinActualID, t1.ShortName };
+
+           
 
             //ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
             //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
             ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
+
+            var except = UpPersist.Except(OPersist);
             //TO DO: Map PopupViewModel to PopupContent with converter
             //ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
+            var tmpTbl = (TransactionResultListApiModel)((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mChange;
+            var res = from c in tmpTbl
+                      group c by new { c.KFinActualID, c.ChangeType } into transApi
+                      select transApi.OrderByDescending(x => x.DateEffective)
+                                      .FirstOrDefault();
+
             ViewModelApplication.CurrentPopupViewModel = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+
+            res = from c in tmpTbl
+                  group c by new { c.KFinActualID, c.ChangeType } into transApi
+                  select transApi.OrderByDescending(x => x.DateEffective)
+                                  .FirstOrDefault();
+
             //ViewModelApplication.PopupVisible = true;
 
 

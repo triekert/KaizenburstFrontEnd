@@ -360,7 +360,7 @@ namespace Fasetto.Word
 
         #endregion
 
-        #region Command Methods
+        //#region Command Methods
 
         /// <summary>
         /// When the attachment button is clicked show/hide the attachment pop-up
@@ -552,6 +552,6 @@ namespace Fasetto.Word
             ViewModelApplication.CurrentPopupContent = PopupContent.AddElement; ;
             ViewModelApplication.GoToPage(ApplicationPage.Chat);}
 
-        #endregion
+        //#endregion
     }
 }

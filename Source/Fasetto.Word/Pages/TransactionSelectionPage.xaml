@@ -175,14 +175,14 @@
                             FontSize="{StaticResource FontSizeRegular}"
                             />
                 <!--Select reconciliation data/ day portion-->
-                <!--<Button Content="Reconcile Bulk Meter: TimeOfDay"
+                <Button Content="Persist Changes"
                             Padding="8"
                             IsDefault="True"
                             Focusable="False"
                             Command="{Binding ReconcileTODCommand}"
                             Background="{StaticResource WordGreenBrush}"
                             FontSize="{StaticResource FontSizeRegular}"
-                            />-->
+                            />
 
                 <Button 
                             Style="{StaticResource TextButton}" 
