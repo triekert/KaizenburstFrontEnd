@@ -214,8 +214,8 @@ namespace Fasetto.Word
 
                 // Commit the changed text
                 // So we can see it while it is working
-                //OriginalName = EditedName;
-                //OriginalKid = EditedKid;
+                OriginalName = EditedName;
+                OriginalKid = EditedKid;
 
                 // Try and do the work
                 result = CommitAction == null ? true : await CommitAction();

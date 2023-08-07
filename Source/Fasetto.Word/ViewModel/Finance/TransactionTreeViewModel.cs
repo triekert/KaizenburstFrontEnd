@@ -34,7 +34,10 @@ namespace Fasetto.Word
         public ObservableCollection<TransactionViewModel> OrgTransaction { get; set; }
 
         //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
-
+        /// <summary>
+        /// A flag indicating if the login command is running
+        /// </summary>
+        public bool TransClassBuildIsRunning { get; set; }
         #endregion
 
         #region Data
@@ -255,7 +258,7 @@ namespace Fasetto.Word
                     //Transaction.Clear();
                     mPersist = result.ServerResponse.Response;
                     mChange = new TransactionResultListApiModel();
-                    var matches = result.ServerResponse.Response.ToList();
+                    var matches = result.ServerResponse.Response.OrderByDescending(x=>x.Posted_Date).ThenBy(x=>x.KFinTranID).ThenBy(x=>x.ShortName).ToList();
 
 
                     foreach (var item in matches)
@@ -457,7 +460,38 @@ namespace Fasetto.Word
 
         }
 
- 
+        public async Task PersistTransClassAsync()
+        {
+            await RunCommandAsync(() => TransClassBuildIsRunning, async () =>
+            {
+
+                // Store single transcient instance of client data store
+                var scopedClientDataStore = ClientDataStore;
+
+                // Update values from local cache
+                // Get the user token
+                var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+                // Call the server and attempt to register with the provided credentials
+                // If we don't have a token (then not logged in...)
+                if (string.IsNullOrEmpty(token))
+                    // Then do nothing more
+                    return;
+                var result = await WebRequests.PostAsync<ApiResponse<HierarchyResultListApiModel>>(
+                // Set URL
+                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.PersistHierarchy),
+                    mPersist,
+                    bearerToken: token);
+
+                // If the response has an error...
+                if (await result.HandleErrorIfFailedAsync("Hierarchy retrieval Failed"))
+                    // We are done
+                    return;
+
+                // return to menu
+
+
+            });
+        }
 
 
 

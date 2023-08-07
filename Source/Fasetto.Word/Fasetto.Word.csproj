@@ -225,6 +225,7 @@
     <Compile Include="ValueConverters\TimeToStringConverter.cs" />
     <Compile Include="ViewModel\Application\Design\FinanceSelectionDesignModel.cs" />
     <Compile Include="ViewModel\Finance\ManageClassificationViewModel.cs" />
+    <Compile Include="ViewModel\Finance\ObservableCollectionExtensions.cs" />
     <Compile Include="ViewModel\Finance\TransactionDetailTreeViewModel.cs" />
     <Compile Include="ViewModel\Finance\TransactionDetailViewModel.cs" />
     <Compile Include="ViewModel\Finance\TransactionTreeViewModel.cs" />

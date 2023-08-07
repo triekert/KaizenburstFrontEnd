@@ -343,7 +343,7 @@ namespace Fasetto.Word
             //RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).RootID;
             ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid      = mDraggedItem.KCategoryID;
             ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName     = mDraggedItem.ShortName;
-            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalName   = mDraggedItem.ShortName;
+            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalName   = mDraggedItem.ShortName;
             ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID       = mDraggedItem.FClientID;
             ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
             //ViewModelApplication.PopupVisible = false;
