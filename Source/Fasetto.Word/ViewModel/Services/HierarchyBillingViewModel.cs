@@ -232,6 +232,24 @@ namespace Fasetto.Word
 
 
         /// <summary>
+        /// Aggregate adjustment to water bill from prior periods
+        /// </summary>
+        public decimal CostWaterAdjust => mElement.CostWaterAdjust;
+
+
+        /// <summary>
+        /// Aggregate adjusdtment to sewerage bill from prior periods
+        /// </summary>
+        public decimal CostSewerAdjust => mElement.CostSewerAdjust;
+
+
+        /// <summary>
+        /// Aggregate adjustment to total bill from prior periods
+        /// </summary>
+        public decimal CostTotalAdjust => mElement.CostTotalAdjust;
+
+
+        /// <summary>
         /// A list of all children containd inside this item
         /// </summary>
         public ObservableCollection<HierarchyBillingViewModel> Children => mChildren;

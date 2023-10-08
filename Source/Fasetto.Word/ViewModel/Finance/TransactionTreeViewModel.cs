@@ -48,6 +48,7 @@ namespace Fasetto.Word
         //private readonly ICommand mSearchCommand;
         public TransactionListDataModel mTDML;
         public TransactionResultListApiModel mPersist,mChange;
+  
         public TransactionViewModel mTVM;
         public ParameterTransactionApiModel mRequest;
         public string mClient;
@@ -447,15 +448,48 @@ namespace Fasetto.Word
                       group c by new { c.KFinActualID, c.ChangeType } into transApi
                       select transApi.OrderByDescending(x => x.DateEffective)
                                       .FirstOrDefault();
+            mPersist = new TransactionResultListApiModel();
 
-            ViewModelApplication.CurrentPopupViewModel = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+            foreach (var item in res)
+            {
 
-            res = from c in tmpTbl
-                  group c by new { c.KFinActualID, c.ChangeType } into transApi
-                  select transApi.OrderByDescending(x => x.DateEffective)
-                                  .FirstOrDefault();
+                var mTR = new TransactionResultApiModel
+
+                {
+                    Posted_Date = item.Posted_Date,
+                    Month = item.Month,
+                    Description = item.Description,
+                    TransAmount = item.TransAmount,
+                    ActualAmount = item.ActualAmount,
+                    ShortName = item.ShortName,
+                    KCategoryID = item.KCategoryID,
+                    KFinActualID = item.KFinActualID,
+                    KFinTranID = item.KFinTranID,
+                    KClientID = item.KClientID,
+                    KHierarchyID = item.KHierarchyID,
+                    ChangeType = item.ChangeType,
+                    DateEffective = item.DateEffective,
+
+
+                };
+                mPersist.Add(mTR);
+            }
+
+
+                ViewModelApplication.CurrentPopupViewModel = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+
+            //res = from c in tmpTbl
+            //       group c by new { c.KFinActualID, c.ChangeType } into transApi
+            //       select transApi.OrderByDescending(x => x.DateEffective)
+            //                       .FirstOrDefault();
 
             //ViewModelApplication.PopupVisible = true;
+            if (mPersist.Count > 0)
+                //if changes have been made, persist these on the database...
+            {
+            TaskManager.RunAndForget(PersistTransClassAsync);
+            }
+
 
 
         }
@@ -476,9 +510,9 @@ namespace Fasetto.Word
                 if (string.IsNullOrEmpty(token))
                     // Then do nothing more
                     return;
-                var result = await WebRequests.PostAsync<ApiResponse<HierarchyResultListApiModel>>(
+                var result = await WebRequests.PostAsync<ApiResponse<TransactionResultListApiModel>>(
                 // Set URL
-                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.PersistHierarchy),
+                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.PersistClassification),
                     mPersist,
                     bearerToken: token);
 

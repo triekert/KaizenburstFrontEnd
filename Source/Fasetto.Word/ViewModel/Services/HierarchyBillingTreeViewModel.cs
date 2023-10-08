@@ -44,6 +44,7 @@ namespace Fasetto.Word
         public HierarchyBillingResultListApiModel mPersist, mPersistTmp,mOriginal;
         public HierarchyBillingDataModel mHDM;
         public string mBillingPeriod;
+        public ParameterBillingApiModel mBillingParameter;
         public HierarchyElementViewModel mElement;
 
         //IEnumerator<HierarchyManagementViewModel> mMatchingCategoryEnumerator;
@@ -65,13 +66,13 @@ namespace Fasetto.Word
 
         #region Constructor
         /// <summary>
-        /// The HierarchyTreeViewModel is a visual inteface for interacting with hiearchical
+        /// The HierarchyTreeViewModel is a visual interface for interacting with hierarchical
         /// Structures persisted on the database linked to the application
         /// Generic hierarchy structures with parent-child relationships may be used to represent
         /// appropriate data sets
         /// </summary>
         /// <param name="hierarchyTable"></param>
-        /// The hierarchyTable passed through as a paremeter identifies the specific hierarchy set to be retrieved
+        /// The hierarchyTable passed through as a parameter identifies the specific hierarchy set to be retrieved
         /// from persistent s
         public HierarchyBillingTreeViewModel(string hierarchyTable)
         {
@@ -89,6 +90,11 @@ namespace Fasetto.Word
             mHDML.Add(mHDM);
 
             mBillingPeriod = hierarchyTable;
+            mBillingParameter = new ParameterBillingApiModel
+            {
+                BillingPeriodID = mBillingPeriod,
+                DateEffective = DateTime.Now
+            };
             #endregion
             //retrieve hierarchy from persistent storage on server
             //To Do: Add mTableName as parameter when calling HiearchyAsync to populate hierarchy
@@ -221,7 +227,7 @@ namespace Fasetto.Word
                 var result = await WebRequests.PostAsync<ApiResponse<HierarchyBillingResultListApiModel>>(
                 // Set URL
                     RouteHelpers.GetAbsoluteRoute(ApiRoutes.ReturnSWBilling),
-                    mBillingPeriod,
+                    mBillingParameter,
                     bearerToken: token);
 
                 // If the response has an error...
@@ -352,6 +358,9 @@ namespace Fasetto.Word
                     CostSewerN = item.CostSewerN,
                     Adjustment = item.Adjustment,
                     AdjustmentN = item.AdjustmentN,
+                    CostWaterAdjust = item.CostWaterAdjust,
+                    CostSewerAdjust = item.CostSewerAdjust,
+                    CostTotalAdjust = item.CostTotalAdjust,
 
 
                     //TotalConsumption = item.TotalConsumption,

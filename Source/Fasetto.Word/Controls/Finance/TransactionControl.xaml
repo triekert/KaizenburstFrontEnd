@@ -99,12 +99,23 @@
                     <!--FAMILY TREE-->
 
                 </Grid>
+                <StackPanel>
+                    <StackPanel.Resources>
+                        <ControlTemplate x:Key="ButtonTemplate" TargetType="{x:Type Button}">
+                            <Border Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" 
+                    BorderBrush="{TemplateBinding BorderBrush}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </StackPanel.Resources>
+
+                </StackPanel>
             </Grid>
         </Border>
 
         <DataGrid x:Name="Transaction" Grid.Row="3"  ItemsSource="{Binding Trans_action}" 
                   HeadersVisibility="All" RenderTransformOrigin="0.5,0.5"       GridLinesVisibility="None" 
-                    AutoGenerateColumns="False" AlternatingRowBackground="Beige" 
+                    AutoGenerateColumns="False" AlternationCount="2"
                     SelectionMode="Single" SelectionUnit="FullRow"  VerticalAlignment="Center"  HorizontalAlignment="Center" HorizontalContentAlignment="Center"  CanUserAddRows="False"
                   
                   >
@@ -122,16 +133,22 @@
                     <EventSetter Event ="KeyDown"  Handler="DataGridRow_KeyDown"/>
                     <EventSetter Event ="PreviewMouseRightButtonDown"  Handler="DataGridRow_MouseRightClick"/>
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
-                    <Setter Property="Background" Value ="Cyan"/>
+                    <Setter Property="Background" Value ="AliceBlue"/>
  
                     <!--Setting highlight-->
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding State}" Value="State1">
-                                <Setter Property="Background" Value="Red"></Setter>
+                            <Trigger Property="AlternationIndex" Value="1">
+                                <Setter Property="Background" Value="Beige"/>
+                                       <Setter Property="Foreground" Value="DarkGray"></Setter>                                
+                            </Trigger>
+                            <DataTrigger Binding="{Binding ShortName}" Value ="">
+                                <Setter Property="Background" Value="Crimson"></Setter>
+                                      <Setter Property="Foreground" Value="Beige"></Setter>                              
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding State}" Value="State2">
+
+                        <!--<DataTrigger Binding="{Binding State}" Value="State2">
                                 <Setter Property="Background" Value="Orange"></Setter>
-                            </DataTrigger>
+                            </DataTrigger>-->
                         </Style.Triggers>
                     <!--Setting highlight-->
 
@@ -178,6 +195,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Margin="5" Width="100" Text="{Binding Path=ActualAmount,StringFormat=C,ConverterCulture='en-ZA'}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+ 
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -188,6 +206,7 @@
 
 
         </DataGrid>
+
 
     </DockPanel>
 </UserControl>

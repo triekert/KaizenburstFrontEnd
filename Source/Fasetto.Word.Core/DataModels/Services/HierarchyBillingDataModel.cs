@@ -207,7 +207,30 @@ namespace Fasetto.Word.Core
         /// Manual adjustment of consumption,first month
         /// </summary>
         public decimal AdjustmentN { get; set; }
+
+        /// <summary>
+        /// Aggregate adjustment to water bill from prior periods
+        /// </summary>
+        public decimal CostWaterAdjust { get; set; }
+
+
+        /// <summary>
+        /// Aggregate adjusdtment to sewerage bill from prior periods
+        /// </summary>
+        public decimal CostSewerAdjust { get; set; }
+
+
+
+        /// <summary>
+        /// Aggregate adjustment to total bill from prior periods
+        /// </summary>
+        public decimal CostTotalAdjust { get; set; }
+
+
         public List<HierarchyBillingDataModel> Children { get; set; }
+
+
+
 
 
         #region KCategoryIdContainsText

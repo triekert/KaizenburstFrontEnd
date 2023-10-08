@@ -1,21 +1,19 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Fasetto.Word
+namespace Fasetto.Word.Core
 {
-    public partial class ManageClassificationViewModel
-    {
-        #endregion
 
-        #region Adding to a collection
-        public static class ObservableCollectionExtensions
+
+    #region Adding to a collection
+    public static class ObservableCollectionExtensions
         {
             /// <summary>
             /// Sorted add for observable collection using custom comparer
             /// </summary>
             public static void AddSorted<T>(this ObservableCollection<T> collection, T item, IComparer<T> comparer)
             {
-                var sortableList = new List<T>(collection);
+                var sortableList = new System.Collections.Generic.List<T>(collection);
                 var index = sortableList.BinarySearch(item, comparer);
                 if (index < 0)
                     index = ~index;
@@ -27,5 +25,5 @@ namespace Fasetto.Word
 
 
 
-    }
+    
 }

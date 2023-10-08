@@ -66,9 +66,22 @@ namespace Fasetto.Word.Core
         /// String representation of GUID for originating transaction
         /// </summary>
 
-
         public string KFinTranID { get; set; }
 
+
+        /// <summary>
+        /// String representation of GUID for Client
+        /// </summary>
+
+        public string KClientID { get; set; }
+
+
+
+        /// <summary>
+        /// String representation of GUID for CostHierarchy
+        /// </summary>
+
+        public string KHierarchyID { get; set; }
 
         /// <summary>
         /// Calendar date from which Element is seen as active
@@ -96,7 +109,7 @@ namespace Fasetto.Word.Core
         /// "c" change allocation and/or value on existing record
         /// --could use an enumerator, but as there are only 3 values, just use fixed values
         /// --if an audit trail is required for changing allocations, the full change management functionality
-        /// 
+        /// --will need to be implemented
         /// </summary>
         /// 
 

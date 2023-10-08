@@ -25,7 +25,7 @@ namespace Fasetto.Word
         //public CostHierarchyListViewModel mBPVM;
         // Using a DependencyProperty as the backing store for LabelWidth.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty LabelWidthProperty =
-            DependencyProperty.Register("LabelWidth3", typeof(GridLength), typeof(TextEntryControl), new PropertyMetadata(GridLength.Auto, LabelWidthChangedCallback));
+            DependencyProperty.Register("LabelWidth5", typeof(GridLength), typeof(TextEntryControl), new PropertyMetadata(GridLength.Auto, LabelWidthChangedCallback));
 
         #endregion
 

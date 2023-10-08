@@ -11,6 +11,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Web;
 using static Dna.FrameworkDI;
@@ -728,7 +729,7 @@ namespace Fasetto.Word.Web.Server
 
         #endregion BillingPeriods
         #region RootPerClientAndType
-
+        
         [Route(ApiRoutes.ReturnRootPerClientAndType)]
         public async Task<ApiResponse> ReturnRootPerClientAndTypeAsync([FromBody] ParameterGenericRootApiModel model)
 
@@ -803,22 +804,205 @@ namespace Fasetto.Word.Web.Server
 
         #endregion RootPerClientAndType
 
+        #region PersistClassification
+        [Route(ApiRoutes.PersistClassification)]
+        /// <summary>
+        /// Persist hierarchy changes made on front end
+        /// </summary>
+        /// <param name="mPersist"></param>
+        /// <returns></returns>
+        public async Task<ApiResponse<TransactionResultListApiModel>> PersistClassificationAsync([FromBody] TransactionResultListApiModel mPersist)
 
-        #endregion Financials
+        {
+            #region Get User
+
+            // Get the current user
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            // If we have no user...
+            if (user == null)
+                return new ApiResponse<TransactionResultListApiModel>
+                {
+                    // TODO: Localization
+                    ErrorMessage = "User not found"
+                };
+
+            #endregion //Get User   
+            var results = mPersist.OrderBy(x => x.KFinActualID).ToList();
+
+
+
+
+            var para = new SqlParameter[12];
+            para[0] = new SqlParameter("@ShortName", SqlDbType.NVarChar);
+            para[1] = new SqlParameter("@Description", SqlDbType.NVarChar);
+            para[2] = new SqlParameter("@kCategoryID", SqlDbType.UniqueIdentifier);
+            para[3] = new SqlParameter("@kFinActualID", SqlDbType.UniqueIdentifier);
+            para[4] = new SqlParameter("@kFinTranID", SqlDbType.UniqueIdentifier);
+            para[5] = new SqlParameter("@DateEffective", SqlDbType.DateTime);
+            para[6] = new SqlParameter("@TransAmount", SqlDbType.Decimal);
+            para[7] = new SqlParameter("@ActualAmount", SqlDbType.Decimal);
+            para[8] = new SqlParameter("@Posted_Date", SqlDbType.DateTime);
+            para[9] = new SqlParameter("@kClientID", SqlDbType.UniqueIdentifier);
+            para[10] = new SqlParameter("@kHierarchyID", SqlDbType.UniqueIdentifier);
+            para[11] = new SqlParameter("@Month", SqlDbType.Int);           
+            //var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (ShortName,Description,kCategoryID,ParentCategoryID,fIconID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement)" +// ) " +
+            //    "VALUES (@ShortName,@Description,@kCategoryID,@ParentCategoryID,@fIconID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement)";//)";
+            var SqlString = "INSERT INTO [Finance].[FinActual]  (ActualAmount,kFinActualID,fFinTranID,kCategoryID,DateEffective,fClientID,fHierarchyID,Month)" +// ) " +
+
+                "VALUES (@ActualAmount,@kFinActualID,@kFinTranID,@kCategoryID,@DateEffective,@fIconID,@DateEffective,@kClientID,@kHierarchyID,@Month)";//)";
+                                                                                                                                                                                                          //If elements are to be added, insert into backend
+            results = mPersist.Where(x => x.ChangeType == "a").OrderBy(x => x.KFinActualID).ToList();//
+            if (results.Count > 0)
+
+
+            {
+                foreach (var row in results)
+                {
+                    para[0].Value = row.ShortName;
+                    para[1].Value = row.Description;
+                    para[2].Value = new Guid(row.KCategoryID);
+                    para[3].Value = new Guid(row.KFinActualID);
+                    para[4].Value = new Guid(row.KFinTranID);
+                    para[5].Value = row.DateEffective;
+                    para[6].Value = Convert.ToDecimal(row.TransAmount);
+                    para[7].Value = Convert.ToDecimal(row.ActualAmount);
+                    para[8].Value = row.Posted_Date;
+                    para[9].Value = new Guid(row.KClientID);
+                    para[10].Value = new Guid(row.KHierarchyID);
+                    para[11].Value = row.Month; 
+                    try
+                    {
+                        // Try and run the task
+                        _ = await ExecuteAsync(SqlString, para);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log error
+                        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                        // Throw it as normal
+                        throw;
+                    }
+
+                }
+            }
+
+
+
+            SqlString = "UPDATE [Finance].[FinActual] SET ActualAmount =@ActualAmount,fCategoryID = @kCategoryID WHERE kFinActualID = @kFinActualID";
+
+            //If elements are to be updated, insert into backend
+            results = mPersist.Where(x => x.ChangeType == "c").OrderBy(x => x.KFinActualID).ToList();//
+            if (results.Count > 0)
+
+            {
+                foreach (var row in results)
+                {
+                    para[0].Value = row.ShortName;
+                    para[1].Value = row.Description;
+                    para[2].Value = new Guid(row.KCategoryID);
+                    para[3].Value = new Guid(row.KFinActualID);
+                    para[4].Value = new Guid(row.KFinTranID);
+                    para[5].Value = row.DateEffective;
+                    para[6].Value = Convert.ToDecimal(row.TransAmount);
+                    para[7].Value = Convert.ToDecimal(row.ActualAmount);
+                    para[8].Value = row.Posted_Date;
+                    para[9].Value = new Guid(row.KClientID);
+                    para[10].Value = new Guid(row.KHierarchyID);
+                    para[11].Value = row.Month;
+                    try
+
+                    {
+                        // Try and run the task
+                        _ = await ExecuteAsync(SqlString, para);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log error
+                        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                        // Throw it as normal
+                        throw;
+                    }
+
+
+                }
+            }
+
+            SqlString = "Delete from [Finance].[FinActual]  WHERE kFinActualID = @kFinActualID";
+
+            //If elements are to be deleted, find and remove
+            results = mPersist.Where(x => x.ChangeType == "d").OrderBy(x => x.KFinActualID).ToList();////
+            if (results.Count > 0)
+
+            {
+                foreach (var row in results)
+                {
+                    para[0].Value = row.ShortName;
+                    para[1].Value = row.Description;
+                    para[2].Value = new Guid(row.KCategoryID);
+                    para[3].Value = new Guid(row.KFinActualID);
+                    para[4].Value = new Guid(row.KFinTranID);
+                    para[5].Value = row.DateEffective;
+                    para[6].Value = Convert.ToDecimal(row.TransAmount);
+                    para[7].Value = Convert.ToDecimal(row.ActualAmount);
+                    para[8].Value = row.Posted_Date;
+                    para[9].Value = new Guid(row.KClientID);
+                    para[10].Value = new Guid(row.KHierarchyID);
+                    para[11].Value = row.Month;
+                    try
+                    {
+                        // Try and run the task
+                        _ = await ExecuteAsync(SqlString, para);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log error
+                        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                        // Throw it as normal
+                        throw;
+                    }
+                }
+            }
+
+
+
+            #region sql query
+
+
+
+
+            return new ApiResponse<TransactionResultListApiModel>
+            {
+                //Response = results
+            };
+            #endregion //sql query
+
+        }
+
+        #endregion
+
+
+#endregion Financials
 
 
         #region Services
-            #region LoadReadings
-            /// <summary>
-            /// Retrieves meter readings from Client API and updates database
-            /// </summary>
-            /// <param name="model">The search credentials</param>
-            /// <returns>
-            ///     Returns a list of hiearchy items if successful, 
-            ///     otherwise returns the error reasons for the failure
-            /// </returns>
+        #region LoadReadings
+        /// <summary>
+        /// Retrieves meter readings from Client API and updates database
+        /// </summary>
+        /// <param name="model">The search credentials</param>
+        /// <returns>
+        ///     Returns a list of hiearchy items if successful, 
+        ///     otherwise returns the error reasons for the failure
+        /// </returns>
 
-            [Route(ApiRoutes.LoadReadings)]
+        [Route(ApiRoutes.LoadReadings)]
             public async Task<ApiResponse> ReturnMeterReadingsAsync([FromBody] string model)
             {
 
@@ -862,9 +1046,9 @@ namespace Fasetto.Word.Web.Server
                         {
                             var param = (string)(row1[0]);
                             param = "https://api.netqedge.com/v1" + param;
-                            //For testing a specific subset of data via api   2022-11-27 20:54:47.000
-                            //param = "https://api.netqedge.com/v1?From=2022-12-16%2000%3A00%3A00&To=2022-12-16%2012%3A30%3A00";
-                            var serverResponse = default(HttpWebResponse);
+                        //For testing a specific subset of data via api   2022-11-27 20:54:47.000
+                        //param = "https://api.netqedge.com/v1?From=2023-07-01%2000%3A00%3A00&To=2023-07-02%2012%3A30%3A00";
+                        var serverResponse = default(HttpWebResponse);
                             serverResponse = await Get2Async(param);
 
                             var result1 = serverResponse.CreateWebRequestResult<WaterReading>();
@@ -1212,7 +1396,7 @@ namespace Fasetto.Word.Web.Server
             #region Billing
                 #region BillingDetail
                 [Route(ApiRoutes.ReturnSWBilling)]
-                public async Task<ApiResponse> ReturnSWBillingAsync([FromBody] string model)
+                public async Task<ApiResponse> ReturnSWBillingAsync([FromBody] ParameterBillingApiModel model)
 
                 {
                     #region Get User
@@ -1234,7 +1418,8 @@ namespace Fasetto.Word.Web.Server
 
 
 
-                    var SqlString = "EXEC [Services].[spGetSWConsumerBilling1] 	 @fBillingPeriodID =  '" + model + "'";
+                    var SqlString = "EXEC [Services].[spGetSWConsumerBillingSand] 	 @fBillingPeriodID =  '" + model.BillingPeriodID + "'";
+            //+"', @fDateReference = '" + model.DateEffective
                     ;
                     try
                     {
@@ -1287,8 +1472,12 @@ namespace Fasetto.Word.Web.Server
                                 BasesN = (decimal)row[37],
                                 TariffsN = (decimal)row[38],
                                 CostSewerN = (decimal)row[39],
-                                Adjustment= (decimal)row[40],
-                                AdjustmentN= (decimal)row[41],
+                                Adjustment = (decimal)row[40],
+                                AdjustmentN = (decimal)row[41],
+                                CostWaterAdjust = (decimal)row[42],
+                                CostSewerAdjust = (decimal)row[43],
+                                CostTotalAdjust = (decimal)row[44],
+
                             };
                             results.Add(u);
 

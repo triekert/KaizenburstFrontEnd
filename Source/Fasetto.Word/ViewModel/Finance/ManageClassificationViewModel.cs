@@ -1,6 +1,7 @@
 ﻿using Dna;
 using Fasetto.Word.Core;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
@@ -351,7 +352,7 @@ namespace Fasetto.Word
             { Category.EditedName = Category.OriginalName;
                 Category.EditedKid = Category.OriginalKid;
             }
-        if (IntAmnt > Selected.ActualAmount) { IntAmnt = Selected.ActualAmount; }
+        if (Math.Abs(IntAmnt) > Math.Abs(Selected.ActualAmount)) { IntAmnt = Selected.ActualAmount; }
             if (Category.EditedKid != Category.OriginalKid || IntAmnt != OrgActual) 
                 //Don't do anything if cost category hasn't changed,AND the allocated amount has not changed
             {  if (!(Category.EditedKid == Category.OriginalKid && Category.OriginalKid == ""))
@@ -421,6 +422,8 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "c",
                                     DateEffective = DateTime.Now,
+                                    KHierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                                    KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                 };
                                 tmp2.Add(u);
 
@@ -451,6 +454,8 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "c",
                                     DateEffective = DateTime.Now,
+                                    KHierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                                    KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                 };
                                 tmp2.Add(u);
                                 matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
@@ -470,6 +475,8 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "d",
                                     DateEffective = DateTime.Now,
+                                    KHierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                                    KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                 };
                                 tmp2.Add(u);
 
@@ -517,6 +524,8 @@ namespace Fasetto.Word
                                 KFinTranID = Selected1.KFinTranID,
                                 ChangeType = "c",
                                 DateEffective = DateTime.Now,
+                                KHierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                                KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                             };
                             tmp2.Add(u);
                             matches = tmp.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
@@ -556,6 +565,8 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "a",
                                     DateEffective = DateTime.Now,
+                                    KHierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                                    KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                 };
                                 tmp2.Add(u);
 
@@ -586,6 +597,8 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "c",
                                     DateEffective = DateTime.Now,
+                                    KHierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                                    KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                 };
                                 tmp2.Add(u);
 
@@ -693,6 +706,8 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "c",
                                     DateEffective = DateTime.Now,
+                                    KHierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                                    KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                 };
                                 tmp2.Add(u);
 
@@ -713,6 +728,8 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "d",
                                     DateEffective = DateTime.Now,
+                                    KHierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                                    KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                 };
                                 tmp2.Add(u);
 
@@ -756,6 +773,8 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "c",
                                     DateEffective = DateTime.Now,
+                                    KHierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                                    KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                 };
                                 tmp2.Add(u);
                             }
@@ -797,6 +816,8 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "c",
                                     DateEffective = DateTime.Now,
+                                    KHierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                                    KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                 };
                                 tmp2.Add(u);
                                 // now create a new assignment for the new cost category
@@ -813,6 +834,9 @@ namespace Fasetto.Word
 
                                 tmp.Add(Selected1);
                                 tmp1.Add(Selected1);
+
+
+
                                 u = new TransactionResultApiModel
                                 {
                                     Posted_Date = Selected1.Posted_Date,
@@ -826,6 +850,8 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "a",
                                     DateEffective = DateTime.Now,
+                                    KHierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                                    KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                 };
                                 tmp2.Add(u);
 
@@ -865,6 +891,8 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "c",
                                     DateEffective = DateTime.Now,
+                                    KHierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                                    KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                 };
                                 tmp2.Add(u); 
 
@@ -902,6 +930,8 @@ namespace Fasetto.Word
                                         KFinTranID = Selected1.KFinTranID,
                                         ChangeType = "a",
                                         DateEffective = DateTime.Now,
+                                        KHierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                                        KClientID =((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     };
                                     tmp2.Add(u);
                                 }
@@ -926,6 +956,8 @@ namespace Fasetto.Word
                                         KFinTranID = Selected1.KFinTranID,
                                         ChangeType = "c",
                                         DateEffective = DateTime.Now,
+                                        KHierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                                        KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     };
                                     tmp2.Add(u);
                                 }
@@ -1021,36 +1053,18 @@ namespace Fasetto.Word
                     }
                     //var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
                     ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                    matches = tmp1.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
+                    Remove(matches,tmp1 );
+                    Clone(matches, tmp1);
+                    matches = tmp.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
+                    Remove(matches, tmp);
+                    Clone(matches, tmp);
                 }
 
             }
 
 
 
-
-
-
-
-            //var MDateAdj = ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateAdjustment;
-            //MAPI = new ParameterBillingAdjustmentApiModel
-            //{
-            //    FBillingPeriodID = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.KBillingPeriodID,
-            //    FPropertyID = ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).KCategoryID,
-            //    Adjustment = Convert.ToDecimal(((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).Adjustment.EditedText)/1000,
-            //    DateStart = ((MDateAdj.Month ==
-            //                ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateStart.Month) ?
-            //                ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateStart :
-            //                new DateTime(MDateAdj.Year, MDateAdj.Month, 1)),
-            //    DateEffective = DateTime.Now,
-            //    FChangeID = new Guid().ToString(),
-            //};
-
-        //    mElementViewModel.Description.OriginalText = null;
-        //    mElementViewModel.Description.OriginalText = null;
-        //}
-        //mViewModel.AddElement(mElementViewModel);
-        //ViewModelApplication.PopupVisible = false;
-        //TaskManager.RunAndForget(BillingPeriodAdjustAsync);
             Close();
         }
         public async Task BillingPeriodAdjustAsync()
@@ -1110,11 +1124,24 @@ namespace Fasetto.Word
         }
 
 #endregion
-#region Adding to a collection
 
-        #endregion Adding to a collection
+        public void Remove(List<TransactionViewModel> source, ObservableCollection<TransactionViewModel> target)
+        {
+            foreach (var item in source)
+                target.Remove(item);
+        }
+        public void Clone(List<TransactionViewModel> source,ObservableCollection<TransactionViewModel>  target)
+        {
+            foreach (var item in source)
+                target.Add(item);
+        }
+
+
 
 
 
     }
+
+
+    
 }

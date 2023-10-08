@@ -140,7 +140,7 @@
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="80" />
                         <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="100" />
+                        <!--<ColumnDefinition Width="100" />
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="100" />
@@ -164,12 +164,15 @@
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="100" /> 
                         <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="100" />-->
+                        <ColumnDefinition Width="100" />      
                         <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="100" />                        
-                    </Grid.ColumnDefinitions>
-
+                        <ColumnDefinition Width="125" />
+                        <ColumnDefinition Width="125" />
+                        <ColumnDefinition Width="125" />
+                    </Grid.ColumnDefinitions>      
 
 
 
@@ -186,7 +189,7 @@
                     <TextBlock  Grid.Column ="8"  Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="ReadingStart" FontFamily="Lato Medium" FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                     <TextBlock  Grid.Column ="9"  Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="DateEnd" FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                     <TextBlock  Grid.Column ="10" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="ReadingEnd" FontFamily="Lato Medium" FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                    <TextBlock  Grid.Column ="11" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="DateStart1" FontFamily="Lato Medium" FontWeight="ExtraBold"  Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                    <!--<TextBlock  Grid.Column ="11" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="DateStart1" FontFamily="Lato Medium" FontWeight="ExtraBold"  Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                     <TextBlock  Grid.Column ="12" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="DateEnd1" FontFamily="Lato Medium" FontWeight="ExtraBold"  Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                     <TextBlock  Grid.Column ="13" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Volume1" FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                     <TextBlock  Grid.Column ="14" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="MnthVolume1" FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
@@ -210,8 +213,12 @@
                     <TextBlock  Grid.Column ="32" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="BaseS" FontFamily="Lato Medium" FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                     <TextBlock  Grid.Column ="33" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="TariffS" FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                     <TextBlock  Grid.Column ="34" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="CostS" FontFamily="Lato Medium" FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                    <TextBlock  Grid.Column ="35" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Adjustment" FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                    <TextBlock  Grid.Column ="36" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Adjustment2" FontFamily="Lato Medium" FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                    <TextBlock  Grid.Column ="35" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Adjustment" FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>-->
+                    <TextBlock  Grid.Column ="11" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Adjustment" FontFamily="Lato Medium" FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                    <TextBlock  Grid.Column ="12" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Adjustment2" FontFamily="Lato Medium" FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                    <TextBlock  Grid.Column ="13"  Width="125"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="WaterCostAdjust" FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                    <TextBlock  Grid.Column ="14"  Width="125"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="SewerCostAdjust" FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                    <TextBlock  Grid.Column ="15"  Width="125"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="TotalCostADjust" FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
 
                 </Grid>
 
@@ -280,6 +287,7 @@
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="80" />
                                         <ColumnDefinition Width="100" />
+                                        <!--<ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="100" />
@@ -304,33 +312,35 @@
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="100" />-->
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="100" />
-                                        <ColumnDefinition Width="100" />
-                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="125" />
+                                        <ColumnDefinition Width="125" />
+                                        <ColumnDefinition Width="125" />                                        
                                     </Grid.ColumnDefinitions>
 
 
 
                                     <TextBlock Grid.Column ="1" Width="150"  HorizontalAlignment="Right"  TextWrapping="WrapWithOverflow" Text="{Binding ShortName}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                                        <TextBlock  Grid.Column ="2" Width="150"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding Description}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                    <TextBlock  Grid.Column ="2" Width="150"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding Description}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                     <TextBlock  Grid.Column ="3" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding TotalConsumption ,StringFormat='F3'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                     <TextBlock  Grid.Column ="4" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding WaterCost,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                     <TextBlock  Grid.Column ="5" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding SewerCost,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                     <TextBlock  Grid.Column ="6" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding TotalCost,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                                        <TextBlock  Grid.Column ="7" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding TimeStart,StringFormat=dd/MM/yyyy}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                    <TextBlock  Grid.Column ="7" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding TimeStart,StringFormat=dd/MM/yyyy}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                     <TextBlock  Grid.Column ="8" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding Startreading,StringFormat='F3'}" FontFamily="Lato Medium"   Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                                        <TextBlock  Grid.Column ="9" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding TimeEnd,StringFormat=dd/MM/yyyy}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                    <TextBlock  Grid.Column ="9" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding TimeEnd,StringFormat=dd/MM/yyyy}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                     <TextBlock  Grid.Column ="10" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding Endreading,StringFormat='F3'}" FontFamily="Lato Medium"   Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                                        <TextBlock  Grid.Column ="11" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding DatePeriodStart,StringFormat=dd/MM/yyyy}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                                        <TextBlock  Grid.Column ="12" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding DatePeriodEnd,StringFormat=dd/MM/yyyy}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                    <!--<TextBlock  Grid.Column ="11" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding DatePeriodStart,StringFormat=dd/MM/yyyy}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                    <TextBlock  Grid.Column ="12" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding DatePeriodEnd,StringFormat=dd/MM/yyyy}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                     <TextBlock  Grid.Column ="13" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding Volume,StringFormat='F3'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                     <TextBlock  Grid.Column ="14" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding VolumePredicted,StringFormat='F3'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                                        <TextBlock  Grid.Column ="15" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding ThresholdW}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                    <TextBlock  Grid.Column ="15" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding ThresholdW}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                     <TextBlock  Grid.Column ="16" Width="80"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding Basew,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                     <TextBlock  Grid.Column ="17" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding Tariffw,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium"   Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                     <TextBlock  Grid.Column ="18" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding CostWater,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                                        <TextBlock  Grid.Column ="19" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding ThresholdS}" FontFamily="Lato Medium"   Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                    <TextBlock  Grid.Column ="19" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding ThresholdS}" FontFamily="Lato Medium"   Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                     <TextBlock  Grid.Column ="20" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding Bases,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium"   Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                     <TextBlock  Grid.Column ="21" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding Tariffs,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium"   Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                     <TextBlock  Grid.Column ="22" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding CostSewer,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
@@ -345,9 +355,12 @@
                                     <TextBlock  Grid.Column ="31" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding ThresholdSN}" FontFamily="Lato Medium"   Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                     <TextBlock  Grid.Column ="32" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding BasesN,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium"   Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                     <TextBlock  Grid.Column ="33" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding TariffsN,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium"   Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                                    <TextBlock  Grid.Column ="34" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding CostSewerN,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                                    <TextBlock  Grid.Column ="35" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding Adjustment,StringFormat='F3'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                                    <TextBlock  Grid.Column ="36" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding AdjustmentN,StringFormat='F3'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                    <TextBlock  Grid.Column ="34" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding CostSewerN,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}">/-->
+                                    <TextBlock  Grid.Column ="11" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding Adjustment,StringFormat='F3'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                    <TextBlock  Grid.Column ="12" Width="100"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding AdjustmentN,StringFormat='F3'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                    <TextBlock  Grid.Column ="13" Width="125"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding CostWaterAdjust,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                    <TextBlock  Grid.Column ="14" Width="125"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding CostSewerAdjust,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                    <TextBlock  Grid.Column ="15" Width="125"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding CostTotalAdjust,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
 
                                 </Grid>
                         

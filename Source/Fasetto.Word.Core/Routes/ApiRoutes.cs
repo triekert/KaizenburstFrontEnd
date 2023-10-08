@@ -101,6 +101,10 @@
         /// </summary>
         public const string ReturnTransaction = "api/finance/Transaction";
 
+        /// <summary>
+        /// The route to the Persist Classificaton Api method
+        /// </summary>
+        public const string PersistClassification = "api/finance/PersistClassification";
         #endregion
 
 
