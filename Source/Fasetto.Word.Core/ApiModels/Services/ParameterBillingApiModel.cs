@@ -11,7 +11,7 @@ namespace Fasetto.Word.Core
     public class ParameterBillingApiModel
     {
         // <summary>
-        /// GUID of Client selected for transaction management
+        /// GUID of BillingPeriod selected for transaction management
         /// </summary>
         public string BillingPeriodID { get; set; }
 
@@ -21,6 +21,17 @@ namespace Fasetto.Word.Core
         /// </summary>
         public DateTime DateEffective { get; set; }
 
+        // <summary>
+        /// GUID of Property selected for transaction management
+        /// </summary>
+        public string PropertyID { get; set; }
+
+
+
+        // <summary>
+        /// GUID of Client selected for transaction management
+        /// </summary>
+        public string ClientID { get; set; }
 
 
 

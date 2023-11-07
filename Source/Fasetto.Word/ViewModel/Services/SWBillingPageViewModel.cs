@@ -1,9 +1,6 @@
 ﻿using Fasetto.Word.Core;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
-using static Fasetto.Word.DI;
-using static Dna.FrameworkDI;
 using static Fasetto.Word.DI;
 
 
@@ -312,7 +309,7 @@ namespace Fasetto.Word
             //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
             if (SelectedBillingPeriod == null)
             { var Nm = (ViewModelApplication.CurrentPopupViewModel).GetType().Name; };
-            if (SelectedBillingPeriod.KBillingPeriodID == null)
+            if ((SelectedBillingPeriod.KBillingPeriodID == null)||(SelectedBillingPeriod == null))
 
             //To DO - message user
             {

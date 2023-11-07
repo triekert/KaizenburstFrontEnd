@@ -212,7 +212,7 @@ namespace Fasetto.Word
         #endregion //Properties
 
         /// <summary>
-        /// Return Hierarchy of interest from Object persistance infrastructure
+        /// Return Bulk Recon detail information for the selected bulk meter
         /// User credentials are used to determine access authorisation
         /// </summary>
         /// <returns></returns>

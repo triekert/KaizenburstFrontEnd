@@ -139,6 +139,16 @@
 
         public const string ReturnSWBilling = "api/Services/SWBilling";
 
+
+        /// <summary>
+        /// The route to the accessing of S&W BillingDetail information 
+        /// </summary>
+        /// 
+
+        public const string ReturnSWBillingDetail = "api/Services/SWBillingDetail";
+
+
+
         /// <summary>
         /// The route to the accessing of Detail Water Meter readings (aggregated)
         /// </summary>

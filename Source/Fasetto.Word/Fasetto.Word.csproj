@@ -118,6 +118,7 @@
       <DependentUpon>HierarchyItemSelectionControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Input\HierarchySelectionControl.xaml.cs" />
+    <Compile Include="Controls\Services\SWBillingDetailControl.xaml.cs" />
     <Compile Include="Controls\Services\WaterReadingControl.xaml .cs" />
     <Compile Include="Controls\Services\BulkReconDetailControl.xaml.cs" />
     <Compile Include="Controls\Services\BulkReconControl.xaml.cs" />
@@ -233,6 +234,8 @@
     <Compile Include="ViewModel\Finance\Expenditure\TransactionSelectionPageViewModel.cs" />
     <Compile Include="ViewModel\Input\CostHierarchyListViewModel.cs" />
     <Compile Include="ViewModel\Input\CostHierarchyViewModel .cs" />
+    <Compile Include="ViewModel\Services\SWBillingDetailViewModel.cs" />
+    <Compile Include="ViewModel\Services\SWBillingDetailTreeViewModel.cs" />
     <Compile Include="ViewModel\Services\WaterReadingTreeViewModel.cs" />
     <Compile Include="ViewModel\FinancePageViewModel.cs" />
     <Compile Include="ViewModel\Finance\Expenditure\Design\HierarchyElementDesignModel.cs" />
@@ -421,6 +424,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Finance\FinanceSelectionControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Services\SWBillingDetailControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

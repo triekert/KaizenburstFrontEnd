@@ -1412,160 +1412,286 @@ namespace Fasetto.Word.Web.Server
                             ErrorMessage = "User not found"
                         };
 
-                    #endregion
+            #endregion
 
-                    #region sql query
-
-
-
-                    var SqlString = "EXEC [Services].[spGetSWConsumerBillingSand] 	 @fBillingPeriodID =  '" + model.BillingPeriodID + "'";
-            //+"', @fDateReference = '" + model.DateEffective
-                    ;
-                    try
-                    {
-                        // Try and run the task
-                        var dataset = await GetDataSetAsync(SqlString);
-                        var dt = dataset.Tables[0];
-                        var results = new HierarchyBillingResultListApiModel();
-                        //var results = billingPeriodResultListApiModel;
+                 #region sql query
 
 
-                        foreach (DataRow row in dt.Rows)
+
+                var SqlString = "EXEC [Services].[spGetSWConsumerBillingSand] 	 @fBillingPeriodID =  '" + model.BillingPeriodID + "'";
+                //+"', @fDateReference = '" + model.DateEffective
+                        ;
+                        try
                         {
-                            var u = new HierarchyBillingResultApiModel
-                            {
-                                ShortName = row[0].ToString(),
-                                Description = row[1].ToString(),
-                                KCategoryID = row[2].ToString(),
-                                ParentCategoryID = row[3].ToString(),
-                                DateEffective = (DateTime)row[4],
-                                DateDiscontinued = (DateTime)row[5],
-                                TotalConsumption = (decimal)row[6],
-                                WaterCost = (decimal)row[7],
-                                SewerCost = (decimal)row[8],
-                                TotalCost = (decimal)row[9],
-                                TimeStart = (DateTime)row[10],
-                                Startreading = (decimal)row[11],
-                                TimeEnd = (DateTime)row[12],
-                                Endreading = (decimal)row[13],
-                                DatePeriodStart = (DateTime)row[14],
-                                DatePeriodEnd = (DateTime)row[15],
-                                Volume = (decimal)row[16],
-                                VolumePredicted = (decimal)row[17],
-                                ThresholdW = (decimal)row[18],
-                                Basew = (decimal)row[19],
-                                Tariffw = (decimal)row[20],
-                                CostWater = (decimal)row[21],
-                                ThresholdS = (decimal)row[22],
-                                Bases = (decimal)row[23],
-                                Tariffs = (decimal)row[24],
-                                CostSewer = (decimal)row[25],
-                                DatePeriodStartN = (DateTime)row[26],
-                                DatePeriodEndN = (DateTime)row[27],
-                                VolumeN = (decimal)row[28],
-                                VolumePredictedN = (decimal)row[29],
-                                ThresholdWN = (decimal)row[30],
-                                BasewN = (decimal)row[31],
-                                TariffwN = (decimal)row[32],
-                                CostWaterN = (decimal)row[33],
-                                ThresholdSN = (decimal)row[36],
-                                BasesN = (decimal)row[37],
-                                TariffsN = (decimal)row[38],
-                                CostSewerN = (decimal)row[39],
-                                Adjustment = (decimal)row[40],
-                                AdjustmentN = (decimal)row[41],
-                                CostWaterAdjust = (decimal)row[42],
-                                CostSewerAdjust = (decimal)row[43],
-                                CostTotalAdjust = (decimal)row[44],
+                            // Try and run the task
+                            var dataset = await GetDataSetAsync(SqlString);
+                            var dt = dataset.Tables[0];
+                            var results = new HierarchyBillingResultListApiModel();
+                            //var results = billingPeriodResultListApiModel;
 
+
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                var u = new HierarchyBillingResultApiModel
+                                {
+                                    ShortName = row[0].ToString(),
+                                    Description = row[1].ToString(),
+                                    KCategoryID = row[2].ToString(),
+                                    ParentCategoryID = row[3].ToString(),
+                                    DateEffective = (DateTime)row[4],
+                                    DateDiscontinued = (DateTime)row[5],
+                                    TotalConsumption = (decimal)row[6],
+                                    WaterCost = (decimal)row[7],
+                                    SewerCost = (decimal)row[8],
+                                    TotalCost = (decimal)row[9],
+                                    TimeStart = (DateTime)row[10],
+                                    Startreading = (decimal)row[11],
+                                    TimeEnd = (DateTime)row[12],
+                                    Endreading = (decimal)row[13],
+                                    DatePeriodStart = (DateTime)row[14],
+                                    DatePeriodEnd = (DateTime)row[15],
+                                    Volume = (decimal)row[16],
+                                    VolumePredicted = (decimal)row[17],
+                                    ThresholdW = (decimal)row[18],
+                                    Basew = (decimal)row[19],
+                                    Tariffw = (decimal)row[20],
+                                    CostWater = (decimal)row[21],
+                                    ThresholdS = (decimal)row[22],
+                                    Bases = (decimal)row[23],
+                                    Tariffs = (decimal)row[24],
+                                    CostSewer = (decimal)row[25],
+                                    DatePeriodStartN = (DateTime)row[26],
+                                    DatePeriodEndN = (DateTime)row[27],
+                                    VolumeN = (decimal)row[28],
+                                    VolumePredictedN = (decimal)row[29],
+                                    ThresholdWN = (decimal)row[31],
+                                    BasewN = (decimal)row[32],
+                                    TariffwN = (decimal)row[33],
+                                    CostWaterN = (decimal)row[34],
+                                    ThresholdSN = (decimal)row[36],
+                                    BasesN = (decimal)row[37],
+                                    TariffsN = (decimal)row[38],
+                                    CostSewerN = (decimal)row[39],
+                                    Adjustment = (decimal)row[40],
+                                    AdjustmentN = (decimal)row[41],
+                                    CostWaterAdjust = (decimal)row[42],
+                                    CostSewerAdjust = (decimal)row[43],
+                                    CostTotalAdjust = (decimal)row[44],
+
+                                };
+                                results.Add(u);
+
+                            }
+
+                            return new ApiResponse<HierarchyBillingResultListApiModel>
+                            {
+
+                                Response = results
                             };
-                            results.Add(u);
+                          #endregion sql query
+
 
                         }
-
-                        return new ApiResponse<HierarchyBillingResultListApiModel>
+                        catch (Exception ex)
                         {
+                            // Log error
+                            //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
 
+                            // Throw it as normal
+                            throw;
+                        }
+
+                    }
+        #endregion BillingDetail
+        #region BillingDetailBreakdown
+
+        [Route(ApiRoutes.ReturnSWBillingDetail)]
+        public async Task<ApiResponse> ReturnSWBillingDetailAsync([FromBody] ParameterBillingApiModel model)
+
+        {
+            #region Get User
+
+            // Get the current user
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            // If we have no user...
+            if (user == null)
+                return new ApiResponse
+                {
+                    // TODO: Localization
+                    ErrorMessage = "User not found"
+                };
+
+            #endregion
+
+            #region sql query
+
+
+
+            var SqlString = "EXEC [Services].[spGetSWConsumerBillingDetail] 	 @fBillingPeriodID =  '" + model.BillingPeriodID + "',@fPropertyID = '" +  model.PropertyID  +"'" ;
+            //+"', @fDateReference = '" + model.DateEffective
+            ;
+            try
+            {
+                // Try and run the task
+                var dataset = await GetDataSetAsync(SqlString);
+                var dt = dataset.Tables[0];
+                var results = new SWBillingDetailResultListApiModel();
+                //var results = billingPeriodResultListApiModel;
+
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    var u = new SWBillingDetailResultApiModel
+                    {
+                        ShortName = row[1].ToString(),
+                        Description = row[36].ToString(),
+                        KCategoryID = row[3].ToString(),
+                        //ParentCategoryID = row[3].ToString(),
+
+                        DateEffective = (DateTime)row.GetValue<DateTime>(8, Convert.ToDateTime("0001/01/01 00:00:00")),
+                        WaterCost = (decimal)row.GetValue<decimal>(5),
+                        //WaterCost = (decimal)row[5],
+                        SewerCost = (decimal)row.GetValue<decimal>(4),
+                        CostWaterAdjust = (decimal)row.GetValue<decimal>(7, 0.00M),
+                        CostSewerAdjust = (decimal)row.GetValue<decimal>(6, 0.00M),
+                        TimeStart = (DateTime)row.GetValue<DateTime>(9, Convert.ToDateTime("0001/01/01 00:00:00")),
+
+                        TimeEnd = (DateTime)row.GetValue<DateTime>(10, Convert.ToDateTime("0001/01/01 00:00:00")),
+                        Endreading = (decimal)row.GetValue<decimal>(18, 0.00M),
+                        Startreading = (decimal)row.GetValue<decimal>(14, 0.00M),
+                        DatePeriodStart = (DateTime)row.GetValue<DateTime>(11, Convert.ToDateTime("0001/01/01 00:00:00")),
+                        DatePeriodEnd = (DateTime)row.GetValue<DateTime>(17, Convert.ToDateTime("0001/01/01 00:00:00")),
+                        Volume = (decimal)row.GetValue<decimal>(30, 0.00M),
+
+                        //////////////////VolumePredicted = (decimal)row[17],
+                        //////////////////ThresholdW = (decimal)row[18],
+                        //////////////////Basew = (decimal)row[19],
+                        //////////////////Tariffw = (decimal)row[20],
+                        //////////////////CostWater = (decimal)row[21],
+                        //////////////////ThresholdS = (decimal)row[22],
+                        //////////////////Bases = (decimal)row[23],
+                        //////////////////Tariffs = (decimal)row[24],
+                        //////////////////CostSewer = (decimal)row[25],
+                        ///
+                        MeterReadingSP = (decimal)row.GetValue<decimal>(24, 0.00M),
+                        DateSP = (DateTime)row.GetValue<DateTime>(25, Convert.ToDateTime("0001/01/01 00:00:00")),
+                        MeterReadingSN = (decimal)row.GetValue<decimal>(26, 0.00M),
+                        DateSN = (DateTime)row.GetValue<DateTime>(27, Convert.ToDateTime("0001/01/01 00:00:00")),
+                        MeterReadingFP = (decimal)row.GetValue<decimal>(21, 0.00M),
+                        DateFP = (DateTime)row.GetValue<DateTime>(36, Convert.ToDateTime("0001/01/01 00:00:00")),
+                        MeterReadingFN = (decimal)row.GetValue<decimal>(23, 0.00M),
+                        DateFN = (DateTime)row.GetValue<DateTime>(24, Convert.ToDateTime("0001/01/01 00:00:00")),
+                        BillingStart = (DateTime)row.GetValue<DateTime>(28, Convert.ToDateTime("0001/01/01 00:00:00")),
+                        BillingEnd = (DateTime)row.GetValue<DateTime>(29, Convert.ToDateTime("0001/01/01 00:00:00")),
+
+                        //////////////DatePeriodEndN = (DateTime)row[27],
+                        //////////////VolumeN = (decimal)row[28],
+                        //////////////VolumePredictedN = (decimal)row[29],
+                        ////////////////ThresholdWN = (decimal)row[30],
+                        ////////////////BasewN = (decimal)row[31],
+                        ////////////////TariffwN = (decimal)row[32],
+                        ////////////////CostWaterN = (decimal)row[33],
+                        ////////////////ThresholdSN = (decimal)row[36],
+                        ////////////////BasesN = (decimal)row[37],
+                        ////////////////TariffsN = (decimal)row[38],
+                        ////////////////CostSewerN = (decimal)row[39],
+                        ////////////////Adjustment = (decimal)row[40],
+                        ////////////////AdjustmentN = (decimal)row[41],
+                        //////////////CostWaterAdjust = (decimal)row[7],
+                        //////////////CostSewerAdjust = (decimal)row[8],
+
+
+                    };
+                    results.Add(u);
+
+                }
+
+                return new ApiResponse<SWBillingDetailResultListApiModel>
+                {
+
+                    Response = results
+                };
+                #endregion sql query
+
+
+            }
+            catch (Exception ex)
+            {
+                // Log error
+                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                // Throw it as normal
+                throw;
+            }
+
+        }
+
+        #endregion BillingDetailBreakdown
+
+        #region BillingPeriodAdjustment
+        /// <summary>
+        /// Retrieves aggregate  water consumption of Bulk and serviced consumer meters
+        /// </summary>
+        /// <param name="model">The search credentials</param>
+        /// <returns>
+        ///     Returns the water consumption per selected Bulk Metr and period if successful, 
+        ///     otherwise returns the error reasons for the failure
+        /// </returns>
+
+        [Route(ApiRoutes.BillingPeriodAdjustment)]
+                    public async Task<ApiResponse> BillingPeriodAdjustmentAsync([FromBody] ParameterBillingAdjustmentApiModel model)
+
+                    {
+                        #region Get User
+
+                        // Get the current user
+                        var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+                        // If we have no user...
+                        if (user == null)
+                            return new ApiResponse
+                            {
+                                // TODO: Localization
+                                ErrorMessage = "User not found"
+                            };
+
+                        #endregion Get User
+
+                        #region sql query
+
+
+
+                        var SqlString = "EXEC [Services].[spAddBillingAdjustment]	 @fPropertyID =  '" + model.FPropertyID + "' ,  @fBillingPeriodID = '" + model.FBillingPeriodID + "' " +
+                            ",@TimePeriodStart =' " + model.DateStart.ToString() + "',  @Adjustment = '" + model.Adjustment.ToString() + "',  @DateEffective = '" + model.DateEffective.ToString() + "',  @fChangeID = '" + model.FChangeID + "'";
+
+
+
+                        try
+
+                        {
+                            // Try and run the task
+                            _ = await ExecuteAsync(SqlString);
+                            #endregion sql query      
+                        }
+
+                        catch (Exception ex)
+                        {
+                            // Log error
+                            //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                            // Throw it as normal
+                            throw;
+                        }
+                        var results = new HierarchyResultListApiModel();
+                        return new ApiResponse<HierarchyResultListApiModel>
+                        {
                             Response = results
                         };
-                        #endregion sql query
-
-
-                    }
-                    catch (Exception ex)
-                    {
-                        // Log error
-                        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
-
-                        // Throw it as normal
-                        throw;
                     }
 
-                }
-                #endregion BillingDetail
-                #region BillingPeriodAdjustment
-                /// <summary>
-                /// Retrieves aggregate  water consumption of Bulk and serviced consumer meters
-                /// </summary>
-                /// <param name="model">The search credentials</param>
-                /// <returns>
-                ///     Returns the water consumption per selected Bulk Metr and period if successful, 
-                ///     otherwise returns the error reasons for the failure
-                /// </returns>
 
-                [Route(ApiRoutes.BillingPeriodAdjustment)]
-                public async Task<ApiResponse> BillingPeriodAdjustmentAsync([FromBody] ParameterBillingAdjustmentApiModel model)
-
-                {
-                    #region Get User
-
-                    // Get the current user
-                    var user = await mUserManager.GetUserAsync(HttpContext.User);
-
-                    // If we have no user...
-                    if (user == null)
-                        return new ApiResponse
-                        {
-                            // TODO: Localization
-                            ErrorMessage = "User not found"
-                        };
-
-                    #endregion Get User
-
-                    #region sql query
-
-
-
-                    var SqlString = "EXEC [Services].[spAddBillingAdjustment]	 @fPropertyID =  '" + model.FPropertyID + "' ,  @fBillingPeriodID = '" + model.FBillingPeriodID + "' " +
-                        ",@TimePeriodStart =' " + model.DateStart.ToString() + "',  @Adjustment = '" + model.Adjustment.ToString() + "',  @DateEffective = '" + model.DateEffective.ToString() + "',  @fChangeID = '" + model.FChangeID + "'";
-
-
-
-                    try
-
-                    {
-                        // Try and run the task
-                        _ = await ExecuteAsync(SqlString);
-                        #endregion sql query      
-                    }
-
-                    catch (Exception ex)
-                    {
-                        // Log error
-                        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
-
-                        // Throw it as normal
-                        throw;
-                    }
-                    var results = new HierarchyResultListApiModel();
-                    return new ApiResponse<HierarchyResultListApiModel>
-                    {
-                        Response = results
-                    };
-                }
-
-
-             #endregion BillingPeriodAdjustment
+                 #endregion BillingPeriodAdjustment
             #endregion Billing
         #endregion Services
 
@@ -1668,9 +1794,6 @@ namespace Fasetto.Word.Web.Server
                 //convert response into HierarchyListDataModel
                 #endregion //Find Users
             }
-
-
-
 
             /// <summary>
             /// Returns Hierarchy for Navigation
@@ -2177,9 +2300,31 @@ namespace Fasetto.Word.Web.Server
 
 
         }
-    //}
+        //}
         //}
 
-        #endregion
+
     }
+
+    #endregion
+    #region ExtensionMethod
+    public static class ExtensionMethods
+    {
+        public static T? GetValue<T>(this DataRow row, int columnIndex) where T : struct
+        {
+            var Test = row[5];
+            _ = row[columnIndex];
+            if (row[columnIndex] is T t)
+                //if (row[5] is T t)
+
+                return t;
+            return null;
+        }
+
+        public static T GetValue<T>(this DataRow row, int columnIndex, T defaultValue)
+        {
+            return (row[columnIndex] is T t) ? t : defaultValue;
+        }
+    }
+    #endregion
 }

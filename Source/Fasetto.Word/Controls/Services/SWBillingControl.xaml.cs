@@ -4,6 +4,7 @@ using System.Activities.Expressions;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -171,7 +172,8 @@ namespace Fasetto.Word
         private void TreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         { if (e.ChangedButton == MouseButton.Right)
             {
-             AddHierarchyElement();                            
+                //AddHierarchyElement();
+                 e.Handled = true;
             }
             else
                 if (e.ChangedButton == MouseButton.Left)
@@ -190,31 +192,31 @@ namespace Fasetto.Word
         private void TreeView_KeyBoard(object sender, KeyboardEventArgs e)
         {
             //check to determine whether user would like to add an item to the hierarchy
-            if (ViewModelApplication.PopupVisible == false)
-            { 
+            //if (ViewModelApplication.PopupVisible == false)
+            //{ 
 
                 if (Keyboard.IsKeyDown(Key.Insert))
                 {
-                    AddHierarchyElement();                    
+                    AddAdjustment();                    
                     e.Handled= true;
                 }
                 else
                     if (Keyboard.IsKeyDown(Key.Enter))
                 {
-                    EditHierarchyElement();
+                    ViewDetailBilling();
                     e.Handled = true;
 
                 }
                 else
-                    if (Keyboard.IsKeyDown(Key.Delete))
+                    if (Keyboard.IsKeyDown(Key.Escape))
                     {
-                        DeleteHierarchyElement();
-                    e.Handled = true;
+                Close();
+                e.Handled = true;
 
                 }
 
 
-            }
+            //}
         }
 
         /// <summary>
@@ -552,12 +554,24 @@ namespace Fasetto.Word
         /// <summary>
         /// Use Popup View to add a Hierarchy Element
         /// </summary>
-        private void AddHierarchyElement()
+        private void ViewDetailBilling()
         {
             //Prepopulate
+
             mDraggedItem = (HierarchyBillingViewModel)tvParameters.SelectedItem;
             if (mDraggedItem == null)
                 return;
+
+            ViewModelApplication.CurrentPopupViewModel = new SWBillingDetailTreeViewModel(((HierarchyBillingTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBillingPeriod,mDraggedItem.KCategoryID );
+
+            //((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+            //ViewModelApplication.PopupVisible = false;
+            ////ViewModelApplication.CurrentPopupContent = Null;
+            //ViewModelApplication.CurrentPopupContent = PopupContent.BulkReconDetail;
+            //ViewModelApplication.PopupVisible = true;
+
+
+            ViewModelApplication.CurrentPopupContent = PopupContent.SWBillingDetail;
             //var results = mHierarchyTree.mPersist.Where(x => x.KCategoryID == mDraggedItem.ParentCategoryID).OrderBy(x => x.ShortName).ToList();
             //var mPage = "";
             ////if (results.Count > 0)
@@ -586,7 +600,7 @@ namespace Fasetto.Word
             //mAddElementViewModel.MoveNodeButtonText = null;
 
             //mAddElementViewModel.HeadingText= "Add new Hierarchy Element";
-            
+
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
@@ -602,29 +616,29 @@ namespace Fasetto.Word
             mDraggedItem = (HierarchyBillingViewModel)tvParameters.SelectedItem;
             if (mDraggedItem == null)
                 return;
-            var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-            mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
-            mAddElementViewModel.ShortName.EditedText = mDraggedItem.ShortName;
-            mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
-            mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
-            //mAddElementViewModel.Page = mDraggedItem.Page;
-            //mAddElementViewModel.Root.OriginalText = mDraggedItem.Root;
-            //mAddElementViewModel.Root.EditedText = mDraggedItem.Root;
-            //mAddElementViewModel.IsMenuItem = mDraggedItem.IsMenuItem;
-            //mAddElementViewModel.ParentShortName = mDraggedItem.ParentShortName;
-            mAddElementViewModel.ParentCategoryID = mDraggedItem.ParentCategoryID;
-            mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
-            mAddElementViewModel.DateEffective = mDraggedItem.DateEffective;
-            mAddElementViewModel.DateDiscontinued = mDraggedItem.DateDiscontinued;
-            mAddElementViewModel.AddNodeButtonText = null;
-            mAddElementViewModel.EditNodeButtonText = "Update Selected Element";
-            mAddElementViewModel.DeleteNodeButtonText = null;
-            mAddElementViewModel.CopyNodeButtonText = null;
-            mAddElementViewModel.MoveNodeButtonText = null;
-            mAddElementViewModel.HeadingText = "Update Selected Element";
+            //var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
+            //mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
+            //mAddElementViewModel.ShortName.EditedText = mDraggedItem.ShortName;
+            //mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
+            //mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
+            ////mAddElementViewModel.Page = mDraggedItem.Page;
+            ////mAddElementViewModel.Root.OriginalText = mDraggedItem.Root;
+            ////mAddElementViewModel.Root.EditedText = mDraggedItem.Root;
+            ////mAddElementViewModel.IsMenuItem = mDraggedItem.IsMenuItem;
+            ////mAddElementViewModel.ParentShortName = mDraggedItem.ParentShortName;
+            //mAddElementViewModel.ParentCategoryID = mDraggedItem.ParentCategoryID;
+            //mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
+            //mAddElementViewModel.DateEffective = mDraggedItem.DateEffective;
+            //mAddElementViewModel.DateDiscontinued = mDraggedItem.DateDiscontinued;
+            //mAddElementViewModel.AddNodeButtonText = null;
+            //mAddElementViewModel.EditNodeButtonText = "Update Selected Element";
+            //mAddElementViewModel.DeleteNodeButtonText = null;
+            //mAddElementViewModel.CopyNodeButtonText = null;
+            //mAddElementViewModel.MoveNodeButtonText = null;
+            //mAddElementViewModel.HeadingText = "Update Selected Element";
             
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-            ViewModelApplication.PopupVisible = true;
+            //ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
         }
         private void DeleteHierarchyElement()

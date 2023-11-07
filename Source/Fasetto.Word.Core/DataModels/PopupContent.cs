@@ -94,7 +94,15 @@
         /// <summary>
         /// Manage classification of a transaction
         /// </summary>
-        Classify = 15
+        Classify = 15,
+
+
+
+
+        /// <summary>
+        /// Manage classification of a transaction
+        /// </summary>
+        SWBillingDetail = 16
 
 
     }

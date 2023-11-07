@@ -516,7 +516,7 @@ namespace Fasetto.Word
                 ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
                 {
                     MSelectedCostHierarchy = new CostHierarchyViewModel()
-            };
+                };
                 ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
                 return true;
             });
