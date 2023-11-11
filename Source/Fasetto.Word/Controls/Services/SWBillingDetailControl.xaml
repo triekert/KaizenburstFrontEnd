@@ -13,8 +13,8 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridColumnHeader">
-                        <Label Foreground="DarkRed" FontWeight="ExtraBlack" Background="BurlyWood" FontFamily="Lato Heavy" FontSize="20" Content="{TemplateBinding Content}"
-                               HorizontalAlignment="Stretch" HorizontalContentAlignment ="Left"  VerticalAlignment="Center"   />
+                        <Label Foreground="Black" FontWeight="ExtraBold" Background="LightGray" FontFamily="Lato Heavy" FontSize="20" Content="{TemplateBinding Content}"
+                               HorizontalAlignment="Stretch" HorizontalContentAlignment ="Center"  VerticalAlignment="Center"   />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -146,14 +146,24 @@
                 <DataGridTemplateColumn Header="BillingStart" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=BillingStart,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
+                            <TextBlock Margin="5" Text="{Binding Path=BillingStart,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
+                 </DataGridTemplateColumn>
+                
+                <DataGridTemplateColumn Header="PropertyID" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate >
+                        <DataTemplate >
+                            <TextBlock Margin="5" TextWrapping="Wrap"  Width="30" Text="{Binding Path= ShortName}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        </DataTemplate>
+
+                    </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Transaction Description" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+
+                <DataGridTemplateColumn Header="MeterID" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Margin="5" TextWrapping="Wrap"  Width="200" Text="{Binding Path= Description}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBlock Margin="5" TextWrapping="Wrap"  Width="100" Text="{Binding Path= Description}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -161,7 +171,7 @@
                 <DataGridTemplateColumn Header="WaterCost" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Margin="5" Width="100" Text="{Binding Path= WaterCost,StringFormat=C,ConverterCulture='en-ZA'}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBlock Margin="5" Width="50" Text="{Binding Path= WaterCost,StringFormat=C,ConverterCulture='en-ZA'}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -169,45 +179,135 @@
                 <DataGridTemplateColumn Header="WaterCostDelta" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Margin="5" Width="100" Text="{Binding Path= CostWaterAdjust,StringFormat=C,ConverterCulture='en-ZA'}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBlock Margin="5" Width="50" Text="{Binding Path= CostWaterAdjust,StringFormat=C,ConverterCulture='en-ZA'}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+
                 <DataGridTemplateColumn Header="SewerCost" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Margin="5" Width="100" Text="{Binding Path= SewerCost,StringFormat=C,ConverterCulture='en-ZA'}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBlock Margin="5" Width="70" Text="{Binding Path= SewerCost,StringFormat=C,ConverterCulture='en-ZA'}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="SewerCostDelta" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Margin="5" Width="100" Text="{Binding Path= CostSewerAdjust,StringFormat=C,ConverterCulture='en-ZA'}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBlock Margin="5" Width="50" Text="{Binding Path= CostSewerAdjust,StringFormat=C,ConverterCulture='en-ZA'}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Volume" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="5" Width="50" Text="{Binding Path= Volume,StringFormat={}{0:0.###}}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="ReadBillStrt" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="5" Width="50" Text="{Binding Path= ReadingStart,StringFormat={}{0:0.###}}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="ReadBilEnd" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="5" Width="50" Text="{Binding Path= ReadingEnd,StringFormat={}{0:0.###}}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+        
+    
                 <DataGridTemplateColumn Header="PeriodStart" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=DatePeriodStart,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
+                            <TextBlock  Margin="5" Text="{Binding Path=DatePeriodStart,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="PeriodEnd" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                
+                <DataGridTemplateColumn Header="StReading" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=DatePeriodEnd,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
+                            <TextBlock Margin="5" Width="50" Text="{Binding Path= Startreading,StringFormat={}{0:0.###}}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+
                 <DataGridTemplateColumn Header="DateSP" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=DateSP,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
+                            <TextBlock  Margin="5" Text="{Binding Path=DateSP,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                
+                 <DataGridTemplateColumn Header="ReadingSP" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="5" Width="50" Text="{Binding Path= MeterReadingSP,StringFormat={}{0:0.###}}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+            
+                <DataGridTemplateColumn Header="DateSN" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="5" Text="{Binding Path=DateSN,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>     
+                    
+                <DataGridTemplateColumn Header="ReadingSN" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="5" Width="50" Text="{Binding Path= MeterReadingSN,StringFormat={}{0:0.###}}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+
+                <DataGridTemplateColumn Header="DateFP" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock  Margin="5" Text="{Binding Path=DateSP,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="ReadingFP" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="5" Width="50" Text="{Binding Path= MeterReadingFP,StringFormat={}{0:0.###}}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+
+                <DataGridTemplateColumn Header="DateFP" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock  Margin="5" Text="{Binding Path=DateSP,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="ReadingFN" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="5" Width="50" Text="{Binding Path= MeterReadingFN,StringFormat={}{0:0.###}}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+
                 <!--<DataGridTemplateColumn Header="BillingStart" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

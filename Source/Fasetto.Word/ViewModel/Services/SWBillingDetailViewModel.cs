@@ -302,6 +302,16 @@ namespace Fasetto.Word
 
 
         /// <summary>
+        /// Start Reading for billing period
+        /// </summary>
+        public decimal ReadingStart { get; set; }
+
+        /// <summary>
+        ///End Reading for billing period
+        /// </summary>
+        public decimal ReadingEnd { get; set; }
+
+        /// <summary>
         /// A list of all children containd inside this item
         /// </summary>
         public ObservableCollection<SWBillingDetailViewModel> Children => mChildren;

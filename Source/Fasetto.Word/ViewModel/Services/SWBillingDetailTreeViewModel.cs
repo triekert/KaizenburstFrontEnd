@@ -174,7 +174,8 @@ namespace Fasetto.Word
                     DatePeriodEnd = item.DatePeriodEnd,
                     Endreading = item.Endreading,
                     Startreading = item.Startreading,
-                    Volume = item.Volume,
+                    //Volume = item.Volume,
+
                     DateSP = item.DateSP,
                     MeterReadingSP = item.MeterReadingSP,
                     DateSN = item.DateSN,
@@ -182,15 +183,20 @@ namespace Fasetto.Word
                     DateFP = item.DateFP,
                     MeterReadingFP = item.MeterReadingFP,
                     DateFN = item.DateFN,
-                    MeterReadingFN = item.MeterReadingFN
+                    MeterReadingFN = item.MeterReadingFN,
+                    ReadingStart = item.ReadingStart,
+                    ReadingEnd = item.ReadingEnd,
 
 
 
 
                 };
                 BillingDetail.Add(mTDVM);
-            }
 
+            };
+
+                foreach (var item1 in BillingDetail)
+                { item1.Volume = item1.ReadingEnd - item1.ReadingStart; }
             //PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
 
             //var rootElement = mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
@@ -275,11 +281,9 @@ namespace Fasetto.Word
                         DateFP = item.DateFP,
                         MeterReadingFP = item.MeterReadingFP,
                         DateFN = item.DateFN,
-                        MeterReadingFN = item.MeterReadingFN
-
-
-
-
+                        MeterReadingFN = item.MeterReadingFN,
+                        ReadingStart = item.ReadingStart,
+                        ReadingEnd = item.ReadingEnd,
                     };
                    mBDDML.Add(mBDDM);
                 }

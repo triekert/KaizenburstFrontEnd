@@ -1528,7 +1528,7 @@ namespace Fasetto.Word.Web.Server
 
 
 
-            var SqlString = "EXEC [Services].[spGetSWConsumerBillingDetail] 	 @fBillingPeriodID =  '" + model.BillingPeriodID + "',@fPropertyID = '" +  model.PropertyID  +"'" ;
+            var SqlString = "EXEC [Services].[spGetSWConsumerBillingDetail] 	 @fBillingPeriodID =  '" + model.BillingPeriodID + "',@fPropertyID = '" + model.PropertyID + "'";
             //+"', @fDateReference = '" + model.DateEffective
             ;
             try
@@ -1560,8 +1560,8 @@ namespace Fasetto.Word.Web.Server
                         TimeEnd = (DateTime)row.GetValue<DateTime>(10, Convert.ToDateTime("0001/01/01 00:00:00")),
                         Endreading = (decimal)row.GetValue<decimal>(18, 0.00M),
                         Startreading = (decimal)row.GetValue<decimal>(14, 0.00M),
-                        DatePeriodStart = (DateTime)row.GetValue<DateTime>(11, Convert.ToDateTime("0001/01/01 00:00:00")),
-                        DatePeriodEnd = (DateTime)row.GetValue<DateTime>(17, Convert.ToDateTime("0001/01/01 00:00:00")),
+                        DatePeriodStart = (DateTime)row.GetValue<DateTime>(13, Convert.ToDateTime("0001/01/01 00:00:00")),
+                        DatePeriodEnd = (DateTime)row.GetValue<DateTime>(12, Convert.ToDateTime("0001/01/01 00:00:00")),
                         Volume = (decimal)row.GetValue<decimal>(30, 0.00M),
 
                         //////////////////VolumePredicted = (decimal)row[17],
@@ -1578,13 +1578,14 @@ namespace Fasetto.Word.Web.Server
                         DateSP = (DateTime)row.GetValue<DateTime>(25, Convert.ToDateTime("0001/01/01 00:00:00")),
                         MeterReadingSN = (decimal)row.GetValue<decimal>(26, 0.00M),
                         DateSN = (DateTime)row.GetValue<DateTime>(27, Convert.ToDateTime("0001/01/01 00:00:00")),
-                        MeterReadingFP = (decimal)row.GetValue<decimal>(21, 0.00M),
-                        DateFP = (DateTime)row.GetValue<DateTime>(36, Convert.ToDateTime("0001/01/01 00:00:00")),
-                        MeterReadingFN = (decimal)row.GetValue<decimal>(23, 0.00M),
-                        DateFN = (DateTime)row.GetValue<DateTime>(24, Convert.ToDateTime("0001/01/01 00:00:00")),
+                        MeterReadingFP = (decimal)row.GetValue<decimal>(20, 0.00M),
+                        DateFP = (DateTime)row.GetValue<DateTime>(21, Convert.ToDateTime("0001/01/01 00:00:00")),
+                        MeterReadingFN = (decimal)row.GetValue<decimal>(22,0.00M),
+                        DateFN = (DateTime)row.GetValue<DateTime>(23, Convert.ToDateTime("0001/01/01 00:00:00")),
                         BillingStart = (DateTime)row.GetValue<DateTime>(28, Convert.ToDateTime("0001/01/01 00:00:00")),
                         BillingEnd = (DateTime)row.GetValue<DateTime>(29, Convert.ToDateTime("0001/01/01 00:00:00")),
-
+                        ReadingStart= (decimal)row.GetValue<decimal>(37, 0.00M),
+                        ReadingEnd = (decimal)row.GetValue<decimal>(38, 0.00M),
                         //////////////DatePeriodEndN = (DateTime)row[27],
                         //////////////VolumeN = (decimal)row[28],
                         //////////////VolumePredictedN = (decimal)row[29],

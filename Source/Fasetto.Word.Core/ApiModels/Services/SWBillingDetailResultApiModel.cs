@@ -293,6 +293,17 @@ namespace Fasetto.Word.Core
         public DateTime BillingEnd { get; set; }
 
 
+        /// <summary>
+        /// Start Reading for billing period
+        /// </summary>
+        public decimal ReadingStart { get; set; }
+
+        /// <summary>
+        ///End Reading for billing period
+        /// </summary>
+        public decimal ReadingEnd { get; set; }
+
+
 
 
 
