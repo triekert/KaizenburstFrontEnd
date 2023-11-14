@@ -272,6 +272,7 @@ namespace Fasetto.Word
 
 
                 RefreshHierarchy();
+                PerformKIdSearch();
 
                 ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
 

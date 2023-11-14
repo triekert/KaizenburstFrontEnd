@@ -877,6 +877,8 @@ namespace Fasetto.Word
 
                 }
                 else
+                if (!(category.ShortName == (element.ShortName.EditedText ?? element.ShortName.OriginalText) && category.Description == (element.Description.EditedText ?? element.Description.OriginalText)
+                       && category.DateEffective == element.DateEffective && category.Page == element.Page && category.Root == (element.Root.EditedText ?? element.Description.OriginalText)))
                 {
                     category.DateDiscontinued =  element.DateEffective.AddSeconds(-10);
                     category.KChangeID = element.KChangeID;
@@ -916,12 +918,25 @@ namespace Fasetto.Word
         {
             // Close settings menu
             ViewModelApplication.SideMenuVisible = true;
-            TaskManager.RunAndForget(((HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel).HierarchyAsync);
-            //ViewModelApplication.CurrentSideMenuViewModel = null;
-            //TaskManager.RunAndForget(HierarchyAsync);
+            if (ViewModelApplication.CurrentPopupContent == null)
+            {
+                TaskManager.RunAndForget(((HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel).HierarchyAsync);
+                //ViewModelApplication.CurrentSideMenuViewModel = null;
+                //TaskManager.RunAndForget(HierarchyAsync);
+
+                ViewModelApplication.GoToPage(ApplicationPage.Chat);
+            }
+            else
+            { ViewModelApplication.PopupVisible = false; }
+
+
+            //// Close settings menu
+            //ViewModelApplication.SideMenuVisible = true;
+            ////TaskManager.RunAndForget(((HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel).HierarchyAsync);
+            ////ViewModelApplication.CurrentSideMenuViewModel = null;
+            ////TaskManager.RunAndForget(HierarchyAsync);
 
             ViewModelApplication.GoToPage(ApplicationPage.Chat);
-
 
         }
 

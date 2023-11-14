@@ -204,7 +204,7 @@ namespace Fasetto.Word
         #endregion //Properties
 
         /// <summary>
-        /// Return Hierarchy of interest from Object persistance infrastructure
+        /// Return Hierarchy of interest from Object persistence infrastructure
         /// User credentials are used to determine access authorisation
         /// </summary>
         /// <returns></returns>
@@ -254,6 +254,7 @@ namespace Fasetto.Word
 
 
                 RefreshHierarchy();
+                PerformKIdSearch();
 
                 ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
 
@@ -463,7 +464,7 @@ namespace Fasetto.Word
 
         #endregion // SearchKCategoryID
         #region Search Logic //KCategoryID
-        private void PerformKIdSearch()
+        public  void PerformKIdSearch()
         {
 
             if (MatchingKCategoryEnumerator == null || !MatchingKCategoryEnumerator.MoveNext())

@@ -642,9 +642,10 @@ namespace Fasetto.Word
                 ViewModelApplication.CurrentPopupViewModel = ((SWBillingDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             var mSWBillingDetailTreeViewModel = ViewModelApplication.CurrentPopupViewModel;
             ViewModelApplication.PopupVisible = false;
+            //_ = mBillingParameter.PropertyID;
 
             if (mType == "SWBillingDetailTreeViewModel")
-                {
+            {
                 ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
                 ViewModelApplication.CurrentPopupViewModel = mSWBillingDetailTreeViewModel;
                 ViewModelApplication.CurrentPopupContent = PopupContent.SWBillingDetail;
@@ -653,6 +654,9 @@ namespace Fasetto.Word
             {
                 //ViewModelApplication.CurrentPopupViewModel = ((SWBillingDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
                 ViewModelApplication.CurrentPopupContent = PopupContent.SWBilling;
+                ((HierarchyBillingTreeViewModel)ViewModelApplication.CurrentPopupViewModel).SearchText  = mBillingParameter.PropertyID;
+                ((HierarchyBillingTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
+
             }
 
             ViewModelApplication.PopupVisible = true;

@@ -348,30 +348,7 @@ namespace Fasetto.Word
             };
         }
 
-        /// <summary>
-        /// Saves the new Email to the server
-        /// </summary>
-        /// <returns>Returns true if successful, false otherwise</returns>
-        //public async Task<bool> SaveClientAsync()
-        //{
-            // Lock this command to ignore any other requests while processing
-            //return await RunCommandAsync(() => ClientIsSaving, async () =>
-            //{
-            //    // Update the Email value on the server...
-            //    return await UpdateUserCredentialsValueAsync(
-            //        // Display name
-            //        "Email",
-            //        // Update the email
-            //        (credentials) => credentials.Email,
-            //        // To new value
-            //        Client.OriginalName,
-            //        // Set Api model value
-            //        (apiModel, value) => apiModel.Email = value
-            //        );
 
-            //}
-            //);
-        //}
 
         public void Search()
         {
