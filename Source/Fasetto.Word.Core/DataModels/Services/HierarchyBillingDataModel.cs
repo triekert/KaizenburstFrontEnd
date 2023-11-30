@@ -227,6 +227,15 @@ namespace Fasetto.Word.Core
         public decimal CostTotalAdjust { get; set; }
 
 
+
+        /// <summary>
+        ///Sequence no for sorting property meters
+        /// </summary>
+        public int Sequence { get; set; }
+
+
+
+
         public List<HierarchyBillingDataModel> Children { get; set; }
 
 

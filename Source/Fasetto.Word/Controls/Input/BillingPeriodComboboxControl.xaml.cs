@@ -40,7 +40,6 @@ namespace Fasetto.Word
             //ViewModelApplication.CurrentControlViewModel = mBPLVM;
             //DataContext = mBPLVM;
             InitializeComponent();
-
         }
 
         #endregion
@@ -78,7 +77,8 @@ namespace Fasetto.Word
         {
 
             ((BillingPeriodListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedBillingPeriod = (BillingPeriodViewModel)((ComboBox)sender).SelectedItem;
-                ((BillingPeriodListViewModel)ViewModelApplication.CurrentControlViewModel).Edit();
+            ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod = (BillingPeriodViewModel)((ComboBox)sender).SelectedItem;
+           // ((BillingPeriodListViewModel)ViewModelApplication.CurrentControlViewModel).Edit();
             
         }
     }

@@ -248,6 +248,12 @@ namespace Fasetto.Word
         /// </summary>
         public decimal CostTotalAdjust => mElement.CostTotalAdjust;
 
+        /// <summary>
+        ///Sequence no for sorting property meters
+        /// </summary>
+        public int Sequence => mElement.Sequence;
+
+
 
         /// <summary>
         /// A list of all children containd inside this item

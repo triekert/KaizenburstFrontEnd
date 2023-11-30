@@ -309,7 +309,7 @@ namespace Fasetto.Word
             //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
             if (SelectedBillingPeriod == null)
             { var Nm = (ViewModelApplication.CurrentPopupViewModel).GetType().Name; };
-            if ((SelectedBillingPeriod.KBillingPeriodID == null)||(SelectedBillingPeriod == null))
+            if ((SelectedBillingPeriod == null)||(SelectedBillingPeriod.KBillingPeriodID == null))
 
             //To DO - message user
             {

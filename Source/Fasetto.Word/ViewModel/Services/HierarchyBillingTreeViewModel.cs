@@ -1,15 +1,20 @@
 ﻿
+using CsvHelper;
 using Dna;
 using Fasetto.Word.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Xml.Linq;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
+
 
 namespace Fasetto.Word
 {
@@ -215,7 +220,7 @@ namespace Fasetto.Word
 
                 // Store single transcient instance of client data store
                 var scopedClientDataStore = ClientDataStore;
-
+            
                 // Update values from local cache
                 // Get the user token
                 var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
@@ -238,8 +243,82 @@ namespace Fasetto.Word
                 // OK successfully registered (and logged in)... now get appropriate tree view data
                 //for now; keep a snapshot of persisted data
                 mOriginal = result.ServerResponse.Response;
+                mPersistTmp = new HierarchyBillingResultListApiModel();
+                var Tsttmp = mOriginal.Where(x => x.Sequence == x.Sequence).OrderBy(x => x.Sequence).ToList();//
+            var elements1 = new HierarchyBillingSummaryListDataModel();
+                foreach (var item in Tsttmp)
+                {
+                    var ud = new HierarchyBillingSummaryDataModel
+                    {
+
+                        ShortName = item.ShortName,
+                        TotalConsumption = item.TotalConsumption,
+                        WaterCost = item.WaterCost,
+                        SewerCost = item.SewerCost,
+                        TotalCost = item.TotalCost,
+                        TimeStart = item.TimeStart,
+                        Startreading = item.Startreading,
+                        Endreading = item.Endreading,
+                        TimeEnd = item.TimeEnd,
+                        DatePeriodStart = item.DatePeriodStart,
+                        DatePeriodEnd = item.DatePeriodEnd,
+                        Volume = item.Volume,
+                        VolumePredicted = item.VolumePredicted,
+                        ThresholdW = item.ThresholdW,
+                        Basew = item.Basew,
+                        Tariffw = item.Tariffw,
+                        CostWater = item.CostWater,
+                        ThresholdS = item.ThresholdS,
+                        Bases = item.Bases,
+                        Tariffs = item.Tariffs,
+                        CostSewer = item.CostSewer,
+                        DatePeriodStartN = item.DatePeriodStartN,
+                        DatePeriodEndN = item.DatePeriodEndN,
+                        VolumeN = item.VolumeN,
+                        VolumePredictedN = item.VolumePredictedN,
+                        ThresholdWN = item.ThresholdWN,
+                        BasewN = item.BasewN,
+                        TariffwN = item.TariffwN,
+                        CostWaterN = item.CostWaterN,
+                        ThresholdSN = item.ThresholdSN,
+                        BasesN = item.BasesN,
+                        TariffsN = item.TariffsN,
+                        CostSewerN = item.CostSewerN,
+                        Adjustment = item.Adjustment,
+                        AdjustmentN = item.AdjustmentN,
+                        CostWaterAdjust = item.CostWaterAdjust,
+                        CostSewerAdjust = item.CostSewerAdjust,
+                        CostTotalAdjust = item.CostTotalAdjust,
+                        Sequence = item.Sequence,
+
+
+                    };
+
+
+                    elements1.Add(ud);
+                }
+
+                    var fileName = @"C:\Temp\SW Billing " +
+                ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeStart.ToString("d_MM_yyyy")
+            + " TO " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeEnd.ToString("d_MM_yyyy") + ".csv";
+                try
+                {
+                    using (var writer = new StreamWriter(fileName))
+                    {
+                        using (var csvOut = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                        {
+                            csvOut.WriteRecords(elements1);
+                        }
+                    }
+                }
+                catch (Exception exp)
+                {
+                    Console.Write(exp.Message);
+                }
+
+
                 ;
-               
+
                 try
                 {
                     //var hierarchyResultApiModels = mOriginal.ToList();
@@ -247,16 +326,33 @@ namespace Fasetto.Word
                     mPersist = new HierarchyBillingResultListApiModel();
                     mPersist.Clone(mOriginal, mPersist);
                 }
-                 catch (Exception e)
+                catch (Exception e)
                 {
                     throw e;
                 }
 
 
+
+
                 RefreshHierarchy();
                 PerformKIdSearch();
+                //WriteCsv();
 
-                ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
+                //}
+                //using var writer = new StreamWriter(outputFile);
+                //using var csvOut = new CsvWriter(writer, CultureInfo.InvariantCulture);
+
+                /// write to csv file as a test
+                /// 
+
+
+
+
+
+
+
+
+                //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentControlViewModel;
 
 
             });
@@ -290,6 +386,8 @@ namespace Fasetto.Word
 
 
 
+
+
         /// <summary>
         /// This funtion builds a hierarchy of elements based on a
         /// a Hierarchy result returned when querying a database structure
@@ -314,6 +412,7 @@ namespace Fasetto.Word
                 return new HierarchyBillingListDataModel();
             //...otherwise, return all descendants recursively
             var elements = new HierarchyBillingListDataModel();
+
             foreach (var item in children)
             {
                 var ud1 = new HierarchyBillingDataModel
@@ -362,6 +461,7 @@ namespace Fasetto.Word
                     CostWaterAdjust = item.CostWaterAdjust,
                     CostSewerAdjust = item.CostSewerAdjust,
                     CostTotalAdjust = item.CostTotalAdjust,
+                    Sequence = item.Sequence,
 
 
                     //TotalConsumption = item.TotalConsumption,
@@ -377,7 +477,12 @@ namespace Fasetto.Word
                     Children = new HierarchyBillingListDataModel()
                 };
                 ud1.Children = ExpandHierarchyData(results, ud1.KCategoryID, ud1.ShortName);
+
+
+
+
                 elements.Add(ud1);
+
             }
             //var matches = elements.OrderBy(x => x.DateEffective).ToList();
             //foreach(var category in matches)
@@ -560,6 +665,27 @@ namespace Fasetto.Word
 
             });
         }
+
+
+
+
+        /// <summary>
+        /// Persist all items changed or added on hierarchy to back end database. Depending on stage
+        /// of change control, changes may be forwarded for recommendation or finally approved and implemented
+        /// on back end
+        /// </summary>
+        public void WriteCsv()
+        {
+
+            //var outputFile = @"C:\Temp\filtered-people.csv";
+
+
+            var fileName = @"C:\Temp\CSharpAuthors.csv";
+            using (var writer = new StreamWriter(fileName))
+            using (var csvOut = new CsvWriter(writer, CultureInfo.InvariantCulture)) 
+
+            csvOut.WriteRecords(mOriginal);
+                    }       
 
 
 

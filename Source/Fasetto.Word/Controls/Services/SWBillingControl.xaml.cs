@@ -1,10 +1,11 @@
-﻿using Fasetto.Word.Core;
+﻿using CsvHelper;
+using Fasetto.Word.Core;
 using System;
-using System.Activities.Expressions;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
+using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -562,7 +563,14 @@ namespace Fasetto.Word
             if (mDraggedItem == null)
                 return;
 
+
+
+
             ViewModelApplication.CurrentPopupViewModel = new SWBillingDetailTreeViewModel(((HierarchyBillingTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBillingPeriod,mDraggedItem.KCategoryID );
+
+
+
+
 
             //((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
             //ViewModelApplication.PopupVisible = false;
@@ -737,6 +745,7 @@ namespace Fasetto.Word
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
+
         }
         #endregion
 

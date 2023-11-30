@@ -61,47 +61,7 @@
                        />
 
             <!-- Edit Content -->
-            <!--<TextBox Text="{Binding EditedName, UpdateSourceTrigger=PropertyChanged}"
-                     Grid.Column="1"
-                     Opacity="0"
-                     local:AnimateFadeInProperty.Value="{Binding Editing}"
-                     local:FocusAndSelectProperty.Value="{Binding Editing}"
-                     FontSize="{StaticResource FontSizeRegular}"
-                     Padding="2"
-                     Margin="10 10 15 8" FontFamily="Lato Heavy"
-                     />-->
 
-            <!-- Content -->
-            <!--<TextBlock Text="{Binding OriginalName}" 
-                       Grid.Column="1"
-                       local:AnimateFadeInProperty.Value="{Binding Editing, Converter={local:BooleanInvertConverter}}"
-                       Margin="15 8"
-                       VerticalAlignment="Center"
-                       ToolTip="{Binding OriginalName}"
-                       />-->
-
-            <!-- Edit button container -->
-            <!--<Grid Grid.Column="2" 
-                  HorizontalAlignment="Right"
-                  VerticalAlignment="Center"
-                  local:AnimateFadeInProperty.Value="{Binding Editing, Converter={local:BooleanInvertConverter}}">
-                
-                -->
-            <!-- Edit Button -->
-            <!--
-                <Button Content="{StaticResource FontAwesomeEllipsisIcon}"
-                        FontFamily="{StaticResource FontAwesome}"
-                        x:Name="EditButton"
-                        Opacity="0"
-                        Padding="8 5"
-                        Margin="0"
-                        Cursor="Hand"
-                        Command="{Binding EditCommand}"
-                        Background="{StaticResource ForegroundDarkBrush}"
-                        FontSize="{StaticResource FontSizeSmall}"
-                        VerticalAlignment="Center"
-                        />
-            </Grid>-->
 
             <!-- Working spinner container -->
             <Grid Grid.Column="2" 
@@ -121,8 +81,8 @@
                         >
 
 
-                <TextBlock  Text ="Billing Period" FontFamily="{StaticResource LatoRegular}" 
-                                           Padding="10 10 42 10" FontWeight="Bold"/>
+                <TextBlock  Text ="Billing Period" FontFamily="{StaticResource LatoBold}" 
+                                           Padding="10 10 42 10"/>
                 <ComboBox MinWidth="90"
                                       MaxDropDownHeight="400"
                                       ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -135,11 +95,11 @@
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Start Date " />
-                                <TextBlock Text="{Binding Path=TimeStart,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
-                                <TextBlock Text=" -  End Date "    />
-                                <TextBlock Text="{Binding Path=TimeEnd,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
-                           </StackPanel>
+                                <TextBlock Text="Start Date " FontFamily="{StaticResource LatoBold}" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding Path=TimeStart,StringFormat=dd/MM/yyyy HH:mm}"  FontFamily="{StaticResource LatoRegular}" VerticalAlignment="Center" Foreground="BlueViolet"/>
+                                <TextBlock Text=" -  End Date "    FontFamily="{StaticResource LatoBold}" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding Path=TimeEnd,StringFormat=dd/MM/yyyy HH:mm}"   FontFamily="{StaticResource LatoRegular}" VerticalAlignment="Center" Foreground="OrangeRed"/>
+                            </StackPanel>
                         </DataTemplate>                        
                     </ComboBox.ItemTemplate>
 

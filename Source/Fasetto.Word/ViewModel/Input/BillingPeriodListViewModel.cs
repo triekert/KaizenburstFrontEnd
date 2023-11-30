@@ -1,13 +1,11 @@
 ﻿
 using Dna;
 using Fasetto.Word.Core;
-using Fasetto.Word.Core.ApiModels.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
@@ -66,13 +64,13 @@ namespace Fasetto.Word
         #endregion//Public Commands
         #region Constructor
         /// <summary>
-        /// The HierarchyTreeViewModel is a visual inteface for interacting with hiearchical
+        /// The HierarchyTreeViewModel is a visual interface for interacting with hierarchical
         /// Structures persisted on the database linked to the application
         /// Generic hierarchy structures with parent-child relationships may be used to represent
         /// appropriate data sets
         /// </summary>
         /// <param name="hierarchyTable"></param>
-        /// The hierarchyTable passed through as a paremeter identifies the specific hierarchy set to be retrieved
+        /// The hierarchyTable passed through as a parameter identifies the specific hierarchy set to be retrieved
         /// from persistent s
         public BillingPeriodListViewModel(string client)
         {
@@ -123,7 +121,7 @@ namespace Fasetto.Word
 
             //Go into edit mode
             MSelectedBillingPeriod = MSelectedBillingPeriod;
-            ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod.MSelectedBillingPeriod = MSelectedBillingPeriod;
+            //((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod.MSelectedBillingPeriod = MSelectedBillingPeriod;
             ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod = MSelectedBillingPeriod;
             Editing = true;
             //ViewModelApplication.CurrentControlViewModel

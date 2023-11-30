@@ -1,71 +1,17 @@
-﻿
-using System;
-using System.Security.Cryptography;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Fasetto.Word.Core
 {
     /// <summary>
-    /// Return of selected  hierarchy item from hierarchy table on database 
+    /// Class representing each individual element of the hierarchy 
     /// </summary>
-    public class HierarchyBillingResultApiModel
+    public class HierarchyBillingSummaryDataModel
     {
-        #region Public Properties
-
-        ////string represetntation of UniqueIdentifier for a Category of hierarchy elements
-        //public string FHierarchyID { get; set; }
-
         //name of Category element
         public string ShortName { get; set; }
         //description of Category element
-        public string Description { get; set; }
-
-        //string representation of GUID for a Category element
-        public string KCategoryID { get; set; }
-
-        //TO DO: If more convenient to include the BIlling Period GUID in the API result call....
-        ////string representation of GUID for the selected billing  period
-        //public string KBillingPeriodID { get; set; }
-
-
-        //sstring representation of GUID for the Parent category of a Category element
-        //the parent of all root elements will be NULL... any hierarchy will have at least one root element
-
-        public string ParentCategoryID { get; set; }
-
-        /// <summary>
-        /// Calendar date from which Element is seen as active
-        /// </summary>
-        public DateTime DateEffective { get; set; }
-
-        /// <summary>
-        /// Calendar date from which Element is deactivated
-        /// </summary>
-        public DateTime DateDiscontinued { get; set; }
-
-        /// <summary>
-        /// Total Water Consumption for period
-        /// </summary>
-
-        public decimal TotalConsumption { get; set; }
-
-        /// <summary>
-        /// Water Bill
-        /// </summary>
-        public decimal WaterCost { get; set; }
-
-        /// <summary>
-        /// Sewerage Bill
-        /// </summary>
-        public decimal SewerCost { get; set; }
-
-        /// <summary>
-        /// Toal Cost
-        /// </summary>
-        public decimal TotalCost { get; set; }
-
-        /// <summary>
-        /// Period start
-        /// </summary>
         public DateTime TimeStart { get; set; }
 
         /// <summary>
@@ -84,6 +30,25 @@ namespace Fasetto.Word.Core
         /// Reading at end of Period
         /// </summary>
         public decimal Endreading { get; set; }
+
+
+        public decimal TotalConsumption { get; set; }
+
+        /// <summary>
+        /// Water Bill
+        /// </summary>
+        public decimal WaterCost { get; set; }
+
+        /// <summary>
+        /// Sewerage Bill
+        /// </summary>
+        public decimal SewerCost { get; set; }
+
+        /// <summary>
+        /// Toal Cost
+        /// </summary>
+        public decimal TotalCost { get; set; }
+
 
         /// <summary>
         /// Start of period relevant to first Calendar month
@@ -206,13 +171,13 @@ namespace Fasetto.Word.Core
         public decimal CostSewerN { get; set; }
 
         /// <summary>
-        ///Adjustment related to the portion of consumption in the first month
+        /// Manual adjustment of consumption,first month
         /// </summary>
         public decimal Adjustment { get; set; }
 
 
         /// <summary>
-        ///Adjustment related to the portion of consumption in the Next month
+        /// Manual adjustment of consumption,first month
         /// </summary>
         public decimal AdjustmentN { get; set; }
 
@@ -237,10 +202,14 @@ namespace Fasetto.Word.Core
 
 
         /// <summary>
-        /// Sequence no to sequence order of meters
+        ///Sequence no for sorting property meters
         /// </summary>
         public int Sequence { get; set; }
 
-        #endregion
+
+
+
+
     }
+
 }

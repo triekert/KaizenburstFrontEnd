@@ -15,6 +15,9 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Web;
 using static Dna.FrameworkDI;
+using CsvHelper;
+using System.Globalization;
+using System.IO;
 
 
 namespace Fasetto.Word.Web.Server
@@ -1448,8 +1451,8 @@ namespace Fasetto.Word.Web.Server
                                     Startreading = (decimal)row[11],
                                     TimeEnd = (DateTime)row[12],
                                     Endreading = (decimal)row[13],
-                                    DatePeriodStart = (DateTime)row[14],
-                                    DatePeriodEnd = (DateTime)row[15],
+                                    DatePeriodStart = (DateTime)row.GetValue<DateTime>(14, Convert.ToDateTime("0001/01/01 00:00:00")),
+                                    DatePeriodEnd = (DateTime)row.GetValue<DateTime>(15, Convert.ToDateTime("0001/01/01 00:00:00")),
                                     Volume = (decimal)row[16],
                                     VolumePredicted = (decimal)row[17],
                                     ThresholdW = (decimal)row[18],
@@ -1460,8 +1463,8 @@ namespace Fasetto.Word.Web.Server
                                     Bases = (decimal)row[23],
                                     Tariffs = (decimal)row[24],
                                     CostSewer = (decimal)row[25],
-                                    DatePeriodStartN = (DateTime)row[26],
-                                    DatePeriodEndN = (DateTime)row[27],
+                                    DatePeriodStartN = (DateTime)row.GetValue<DateTime>(27, Convert.ToDateTime("0001/01/01 00:00:00")),
+                                    DatePeriodEndN = (DateTime)row.GetValue<DateTime>(28, Convert.ToDateTime("0001/01/01 00:00:00")),
                                     VolumeN = (decimal)row[28],
                                     VolumePredictedN = (decimal)row[29],
                                     ThresholdWN = (decimal)row[31],
@@ -1477,13 +1480,28 @@ namespace Fasetto.Word.Web.Server
                                     CostWaterAdjust = (decimal)row[42],
                                     CostSewerAdjust = (decimal)row[43],
                                     CostTotalAdjust = (decimal)row[44],
+                                    Sequence = (int)row[45],
 
                                 };
                                 results.Add(u);
 
+
+
+
                             }
 
-                            return new ApiResponse<HierarchyBillingResultListApiModel>
+                            ////Print full result set to csv file
+                            /////
+                            //var outputFile = @"C:\Temp\billing.csv";
+                            //using var writer = new StreamWriter(outputFile);
+                            //using var csvOut = new CsvWriter(writer, CultureInfo.InvariantCulture);
+
+                            //csvOut.WriteRecords(results);
+
+
+                ///              return new ApiResponse<HierarchyBillingResultListApiModel>
+
+                return new ApiResponse<HierarchyBillingResultListApiModel>
                             {
 
                                 Response = results
@@ -1605,6 +1623,8 @@ namespace Fasetto.Word.Web.Server
 
                     };
                     results.Add(u);
+
+
 
                 }
 
@@ -1801,7 +1821,7 @@ namespace Fasetto.Word.Web.Server
             /// </summary>
             /// <param name="model">The search credentials</param>
             /// <returns>
-            ///     Returns a list of hiearchy items if successful, 
+            ///     Returns a list of hierarchy items if successful, 
             ///     otherwise returns the error reasons for the failure
             /// </returns>
 

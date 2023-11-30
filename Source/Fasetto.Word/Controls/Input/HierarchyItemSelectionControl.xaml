@@ -16,9 +16,9 @@
         <Grid Background="{StaticResource ForegroundLightBrush}">
 
             <!-- Double click to edit -->
-            <Grid.InputBindings>
+            <!--<Grid.InputBindings>
                 <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding EditCommand}" />
-            </Grid.InputBindings>
+            </Grid.InputBindings>-->
             
             <!-- Hover over to show edit button -->
             <Grid.Triggers>
