@@ -282,7 +282,7 @@ namespace Fasetto.Word
 
         /// <summary>
         /// Method to refresh element Hierarchy
-        /// -used when elements of the treefiew are being manipulated on the front end
+        /// -used when elements of the treevew are being manipulated on the front end
         /// </summary>
         public void RefreshHierarchy()
         {

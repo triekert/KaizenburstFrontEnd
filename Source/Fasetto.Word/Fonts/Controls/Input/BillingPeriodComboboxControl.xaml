@@ -1,0 +1,133 @@
+﻿<UserControl x:Class="Fasetto.Word.BillingPeriodComboboxControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Fasetto.Word"
+             xmlns:core="clr-namespace:Fasetto.Word.Core;assembly=Fasetto.Word.Core"
+             mc:Ignorable="d" 
+             d:DataContext="{x:Static local:TextEntryDesignModel.Instance}">
+
+    <!-- Grey underline -->
+    <Border BorderBrush="{StaticResource ForegroundDarkBrush}"
+            IsEnabled="{Binding Working, Converter={local:BooleanInvertConverter}}"
+            BorderThickness="0 0 0 0.5">
+
+        <Grid Background="{StaticResource ForegroundLightBrush}">
+
+            <!-- Double click to edit -->
+            <!--<Grid.InputBindings>
+                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding EditCommand}" />
+            </Grid.InputBindings>-->
+
+            <!-- Hover over to show edit button -->
+            <Grid.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation To="1" 
+                                             Duration="0:0:0.4" 
+                                             Storyboard.TargetName="EditButton"
+                                             Storyboard.TargetProperty="Opacity" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation To="0" 
+                                             Duration="0:0:0.4" 
+                                             Storyboard.TargetName="EditButton"
+                                             Storyboard.TargetProperty="Opacity" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Grid.Triggers>
+
+            <!-- Label -> Name* -> Buttons -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Name="LabelColumnDefinition" Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Label -->
+            <TextBlock Text="{Binding Label}"
+                       Name="Label"
+                       Margin="15 12"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       FontFamily="{StaticResource LatoRegular}"
+                       />
+
+            <!-- Edit Content -->
+
+
+            <!-- Working spinner container -->
+            <Grid Grid.Column="2" 
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Center"
+                  local:AnimateFadeInProperty.Value="{Binding Working}">
+
+                <Border Padding="0 0 5 0">
+                    <TextBlock Style="{StaticResource SpinningText}" />
+                </Border>
+
+
+            </Grid>
+
+            <StackPanel Grid.Column="1"
+                        Orientation="Vertical"
+                        >
+
+
+                <TextBlock  Text ="Billing Period" FontFamily="{StaticResource LatoBold}" 
+                                           Padding="10 10 42 10"/>
+                <ComboBox MinWidth="90"
+                                      MaxDropDownHeight="400"
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                      SelectedItem="{Binding MSelectedBillingPeriod}"                          
+                                      ItemsSource="{Binding BillingPeriodList}" IsDropDownOpen="False" 
+                                      SelectionChanged="ComboBox_Selected"
+
+                          
+                          >
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Start Date " FontFamily="{StaticResource LatoBold}" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding Path=TimeStart,StringFormat=dd/MM/yyyy HH:mm}"  FontFamily="{StaticResource LatoRegular}" VerticalAlignment="Center" Foreground="BlueViolet"/>
+                                <TextBlock Text=" -  End Date "    FontFamily="{StaticResource LatoBold}" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding Path=TimeEnd,StringFormat=dd/MM/yyyy HH:mm}"   FontFamily="{StaticResource LatoRegular}" VerticalAlignment="Center" Foreground="OrangeRed"/>
+                            </StackPanel>
+                        </DataTemplate>                        
+                    </ComboBox.ItemTemplate>
+
+                </ComboBox>
+
+
+
+
+            </StackPanel>
+
+            <!--Edit Button-->
+
+            <Button Content="{StaticResource FontAwesomeEllipsisIcon}"
+Grid.Column="2"                    
+                        FontFamily="{StaticResource FontAwesome}"
+                        x:Name="EditButton"
+                        Opacity="1"
+                        Padding="8 5"
+                        Margin="0"
+                        Cursor="Hand"
+                        Command="{Binding EditCommand}"
+                        Background="{StaticResource ForegroundDarkBrush}"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        VerticalAlignment="Center"
+                        />
+
+
+        </Grid>
+
+    </Border>
+</UserControl>

@@ -1,0 +1,144 @@
+﻿using Fasetto.Word.Core;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using static Fasetto.Word.DI;
+
+namespace Fasetto.Word
+{
+    /// <summary>
+    /// Interaction logic for HierarchyManagementControl.xaml
+    /// </summary>
+    public partial class BulkReconControl : UserControl
+    {
+
+        #region Public Properties
+
+        //public string ControlTitle { get; set; } = "Title of Control";
+
+        #endregion//Public Properties
+
+        #region Public Commands
+        /// <summary>
+        /// The command to close the settings menu
+        /// </summary>
+        //public ICommand CloseCommand { get; set; }
+        #endregion//Public Commands
+
+
+        public bool BulkReconBuildIsRunning { get; set; }
+        private BulkReconDataModel mBulkReconItem;
+        private BulkReconListDataModel mBulkRecon = new BulkReconListDataModel();
+        public BulkReconResultListApiModel mBulkReconApi = new BulkReconResultListApiModel();
+        public BulkReconTreeViewModel mBulkReconTreeView;
+        //public BulkReconListDataModel mBRDML;
+        public string mBulkMeter;
+
+
+        //private readonly HierarchyTreeViewModel mHierarchyTree;
+        //private string mSourceCategory;
+        //private string mSourceCategoryName;
+        //private string mDestinationCategoryID, mDestinationID, mSourceID, mParentID;
+        //private string mDestinationCategoryName;
+        //private bool mIsSourceObtained = false, mIsEqual = false;
+        //private Point mLastMouseDown;
+        //private TreeViewItem mTargetT, mSource;
+        //private HierarchyViewModel mDraggedItemTest, mDraggedItem, mTarget;
+        ////private readonly object mFamilyTree;
+        //private readonly HierarchyViewModel mTargetTest;
+        public string DisplayTitle { get; set; }
+
+
+        //[Obsolete]
+        //public HierarchyManagementControl(HierarchyManagementTreeDataModel hierarchyManagementTreeDataModel)
+        public BulkReconControl()
+        {
+
+            //var root = "1C225789-3938-4480-86CB-071863DC5D33";
+            mBulkReconTreeView = (BulkReconTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
+            //mBulkMeter = "Tre Donne Estate Main Feed";
+            DataContext = mBulkReconTreeView;
+            //((BulkReconPageViewModel)ViewModelApplication.CurrentPageViewModel).DisplayTitle = ((BulkReconPageViewModel)ViewModelApplication.CurrentPageViewModel).DisplayTitle + mBulkMeter;
+
+            InitializeComponent();
+            //mBulkReconTreeView.mBulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
+            //ViewModelApplication.CurrentControlViewModel = mBulkReconTreeView;
+
+            //CloseCommand = new RelayCommand(Close);
+
+
+        }
+
+        //public HierarchyControl(string root)
+        //{
+        //    mHierarchyTree = new HierarchyTreeViewModel(root);//root);
+
+        //    DataContext = mHierarchyTree;
+        //    InitializeComponent();
+        //    ViewModelApplication.CurrentControlViewModel = mHierarchyTree;   
+        //}
+
+
+        private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var row = sender as DataGridRow;
+            var bulkReconRec = row.DataContext as BulkReconViewModel;
+            MessageBox.Show($"The timeslot selected is {bulkReconRec.TimeSlotStart}", $"The timeslot selected is {bulkReconRec.TimeSlotStart}");
+        }
+
+        private void DataGridRow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                //_ = (BulkReconViewModel)(BulkRecon.SelectedItems).OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault()).TimeSlotStart;
+                //ViewModelApplication.PopupVisible = false;
+                //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+                var cellInfos = BulkRecon.SelectedCells;
+                var tempst = cellInfos[0].Column.Header;
+                //var tempBR = new ObservableCollection<BulkReconViewModel>();
+                //
+                //    //foreach (var tBR in BulkRecon.SelectedItems)
+                //    tempBR.Add((BulkReconViewModel)tBR.Item);
+
+
+                var tempBR = new ObservableCollection<BulkReconViewModel>();
+                //foreach (var tBR in BulkRecon.SelectedItems)
+                foreach (var tBR in cellInfos)
+                    tempBR.Add((BulkReconViewModel)tBR.Item);
+                var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
+                var mTimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart.AddMinutes(30);
+                var mBulkMeter = tempBR.OrderByDescending(x => x.BulkMeter).ToList().FirstOrDefault().BulkMeter;
+                var ShortName = tempBR.OrderByDescending(x => x.ShortName).ToList().FirstOrDefault().ShortName;
+                var mTODStart = ((BulkReconTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODStart;
+                var mTODEnd = ((BulkReconTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mTODEnd;
+                var mDateReference = ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).DateReference.EditedDateTime;
+                //TO DO
+
+                ViewModelApplication.CurrentPopupViewModel = new BulkReconDetailTreeViewModel(mBulkMeter, mTimeStart, mTimeEnd,
+                   mTODStart, mTODEnd,mDateReference);
+
+                ((BulkReconDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+                ViewModelApplication.PopupVisible = false;
+                //ViewModelApplication.CurrentPopupContent = Null;
+                ViewModelApplication.CurrentPopupContent = PopupContent.BulkReconDetail;
+                ViewModelApplication.PopupVisible = true;
+
+
+
+            }
+        }
+        private void DataGridRow_MouseRightClick(object sender, MouseButtonEventArgs e)
+        {
+            var tempBR = new ObservableCollection<BulkReconViewModel>();
+            foreach (var tBR in BulkRecon.ItemsSource)
+                tempBR.Add((BulkReconViewModel)tBR);
+
+            var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
+            var mTimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart.AddMinutes(30);
+            MessageBox.Show($" timeslot ends at {mTimeEnd}", $" The timeslot selected starts at {mTimeStart}");
+        }
+    }
+}
