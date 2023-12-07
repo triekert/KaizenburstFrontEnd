@@ -121,12 +121,6 @@ namespace Fasetto.Word
 
 
         }
-        //private void SetHierarchySelectionMeter(object sender, System.Windows.RoutedEventArgs e)
-        //{
 
-        //    ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Meter.ClientID =  ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root.EditedKid;
-        //    ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Meter.RootID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root.RootID;
-        //    ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Meter;
-        //}
     }
 }

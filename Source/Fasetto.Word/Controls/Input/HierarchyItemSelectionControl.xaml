@@ -61,7 +61,7 @@
                        />
 
             <!-- Edit Content -->
-            <TextBox Text="{Binding EditedName, UpdateSourceTrigger=PropertyChanged}"
+            <!--<TextBox Text="{Binding EditedName, UpdateSourceTrigger=PropertyChanged}"
                      Grid.Column="1"
                      Opacity="0"
                      local:AnimateFadeInProperty.Value="{Binding Editing}"
@@ -69,23 +69,24 @@
                      FontSize="{StaticResource FontSizeRegular}"
                      Padding="2"
                      Margin="10 10 15 8" FontFamily="Lato Heavy"
-                     />
+                     />-->
 
             <!-- Content -->
             <TextBlock Text="{Binding OriginalName}" 
                        Grid.Column="1"
-                       local:AnimateFadeInProperty.Value="{Binding Editing, Converter={local:BooleanInvertConverter}}"
+
                        Margin="15 8"
                        VerticalAlignment="Center"
                        ToolTip="{Binding OriginalName}"
                        />
-
+                       <!--local:AnimateFadeInProperty.Value="{Binding Editing, Converter={local:BooleanInvertConverter}}"-->
             <!-- Edit button container -->
             <Grid Grid.Column="2" 
                   HorizontalAlignment="Right"
                   VerticalAlignment="Center"
-                  local:AnimateFadeInProperty.Value="{Binding Editing, Converter={local:BooleanInvertConverter}}">
-                
+
+                  >
+                  <!--local:AnimateFadeInProperty.Value="{Binding Editing, Converter={local:BooleanInvertConverter}}"-->                
                 <!-- Edit Button -->
                 <Button Content="{StaticResource FontAwesomeEllipsisIcon}"
                         FontFamily="{StaticResource FontAwesome}"
@@ -102,7 +103,7 @@
             </Grid>
 
             <!-- Working spinner container -->
-            <Grid Grid.Column="2" 
+            <!--<Grid Grid.Column="2" 
                   HorizontalAlignment="Right"
                   VerticalAlignment="Center"
                   local:AnimateFadeInProperty.Value="{Binding Working}">
@@ -112,14 +113,14 @@
                 </Border>
                 
 
-            </Grid>
+            </Grid>-->
 
-            <StackPanel Grid.Column="2"
+            <!--<StackPanel Grid.Column="2"
                         Orientation="Horizontal"
-                        >
+                        >-->
 
                 <!-- Save Button -->
-                <Button Content="{StaticResource FontAwesomeTickIcon}"
+                <!--<Button Content="{StaticResource FontAwesomeTickIcon}"
                         FontFamily="{StaticResource FontAwesome}"
                         local:AnimateFadeInProperty.Value="{Binding Editing}"
                         IsDefault="True"
@@ -130,10 +131,10 @@
                         Margin="0 0 5 0"
                         VerticalAlignment="Center"
                         FontSize="{StaticResource FontSizeSmall}"
-                        />
+                        />-->
 
                 <!-- Cancel Button -->
-                <Button Content="{StaticResource FontAwesomeCloseIcon}"
+                <!--<Button Content="{StaticResource FontAwesomeCloseIcon}"
                         FontFamily="{StaticResource FontAwesome}"
                         local:AnimateFadeInProperty.Value="{Binding Editing}"
                         IsCancel="True"
@@ -144,10 +145,10 @@
                         Margin="0"
                         VerticalAlignment="Center"
                         FontSize="{StaticResource FontSizeSmall}"
-                        />
+                        />-->
                 
                 <!-- Cancel Button -->
-                <Button Content="{StaticResource  FontAwesomeProjectIcon}"
+                <!--<Button Content="{StaticResource  FontAwesomeProjectIcon}"
                         FontFamily="{StaticResource FontAwesome}"
                         local:AnimateFadeInProperty.Value="{Binding Editing}"
                         IsCancel="True"
@@ -158,9 +159,9 @@
                         Margin="0"
                         VerticalAlignment="Center"
                         FontSize="{StaticResource FontSizeSmall}"
-                        />                
+                        />-->                
 
-            </StackPanel>
+            <!--</StackPanel>-->
             
         </Grid>
             

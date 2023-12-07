@@ -102,15 +102,31 @@ namespace Fasetto.Word
 
 
             mHDML = new HierarchyListDataModel();
+
+
             mHDM = new HierarchyDataModel
             {
-                KCategoryID = new Guid().ToString(),
-                ParentCategoryID = "00000000-0000-0000-0000-000000000000",
+                KCategoryID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid,
+                ParentCategoryID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid,
                 Description = "...Loading hierarchy data...",
                 ShortName = "Loading...Please be patient",
                 Children = new HierarchyListDataModel()
             };
             mHDML.Add(mHDM);
+
+            mPersist = new HierarchyResultListApiModel();
+
+
+            var mPM = new HierarchyResultApiModel
+            {
+                KCategoryID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid,
+                ParentCategoryID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid,
+                Description = "...Loading hierarchy data...",
+                ShortName = "Loading...Please be patient",
+                //Children = new HierarchyListDataModel()
+            };
+            mPersist.Add(mPM);
+
 
             mHierarchy = hierarchyparam;
             #endregion
@@ -133,7 +149,22 @@ namespace Fasetto.Word
 
         {
 
-            var rootElement = mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
+            var MRoot0 = mParentCategoryID;
+            //if ((mPersist.Where(x => x.ParentCategoryID == "4766E825-1B58-410D-B06B-5A2639CA22C8").ToList().FirstOrDefault().KCategoryID) != null)
+                if ((string)(mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").ToList().FirstOrDefault()?.KCategoryID) != "")
+                {
+
+                MRoot0 = (string)(mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").ToList().FirstOrDefault())?.KCategoryID ?? "00000000-0000-0000-0000-000000000000"; }
+                //;}
+
+   
+            ///
+            var MRoot1 = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid ?? MRoot0;
+
+            ////MRoot = "00000000-0000-0000-0000-000000000000";
+            var MRoot = (mPersist.Where(x => x.KCategoryID == MRoot1).OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ParentCategoryID;
+            //MRoot = "00000000-0000-0000-0000-000000000000";
+            var rootElement = mHDML.FirstOrDefault(x => x.ParentCategoryID == MRoot);
             mRootHierarchyElement = new HierarchyViewModel(rootElement)
             {
                 IsExpanded = true
@@ -288,10 +319,31 @@ namespace Fasetto.Word
         {
 
             mHDML.Clear();
-            //build a tree view, always starting with the root element, which is also the classification for the hierarchy
-            mHDML.AddRange(ExpandHierarchyData(mPersist, "00000000-0000-0000-0000-000000000000", "Root"));
-            //Refresh the tree view title with the current name of the root element
-            ControlTitle = (mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ShortName;
+            //build a tree view, always
+            //starting with the root element, which is also the classification for the hierarchy
+            //// Close settings menu
+            var MRoot0 = mParentCategoryID;
+            //if ((mPersist.Where(x => x.ParentCategoryID == "4766E825-1B58-410D-B06B-5A2639CA22C8").ToList().FirstOrDefault().KCategoryID) != null)
+            if ((string)(mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").ToList().FirstOrDefault()?.KCategoryID) != "")
+            {
+
+                MRoot0 = (string)(mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").ToList().FirstOrDefault())?.KCategoryID ?? "00000000-0000-0000-0000-000000000000";
+            }
+
+            //var MRoot0 = (mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).KCategoryID;          
+            ///
+            var MRoot1 = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid ?? MRoot0;
+
+            ////MRoot = "00000000-0000-0000-0000-000000000000";
+            var MRoot = (mPersist.Where(x => x.KCategoryID == MRoot1).OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ParentCategoryID;
+
+
+
+            mHDML.AddRange(ExpandHierarchyData(mPersist, MRoot, "Root"));
+            //Refresh the tree view title with theKCategoryID == MRoot).OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ShortName;
+
+            ControlTitle = (mPersist.Where(x => x.ParentCategoryID == MRoot).OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ShortName;
+
 
             var matches = mPersist.OrderBy(x => x.DateEffective).ToList();
             foreach (var category in matches)
@@ -324,7 +376,8 @@ namespace Fasetto.Word
             //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued == new DateTime(9999,12,31,0,0,0) && !x.IsDeleteElement ).OrderBy(x=>x.ShortName).ToList();//
             //To do:  accept a date parameter to retroactively modify hierarchy data
             //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued >  DateTime.Today && !x.IsDeleteElement).OrderBy(x => x.ShortName).ToList();//
-            var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued > DateTime.Today && !x.IsDeleteElement).OrderBy(x => (x.ShortName.ParseInt())).ThenBy(x => x.ShortName).ToList();//
+            //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued > DateTime.Today && !x.IsDeleteElement).OrderBy(x => (x.ShortName.ParseInt())).ThenBy(x => x.ShortName).ToList();//
+            var children = results.Where(x =>  x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued > DateTime.Today && !x.IsDeleteElement).OrderBy(x => (x.ShortName.ParseInt())).ThenBy(x => x.ShortName).ToList();//
             // Hierarchy cannot be expanded
             if (children.Count() == 0)
                 return new HierarchyListDataModel();

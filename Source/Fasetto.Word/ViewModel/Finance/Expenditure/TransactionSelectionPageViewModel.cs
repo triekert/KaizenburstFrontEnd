@@ -88,7 +88,7 @@ namespace Fasetto.Word
         public HierarchyItemSelectionViewModel Root { get; set; }
 
         /// <summary>
-        /// The CostHierarchys for the Water and Sewerage Billing analysis
+        /// The CostHierarchy for Transaction processing for the selected client
         /// </summary>
         public CostHierarchyListViewModel CostHierarchy { get; set; }
 
@@ -278,11 +278,15 @@ namespace Fasetto.Word
                 OriginalKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
                 EditedKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
                 HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
-                CommitAction = InitialiseCostHAsync,
-                PrepareAction = ClientSrchAsync,
+                //CommitAction = InitialiseCostHAsync,
+                //PrepareAction = ClientSrchAsync,
+
+
 
                 //CommitAction = SaveFirstNameAsync
             };
+
+            ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
             //ViewModelApplication.CurrentControlViewModel = Root;
 
             //Meter = new HierarchyItemSelectionViewModel

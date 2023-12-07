@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using static Fasetto.Word.DI;
 
 namespace Fasetto.Word
 {

@@ -256,7 +256,7 @@ namespace Fasetto.Word
 
                 //CommitAction = SaveFirstNameAsync
             };
-
+            ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
 
             BillingPeriod = new BillingPeriodListViewModel(Client.OriginalKid);
             SelectedBillingPeriod = new BillingPeriodViewModel();

@@ -70,6 +70,7 @@ namespace Fasetto.Word
                 if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Client")
                 {
                     root.FHierarchyID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid ;
+                    root.RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid ;
                     //root.ClientID = "NULL";
                     //root.HierarchyTypeID = "NULL"; 
                 }
@@ -85,7 +86,7 @@ namespace Fasetto.Word
                     root.ClientID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID;
                     root.HierarchyTypeID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).HierarchyTypeID;
                     root.FHierarchyID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).HierarchyID;
-
+                    ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid = "00000000-0000-0000-0000-000000000000";
                     //root.FHierarchyID = "NULL"; 
                 }
             //}
@@ -345,7 +346,10 @@ namespace Fasetto.Word
             ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName     = mDraggedItem.ShortName;
             //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalName   = mDraggedItem.ShortName;
             ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID       = mDraggedItem.FClientID;
-            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalName     = mDraggedItem.ShortName;
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid = mDraggedItem.KCategoryID;
+            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Editing= true;
+            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Working = false;
             //ViewModelApplication.PopupVisible = false;
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
 

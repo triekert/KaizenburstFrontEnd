@@ -1848,10 +1848,13 @@ namespace Fasetto.Word.Web.Server
                 #region sql query
 
                 var SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '";
-                if (model.FHierarchyID == null)
-                { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fClientID = '" + model.ClientID + "',@fHierarchyTypeID = '" + model.HierarchyTypeID + "'"; }
+                if (model.RootID != null)
+                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fClientID = NULL ,@fHierarchyTypeID = NULL, @fRootID = '" + model.RootID + "'"; }
                 else
-                { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '" + model.FHierarchyID + "',  @fClientID = NULL,@fHierarchyTypeID = NULL"; }
+                    if (model.FHierarchyID == null)
+                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fRootID = NULL, @fClientID = '" + model.ClientID + "', @fHierarchyTypeID = '" + model.HierarchyTypeID + "'"; }
+                    else
+                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '" + model.FHierarchyID + "',  @fClientID = NULL, @fRootID = NULL ,@fHierarchyTypeID = NULL"; }
                 try
                 {
                     // Try and run the task

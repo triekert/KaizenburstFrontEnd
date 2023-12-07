@@ -142,7 +142,9 @@ namespace Fasetto.Word
         /// </summary>
         public void Edit()
         {
+
             var result = default(bool);
+            ViewModelApplication.CurrentPopupContent = ViewModelApplication.CurrentPopupContent;
             // Set the edited text to the current value
             EditedName = OriginalName;
             EditedKid = OriginalKid;
