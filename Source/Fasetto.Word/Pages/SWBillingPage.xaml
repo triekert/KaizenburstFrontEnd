@@ -71,13 +71,13 @@
                         </StackPanel>
 
                         <!--<local:HierarchyItemSelectionControl DataContext="{Binding Client}" FontWeight="ExtraBlack" />-->
-                            <Button 
+                            <!--<Button 
                             Style="{StaticResource TextButton}" 
                             Content="Use Client information in search ..." 
                             HorizontalAlignment="Center" 
                             Command="{Binding PopulateCommand}"
                             FontSize="{StaticResource FontSizeRegular}"                         
-                        />
+                        />-->
                         <StackPanel MouseEnter="SetClient">
                             <local:BillingPeriodComboboxControl DataContext="{Binding BillingPeriod}" FontWeight="ExtraBlack"  />
                         </StackPanel>

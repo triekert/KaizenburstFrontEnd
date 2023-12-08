@@ -307,6 +307,7 @@ namespace Fasetto.Word
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             //To do: Lookup to be user rights and available options driven
             //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
+
             if (SelectedBillingPeriod == null)
             { var Nm = (ViewModelApplication.CurrentPopupViewModel).GetType().Name; };
             if ((SelectedBillingPeriod == null)||(SelectedBillingPeriod.KBillingPeriodID == null))
@@ -316,6 +317,7 @@ namespace Fasetto.Word
                 MessageBox.Show($"First select a valid Billing Period to proceed...");
                 return;
             };
+            _ = SelectedBillingPeriod.KBillingPeriodID;
             //
             //if (SelectedBillingPeriod.KBillingPeriodID != ((HierarchyBillingTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBillingPeriod)
             //{ ViewModelApplication.CurrentPopupContent = PopupContent.AddElement; };
@@ -328,6 +330,7 @@ namespace Fasetto.Word
                 };
             };
 
+            //((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod = SelectedBillingPeriod.KBillingPeriodID;
             var MType = (ViewModelApplication.CurrentPopupViewModel).GetType().Name;
             //ViewModelApplication.CurrentPopupViewModel = new HierarchyBillingTreeViewModel(SelectedBillingPeriod.KBillingPeriodID);
             //((HierarchyBillingTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Water & Sewerage Billing : FROM " + SelectedBillingPeriod.TimeStart.ToString("d/MM/yyyy")

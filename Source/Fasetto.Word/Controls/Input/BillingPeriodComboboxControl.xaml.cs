@@ -75,11 +75,15 @@ namespace Fasetto.Word
 
         private void ComboBox_Selected(object sender, RoutedEventArgs e)
         {
+            if ((BillingPeriodViewModel)((ComboBox)sender).SelectedItem != null)
+            {
+            //((BillingPeriodListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedBillingPeriod = (BillingPeriodViewModel)((ComboBox)sender).SelectedItem;
+            ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod = (BillingPeriodViewModel)((ComboBox)sender).SelectedItem; 
+            }
+            ((BillingPeriodListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedBillingPeriod = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod;
 
-            ((BillingPeriodListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedBillingPeriod = (BillingPeriodViewModel)((ComboBox)sender).SelectedItem;
-            ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod = (BillingPeriodViewModel)((ComboBox)sender).SelectedItem;
-           // ((BillingPeriodListViewModel)ViewModelApplication.CurrentControlViewModel).Edit();
-            
+            // ((BillingPeriodListViewModel)ViewModelApplication.CurrentControlViewModel).Edit();
+
         }
     }
 }

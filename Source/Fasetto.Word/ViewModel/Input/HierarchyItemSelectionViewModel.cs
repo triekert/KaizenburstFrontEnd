@@ -186,62 +186,6 @@ namespace Fasetto.Word
             Editing = false;
         }
 
-        ///// <summary>
-        ///// Replaces Original Hierarchy Element values with the newly selected set of values
-        ///// </summary>
-        //public void HierarchyitemSelect()
-        //{
-
-        //    ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
-
-
-
-        //}
-
-        ///// <summary>
-        ///// Commits the content and exits out of edit mode
-        ///// </summary>
-        //public void Save()
-        //{
-        //    // Store the result of a commit call
-        //    var result = default(bool);
-        //    EditedName = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName;
-        //    EditedKid = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid;
-
-
-        //    // Save currently saved value
-        //    var currentSavedValue = OriginalName;
-        //    var OriginalSavedKID = OriginalKid;
-
-        //    RunCommandAsync(() => Working, async () =>
-        //    {
-        //        // While working, come out of edit mode
-        //        Editing = false;
-
-        //        // Commit the changed text
-        //        // So we can see it while it is working
-        //        OriginalName = EditedName;
-        //        OriginalKid = EditedKid;
-
-        //        // Try and do the work
-        //        result = CommitAction == null ? true : await CommitAction();
-
-        //    }).ContinueWith(t =>
-        //    {
-        //        // If we succeeded...
-        //        // Nothing to do
-        //        // If we fail...
-        //        if (!result)
-        //        {
-        //            // Restore original value
-        //            OriginalName = currentSavedValue;
-        //            OriginalKid = currentSavedValue;
-
-        //            // Go back into edit mode
-        //            Editing = true;
-        //        }
-        //    });
-        //}
 
 
 

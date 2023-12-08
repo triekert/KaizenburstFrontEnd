@@ -113,8 +113,8 @@ namespace Fasetto.Word
 
             // Save currently saved value
             var currentSavedValue = OriginalText;
-            Working = true;
-            var working1 = Working;
+            //Working = true;
+            //var working1 = Working;
 
             RunCommandAsync(() => Working, async () =>
             {
