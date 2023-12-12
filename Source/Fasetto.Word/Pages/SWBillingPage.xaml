@@ -65,10 +65,10 @@
                            VerticalAlignment="Center" 
                            />
                     <!--Button to update-->
-
-                        <StackPanel MouseEnter="SetHierarchySelection">
                             <local:HierarchyItemSelectionControl DataContext="{Binding Client}" FontWeight="ExtraBlack"  />
-                        </StackPanel>
+
+                        <!--<StackPanel MouseLeave="SetHierarchySelection">
+                        </StackPanel>-->
 
                         <!--<local:HierarchyItemSelectionControl DataContext="{Binding Client}" FontWeight="ExtraBlack" />-->
                             <!--<Button 
@@ -78,9 +78,9 @@
                             Command="{Binding PopulateCommand}"
                             FontSize="{StaticResource FontSizeRegular}"                         
                         />-->
-                        <StackPanel MouseEnter="SetClient">
-                            <local:BillingPeriodComboboxControl DataContext="{Binding BillingPeriod}" FontWeight="ExtraBlack"  />
-                        </StackPanel>
+                        <!--<StackPanel MouseEnter="SetClient">
+                        </StackPanel>-->
+                        <local:BillingPeriodComboboxControl DataContext="{Binding BillingPeriod}" FontWeight="ExtraBlack"  />
 
 
                         <!--<Button Style="{StaticResource IconGrowButton}"

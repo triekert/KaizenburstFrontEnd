@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using System;
+using System.Windows;
 
 namespace Fasetto.Word
 {
@@ -43,6 +45,18 @@ namespace Fasetto.Word
         /// Title of Control
         /// </summary>
         public string Title { get; set; } = "Cost Hierarchy Selection";
+
+        /// <summary>
+        /// The action to run when initiating the control.
+        /// Returns true if the prepaation was successful, or false otherwise.
+        /// </summary>
+        public Func<Task<bool>> PrepareAction { get; set; }
+
+        /// <summary>
+        /// Indicates if the current text is in edit mode
+        /// </summary>
+        public bool Editing { get; set; }
+
 
 
         /// <summary>

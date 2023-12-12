@@ -80,7 +80,7 @@ namespace Fasetto.Word
             //((BillingPeriodListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedBillingPeriod = (BillingPeriodViewModel)((ComboBox)sender).SelectedItem;
             ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod = (BillingPeriodViewModel)((ComboBox)sender).SelectedItem; 
             }
-            ((BillingPeriodListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedBillingPeriod = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod;
+            ((BillingPeriodListViewModel)((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod).MSelectedBillingPeriod = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod;
 
             // ((BillingPeriodListViewModel)ViewModelApplication.CurrentControlViewModel).Edit();
 

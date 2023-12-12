@@ -62,6 +62,13 @@ namespace Fasetto.Word
         /// </summary>
         public bool FirstNameIsSaving { get; set; }
 
+
+        /// <summary>
+        /// Indicates if the meter lookup has been configured
+        /// </summary>
+        public bool MeterSelectionIsConfigured { get; set; }
+
+
         /// <summary>
         /// Indicates if the last name is current being saved
         /// </summary>

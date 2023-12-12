@@ -1,4 +1,7 @@
 ﻿using Fasetto.Word.Core;
+using System;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
@@ -256,8 +259,7 @@ namespace Fasetto.Word
 
                 //CommitAction = SaveFirstNameAsync
             };
-            ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
-
+            //ViewModelApplication.CurrentControlViewModel = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
             BillingPeriod = new BillingPeriodListViewModel(Client.OriginalKid);
             SelectedBillingPeriod = new BillingPeriodViewModel();
             BillingPeriod.MSelectedBillingPeriod = SelectedBillingPeriod;
@@ -340,15 +342,21 @@ namespace Fasetto.Word
 
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public void Populate()
         {
-            BillingPeriod = new BillingPeriodListViewModel(Client.EditedKid)
-            {
-                MSelectedBillingPeriod = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod
-            };
+            PopulateAsync();
+        }
+
+            /// <summary>
+            /// 
+            /// </summary>
+        public async Task  PopulateAsync()
+        {
+             await BillingPeriod.BillingPeriodAsync();
+            //BillingPeriod = new BillingPeriodListViewModel(Client.EditedKid)
+            //{
+            //    MSelectedBillingPeriod = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod
+            //};
         }
 
 

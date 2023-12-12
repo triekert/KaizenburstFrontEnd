@@ -67,9 +67,11 @@
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center" 
                            />
-                        <StackPanel MouseEnter="SetHierarchySelection">
-                            <local:HierarchyItemSelectionControl DataContext="{Binding Root}" FontWeight="ExtraBlack"  />
-                        </StackPanel>
+                    
+                             <local:HierarchyItemSelectionControl DataContext="{Binding Root}" FontWeight="ExtraBlack"  />
+                   
+                        <!--<StackPanel MouseEnter="SetHierarchySelection">
+                        </StackPanel>-->
 
                     <Button 
                         Style="{StaticResource IconGrowButton}"
@@ -77,18 +79,18 @@
                         Content="{StaticResource FontAwesomeEmojiIcon}"
                         Foreground="{StaticResource WordOrangeBrush}"
                     />
-                    <Button 
+                    <!--<Button 
                         Style="{StaticResource TextButton}" 
                         Content="Use Client information in search ..." 
                         HorizontalAlignment="Center" 
                         Command="{Binding PopulateCommand}"
                         FontSize="{StaticResource FontSizeRegular}"                         
-                    />
-                        <StackPanel MouseEnter="SetHierarchySelectionMeter">
+                    />-->
+                        <!--<StackPanel MouseEnter="SetHierarchySelectionMeter">
 
-                            <local:HierarchyItemSelectionControl DataContext="{Binding Meter}" FontWeight="ExtraBlack" />
-                         </StackPanel>
+                         </StackPanel>-->
                     
+                            <local:HierarchyItemSelectionControl DataContext="{Binding Meter}" FontWeight="ExtraBlack" />
                     
                     <local:DateTimeControl  DataContext="{Binding TimeStart}" FontWeight="ExtraBlack"  />
                     <local:DateTimeControl  DataContext="{Binding TimeEnd}" FontWeight="ExtraBlack"  />

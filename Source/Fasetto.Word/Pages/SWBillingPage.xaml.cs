@@ -31,6 +31,7 @@ namespace Fasetto.Word
         public SWBillingPage(SWBillingPageViewModel specificViewModel) : base(specificViewModel)
         {
             ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+            ViewModelApplication.CurrentControlViewModel = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
             InitializeComponent();
         }
 
@@ -106,18 +107,23 @@ namespace Fasetto.Word
         }
 
 
-        private void SetClient(object sender, System.Windows.RoutedEventArgs e)
+        private void SetHierarchySelection(object sender, System.Windows.RoutedEventArgs e)
         {
             //((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod = new BillingPeriodListViewModel(((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedKid);
             //((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod.MSelectedBillingPeriod = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod;
-            ViewModelApplication.CurrentControlViewModel = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod;
-            ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Populate();
+            if (((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedName != "Selected Client")
+            { 
+                ViewModelApplication.CurrentControlViewModel = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod;
+                ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod.mRequest = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedKid;
+                ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).PopulateAsync();
+            }
         }
-        private void SetHierarchySelection(object sender, System.Windows.RoutedEventArgs e)
-        {
-            ViewModelApplication.CurrentControlViewModel =  ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
 
-        }
+        //private void SetHierarchySelection(object sender, System.Windows.RoutedEventArgs e)
+        //{
+        //    ViewModelApplication.CurrentControlViewModel =  ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
+
+        //}
 
     }
 }

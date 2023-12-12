@@ -1,5 +1,6 @@
 ﻿using Fasetto.Word.Core;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
@@ -129,13 +130,18 @@ namespace Fasetto.Word
         public bool AnyPopupVisible => AttachmentMenuVisible;
 
         /// <summary>
-        /// The view model for the attachment menu
+        /// True to show the attachment menu, false to hide it
         /// </summary>
-        //public ChatAttachmentPopupMenuViewModel AttachmentMenu { get; set; }
+        public bool SetHierarchyCompleted { get; set; }
 
         /// <summary>
         /// The text for the current message being written
         /// </summary>
+        /// 
+
+
+
+
         public string PendingMessageText { get; set; }
 
         /// <summary>
@@ -267,9 +273,10 @@ namespace Fasetto.Word
                 EditedName = "TD Water Metering",
                 OriginalName = "Original Meter Selection",
                 EditedKid = "5249FFEB-6907-46AA-9204-D4527E11F9CE",
+                OriginalKid = "5249FFEB-6907-46AA-9204-D4527E11F9CE",
                 //hard coded for hierarchy type linked to water meters
                 HierarchyTypeID = "8A50E984-9E9F-44F6-9392-875E56A0B7CA",
-                //CommitAction = SaveFirstNameAsync
+                PrepareAction = SetHierarchySelectionMeterAsync
             };
 
             TimeStart = new DateTimeViewModel
@@ -439,10 +446,29 @@ namespace Fasetto.Word
             //ViewModelApplication.CurrentPageViewModel = Meter;
         }
 
-        /// <summary>
-        /// Searches the current message list and filters the view
-        /// </summary>
-        public void Search()
+
+
+        public async Task<bool> SetHierarchySelectionMeterAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the First Name value on the server...
+
+                ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Meter.ClientID = ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root.EditedKid;
+                ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Meter.RootID = ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root.RootID;
+                ViewModelApplication.CurrentControlViewModel = ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Meter;
+            return true;
+            });
+        }
+
+
+
+
+    /// <summary>
+    /// Searches the current message list and filters the view
+    /// </summary>
+    public void Search()
         {
             // Make sure we don't re-search the same text
             //if ((string.IsNullOrEmpty(mLastSearchText) && string.IsNullOrEmpty(SearchText)) ||

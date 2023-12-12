@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms.DataVisualization.Charting;
 using System.Windows.Input;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
@@ -38,6 +39,36 @@ namespace Fasetto.Word
         //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
 
         #endregion
+        #region Properties
+        #region Public Properties
+
+
+
+        /// <summary>
+        /// A flag indicating if the login command is running
+        /// </summary>
+        public bool BulkReconBuildIsRunning { get; set; }
+
+        /// <summary>
+        /// Title to be published on Control
+        /// </summary>
+        public string ControlTitle { get; set; }
+        //{get => mTableName;
+        //    set
+        //    {
+        //        if (value == mTableName)
+        //            return;
+
+        //        mTableName = value;
+
+        //    } }
+        #endregion//Public Properties
+
+
+
+
+
+        #endregion //Properties
 
         #region Data
 
@@ -105,7 +136,7 @@ namespace Fasetto.Word
                 //Set Generic Root lookup to return hierarchies of type 'Cost Hierarchy'
                 HierarchyTypeID = "64413ae7-822f-4866-9ebe-433083d699ac"
             };
-            TaskManager.RunAndForget(CostHierarchyAsync);
+            //TaskManager.RunAndForget(CostHierarchyAsync);
 
 
             // Get the OptFinHierarchies currently configured - first populate 'root hierarchy' variable with all configured root hierarchy elements currently available
@@ -125,7 +156,6 @@ namespace Fasetto.Word
         {
             // Set the edited text to the current value
 
-
             //Go into edit mode
             ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
             //((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Populate();
@@ -139,36 +169,6 @@ namespace Fasetto.Word
 
         #endregion // Constructor
 
-        #region Properties
-        #region Public Properties
-
-
-
-        /// <summary>
-        /// A flag indicating if the login command is running
-        /// </summary>
-        public bool BulkReconBuildIsRunning { get; set; }
-
-        /// <summary>
-        /// Title to be published on Control
-        /// </summary>
-        public string ControlTitle { get; set; }
-        //{get => mTableName;
-        //    set
-        //    {
-        //        if (value == mTableName)
-        //            return;
-
-        //        mTableName = value;
-
-        //    } }
-        #endregion//Public Properties
-
-
-
-
-
-        #endregion //Properties
 
         /// <summary>
         /// Return Hierarchy of interest from Object persistance infrastructure

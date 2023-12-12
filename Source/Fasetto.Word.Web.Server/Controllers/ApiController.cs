@@ -48,6 +48,36 @@ namespace Fasetto.Word.Web.Server
 
 
         #endregion
+        #region Properties
+        #region Public Properties
+
+
+
+        /// <summary>
+        /// A flag indicating if the login command is running
+        /// </summary>
+        public bool BulkReconBuildIsRunning { get; set; }
+
+        /// <summary>
+        /// Title to be published on Control
+        /// </summary>
+        public string ControlTitle { get; set; }
+        //{get => mTableName;
+        //    set
+        //    {
+        //        if (value == mTableName)
+        //            return;
+
+        //        mTableName = value;
+
+        //    } }
+        #endregion//Public Properties
+
+
+
+
+
+        #endregion //Properties
 
         #region Constructor
 

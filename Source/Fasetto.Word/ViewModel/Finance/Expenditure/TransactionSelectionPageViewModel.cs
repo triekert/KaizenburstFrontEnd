@@ -2,7 +2,6 @@
 using System;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
 
@@ -146,6 +145,11 @@ namespace Fasetto.Word
         public string PendingMessageText { get; set; }
 
         /// <summary>
+        /// True to show the attachment menu, false to hide it
+        /// </summary>
+        public bool SetHierarchyCompleted { get; set; }
+
+        /// <summary>
         /// The text to search for when we do a search
         /// </summary>
         public string SearchText
@@ -286,8 +290,8 @@ namespace Fasetto.Word
                 //CommitAction = SaveFirstNameAsync
             };
 
-            ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
-            //ViewModelApplication.CurrentControlViewModel = Root;
+            //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
+            ViewModelApplication.CurrentControlViewModel = Root;
 
             //Meter = new HierarchyItemSelectionViewModel
             //{
@@ -451,6 +455,21 @@ namespace Fasetto.Word
                 MSelectedCostHierarchy = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedCostHierarchy
             };
         }
+
+        public async Task<bool> SetHierarchySelectionMeterAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the First Name value on the server...
+
+                ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Populate();
+                return true;
+            });
+        }
+
+
 
         /// <summary>
         /// Searches the current message list and filters the view

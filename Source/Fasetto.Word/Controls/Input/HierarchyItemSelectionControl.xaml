@@ -72,13 +72,23 @@
                      />-->
 
             <!-- Content -->
-            <TextBlock Text="{Binding OriginalName}" 
-                       Grid.Column="1"
+
+            <StackPanel Grid.Column="1"
+                        Orientation="Vertical">
+                <TextBlock Text="{Binding OriginalName}" 
+
+
+                           Margin="15 8"
+                           VerticalAlignment="Center"
+                           ToolTip="{Binding OriginalName}"
+                       />
+                <TextBlock Text="{Binding EditedName}" Foreground="Green"
 
                        Margin="15 8"
                        VerticalAlignment="Center"
-                       ToolTip="{Binding OriginalName}"
+                       ToolTip="{Binding EditedName}"
                        />
+            </StackPanel>
                        <!--local:AnimateFadeInProperty.Value="{Binding Editing, Converter={local:BooleanInvertConverter}}"-->
             <!-- Edit button container -->
             <Grid Grid.Column="2" 

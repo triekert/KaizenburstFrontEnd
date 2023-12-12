@@ -83,7 +83,7 @@ namespace Fasetto.Word
 
         /// <summary>
         /// The action to run when initiating the control.
-        /// Returns true if the commit was successful, or false otherwise.
+        /// Returns true if the prepaation was successful, or false otherwise.
         /// </summary>
         public Func<Task<bool>> PrepareAction { get; set; }
 
@@ -144,29 +144,9 @@ namespace Fasetto.Word
         {
 
             var result = default(bool);
-            ViewModelApplication.CurrentPopupContent = ViewModelApplication.CurrentPopupContent;
-            // Set the edited text to the current value
-            EditedName = OriginalName;
-            EditedKid = OriginalKid;
 
-
-            // Go into edit mode
-            Editing = true;
-            //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
-            ViewModelApplication.PopupVisible = true;
-            ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
-            OriginalName = EditedName;
-            OriginalKid = EditedKid;
-            Editing = false;
             RunCommandAsync(() => Working, async () =>
             {
-                // While working, come out of edit mode
-                //Editing = false;
-
-                // Commit the changed text
-                // So we can see it while it is working
-                //OriginalName = EditedName;
-                //OriginalKid = EditedKid;
 
                 // Try and do the work
                 result = PrepareAction == null ? true : await PrepareAction();
@@ -175,6 +155,12 @@ namespace Fasetto.Word
             {
 
             });
+
+            ViewModelApplication.PopupVisible = true;
+            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+
+            ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
+
 
         }
 

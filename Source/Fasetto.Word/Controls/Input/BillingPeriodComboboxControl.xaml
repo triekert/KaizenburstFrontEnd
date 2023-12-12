@@ -83,12 +83,12 @@
 
                 </ComboBox>
 
-                <StackPanel Orientation="Horizontal">
+                <!--<StackPanel Orientation="Horizontal">
                     <TextBlock Text="Start Date " FontFamily="{StaticResource LatoBold}" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding Path=MSelectedBillingPeriod.TimeStart,StringFormat=dd/MM/yyyy HH:mm}"  FontFamily="{StaticResource LatoRegular}" VerticalAlignment="Center" Foreground="BlueViolet"/>
                     <TextBlock Text=" -  End Date "    FontFamily="{StaticResource LatoBold}" VerticalAlignment="Center" />
                     <TextBlock Text="{Binding Path=MSelectedBillingPeriod.TimeEnd,StringFormat=dd/MM/yyyy HH:mm}"   FontFamily="{StaticResource LatoRegular}" VerticalAlignment="Center" Foreground="OrangeRed"/>
-                </StackPanel>
+                </StackPanel>-->
 
 
             </StackPanel>
