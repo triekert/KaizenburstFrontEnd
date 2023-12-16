@@ -74,6 +74,12 @@ namespace Fasetto.Word
         /// </summary>
         public object PriorPopupViewModel { get; set; }
 
+
+        // <summary>
+        /// Level limit for hierarchy's to be returned (1 = top level only...)
+        /// </summary>
+        public int Level { get; set; }
+
         /// <summary>
         /// The action to run when saving the text.
         /// Returns true if the commit was successful, or false otherwise.

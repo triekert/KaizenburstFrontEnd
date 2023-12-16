@@ -2,11 +2,9 @@
 using Dna;
 using Fasetto.Word.Core;
 using Fasetto.Word.Core.ApiModels.Controls;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -135,10 +133,13 @@ namespace Fasetto.Word
 
             var MRoot0 = mParentCategoryID;
             //if ((mPersist.Where(x => x.ParentCategoryID == "4766E825-1B58-410D-B06B-5A2639CA22C8").ToList().FirstOrDefault().KCategoryID) != null)
-                if ((string)(mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").ToList().FirstOrDefault()?.KCategoryID) != "")
-                {
+            if ((string)(mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").ToList().FirstOrDefault()?.KCategoryID) != "")
 
-                MRoot0 = (string)(mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").ToList().FirstOrDefault())?.KCategoryID ?? "00000000-0000-0000-0000-000000000000"; }
+
+                //{
+
+                MRoot0 = (string)(mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").ToList().FirstOrDefault())?.KCategoryID ?? "00000000-0000-0000-0000-000000000000"; 
+            //}
                 //;}
 
    
@@ -146,7 +147,9 @@ namespace Fasetto.Word
             var MRoot1 = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid ?? MRoot0;
 
             ////MRoot = "00000000-0000-0000-0000-000000000000";
-            var MRoot = (mPersist.Where(x => x.KCategoryID == MRoot1).OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ParentCategoryID;
+            //4766E825 - 1B58 - 410D - B06B - 5A2639CA22C8
+
+            var MRoot = (mPersist.Where(x => x.Level == 0).OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ParentCategoryID;
             //MRoot = "00000000-0000-0000-0000-000000000000";
             var rootElement = mHDML.FirstOrDefault(x => x.ParentCategoryID == MRoot);
             mRootHierarchyElement = new HierarchyViewModel(rootElement)
@@ -319,9 +322,10 @@ namespace Fasetto.Word
             var MRoot1 = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid ?? MRoot0;
 
             ////MRoot = "00000000-0000-0000-0000-000000000000";
-            var MRoot = (mPersist.Where(x => x.KCategoryID == MRoot1).OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ParentCategoryID;
+            var MRoot = (mPersist.Where(x => x.Level == 0).OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ParentCategoryID;
 
-
+            //4AE7E499 - 53E2 - 49C5 - 81D4 - D169941A3CB9
+            //4766E825 - 1B58 - 410D - B06B - 5A2639CA22C8
 
             mHDML.AddRange(ExpandHierarchyData(mPersist, MRoot, "Root"));
             //Refresh the tree view title with theKCategoryID == MRoot).OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ShortName;
@@ -361,7 +365,7 @@ namespace Fasetto.Word
             //To do:  accept a date parameter to retroactively modify hierarchy data
             //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued >  DateTime.Today && !x.IsDeleteElement).OrderBy(x => x.ShortName).ToList();//
             //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued > DateTime.Today && !x.IsDeleteElement).OrderBy(x => (x.ShortName.ParseInt())).ThenBy(x => x.ShortName).ToList();//
-            var children = results.Where(x =>  x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued > DateTime.Today && !x.IsDeleteElement).OrderBy(x => (x.ShortName.ParseInt())).ThenBy(x => x.ShortName).ToList();//
+            var children = results.Where(x =>  x.ParentCategoryID == KCategoryID  && x.DateEffective <= DateTime.Today && x.DateDiscontinued > DateTime.Today && !x.IsDeleteElement).OrderBy(x => (x.ShortName.ParseInt())).ThenBy(x => x.ShortName).ToList();//
             // Hierarchy cannot be expanded
             if (children.Count() == 0)
                 return new HierarchyListDataModel();

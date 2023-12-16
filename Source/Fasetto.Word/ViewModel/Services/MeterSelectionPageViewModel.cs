@@ -261,6 +261,7 @@ namespace Fasetto.Word
                 OriginalKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
                 EditedKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
                 HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
+                PrepareAction = SetHierarchySelectionAsync
 
                 //CommitAction = SaveFirstNameAsync
             };
@@ -276,6 +277,7 @@ namespace Fasetto.Word
                 OriginalKid = "5249FFEB-6907-46AA-9204-D4527E11F9CE",
                 //hard coded for hierarchy type linked to water meters
                 HierarchyTypeID = "8A50E984-9E9F-44F6-9392-875E56A0B7CA",
+                Level = 2,
                 PrepareAction = SetHierarchySelectionMeterAsync
             };
 
@@ -447,6 +449,20 @@ namespace Fasetto.Word
         }
 
 
+        public async Task<bool> SetHierarchySelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the First Name value on the server...
+
+                ViewModelApplication.CurrentControlViewModel = ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
+                return true;
+            });
+
+        }
+
 
         public async Task<bool> SetHierarchySelectionMeterAsync()
         {
@@ -461,8 +477,6 @@ namespace Fasetto.Word
             return true;
             });
         }
-
-
 
 
     /// <summary>

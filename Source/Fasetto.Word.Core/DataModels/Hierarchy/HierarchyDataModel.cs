@@ -113,6 +113,11 @@ namespace Fasetto.Word.Core
         /// </summary>
         public bool IsDeleteElement { get; set; }
 
+        // <summary>
+        /// Level limit for hierarchy's to be returned (1 = top level only...)
+        /// </summary>
+        public int Level { get; set; }
+
         /// <summary>
         //sub categories that are also categories in themself
         /// </summary>

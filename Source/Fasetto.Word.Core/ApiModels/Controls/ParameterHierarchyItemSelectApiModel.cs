@@ -31,6 +31,13 @@ namespace Fasetto.Word.Core.ApiModels.Controls
         /// GUID of hierarchy
         /// </summary>
         public string FHierarchyID { get; set; }
+
+
+
+        // <summary>
+        /// Level limit for hierarchy's to be returned (1 = top level only...)
+        /// </summary>
+        public int Level { get; set; }
     }
 
 }

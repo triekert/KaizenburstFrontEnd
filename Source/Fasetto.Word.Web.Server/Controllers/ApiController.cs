@@ -1786,7 +1786,7 @@ namespace Fasetto.Word.Web.Server
                     "'" + model + "'";
                     ;// " + model;
                 try
-                {
+            {
                     // Try and run the task
                     var dataset = await GetDataSetAsync(SqlString);
                     var dt = dataset.Tables[0];
@@ -1879,12 +1879,12 @@ namespace Fasetto.Word.Web.Server
 
                 var SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '";
                 if (model.RootID != null)
-                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fClientID = NULL ,@fHierarchyTypeID = NULL, @fRootID = '" + model.RootID + "'"; }
+                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '" + model.FHierarchyID + "',  @fClientID = '" + model.ClientID + "',  @Level = 100, @fHierarchyTypeID = NULL, @fRootID = '" + model.RootID + "'"; }
                 else
                     if (model.FHierarchyID == null)
-                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fRootID = NULL, @fClientID = '" + model.ClientID + "', @fHierarchyTypeID = '" + model.HierarchyTypeID + "'"; }
+                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fRootID = NULL,  @Level ='" + model.Level + "',  @fClientID = '" + model.ClientID + "', @fHierarchyTypeID = '" + model.HierarchyTypeID + "'"; }
                     else
-                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '" + model.FHierarchyID + "',  @fClientID = NULL, @fRootID = NULL ,@fHierarchyTypeID = NULL"; }
+                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '" + model.FHierarchyID + "',  @fClientID = NULL, @fRootID = NULL,  @Level = 100, @fHierarchyTypeID = NULL"; }
                 try
                 {
                     // Try and run the task
@@ -1913,6 +1913,7 @@ namespace Fasetto.Word.Web.Server
                             Page = (string)row[10],
                             Root = (string)row[11],
                             IsMenuItem = (row[12] != DBNull.Value) ? (bool)row[12] : false,
+                            Level = (int)row[14],
 
                         };
                         var mShortName = u.ShortName;

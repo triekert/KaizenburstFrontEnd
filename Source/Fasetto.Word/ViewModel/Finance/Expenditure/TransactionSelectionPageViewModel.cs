@@ -89,7 +89,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The CostHierarchy for Transaction processing for the selected client
         /// </summary>
-        public CostHierarchyListViewModel CostHierarchy { get; set; }
+        public HierarchyItemSelectionViewModel CostHierarchy { get; set; }
 
         /// <summary>
         /// The selected CostHierarchy for the Water and Sewerage Billing analysis
@@ -282,7 +282,7 @@ namespace Fasetto.Word
                 OriginalKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
                 EditedKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
                 HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
-                //CommitAction = InitialiseCostHAsync,
+                PrepareAction = SetHierarchySelectionAsync
                 //PrepareAction = ClientSrchAsync,
 
 
@@ -292,6 +292,26 @@ namespace Fasetto.Word
 
             //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
             ViewModelApplication.CurrentControlViewModel = Root;
+
+
+            CostHierarchy = new HierarchyItemSelectionViewModel
+            {
+
+                Label = "Select Cost Hierarchy",
+                EditedName = "Cost Hierarchy Name",
+                OriginalName = "Cost Hierarchy",
+                OriginalKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                EditedKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                HierarchyTypeID = "64413ae7-822f-4866-9ebe-433083d699ac",
+                PrepareAction = SetHierarchySelectionMeterAsync,
+                Level = 1
+
+                //CommitAction = SaveFirstNameAsync
+            };
+
+            //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
+            ViewModelApplication.CurrentControlViewModel = Root;
+
 
             //Meter = new HierarchyItemSelectionViewModel
             //{
@@ -344,9 +364,9 @@ namespace Fasetto.Word
             //TimeEnd.OriginalTime.Content = "00:00";
             //TimeEnd.EditedTime.Content = "00:00";
 
-            CostHierarchy = new CostHierarchyListViewModel(Root.OriginalKid);
-            SelectedCostHierarchy = new CostHierarchyViewModel();
-            CostHierarchy.MSelectedCostHierarchy = SelectedCostHierarchy;
+            //CostHierarchy = new CostHierarchyListViewModel(Root.OriginalKid);
+            //SelectedCostHierarchy = new CostHierarchyViewModel();
+            //CostHierarchy.MSelectedCostHierarchy = SelectedCostHierarchy;
 
 
             // Create commands
@@ -388,6 +408,10 @@ namespace Fasetto.Word
             AttachmentMenuVisible = false;
         }
 
+
+
+
+
         /// <summary>
         /// When the user clicks the send button, sends the message
         /// </summary>
@@ -402,7 +426,7 @@ namespace Fasetto.Word
             //if ((ViewModelApplication.CurrentControlViewModel).GetType().Name != "CostHierarchyListViewModel")
             //{ return; }
 
-            var Test3 = ((CostHierarchyViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.MSelectedCostHierarchy).KCategoryID;
+            var Test3 = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid;
             if (Test3 == null)
             {
                 System.Windows.MessageBox.Show(
@@ -420,7 +444,7 @@ namespace Fasetto.Word
             //    System.Windows.MessageBox.Show($"First select a valid Transaction Client to proceed...");
             //    return;
             //};
-            ShortName = ((CostHierarchyViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.MSelectedCostHierarchy).ShortName;
+            ShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedName;
             TimeEnd.OriginalDateTime = TimeEnd.EditedDateTime;
             TimeStart.OriginalDateTime = TimeStart.EditedDateTime;
 
@@ -450,23 +474,37 @@ namespace Fasetto.Word
         /// </summary>
         public void Populate()
         {
-            CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
-            {
-                MSelectedCostHierarchy = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedCostHierarchy
-            };
+
         }
 
         public async Task<bool> SetHierarchySelectionMeterAsync()
         {
             // Lock this command to ignore any other requests while processing
+
             return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
             {
                 // Update the First Name value on the server...
 
+                ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.ClientID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root.EditedKid;
+                ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.RootID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root.RootID;
                 ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
-                ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Populate();
                 return true;
             });
+
+        }
+
+        public async Task<bool> SetHierarchySelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the First Name value on the server...
+
+                ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
+                return true;
+            });
+
         }
 
 
@@ -532,17 +570,17 @@ namespace Fasetto.Word
         /// <returns>Returns true if successful, false otherwise</returns>
         public async Task<bool> InitialiseCostHAsync()
         {
-            // Lock this command to ignore any other requests while processing
-            return await RunCommandAsync(() => CostHierarchySrchIsSaving, async () =>
-            {
+            //// Lock this command to ignore any other requests while processing
+            //return await RunCommandAsync(() => CostHierarchySrchIsSaving, async () =>
+            //{
 
-                ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
-                {
-                    MSelectedCostHierarchy = new CostHierarchyViewModel()
-                };
-                ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
-                return true;
-            });
+            //    ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
+            //    {
+            //        MSelectedCostHierarchy = new CostHierarchyViewModel()
+            //    };
+            //    ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+            return true;
+            //});
         }
 
 

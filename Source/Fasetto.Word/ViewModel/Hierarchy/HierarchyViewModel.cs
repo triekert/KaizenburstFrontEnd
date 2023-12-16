@@ -106,8 +106,14 @@ namespace Fasetto.Word
         /// Property to indicate whether this element is to be removed from the persistence layer
         /// </summary>
         public bool IsDeleteElement => mElement.IsDeleteElement;
+
+        // <summary>
+        /// Level limit for hierarchy's to be returned (1 = top level only...)
+        /// </summary>
+        public int Level => mElement.Level;
+
         /// <summary>
-        /// A list of all children containd inside this item
+        /// A list of all children contained inside this item
         /// </summary>
         public ObservableCollection<HierarchyViewModel> Children => mChildren;
 

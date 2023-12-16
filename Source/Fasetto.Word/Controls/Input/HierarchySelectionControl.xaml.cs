@@ -71,6 +71,8 @@ namespace Fasetto.Word
                 {
                     root.FHierarchyID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid ;
                     root.RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid ;
+                    root.ClientID = "4766E825-1B58-410D-B06B-5A2639CA22C8";
+                    root.Level = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Level;
                     //root.ClientID = "NULL";
                     //root.HierarchyTypeID = "NULL"; 
                 }
@@ -86,9 +88,10 @@ namespace Fasetto.Word
                     root.ClientID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID;
                     root.HierarchyTypeID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).HierarchyTypeID;
                     root.FHierarchyID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).HierarchyID;
-                    //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid = "00000000-0000-0000-0000-000000000000";
-                    //root.FHierarchyID = "NULL"; 
-                }
+                    root.Level = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Level;
+                //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid = "00000000-0000-0000-0000-000000000000";
+                //root.FHierarchyID = "NULL"; 
+            }
             //}
             mHierarchyTree = new HierarchyTreeViewModel1(root);//root);
             //PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;

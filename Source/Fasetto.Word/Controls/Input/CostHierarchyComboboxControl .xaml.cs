@@ -76,26 +76,26 @@ namespace Fasetto.Word
 
         private void ComboBox1_Selected(object sender, RoutedEventArgs e)
         {
-            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
-            //var Test2 = ((CostHierarchyViewModel)((ComboBox)sender).SelectedItem).KCategoryID;
-            //if (((CostHierarchyViewModel)((ComboBox)sender).SelectedItem).KCategoryID == "Test1")
-            //{ return; }
-            var Test3 = ((ComboBox)sender).SelectedItem;
-            if (Test3 == null) {
-//                MessageBox.Show(
+//            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+//            //var Test2 = ((CostHierarchyViewModel)((ComboBox)sender).SelectedItem).KCategoryID;
+//            //if (((CostHierarchyViewModel)((ComboBox)sender).SelectedItem).KCategoryID == "Test1")
+//            //{ return; }
+//            var Test3 = ((ComboBox)sender).SelectedItem;
+//            if (Test3 == null) {
+////                MessageBox.Show(
                  
-//                    "to the selected Client",
-//                    "No cost structures currently linked",
+////                    "to the selected Client",
+////                    "No cost structures currently linked",
 
-//                    MessageBoxButton.OK,   MessageBoxImage.Information
-//);
+////                    MessageBoxButton.OK,   MessageBoxImage.Information
+////);
 
-                return; }
-            //((CostHierarchyListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedCostHierarchy = (CostHierarchyViewModel)((ComboBox)sender).SelectedItem;
-            ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy = (CostHierarchyViewModel)((ComboBox)sender).SelectedItem;
+//                return; }
+//            //((CostHierarchyListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedCostHierarchy = (CostHierarchyViewModel)((ComboBox)sender).SelectedItem;
+//            ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy = (CostHierarchyViewModel)((ComboBox)sender).SelectedItem;
 
-            ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).Edit();
-            ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
+//            ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).Edit();
+//            ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
 
         }
     }
