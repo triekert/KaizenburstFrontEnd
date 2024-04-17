@@ -276,8 +276,9 @@ namespace Fasetto.Word
                         ShortName = item.ShortName,
                         KCategoryID = item.KCategoryID,
                         KFinActualID = item.KFinActualID,
-                        KFinTranID = item.KFinTranID
-
+                        KFinTranID = item.KFinTranID,
+                        KPartyID = item.KPartyID,
+                        KPartyName = item.KPartyName,
 
                     };
                         Trans_action.Add(mTVM); 
@@ -469,6 +470,8 @@ namespace Fasetto.Word
                     KHierarchyID = item.KHierarchyID,
                     ChangeType = item.ChangeType,
                     DateEffective = item.DateEffective,
+                    KPartyID = item.KPartyID,
+                    KPartyName = item.KPartyName,
 
 
                 };

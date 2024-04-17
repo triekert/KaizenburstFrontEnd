@@ -195,7 +195,7 @@ namespace Fasetto.Word
         #endregion //Properties
 
         /// <summary>
-        /// Return Expenditure of interest from Object persistance infrastructure
+        /// Return Expenditure of interest from Object persistence infrastructure
         /// User credentials are used to determine access authorisation
         /// </summary>
         /// <returns></returns>
@@ -204,7 +204,7 @@ namespace Fasetto.Word
             await RunCommandAsync(() => ExpenditureBuildIsRunning, async () =>
             {
 
-                // Store single transcient instance of client data store
+                // Store single transient instance of client data store
                 var scopedClientDataStore = ClientDataStore;
 
                 // Update values from local cache

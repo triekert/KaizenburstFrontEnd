@@ -89,12 +89,13 @@ namespace Fasetto.Word
                     root.HierarchyTypeID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).HierarchyTypeID;
                     root.FHierarchyID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).HierarchyID;
                     root.Level = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Level;
+                    root.RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).RootID;
                 //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid = "00000000-0000-0000-0000-000000000000";
                 //root.FHierarchyID = "NULL"; 
             }
             //}
             mHierarchyTree = new HierarchyTreeViewModel1(root);//root);
-            //PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
             //ViewModelApplication.CurrentPopupViewModel = this;
 
             DataContext = mHierarchyTree;
@@ -356,16 +357,44 @@ namespace Fasetto.Word
             //ViewModelApplication.PopupVisible = false;
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
 
+
+            //var Poptype = ViewModelApplication.CurrentControlViewModel.PriorPopupViewModel.GetType().Name;
+
             //If the calling page is from the SWBilling function
+
+            
             if ((ViewModelApplication.CurrentPageViewModel.GetType().Name == "SWBillingPageViewModel"))
                 {
                 ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod.mRequest = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedKid;
                 ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).PopulateAsync();
                 }
+            var Pgtype = ViewModelApplication.CurrentPageViewModel.GetType().Name; 
             if (ViewModelApplication.CurrentPopupViewModel == null || (ViewModelApplication.CurrentPopupViewModel.GetType().Name != "ManageClassificationViewModel"))
             {
+                if ((string)Pgtype == "TransactionSelectionPageViewModel")
+                {
+                    if (ViewModelApplication.ControlParameter1 != null)
+                    {
+                        ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
+                        ViewModelApplication.ControlParameter1 = null;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                        ViewModelApplication.PopupVisible = true;
+                    }   
+                    else
+                    {
+                        ViewModelApplication.PopupVisible = false;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+                    }
+
+                }
+                else
+                {
                 ViewModelApplication.PopupVisible = false;
                 ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+
+                }
+
+
             }
             else
             {

@@ -1,4 +1,5 @@
 ﻿using Fasetto.Word.Core;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions.Internal;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -72,6 +73,7 @@ namespace Fasetto.Word
             ViewModelApplication.CurrentControlViewModel = mHierarchyTree;   
         }
 
+
         private void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -90,9 +92,36 @@ namespace Fasetto.Word
                                          item.KCategoryID)
             }).ToList();
         }
+
+
+
+        //
+        private void TreeViewSelectedItemChanged(object sender, RoutedEventArgs e)
+        {
+            if (sender is TreeViewItem item)
+            {
+                item.BringIntoView(new Rect(100,100, 200, 200));
+                //if (item.)
+                e.Handled = true;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         /// <summary>
         /// The TreeView_MouseDown event does not cater for the left mouse button on Tree View Items
-        /// A soulution is to use the PreViewMouseDown event and to allow it to bubble down to the selected treeview item
+        /// A solution is to use the PreViewMouseDown event and to allow it to bubble down to the selected treeview item
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

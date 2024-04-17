@@ -66,7 +66,7 @@ namespace Fasetto.Word
 
         #region Constructor
         /// <summary>
-        /// The HierarchyTreeViewModel is a visual inteface for interacting with hiearchical
+        /// The HierarchyTreeViewModel is a visual inteface for interacting with hierchical
         /// Structures persisted on the database linked to the application
         /// Generic hierarchy structures with parent-child relationships may be used to represent
         /// appropriate data sets
@@ -323,7 +323,7 @@ namespace Fasetto.Word
 
             ////MRoot = "00000000-0000-0000-0000-000000000000";
             var MRoot = (mPersist.Where(x => x.Level == 0).OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ParentCategoryID;
-
+            var MRootTst = (mPersist.Where(x => x.Level == 0).OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).KCategoryID;
             //4AE7E499 - 53E2 - 49C5 - 81D4 - D169941A3CB9
             //4766E825 - 1B58 - 410D - B06B - 5A2639CA22C8
 
@@ -365,7 +365,7 @@ namespace Fasetto.Word
             //To do:  accept a date parameter to retroactively modify hierarchy data
             //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued >  DateTime.Today && !x.IsDeleteElement).OrderBy(x => x.ShortName).ToList();//
             //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued > DateTime.Today && !x.IsDeleteElement).OrderBy(x => (x.ShortName.ParseInt())).ThenBy(x => x.ShortName).ToList();//
-            var children = results.Where(x =>  x.ParentCategoryID == KCategoryID  && x.DateEffective <= DateTime.Today && x.DateDiscontinued > DateTime.Today && !x.IsDeleteElement).OrderBy(x => (x.ShortName.ParseInt())).ThenBy(x => x.ShortName).ToList();//
+            var children = results.Where(x =>  x.ParentCategoryID == KCategoryID  && x.DateEffective <= DateTime.Now && x.DateDiscontinued > DateTime.Now && !x.IsDeleteElement).OrderBy(x => (x.ShortName.ParseInt())).ThenBy(x => x.ShortName).ToList();//
             // Hierarchy cannot be expanded
             if (children.Count() == 0)
                 return new HierarchyListDataModel();
@@ -983,7 +983,7 @@ namespace Fasetto.Word
             // Close settings menu
             ViewModelApplication.PopupVisible = false;
             ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-
+            //ViewModelApplication.CurrentPopupViewModel = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
 
         }
 

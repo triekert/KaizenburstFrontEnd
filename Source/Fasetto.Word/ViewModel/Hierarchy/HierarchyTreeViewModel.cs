@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
@@ -356,7 +357,7 @@ namespace Fasetto.Word
                 mSearchText = value;
 
                 MatchingCategoryEnumerator = null;
-            }
+           }
         }
 
         public IEnumerator<HierarchyViewModel> MatchingCategoryEnumerator { get; private set; }
@@ -382,6 +383,10 @@ namespace Fasetto.Word
                 Category.mParent.IsExpanded = true;
 
             Category.IsSelected = true;
+
+          
+            
+           
             //Category.IsExpanded = false;
         }
 

@@ -94,10 +94,40 @@ namespace Fasetto.Word
         /// </summary>
         public DateTime DateDiscontinued { get; set; }
 
+
+        /// <summary>
+        /// String representation of GUID for linked Party (legal person including supplier, membership, family etc)
+        /// </summary>
+
+
+        public string KPartyID { get; set; }
+
+
+        /// <summary>
+        /// Name of linked party
+        /// </summary>
+        public string KPartyName { get; set; }
+
+
+        /// <summary>
+        /// String representation of GUID for linked Plant (Including any portion of plant down to lowest BOM level)
+        /// </summary>
+
+        public string KPlantID { get; set; }
+
+
+        /// <summary>
+        /// Name of linked plant
+        /// </summary>
+        public string KPlantName { get; set; }
+
         /// <summary>
         /// Attach the current activity to a Change object
         /// </summary>
         public string KChangeID { get; set; }
+
+
+
 
         /// <summary>
         /// Title of Control

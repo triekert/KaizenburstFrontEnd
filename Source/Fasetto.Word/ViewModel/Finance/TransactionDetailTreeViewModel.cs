@@ -123,7 +123,9 @@ namespace Fasetto.Word
                     ShortName = item.ShortName,
                     KCategoryID = item.KCategoryID,
                     KFinActualID = item.KFinActualID,
-                    KFinTranID = item.KFinTranID
+                    KFinTranID = item.KFinTranID,
+                    KPartyName = item.KPartyName,
+                    KPartyID = item.KPartyID,
 
 
                 };

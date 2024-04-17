@@ -113,7 +113,7 @@ namespace Fasetto.Word
                 ViewModelApplication.CurrentPopupViewModel = new ManageClassificationViewModel(tempTDList, MSelected);
                 ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
                 ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
-
+                ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
                 //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
                 //var mCurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
                 ////New popup is only activated if name differs from current popup (irrespective of view model content)

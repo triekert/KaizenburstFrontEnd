@@ -117,7 +117,6 @@
                   HeadersVisibility="All" RenderTransformOrigin="0.5,0.5"       GridLinesVisibility="None" 
                     AutoGenerateColumns="False" AlternationCount="2"
                     SelectionMode="Single" SelectionUnit="FullRow"  VerticalAlignment="Center"  HorizontalAlignment="Center" HorizontalContentAlignment="Center"  CanUserAddRows="False"
-                  
                   >
             <!--<DataGrid.ColumnHeaderStyle>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
@@ -191,6 +190,14 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Linked Party" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="5" TextWrapping="Wrap"  Width="200" Text="{Binding Path= KPartyName}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>                
+                
                 <DataGridTemplateColumn Header="Assigned Value" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

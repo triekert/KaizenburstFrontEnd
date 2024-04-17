@@ -83,7 +83,8 @@
 
                                         <!-- Icon -->
                                         <Button Style="{StaticResource SystemIconButton}" Command="{Binding MenuCommand}">
-                                            <Image Source="/Images/Logo/KaizenPNG.PNG" />
+                                            <!--<Image Source="/Images/Logo/MyCanBanGraphic.PNG" />-->
+                                              <Image Source="/Images/Logo/KaizenPNG.PNG" />                                          
                                         </Button>
 
                                         <!-- Title -->
@@ -96,6 +97,8 @@
                                                     <Run Text="z" Foreground="{StaticResource WordGreenBrush}" />
                                                     <Run Text="e" Foreground="{StaticResource ForegroundVeryDarkBrush}" />
                                                     <Run Text="n" Foreground="{StaticResource WordLightBlueBrush}" />
+                                                </TextBlock>  
+                                                <TextBlock FontFamily="{StaticResource LatoBold}" FontSize="{StaticResource FontSizeLarge}" Margin="0,0,0,-5" TextAlignment="Center">
                                                     <Run Text="B" Foreground="{StaticResource WordRedBrush}" />
                                                     <Run Text="u" Foreground="{StaticResource WordGreenBrush}" />  
                                                     <Run Text="r" Foreground="{StaticResource WordBlueBrush}" />
@@ -103,6 +106,7 @@
                                                     <Run Text="t" Foreground="{StaticResource WordGreenBrush}" />
                                                     <!--TextAlignment="Center"-->
                                                 </TextBlock>
+                                                <!--<Image Source="/Images/Logo/MyCanBanGraphic.PNG" />-->
                                                 <TextBlock Text="always better, sometimes more so" Foreground="{DynamicResource ForegroundVeryDarkBrush}" TextAlignment="Center" />
                                             </StackPanel>
                                         </Viewbox>
