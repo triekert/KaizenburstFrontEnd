@@ -1,11 +1,6 @@
-﻿using Fasetto.Word.Core;
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
+﻿using System;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 namespace Fasetto.Word
 {

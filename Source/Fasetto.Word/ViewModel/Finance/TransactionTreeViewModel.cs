@@ -1,10 +1,7 @@
 ﻿
 using Dna;
-using EnvDTE;
 using Fasetto.Word.Core;
 using System;
-using System.Activities.Expressions;
-using System.Activities.Statements;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -12,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace Fasetto.Word
 {

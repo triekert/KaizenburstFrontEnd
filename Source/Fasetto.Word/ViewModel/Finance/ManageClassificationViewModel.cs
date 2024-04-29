@@ -341,7 +341,7 @@ namespace Fasetto.Word
 
             return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
             {
-                // Update the First Name value on the server...
+                // Update the Category Classificaion value on the server...
 
                 ViewModelApplication.CurrentControlViewModel = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category;
                 //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category;
@@ -355,7 +355,7 @@ namespace Fasetto.Word
 
             return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
             {
-                // Update the First Name value on the server...
+                // Update the Party value on the server...
 
                 ViewModelApplication.CurrentControlViewModel = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
                 //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
