@@ -330,6 +330,7 @@ namespace Fasetto.Word
 
             ViewModelApplication.CurrentPopupViewModel = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+            ViewModelApplication.ControlParameter1 = null;
             //ViewModelApplication.PopupVisible = false;
 
 

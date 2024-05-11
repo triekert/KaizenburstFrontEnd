@@ -56,7 +56,7 @@ namespace Fasetto.Word
         public string ParentCategoryID =>mElement.ParentCategoryID;
 
         /// <summary>
-        /// Parent ShortName of hiearchy item
+        /// Parent ShortName of hierarchy item
         /// </summary>
         public string ParentShortName => mElement.ParentShortName;
 
@@ -74,6 +74,15 @@ namespace Fasetto.Word
         /// Attach the current activity to a Change object
         /// </summary>
         public string KChangeID   => mElement.KChangeID;
+
+        /// <summary>
+        /// Parent ID  of hierarchy item
+        /// </summary>
+        public string HierarchyTypeID => mElement.HierarchyTypeID;
+        /// <summary>
+        /// Parent ShortName of hierarchy item
+        /// </summary>
+        public string HierarchyType => mElement.HierarchyType;
 
         /// <summary>
         /// If a menu item, link tree item to menu Page

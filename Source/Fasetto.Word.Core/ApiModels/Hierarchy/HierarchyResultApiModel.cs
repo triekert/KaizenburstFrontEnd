@@ -24,7 +24,7 @@ namespace Fasetto.Word.Core
         public int Frequency { get; set; }
         //string representation of GUID for a Category element
         public string KCategoryID { get; set; }
-        //sstring representation of GUID for the Parent category of a Category element
+        //string representation of GUID for the Parent category of a Category element
         //the parent of all root elements will be NULL... any hierarchy will have at least one root element
 
         public string ParentCategoryID { get; set; }
@@ -68,6 +68,15 @@ namespace Fasetto.Word.Core
         /// Attach the current activity to a Change object
         /// </summary>
         public string KChangeID { get; set; }
+        /// <summary>
+        /// Parent ID  of hierarchy item
+        /// </summary>
+        public string HierarchyTypeID { get; set; }
+
+        /// <summary>
+        /// Parent ShortName of hierarchy item
+        /// </summary>
+        public string HierarchyType { get; set; }
         /// <summary>
         /// Property to indicate whether element is being evaluated by a change request
         /// and whether it should be excluded from current operations

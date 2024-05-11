@@ -43,14 +43,24 @@ namespace Fasetto.Word
         public string KCategoryID { get; set; }
 
         /// <summary>
-        /// Parent ID  of hiearchy item
+        /// Parent ID  of hierarchy item
         /// </summary>
         public string ParentCategoryID { get; set; }
 
         /// <summary>
-        /// Parent ShortName of hiearchy item
+        /// Parent ShortName of hierarchy item
         /// </summary>
         public string ParentShortName { get; set; }
+
+        /// <summary>
+        /// Parent ID  of hierarchy item
+        /// </summary>
+        public string HierarchyTypeID { get; set; }
+
+        /// <summary>
+        /// Parent ShortName of hierarchy item
+        /// </summary>
+        public string HierarchyType { get; set; }
 
         /// <summary>
         /// Calendar date from which Element is seen as active

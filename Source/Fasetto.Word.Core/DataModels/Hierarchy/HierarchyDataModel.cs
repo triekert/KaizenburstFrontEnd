@@ -77,6 +77,15 @@ namespace Fasetto.Word.Core
         /// </summary>
         public string KChangeID { get; set; }
 
+        /// Parent ID  of hierarchy item
+        /// </summary>
+        public string HierarchyTypeID { get; set; }
+
+        /// <summary>
+        /// Parent ShortName of hierarchy item
+        /// </summary>
+        public string HierarchyType { get; set; }
+
 
         /// <summary>
         /// If a menu item, link tree item to menu Page

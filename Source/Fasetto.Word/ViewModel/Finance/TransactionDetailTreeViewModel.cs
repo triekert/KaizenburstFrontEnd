@@ -959,15 +959,17 @@ namespace Fasetto.Word
 
         public void Close()
         {
+            var mType = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel.GetType().Name;           
+            ViewModelApplication.CurrentPopupViewModel = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+            var mTransactionDetailTreeViewModel = ViewModelApplication.CurrentPopupViewModel;
+            ViewModelApplication.PopupVisible = false;
+            //ViewModelApplication.ControlParameter1 = null;
+
             //Give control back to parent 'Popup view model'
 
-            var mType = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel.GetType().Name;
-                ViewModelApplication.CurrentPopupViewModel = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
-            var mTransactionDetailTreeViewModel = ViewModelApplication.CurrentPopupViewModel;
-                ViewModelApplication.PopupVisible = false;
 
             if (mType == "TransactionDetailTreeViewModel")
-                {
+            {
                 ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
                 ViewModelApplication.CurrentPopupViewModel = mTransactionDetailTreeViewModel;
                 ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;

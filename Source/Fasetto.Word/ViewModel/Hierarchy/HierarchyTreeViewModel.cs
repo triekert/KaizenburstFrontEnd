@@ -7,7 +7,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
@@ -92,7 +91,7 @@ namespace Fasetto.Word
             mTableName = hierarchyTable;
             #endregion
             //retrieve hierarchy from persistent storage on server
-            //To Do: Add mTableName as parameter when calling HiearchyAsync to populate hierarchy
+            //To Do: Add mTableName as parameter when calling HierarchyAsync to populate hierarchy
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             //ViewModelApplication.PopupVisible = false;
             TaskManager.RunAndForget(HierarchyAsync);

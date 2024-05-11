@@ -382,6 +382,17 @@ namespace Fasetto.Word
                     }   
                     else
                     {
+                        if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Client")
+                        {
+                            if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid != 
+                                ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).ClientID
+                                //If client selection has changed, nullify cost hierarchy selection
+                                )
+                                {
+                                ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid = null;
+                                ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedName = null;
+                            }
+                        }
                         ViewModelApplication.PopupVisible = false;
                         ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
                     }
@@ -403,6 +414,9 @@ namespace Fasetto.Word
             }
 
             //return;
+
+
+
         }
  
   

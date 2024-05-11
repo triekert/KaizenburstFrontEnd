@@ -1793,7 +1793,8 @@ namespace Fasetto.Word.Web.Server
                 #region sql query
                 var SqlString = "SELECT  c.[ShortName],coalesce(c.[Description],'') Description,coalesce(convert(nvarchar(50),c.[KCategoryID]),'') KCategoryID, coalesce(convert(nvarchar(50),c.[ParentCategoryID]),'') ParentCategoryID," +
                     "coalesce(convert(nvarchar(50),c.[fIconID]),'') Icon,coalesce(c.DateEffective,convert(datetime,'1753/1/1'))DateEffective,coalesce(c.DateDiscontinued,convert(datetime,'9999/12/31'))DateDiscontinued,coalesce(convert(nvarchar(50),c.[fChangeID]),'') fChangeID,c.[isUnderReview],c.[isNewElement]," +
-                    "coalesce(c.[Page],'') Page, coalesce(c.[Root],'') Root,p.[isMenuItem] FROM [Admin].[HierarchyGeneric] c LEFT OUTER JOIN  [Admin].[HierarchyGeneric] p on p.kCategoryID = c.ParentCategoryID AND p.fHierarchyID = c.fHierarchyID WHERE c.fHierarchyID = " +
+                    "coalesce(c.[Page],'') Page, coalesce(c.[Root],'') Root,p.[isMenuItem],coalesce(convert(nvarchar(50),t.[KCategoryID]),'') FHierarchyTypeID,coalesce(t.ShortName,'') HierarchyType FROM [Admin].[HierarchyGeneric] c LEFT OUTER JOIN  [Admin].[HierarchyGeneric] p on p.kCategoryID = c.ParentCategoryID AND p.fHierarchyID = c.fHierarchyID  " +
+                    "LEFT OUTER JOIN[Admin].[HierarchyGeneric] t on t.kCategoryID = c.fHierarchyTypeID WHERE c.fHierarchyID = " +
                     "'" + model + "'";
                     ;// " + model;
                 try
@@ -1818,13 +1819,13 @@ namespace Fasetto.Word.Web.Server
                             DateEffective =  (DateTime)row[5],
                             DateDiscontinued =  (DateTime)row[6],
                             KChangeID = (string)row[7],
-
                             IsUnderReview =  (row[8] != DBNull.Value) ?   (bool)row[8] :false ,
                             IsNewElement = false,
                             Page = (string)row[10],
                             Root = (string)row[11],
                             IsMenuItem = (row[12] != DBNull.Value) ? (bool)row[12] : false,
-
+                            HierarchyTypeID = (string)row[13],
+                            HierarchyType = (string)row[14],
                         };
                         var mShortName = u.ShortName;
                         results.Add(u);
@@ -1884,11 +1885,11 @@ namespace Fasetto.Word.Web.Server
                         ErrorMessage = "User not found"
                     };
 
-                #endregion //Get User
+            #endregion //Get User
 
-                #region sql query
+            #region sql query
 
-                var SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '";
+            var SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '";
                 if (model.RootID != null)
                     { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '" + model.FHierarchyID + "',  @fClientID = '" + model.ClientID + "',  @Level = 100, @fHierarchyTypeID = NULL, @fRootID = '" + model.RootID + "'"; }
                 else
@@ -1925,7 +1926,7 @@ namespace Fasetto.Word.Web.Server
                             Root = (string)row[11],
                             IsMenuItem = (row[12] != DBNull.Value) ? (bool)row[12] : false,
                             Level = (int)row[14],
-
+                            FClientID = (string)row[15],
                         };
                         var mShortName = u.ShortName;
                         results.Add(u);
