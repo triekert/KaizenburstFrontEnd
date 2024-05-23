@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using static Fasetto.Word.DI;
 
 namespace Fasetto.Word
 {
@@ -90,6 +91,8 @@ namespace Fasetto.Word
         {
             // Set the edited text to the current value
             EditedText = OriginalText;
+            //OriginalText = "tsting|";
+            ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
 
             // Go into edit mode
             Editing = true;

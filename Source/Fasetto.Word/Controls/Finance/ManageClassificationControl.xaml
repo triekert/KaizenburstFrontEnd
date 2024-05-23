@@ -143,19 +143,19 @@
                             />
                         <!--Change a classification for a transaction -classifcation type or allocation amount-->
 
-                        <Button Content="{Binding EditClassificationButtonText}"
+                        <!--<Button Content="{Binding EditClassificationButtonText}"
                             Command="{Binding EditClassificationCommand}"
                             FontSize="{StaticResource FontSizeRegular}"
                             Visibility="{Binding EditClassificationText, ConverterParameter=True, Converter={local:TextToVisiblityConverter}}" Margin="50
                                 ,10,0,10"
-                            />
+                            />-->
                         <!--Remove a clasification for a transaction-->
-                        <Button Content="{Binding DeleteClassificationButtonText}"
+                        <!--<Button Content="{Binding DeleteClassificationButtonText}"
                             Command="{Binding DeleteClassificationCommand}"
                             FontSize="{StaticResource FontSizeRegular}"
                             Visibility="{Binding DeleteNodeButtonText, ConverterParameter=True, Converter={local:TextToVisiblityConverter}}" Margin="100,10,0,10" 
                              
-                            />
+                            />-->
  
                     </StackPanel>
                 </StackPanel>

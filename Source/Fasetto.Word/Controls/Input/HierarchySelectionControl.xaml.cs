@@ -8,8 +8,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Workflow.Activities;
 using static Fasetto.Word.DI;
+using static Fasetto.Word.Core.CoreDI;
 
 namespace Fasetto.Word
 {
@@ -94,8 +94,10 @@ namespace Fasetto.Word
                 //root.FHierarchyID = "NULL"; 
             }
             //}
+
             mHierarchyTree = new HierarchyTreeViewModel1(root);//root);
             PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            //ViewModelApplication.ControlParameter5 = ViewModelApplication.CurrentControlViewModel;
             //ViewModelApplication.CurrentPopupViewModel = this;
 
             DataContext = mHierarchyTree;
@@ -131,6 +133,9 @@ namespace Fasetto.Word
             {
                 ShortName = item.ShortName,
                 Description = item.Description,
+                FClientID = item.FClientID,
+
+                
 
                 KCategoryID = item.KCategoryID,
                 Children = FillRecursive(flatObjects,
@@ -287,7 +292,7 @@ namespace Fasetto.Word
         {
             // Close settings menu
             ViewModelApplication.PopupVisible = false;
-            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            ViewModelApplication.CurrentPopupContent = 0;
 
 
         }
@@ -394,14 +399,34 @@ namespace Fasetto.Word
                             }
                         }
                         ViewModelApplication.PopupVisible = false;
-                        ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+                        //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+                        ViewModelApplication.CurrentPopupContent = 0;
                     }
 
                 }
                 else
                 {
-                ViewModelApplication.PopupVisible = false;
-                ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+                    if ((string)Pgtype == "HierarchyPageViewModel")
+                        //If the control is being called from the Hierarchy Page view model (and this is a hierarchy element of type hierarchy, then return to the element editing page after selection of hierarchy type
+                    {
+                        //((HierarchyItemSelectionViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).Type).EditedKid = mDraggedItem.KCategoryID;
+                        ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).HierarchyType = mDraggedItem.ShortName;
+                        //((HierarchyItemSelectionViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).Type).ClientID = mDraggedItem.FClientID;
+                        ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).HierarchyTypeID = mDraggedItem.KCategoryID;
+                        //var TempViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+                        ViewModelApplication.CurrentControlViewModel = ViewModelApplication.ControlParameter5;
+
+                        ViewModelApplication.PopupVisible = true;
+                        //ViewModelApplication.AddElementViewModel = TempViewModel;
+                    }
+                    else
+                    { 
+                        ViewModelApplication.PopupVisible = false;
+
+                    ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+                    }
+ 
 
                 }
 

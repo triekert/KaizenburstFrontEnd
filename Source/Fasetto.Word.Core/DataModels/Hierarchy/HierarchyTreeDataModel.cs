@@ -45,6 +45,12 @@ namespace Fasetto.Word.Core
         /// </summary>
         public string ParentCategoryId { get; set; }
 
+
+        /// <summary>
+        //string representation of GUID for a specific Client
+        /// </summary>
+        public string FClientID { get; set; }
+
         /// <summary>
         //the link to tthe ICON used to depict this category
         /// </summary>

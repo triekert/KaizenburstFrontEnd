@@ -14,17 +14,20 @@ namespace Fasetto.Word
      /// </summary>
         public HierarchyElementControl()
         {
-            InitializeComponent();
+            //InitializeComponent();
 
 
             // Set data context to settings view model
-            ViewModelApplication.CurrentPopupViewModel = new HierarchyElementViewModel();
+            if (ViewModelApplication.CurrentPopupViewModel == null || ViewModelApplication.CurrentPopupViewModel.GetType().Name != "HierarchyElementViewModel")
+            {  ViewModelApplication.CurrentPopupViewModel = new HierarchyElementViewModel();}
+
+           
             //if (ViewModelApplication.AddElementViewModel == null)
             //    DataContext = new HierarchyElementViewModel();
             //else
             DataContext = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-          
 
+            InitializeComponent();
         }
         
 

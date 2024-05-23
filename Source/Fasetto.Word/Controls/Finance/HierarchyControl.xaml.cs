@@ -580,6 +580,8 @@ namespace Fasetto.Word
             mAddElementViewModel.DeleteNodeButtonText = null;
             mAddElementViewModel.CopyNodeButtonText = null;
             mAddElementViewModel.MoveNodeButtonText = null;
+            mAddElementViewModel.HierarchyType = mDraggedItem.HierarchyType;
+            mAddElementViewModel.HierarchyTypeID = mDraggedItem.HierarchyTypeID;
 
             mAddElementViewModel.HeadingText= "Add new Hierarchy Element";
             
@@ -617,7 +619,9 @@ namespace Fasetto.Word
             mAddElementViewModel.CopyNodeButtonText = null;
             mAddElementViewModel.MoveNodeButtonText = null;
             mAddElementViewModel.HeadingText = "Update Selected Element";
-
+            mAddElementViewModel.HierarchyType = mDraggedItem.HierarchyType;
+            mAddElementViewModel.HierarchyTypeID = mDraggedItem.HierarchyTypeID;
+            mAddElementViewModel.FHierarchyID = mDraggedItem.HierarchyTypeID;
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             //ViewModelApplication.CurrentPopupViewModel = null;
             //ViewModelApplication.CurrentPopupContent = PopupContent.SWBilling;
@@ -651,7 +655,10 @@ namespace Fasetto.Word
             mAddElementViewModel.MoveNodeButtonText = null;
             mAddElementViewModel.DeleteNodeButtonText = "Delete Selected Element";
             mAddElementViewModel.HeadingText = "Delete Selected Element";
-            
+            mAddElementViewModel.HierarchyType = mDraggedItem.HierarchyType;
+            mAddElementViewModel.HierarchyTypeID = mDraggedItem.HierarchyTypeID;
+            mAddElementViewModel.FHierarchyID = mDraggedItem.HierarchyTypeID;
+
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
@@ -683,8 +690,11 @@ namespace Fasetto.Word
             mAddElementViewModel.DeleteNodeButtonText = null;
             mAddElementViewModel.CopyNodeButtonText = null;
             mAddElementViewModel.EditNodeButtonText = null;
+            mAddElementViewModel.HierarchyType = mDraggedItem.HierarchyType;
+            mAddElementViewModel.HierarchyTypeID = mDraggedItem.HierarchyTypeID;
             mAddElementViewModel.HeadingText = "Move Selected Element (with descendants)";
-            
+            mAddElementViewModel.FHierarchyID = mDraggedItem.HierarchyTypeID;
+
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
@@ -716,8 +726,11 @@ namespace Fasetto.Word
             mAddElementViewModel.MoveNodeButtonText = null;
             mAddElementViewModel.CopyNodeButtonText = "Copy Selected Element";
             mAddElementViewModel.DeleteNodeButtonText = null;
+            mAddElementViewModel.HierarchyType = mDraggedItem.HierarchyType;
+            mAddElementViewModel.HierarchyTypeID = mDraggedItem.HierarchyTypeID;
             mAddElementViewModel.HeadingText = "Copy Selected Element (with descendants)";
-            
+            mAddElementViewModel.FHierarchyID = mDraggedItem.HierarchyTypeID;
+
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;

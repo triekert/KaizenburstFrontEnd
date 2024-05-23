@@ -324,6 +324,9 @@ namespace Fasetto.Word
                     Page = item.Page,
                     Root = item.Root,
                     IsMenuItem = item.IsMenuItem,
+                    HierarchyType = item.HierarchyType,
+                    HierarchyTypeID = item.HierarchyTypeID,
+                    FHierarchyID = item.FHierarchyID,
 
 
                     //To Do: make provision to add Icons to make the UI more intuitive and attractive
@@ -868,7 +871,7 @@ namespace Fasetto.Word
              foreach(var category in matches)
                 //if this is a newly added element, just update the instance
                 if (category.ShortName != (element.ShortName.EditedText ?? element.ShortName.OriginalText) || category.Description != (element.Description.EditedText ?? element.Description.OriginalText)
-                        || category.DateEffective != element.DateEffective||category.Page != element.Page|| category.Root != (element.Root.EditedText ?? element.Description.OriginalText))
+                        || category.DateEffective != element.DateEffective||category.Page != element.Page|| category.Root != (element.Root.EditedText ?? element.Description.OriginalText) || category.HierarchyTypeID != element.HierarchyTypeID)
                 { 
                     if (category.DateEffective == element.DateEffective)
                     category.KChangeID = element.KChangeID;
@@ -877,8 +880,9 @@ namespace Fasetto.Word
                     category.Description = element.Description.EditedText ?? element.Description.OriginalText;
                     category.Page = element.Page;
                     category.Root = element.Root.EditedText ?? element.Root.OriginalText;
+                    category.HierarchyTypeID = element.HierarchyTypeID;
+                    category.HierarchyType = element.HierarchyType;
                     mSearchText = category.KCategoryID;
-
                 }
                 else
                 if (!(category.ShortName == (element.ShortName.EditedText ?? element.ShortName.OriginalText) && category.Description == (element.Description.EditedText ?? element.Description.OriginalText)
@@ -902,7 +906,9 @@ namespace Fasetto.Word
                         IsUnderReview = true,
                         IsNewElement = true,
                         FHierarchyID = category.FHierarchyID,
-                        KChangeID = element.KChangeID
+                        KChangeID = element.KChangeID,
+                        HierarchyTypeID = element.HierarchyTypeID,
+                        HierarchyType = element.HierarchyType,
                     };
                     mPersist.Add(mPersistElement);
 

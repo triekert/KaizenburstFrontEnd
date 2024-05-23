@@ -221,7 +221,7 @@ namespace Fasetto.Word
             await RunCommandAsync(() => BulkReconDetailBuildIsRunning, async () =>
             {
 
-                // Store single transcient instance of client data store
+                // Store single transient instance of client data store
                 var scopedClientDataStore = ClientDataStore;
                 //
                 //return;

@@ -544,7 +544,7 @@ namespace Fasetto.Word
         ViewModelApplication.GoToPage(ApplicationPage.Chat);
         ViewModelApplication.CurrentControlViewModel = null;
         ViewModelApplication.CurrentPopupViewModel = null;
-        ViewModelApplication.CurrentPopupContent = PopupContent.AddElement; ;
+            ViewModelApplication.CurrentPopupContent = 0;
         }
 
         #endregion

@@ -147,7 +147,7 @@ namespace Fasetto.Word
         /// <summary>
         /// Make provision for a nother control parameter  for communication betwween parent and child
         /// </summary>
-        public string ControlParameter5 { get; set; }
+        public object ControlParameter5 { get; set; }
 
         #endregion
 

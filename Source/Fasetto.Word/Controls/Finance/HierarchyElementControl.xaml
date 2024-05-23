@@ -116,12 +116,22 @@
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Grid.Column="1" 
                                 >
-
                             <local:TextEntryControl DataContext="{Binding Root}" FontWeight="Bold" />
                             <!--<ListBox Width="143" d:ItemsSource="{d:SampleData ItemCount=5}"/>
 
                             <TextBlock  Text ="{Binding Root}"
                                            Padding="10 10 10 10" FontFamily="{StaticResource LatoRegular}"  Opacity="0.5"/>-->
+                        </StackPanel>
+                        <StackPanel Visibility="{Binding Page, ConverterParameter=True, Converter={local:HierarchyTypeToVisiblityConverter}}" >
+                            <StackPanel Orientation="Horizontal" Grid.Column="1" 
+                                    >
+                                <local:HierarchyItemSelectionControl DataContext="{Binding Type}" FontWeight="ExtraBlack"  />
+
+                                <!--<ListBox Width="143" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+
+                                <TextBlock  Text ="{Binding Root}"
+                                               Padding="10 10 10 10" FontFamily="{StaticResource LatoRegular}"  Opacity="0.5"/>-->
+                            </StackPanel>                         
                         </StackPanel>
                     </StackPanel>
 

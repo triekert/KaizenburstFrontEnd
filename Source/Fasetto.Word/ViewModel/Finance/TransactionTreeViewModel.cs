@@ -427,8 +427,10 @@ namespace Fasetto.Word
             // select updt
             var results =
             from t1 in UpPersist
-            from t2 in OPersist.Where(x => t1.KFinActualID == x.KFinActualID && x.KCategoryID == t1.KCategoryID)
-                            //.DefaultIfEmpty()
+            from t2 in OPersist.Where(x => t1.KFinActualID == x.KFinActualID && x.KCategoryID == t1.KCategoryID && x.KPartyID == t1.KPartyID)
+            //from t2 in OPersist.Where(x => t1.KFinActualID == x.KFinActualID && x.KCategoryID == t1.KCategoryID )
+
+                //.DefaultIfEmpty()
             select new { t1.KFinActualID, t1.ShortName };
 
            

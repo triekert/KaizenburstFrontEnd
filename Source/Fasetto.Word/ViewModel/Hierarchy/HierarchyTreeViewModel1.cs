@@ -390,6 +390,7 @@ namespace Fasetto.Word
                     Page = item.Page,
                     Root = item.Root,
                     IsMenuItem = item.IsMenuItem,
+                    FClientID = item.FClientID,
 
 
                     //To Do: make provision to add Icons to make the UI more intuitive and attractive

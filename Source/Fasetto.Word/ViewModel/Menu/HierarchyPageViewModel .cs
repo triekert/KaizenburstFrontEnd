@@ -255,6 +255,7 @@ namespace Fasetto.Word
                     mPersistElement.IsUnderReview = row.IsUnderReview;
                     mPersistElement.ParentCategoryID = "00000000-0000-0000-0000-000000000000";
                     mPersistElement.FHierarchyID = row.Root;
+                    mPersistElement.HierarchyTypeID = row.HierarchyTypeID;
                 }
                 mViewModel.mPersist.Add(mPersistElement);
 

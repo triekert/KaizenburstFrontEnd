@@ -1989,7 +1989,7 @@ namespace Fasetto.Word.Web.Server
                 var mHierarchyLink = results.FirstOrDefault().KCategoryID;
 
 
-                var para = new SqlParameter[14];
+                var para = new SqlParameter[15];
                 para[0] = new SqlParameter("@ShortName", SqlDbType.NVarChar);
                 para[1] = new SqlParameter("@Description", SqlDbType.NVarChar);
                 para[2] = new SqlParameter("@kCategoryID", SqlDbType.UniqueIdentifier);
@@ -2004,13 +2004,14 @@ namespace Fasetto.Word.Web.Server
                 para[11] = new SqlParameter("@Root", SqlDbType.NVarChar);
                 para[12] = new SqlParameter("@isMenuItem", SqlDbType.Bit);
                 para[13] = new SqlParameter("@fHierarchyID", SqlDbType.UniqueIdentifier);
+                para[14] = new SqlParameter("@HierarchyTypeID", SqlDbType.UniqueIdentifier);
 
 
                 //var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (ShortName,Description,kCategoryID,ParentCategoryID,fIconID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement)" +// ) " +
                 //    "VALUES (@ShortName,@Description,@kCategoryID,@ParentCategoryID,@fIconID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement)";//)";
-                var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (fHierarchyID,ShortName,Description,kCategoryID,ParentCategoryID,fIconID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement,Page,Root,isMenuItem)" +// ) " +
+                var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (fHierarchyID,ShortName,Description,kCategoryID,ParentCategoryID,fIconID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement,Page,Root,isMenuItem,fHierarchyTypeID)" +// ) " +
 
-                    "VALUES (@fHierarchyID,@ShortName,@Description,@kCategoryID,@ParentCategoryID,@fIconID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement,@Page,@Root,@isMenuItem)";//)";
+                    "VALUES (@fHierarchyID,@ShortName,@Description,@kCategoryID,@ParentCategoryID,@fIconID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement,@Page,@Root,@isMenuItem,@HierarchyTypeID)";//)";
                 //If elements are to be added, insert into backend
                 results = mPersist.Where(x => x.IsNewElement == true).OrderBy(x => x.ShortName).ToList();//
                 if (results.Count >0)
@@ -2057,7 +2058,14 @@ namespace Fasetto.Word.Web.Server
 
                         para[12].Value = row.IsMenuItem;
                         para[13].Value = new Guid(row.FHierarchyID);
-                        try
+                        if (row.HierarchyTypeID != null && row.HierarchyTypeID != "")
+                        {
+                            para[14].Value = new Guid(row.HierarchyTypeID);
+                        }
+                        else
+                            //para[14].Value = new Guid();
+                            para[14].Value = DBNull.Value;
+                    try
                         {
                             // Try and run the task
                             _ = await ExecuteAsync(SqlString, para);
@@ -2077,7 +2085,7 @@ namespace Fasetto.Word.Web.Server
 
                 SqlString = "UPDATE [Admin].[HierarchyGeneric] SET ShortName = @ShortName,Description = @Description,kCategoryID = @kCategoryID," +
                     "ParentCategoryID = @ParentCategoryID,fIconID = @fIconID,DateEffective = @DateEffective,DateDiscontinued = @DateDiscontinued,fChangeID = @fChangeID," +
-                    "isUnderReview = @isUnderReview,isNewElement = @isNewElement,Page = @Page,Root = @Root,isMenuItem =@isMenuItem WHERE kCategoryID = @kCategoryID AND DateEffective = @DateEffective"; 
+                    "isUnderReview = @isUnderReview,isNewElement = @isNewElement,Page = @Page,Root = @Root,isMenuItem =@isMenuItem, fHierarchyTypeID = @HierarchyTypeID WHERE kCategoryID = @kCategoryID AND DateEffective = @DateEffective"; 
 
                 //If elements are to be updated, insert into backend
                 results = mPersist.Where(x => x.IsNewElement != true && x.IsUnderReview == true).OrderBy(x => x.ShortName).ToList();//
@@ -2125,7 +2133,13 @@ namespace Fasetto.Word.Web.Server
                         { para[11].Value = row.Root; }
                         para[12].Value = row.IsMenuItem;
                         para[13].Value = new Guid(row.FHierarchyID);
-                        try
+                        if (row.HierarchyTypeID != null && row.HierarchyTypeID != "")
+                        { para[14].Value = new Guid(row.HierarchyTypeID);
+                        }
+                        else
+                            //para[14].Value = new Guid();
+                            para[14].Value = new Guid("00000000-0000-0000-0000-000000000000");
+                    try
                     
                         {
                             // Try and run the task

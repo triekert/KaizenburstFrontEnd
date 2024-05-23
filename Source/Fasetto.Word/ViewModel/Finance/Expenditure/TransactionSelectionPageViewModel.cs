@@ -426,6 +426,7 @@ namespace Fasetto.Word
         public void Reconcile()
         {
             ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            //ViewModelApplication.CurrentPopupContent = 0;
             //To do: Lookup to be user rights and available options driven
             //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
             if (ViewModelApplication.CurrentControlViewModel ==null)
@@ -438,8 +439,8 @@ namespace Fasetto.Word
             if (Test3 == null)
             {
                 System.Windows.MessageBox.Show(
-                    "No cost structures has been selected",
-                    "for the selected Client",
+                    "No cost structure has been selected",
+                    "for Managing the Transactionst",
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
 
@@ -618,7 +619,8 @@ namespace Fasetto.Word
 
             ViewModelApplication.CurrentControlViewModel = null;
             ViewModelApplication.CurrentPopupViewModel = null;
-            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement; ;
+            ViewModelApplication.CurrentPopupContent = 0; 
+            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement; ;
             ViewModelApplication.GoToPage(ApplicationPage.Chat);}
 
         //#endregion

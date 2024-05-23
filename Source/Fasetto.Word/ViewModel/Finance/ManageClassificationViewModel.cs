@@ -278,6 +278,7 @@ namespace Fasetto.Word
 
             TransactionDetail = selected.Description;
 
+            HeadingText = "Manage classification of selected Transaction";
 
             // Create commands
             CloseCommand = new RelayCommand(Close);

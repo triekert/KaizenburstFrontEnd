@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
 namespace Fasetto.Word
@@ -33,6 +34,11 @@ namespace Fasetto.Word
         /// Page modifier linked to  menu item - in the case of Hierarchies, this is the 
         /// </summary>
         public TextEntryViewModel Root { get; set; }
+
+        /// <summary>
+        /// The Cost category to be used for the allocation
+        /// </summary>
+        public HierarchyItemSelectionViewModel Type { get; set; }
         /// <summary>
         /// Property to indicate whether this element is a Menu Item or not..
         /// </summary>
@@ -51,6 +57,11 @@ namespace Fasetto.Word
         /// Parent ShortName of hierarchy item
         /// </summary>
         public string ParentShortName { get; set; }
+
+        /// <summary>
+        /// Parent ID  of hierarchy item
+        /// </summary>
+        public string FHierarchyID { get; set; }
 
         /// <summary>
         /// Parent ID  of hierarchy item
@@ -115,7 +126,7 @@ namespace Fasetto.Word
             /// </summary>
             public bool FirstNameIsSaving { get; set; }
 
-            /// <summary>
+            /// <summary>a
             /// Indicates if the last name is current being saved
             /// </summary>
             public bool LastNameIsSaving { get; set; }
@@ -145,7 +156,16 @@ namespace Fasetto.Word
             /// </summary>
             public bool LoggingOut { get; set; }
 
-            #endregion
+        /// <summary>
+        /// True to show the attachment menu, false to hide it
+        /// </summary>
+        public bool SetHierarchyCompleted { get; set; }
+
+        /// <summary>
+        /// Indicates if the Cost Hierarchy Search is currently being loaded
+        /// </summary>
+        public bool CostClassificationIsSaving { get; set; }
+        #endregion
 
         #endregion
 
@@ -209,7 +229,7 @@ namespace Fasetto.Word
             // Create Node Description
             Root = new TextEntryViewModel
             {
-                Label = "Page Modifer",
+                Label = "Page Modifier",
             OriginalText = mLoadingText,
                 //CommitAction = SaveLastNameAsync
             };
@@ -223,9 +243,33 @@ namespace Fasetto.Word
             // Heading to be displayed on control
             HeadingText = "Add Node to Hierarchy";
 
+            Type = new HierarchyItemSelectionViewModel
+            {
+                Label = "Select Hierarchy Type",
+                //EditedName = mLoadingText,
+                //,
+                EditedName = "Selected Hierarchy Type",
+                OriginalName = HierarchyType,
+                OriginalKid = HierarchyTypeID,
+                EditedKid = null,
+                ClientID = "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                HierarchyID = "3EA9BAD4-3638-4726-867F-79675FE28F1D",
+                //    //HierarchyTypeID = "64413ae7-822f-4866-9ebe-433083d699ac",
+                RootID = "3EA9BAD4-3638-4726-867F-79675FE28F1D",
+                PrepareAction = SetHierarchyTypeSelectionAsync,
+                //PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
+                Level = 1,
+
+
+                //    //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+
+                CommitAction = AddClassificationAsync
+            };
+
 
 
             // Create commands
+
             CloseCommand = new RelayCommand(Close);
             AddNodeCommand = new RelayCommand(AddNode);
             EditNodeCommand = new RelayCommand(EditNode);
@@ -385,6 +429,42 @@ namespace Fasetto.Word
         //    });
         //}
 
+        public async Task<bool> SetHierarchyTypeSelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the Party value on the server...
+                ViewModelApplication.ControlParameter5 = ViewModelApplication.CurrentControlViewModel;
+                ViewModelApplication.CurrentControlViewModel = ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).Type;
+                //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
+                return true;
+            });
+
+        }
+
+        /// <summary>
+        /// Initialises the Cost Hierarchy Search
+        /// </summary>
+        /// <returns>Returns true if successful, false otherwise</returns>
+        public async Task<bool> AddClassificationAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+
+            return await RunCommandAsync(() => CostClassificationIsSaving, async () =>
+            {
+
+                ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                //((ManageClassificationViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
+                //{
+                //    MSelectedCostHierarchy = new CostHierarchyViewModel()
+                //};
+                //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                return true;
+            });
+        }
 
         #endregion
 
