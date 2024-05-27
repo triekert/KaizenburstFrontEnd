@@ -95,34 +95,18 @@ namespace Fasetto.Word
             var TransactionDetailRec = row.DataContext as TransactionDetailViewModel;
             //MessageBox.Show($"The timeslot selected is {TransactionDetailRec.TimeStart}") ;
         }
-
+        /// <summary>
+        /// pressing 'Enter' on row of DataGrid object will 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DataGridRow_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-  
-                ViewModelApplication.PopupVisible = false;
-                var MSelected = (TransactionViewModel)TransactionDetail.SelectedItem;
-                var RawTable = TransactionDetail.Items.SourceCollection;
-                var tempTDList = new ObservableCollection<TransactionViewModel>();
-                foreach (var tBR in RawTable)
-                    tempTDList.Add((TransactionViewModel)tBR);
+                NavigateOn();
 
-                //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-
-                ViewModelApplication.CurrentPopupViewModel = new ManageClassificationViewModel(tempTDList, MSelected);
-                ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
-                ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
-                ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
-                //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
-                //var mCurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
-                ////New popup is only activated if name differs from current popup (irrespective of view model content)
-                //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-                //ViewModelApplication.CurrentPopupViewModel =  mCurrentPopupViewModel;
-                //ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
-                ViewModelApplication.PopupVisible = true;
-
-                //var Trans = ((TransactionTreeViewModel)PriorPopup).Trans_action;
+                ////var Trans = ((TransactionTreeViewModel)PriorPopup).Trans_action;
 
             }
         }
@@ -204,7 +188,40 @@ namespace Fasetto.Word
 
 
 
-  
+
+
+        /// <summary>
+        /// when called, this method will determine whether more detail is available for further selection and will either
+        /// pass control to the Manage Classification window directly or first display transaction detail allocations made
+        /// 
+        /// </summary>
+
+        private void NavigateOn()
+        {
+
+            ViewModelApplication.PopupVisible = false;
+            var MSelected = (TransactionViewModel)TransactionDetail.SelectedItem;
+            var RawTable = TransactionDetail.Items.SourceCollection;
+            var tempTDList = new ObservableCollection<TransactionViewModel>();
+            foreach (var tBR in RawTable)
+                tempTDList.Add((TransactionViewModel)tBR);
+
+            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+
+            ViewModelApplication.CurrentPopupViewModel = new ManageClassificationViewModel(tempTDList, MSelected);
+            
+            //ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+            ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+            //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+            //var mCurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            ////New popup is only activated if name differs from current popup (irrespective of view model content)
+            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            //ViewModelApplication.CurrentPopupViewModel =  mCurrentPopupViewModel;
+            //ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+            ViewModelApplication.PopupVisible = true;
+
+        }
 
 
 
@@ -214,13 +231,11 @@ namespace Fasetto.Word
 
 
 
-    
 
 
 
 
 
-       
 
 
 

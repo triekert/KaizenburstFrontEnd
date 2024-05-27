@@ -29,6 +29,11 @@ namespace Fasetto.Word
         /// </summary>
         public object PriorPopupViewModel { get; set; }
 
+        /// <summary>
+        /// Store View Model of current popup to allow reverse navigation
+        /// </summary>
+        public ParameterHierarchyItemSelectApiModel  root { get; set; }       
+        
         #endregion//Public Properties
 
         #region Public Commands
@@ -62,23 +67,26 @@ namespace Fasetto.Word
 
             //Set the root of the hierarchy to return the Menu structure
             //var root = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
-            //Use the rootof Clients
-            var root = new ParameterHierarchyItemSelectApiModel();
+            //Use the root of Clients
+            root = new ParameterHierarchyItemSelectApiModel();
 
+
+            //first check whether selection view model has already been populated for the relevant lookup
             //if ((ViewModelApplication.CurrentControlViewModel).GetType().Name == "HierarchyItemSelectionViewModel")
             //{ 
-                if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Client")
-                {
-                    root.FHierarchyID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid ;
-                    root.RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid ;
+
+            switch (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label)
+            {
+                case "Select Client":
+                    root.FHierarchyID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid;
+                    root.RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid;
                     root.ClientID = "4766E825-1B58-410D-B06B-5A2639CA22C8";
                     root.Level = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Level;
                     //root.ClientID = "NULL";
                     //root.HierarchyTypeID = "NULL"; 
-                }
-                else
-                { 
-                    if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID==null)
+                    break;
+                default:
+                    if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID == null)
                     {
                         MessageBox.Show($"First select a valid Client to proceed...");
                         Close();
@@ -90,16 +98,81 @@ namespace Fasetto.Word
                     root.FHierarchyID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).HierarchyID;
                     root.Level = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Level;
                     root.RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).RootID;
-                //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid = "00000000-0000-0000-0000-000000000000";
-                //root.FHierarchyID = "NULL"; 
+                    //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid = "00000000-0000-0000-0000-000000000000";
+                    //root.FHierarchyID = "NULL"; 
+
+                    break;
             }
             //}
+            switch (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label)
+            {
+                case "Select Client":
+                    mHierarchyTree = new HierarchyTreeViewModel1(root);//root);
+                    break;
 
-            mHierarchyTree = new HierarchyTreeViewModel1(root);//root);
-            PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                case "Select Cost Category":
+                    if (
+                        (ViewModelApplication.ControlPopupCostCategory != null)
+                         &&
+                         ((ParameterHierarchyItemSelectApiModel)((HierarchyTreeViewModel1)ViewModelApplication.ControlPopupCostCategory).mHierarchy).ClientID == root.ClientID
+                         &&
+                         ((ParameterHierarchyItemSelectApiModel)((HierarchyTreeViewModel1)ViewModelApplication.ControlPopupCostCategory).mHierarchy).HierarchyTypeID == root.HierarchyTypeID
+                         )
+                    {
+                        mHierarchyTree = (HierarchyTreeViewModel1)ViewModelApplication.ControlPopupCostCategory;
+                    }
+                    else
+
+                        mHierarchyTree = new HierarchyTreeViewModel1(root);
+                    ViewModelApplication.ControlPopupCostCategory = mHierarchyTree;
+                    break;
+
+                case "Select Linked Party":
+                    if (
+                        (ViewModelApplication.ControlPopupParty != null)
+                         &&
+                         ((ParameterHierarchyItemSelectApiModel)((HierarchyTreeViewModel1)ViewModelApplication.ControlPopupParty).mHierarchy).ClientID == root.ClientID
+                         &&
+                         ((ParameterHierarchyItemSelectApiModel)((HierarchyTreeViewModel1)ViewModelApplication.ControlPopupParty).mHierarchy).HierarchyTypeID == root.HierarchyTypeID
+                         )
+                    {
+                        mHierarchyTree = (HierarchyTreeViewModel1)ViewModelApplication.ControlPopupParty;
+                    }
+                    else
+
+                        mHierarchyTree = new HierarchyTreeViewModel1(root);
+                    ViewModelApplication.ControlPopupParty = mHierarchyTree;
+                    break;
+
+                case "Select Cost Hierarchy":
+                    if (
+                        (ViewModelApplication.ControlPopupCostHierarchy != null)
+                         &&
+                         ((ParameterHierarchyItemSelectApiModel)((HierarchyTreeViewModel1)ViewModelApplication.ControlPopupCostHierarchy).mHierarchy).ClientID == root.ClientID 
+                         &&
+                         ((ParameterHierarchyItemSelectApiModel)((HierarchyTreeViewModel1)ViewModelApplication.ControlPopupCostHierarchy).mHierarchy).HierarchyTypeID  == root.HierarchyTypeID                   
+                         )
+                    {
+                        mHierarchyTree = (HierarchyTreeViewModel1)ViewModelApplication.ControlPopupCostHierarchy; 
+                    }
+                    else
+
+                        mHierarchyTree = new HierarchyTreeViewModel1(root);
+                        ViewModelApplication.ControlPopupCostHierarchy = mHierarchyTree;
+                    break;
+
+                default:
+                    mHierarchyTree = new HierarchyTreeViewModel1(root);//root);
+                    break;
+            }
+
+
+
+
+
             //ViewModelApplication.ControlParameter5 = ViewModelApplication.CurrentControlViewModel;
             //ViewModelApplication.CurrentPopupViewModel = this;
-
+            PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
             DataContext = mHierarchyTree;
             InitializeComponent();
             //mTimer = DateTime.Now;

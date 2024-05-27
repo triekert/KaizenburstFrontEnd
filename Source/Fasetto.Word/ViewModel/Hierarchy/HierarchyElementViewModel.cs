@@ -64,7 +64,7 @@ namespace Fasetto.Word
         public string FHierarchyID { get; set; }
 
         /// <summary>
-        /// Parent ID  of hierarchy item
+        /// ID  of hierarchy Type
         /// </summary>
         public string HierarchyTypeID { get; set; }
 
@@ -72,6 +72,13 @@ namespace Fasetto.Word
         /// Parent ShortName of hierarchy item
         /// </summary>
         public string HierarchyType { get; set; }
+
+
+        /// <summary>
+        /// ID  of Client
+        /// </summary>
+        public string FClientID { get; set; }
+
 
         /// <summary>
         /// Calendar date from which Element is seen as active

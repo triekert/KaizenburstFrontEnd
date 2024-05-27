@@ -1793,7 +1793,7 @@ namespace Fasetto.Word.Web.Server
                 #region sql query
                 var SqlString = "SELECT  c.[ShortName],coalesce(c.[Description],'') Description,coalesce(convert(nvarchar(50),c.[KCategoryID]),'') KCategoryID, coalesce(convert(nvarchar(50),c.[ParentCategoryID]),'') ParentCategoryID," +
                     "coalesce(convert(nvarchar(50),c.[fIconID]),'') Icon,coalesce(c.DateEffective,convert(datetime,'1753/1/1'))DateEffective,coalesce(c.DateDiscontinued,convert(datetime,'9999/12/31'))DateDiscontinued,coalesce(convert(nvarchar(50),c.[fChangeID]),'') fChangeID,c.[isUnderReview],c.[isNewElement]," +
-                    "coalesce(c.[Page],'') Page, coalesce(c.[Root],'') Root,p.[isMenuItem],coalesce(convert(nvarchar(50),t.[KCategoryID]),'') FHierarchyTypeID,coalesce(t.ShortName,'') HierarchyType FROM [Admin].[HierarchyGeneric] c LEFT OUTER JOIN  [Admin].[HierarchyGeneric] p on p.kCategoryID = c.ParentCategoryID AND p.fHierarchyID = c.fHierarchyID  " +
+                    "coalesce(c.[Page],'') Page, coalesce(c.[Root],'') Root,p.[isMenuItem],coalesce(convert(nvarchar(50),t.[KCategoryID]),'') FHierarchyTypeID,coalesce(t.ShortName,'') HierarchyType, coalesce(convert(nvarchar(50),c.[FClientID]),'') FClientID FROM [Admin].[HierarchyGeneric] c LEFT OUTER JOIN  [Admin].[HierarchyGeneric] p on p.kCategoryID = c.ParentCategoryID AND p.fHierarchyID = c.fHierarchyID  " +
                     "LEFT OUTER JOIN[Admin].[HierarchyGeneric] t on t.kCategoryID = c.fHierarchyTypeID WHERE c.fHierarchyID = " +
                     "'" + model + "'";
                     ;// " + model;
@@ -1826,6 +1826,7 @@ namespace Fasetto.Word.Web.Server
                             IsMenuItem = (row[12] != DBNull.Value) ? (bool)row[12] : false,
                             HierarchyTypeID = (string)row[13],
                             HierarchyType = (string)row[14],
+                            FClientID = (string)row[15],
                         };
                         var mShortName = u.ShortName;
                         results.Add(u);
@@ -1989,7 +1990,7 @@ namespace Fasetto.Word.Web.Server
                 var mHierarchyLink = results.FirstOrDefault().KCategoryID;
 
 
-                var para = new SqlParameter[15];
+                var para = new SqlParameter[16];
                 para[0] = new SqlParameter("@ShortName", SqlDbType.NVarChar);
                 para[1] = new SqlParameter("@Description", SqlDbType.NVarChar);
                 para[2] = new SqlParameter("@kCategoryID", SqlDbType.UniqueIdentifier);
@@ -2005,13 +2006,14 @@ namespace Fasetto.Word.Web.Server
                 para[12] = new SqlParameter("@isMenuItem", SqlDbType.Bit);
                 para[13] = new SqlParameter("@fHierarchyID", SqlDbType.UniqueIdentifier);
                 para[14] = new SqlParameter("@HierarchyTypeID", SqlDbType.UniqueIdentifier);
+                para[15] = new SqlParameter("@ClientID", SqlDbType.UniqueIdentifier);
 
 
                 //var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (ShortName,Description,kCategoryID,ParentCategoryID,fIconID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement)" +// ) " +
                 //    "VALUES (@ShortName,@Description,@kCategoryID,@ParentCategoryID,@fIconID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement)";//)";
-                var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (fHierarchyID,ShortName,Description,kCategoryID,ParentCategoryID,fIconID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement,Page,Root,isMenuItem,fHierarchyTypeID)" +// ) " +
+                var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (fHierarchyID,ShortName,Description,kCategoryID,ParentCategoryID,fIconID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement,Page,Root,isMenuItem,fHierarchyTypeID,fClientID)" +// ) " +
 
-                    "VALUES (@fHierarchyID,@ShortName,@Description,@kCategoryID,@ParentCategoryID,@fIconID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement,@Page,@Root,@isMenuItem,@HierarchyTypeID)";//)";
+                    "VALUES (@fHierarchyID,@ShortName,@Description,@kCategoryID,@ParentCategoryID,@fIconID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement,@Page,@Root,@isMenuItem,@HierarchyTypeID,@ClientID)";//)";
                 //If elements are to be added, insert into backend
                 results = mPersist.Where(x => x.IsNewElement == true).OrderBy(x => x.ShortName).ToList();//
                 if (results.Count >0)
@@ -2065,6 +2067,13 @@ namespace Fasetto.Word.Web.Server
                         else
                             //para[14].Value = new Guid();
                             para[14].Value = DBNull.Value;
+                        if (row.FClientID != null && row.FClientID != "")
+                        {
+                            para[15].Value = new Guid(row.FClientID);
+                        }
+                        else
+                        //para[14].Value = new Guid();
+                        para[15].Value = DBNull.Value;
                     try
                         {
                             // Try and run the task

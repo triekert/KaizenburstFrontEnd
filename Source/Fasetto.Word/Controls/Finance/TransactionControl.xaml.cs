@@ -87,6 +87,7 @@ namespace Fasetto.Word
         {
             var row = sender as DataGridRow;
             var TransactionRec = row.DataContext as TransactionViewModel;
+            NavigateOn();
             //MessageBox.Show($"The timeslot selected is {TransactionRec.TimeSlotStart}", $"The timeslot selected is {TransactionRec.TimeSlotStart}");
         }
 
@@ -94,34 +95,50 @@ namespace Fasetto.Word
         {
             if (e.Key == Key.Enter)
             {
+
+                NavigateOn();
                 //_ = (TransactionViewModel)(Transaction.SelectedItems).OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault()).TimeSlotStart;
                 //ViewModelApplication.PopupVisible = false;
                 //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-                var MKFinTranID= ((TransactionViewModel)Transaction.SelectedItem).KFinTranID;
-                var RawTable = Transaction.Items;
+                //var MKFinTranID = ((TransactionViewModel)Transaction.SelectedItem).KFinTranID;
+                //var RawTable = Transaction.Items;
 
-                //var tempst = cellInfos[0].Column.Header;
-                //var tempBR = new ObservableCollection<TransactionViewModel>();
-                //
-                //    //foreach (var tBR in Transaction.SelectedItems)
-                //    tempBR.Add((TransactionViewModel)tBR.Item);
-
-
-                //var tempT = new ObservableCollection<TransactionViewModel>();
-                //var tempT = new TransactionViewModel();
-
-                ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(MKFinTranID);
-                ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Allocation " ;
-
-                //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
-                ViewModelApplication.PopupVisible = false;
-                //ViewModelApplication.CurrentPopupContent = Null;
-                ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
-                ViewModelApplication.PopupVisible = true;
+                ////var tempst = cellInfos[0].Column.Header;
+                ////var tempBR = new ObservableCollection<TransactionViewModel>();
+                ////
+                ////    //foreach (var tBR in Transaction.SelectedItems)
+                ////    tempBR.Add((TransactionViewModel)tBR.Item);
 
 
+                ////var tempT = new ObservableCollection<TransactionViewModel>();
+                ////var tempT = new TransactionViewModel();
 
-            }
+                //ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(MKFinTranID);
+                //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Allocation ";
+
+                ////If only one allocation linked to the Transaction, bypass the 'detail' window...
+
+                //if (((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransactionDetail.Count > 1)
+                //{                 //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+                //    ViewModelApplication.PopupVisible = false;
+                //    //ViewModelApplication.CurrentPopupContent = Null;
+                //    ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+                //    ViewModelApplication.PopupVisible = true;
+                //}
+                //else
+                //{            //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+                //    ViewModelApplication.PopupVisible = false;
+                //    //ViewModelApplication.CurrentPopupContent = Null;
+                //    ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+                //    ViewModelApplication.PopupVisible = true;
+
+                    //}
+
+
+
+
+
+                }
         }
         private void DataGridRow_MouseRightClick(object sender, MouseButtonEventArgs e)
         {
@@ -132,6 +149,79 @@ namespace Fasetto.Word
             //var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
             //var mTimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart.AddMinutes(30);
             //MessageBox.Show($" timeslot ends at {mTimeEnd}", $" The timeslot selected starts at {mTimeStart}");
+        }
+
+
+        /// when called, this method will determine whether more detail is available for further selection and will either
+        /// pass control to the Manage Classification window directly or first display transaction detail allocations made
+        /// 
+        /// </summary>
+
+        private void NavigateOn()
+        {
+
+                var MKFinTranID = ((TransactionViewModel)Transaction.SelectedItem).KFinTranID;
+                var RawTable = Transaction.Items;
+
+                ViewModelApplication.PopupVisible = false;
+            ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(MKFinTranID);
+            ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Allocation ";
+
+            //If only one allocation linked to the Transaction, bypass the 'detail' window...
+
+            if (((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransactionDetail.Count > 1)
+            {                 //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+                ViewModelApplication.PopupVisible = false;
+                //ViewModelApplication.CurrentPopupContent = Null;
+                ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+                ViewModelApplication.PopupVisible = true;
+            }
+            else
+            {            //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+                ViewModelApplication.PopupVisible = false;
+                //ViewModelApplication.CurrentPopupContent = Null;
+                ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+
+                var MSelected = new TransactionViewModel();
+
+                var TransactionDetail = new ObservableCollection<TransactionViewModel>();
+                //(TransactionViewModel)(TransactionDetail.SelectedItem;
+                var matches = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).Trans_action.Where(x => x.KFinTranID == MKFinTranID).ToList();
+
+                foreach (var item in matches)
+                {
+
+                    var mTDVM = new TransactionViewModel
+
+                    {
+                        Posted_Date = item.Posted_Date,
+                        Month = item.Month,
+                        Description = item.Description,
+                        TransAmount = item.TransAmount,
+                        ActualAmount = item.ActualAmount,
+                        ShortName = item.ShortName,
+                        KCategoryID = item.KCategoryID,
+                        KFinActualID = item.KFinActualID,
+                        KFinTranID = item.KFinTranID,
+                        KPartyName = item.KPartyName,
+                        KPartyID = item.KPartyID,
+                    };
+                    TransactionDetail.Add(mTDVM);
+                }
+
+
+                //var RawTable = ((ObservableCollection<TransactionViewModel>)((TransactionDetailTreeViewModel)(ViewModelApplication.CurrentPopupViewModel)).TransactionDetail).Items;
+                var tempTDList = new ObservableCollection<TransactionViewModel>();
+                foreach (var tBR in RawTable)
+                    tempTDList.Add((TransactionViewModel)tBR);
+                ViewModelApplication.CurrentPopupViewModel = new ManageClassificationViewModel(TransactionDetail, TransactionDetail[0]);
+
+                //ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+                ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                ViewModelApplication.PopupVisible = true;
+
+            }
         }
     }
 }

@@ -558,15 +558,16 @@ namespace Fasetto.Word
             var mPage = "";
             if (results.Count > 0)
              mPage = results.FirstOrDefault().Page;
+            var ParentNodeClient = results.FirstOrDefault().FClientID;
             var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mAddElementViewModel.ShortName.OriginalText = "New Element Name";
             mAddElementViewModel.Description.OriginalText = "Description of New Element";
             mAddElementViewModel.ShortName.EditedText = "New Element Name";
             mAddElementViewModel.Description.EditedText = "Description of New Element";
-            if (mPage == "Hierarchy")
-                mAddElementViewModel.Page = mPage;
-            else
-                mAddElementViewModel.Page = "";
+            //if (mPage == "Hierarchy")
+            //    mAddElementViewModel.Page = mPage;
+            //else
+            mAddElementViewModel.Page = "";
             mAddElementViewModel.Root.OriginalText = "Element Root";
             mAddElementViewModel.Root.EditedText = "Element Root";
             mAddElementViewModel.IsMenuItem = mDraggedItem.IsMenuItem;
@@ -582,7 +583,9 @@ namespace Fasetto.Word
             mAddElementViewModel.MoveNodeButtonText = null;
             mAddElementViewModel.HierarchyType = mDraggedItem.HierarchyType;
             mAddElementViewModel.HierarchyTypeID = mDraggedItem.HierarchyTypeID;
-
+            mAddElementViewModel.Type.OriginalKid = mDraggedItem.HierarchyTypeID;
+            mAddElementViewModel.Type.OriginalName = mDraggedItem.HierarchyType;
+            mAddElementViewModel.FClientID = ParentNodeClient;
             mAddElementViewModel.HeadingText= "Add new Hierarchy Element";
             
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
@@ -622,6 +625,10 @@ namespace Fasetto.Word
             mAddElementViewModel.HierarchyType = mDraggedItem.HierarchyType;
             mAddElementViewModel.HierarchyTypeID = mDraggedItem.HierarchyTypeID;
             mAddElementViewModel.FHierarchyID = mDraggedItem.HierarchyTypeID;
+            mAddElementViewModel.Type.OriginalKid = mDraggedItem.HierarchyTypeID;
+            mAddElementViewModel.Type.OriginalName = mDraggedItem.HierarchyType;
+            mAddElementViewModel.Type.EditedKid = mDraggedItem.HierarchyTypeID;
+            mAddElementViewModel.Type.EditedName = mDraggedItem.HierarchyType;
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             //ViewModelApplication.CurrentPopupViewModel = null;
             //ViewModelApplication.CurrentPopupContent = PopupContent.SWBilling;
@@ -658,6 +665,9 @@ namespace Fasetto.Word
             mAddElementViewModel.HierarchyType = mDraggedItem.HierarchyType;
             mAddElementViewModel.HierarchyTypeID = mDraggedItem.HierarchyTypeID;
             mAddElementViewModel.FHierarchyID = mDraggedItem.HierarchyTypeID;
+            mAddElementViewModel.Type.OriginalKid = mDraggedItem.HierarchyTypeID;
+            mAddElementViewModel.Type.OriginalName = mDraggedItem.HierarchyType;
+
 
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
@@ -694,6 +704,8 @@ namespace Fasetto.Word
             mAddElementViewModel.HierarchyTypeID = mDraggedItem.HierarchyTypeID;
             mAddElementViewModel.HeadingText = "Move Selected Element (with descendants)";
             mAddElementViewModel.FHierarchyID = mDraggedItem.HierarchyTypeID;
+            mAddElementViewModel.Type.OriginalKid = mDraggedItem.HierarchyTypeID;
+            mAddElementViewModel.Type.OriginalName = mDraggedItem.HierarchyType;
 
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
@@ -730,6 +742,8 @@ namespace Fasetto.Word
             mAddElementViewModel.HierarchyTypeID = mDraggedItem.HierarchyTypeID;
             mAddElementViewModel.HeadingText = "Copy Selected Element (with descendants)";
             mAddElementViewModel.FHierarchyID = mDraggedItem.HierarchyTypeID;
+            mAddElementViewModel.Type.OriginalKid = mDraggedItem.HierarchyTypeID;
+            mAddElementViewModel.Type.OriginalName = mDraggedItem.HierarchyType;
 
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;

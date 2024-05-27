@@ -145,10 +145,24 @@ namespace Fasetto.Word
         public string ControlParameter4 { get; set; }
 
         /// <summary>
-        /// Make provision for a nother control parameter  for communication betwween parent and child
+        /// Make provision for another control parameter  for communication betwween parent and child
         /// </summary>
         public object ControlParameter5 { get; set; }
 
+        /// <summary>
+        /// Persistence of view model for CostHierarchy lookup
+        /// </summary>
+        public object ControlPopupCostHierarchy { get; set; }
+
+        /// <summary>
+        /// Persistence of view model for CostHierarchy lookup
+        /// </summary>
+        public object ControlPopupCostCategory { get; set; }
+
+        /// <summary>
+        /// Persistence of view model for Party lookup
+        /// </summary>
+        public object ControlPopupParty { get; set; }
         #endregion
 
         #region Public Commands

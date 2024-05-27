@@ -327,6 +327,7 @@ namespace Fasetto.Word
                     HierarchyType = item.HierarchyType,
                     HierarchyTypeID = item.HierarchyTypeID,
                     FHierarchyID = item.FHierarchyID,
+                    FClientID = item.FClientID,
 
 
                     //To Do: make provision to add Icons to make the UI more intuitive and attractive
@@ -843,6 +844,7 @@ namespace Fasetto.Word
                 IsNewElement= true,
                 Page = element.Page,
                 FHierarchyID = mTableName,
+                FClientID = element.FClientID,
                 //Create new root element if not already existing
                 Root = mRoot
             };

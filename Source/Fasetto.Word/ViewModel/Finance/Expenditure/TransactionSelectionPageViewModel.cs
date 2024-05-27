@@ -440,7 +440,7 @@ namespace Fasetto.Word
             {
                 System.Windows.MessageBox.Show(
                     "No cost structure has been selected",
-                    "for Managing the Transactionst",
+                    "for Managing the Transactions",
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
 
@@ -468,7 +468,7 @@ namespace Fasetto.Word
                 TimeEnd.EditedDateTime);
             ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail: " + ShortName;
             //force a reload of the BulkRecon Control
-            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            ViewModelApplication.CurrentPopupContent = 0;
             ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;
 
             ViewModelApplication.PopupVisible = true;

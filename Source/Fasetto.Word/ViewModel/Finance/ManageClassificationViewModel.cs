@@ -1,6 +1,5 @@
 ﻿using Dna;
 using Fasetto.Word.Core;
-using Microsoft.Extensions.FileSystemGlobbing;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -330,9 +329,20 @@ namespace Fasetto.Word
             //
 
             ViewModelApplication.CurrentPopupViewModel = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
-            ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
-            ViewModelApplication.ControlParameter1 = null;
-            //ViewModelApplication.PopupVisible = false;
+            var mKFinTranID = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransactionDetail[0].KFinTranID;
+            var matches = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).Trans_action.Where(x => x.KFinTranID == mKFinTranID).ToList();
+            var Cnt = matches.Count;
+                    ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+                    ViewModelApplication.ControlParameter1 = null;
+            if (Cnt ==1)
+            {             
+
+                    ViewModelApplication.CurrentPopupViewModel = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+                ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;
+            }
+
+
+            ViewModelApplication.PopupVisible = true;
 
 
         }
@@ -343,7 +353,7 @@ namespace Fasetto.Word
 
             return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
             {
-                // Update the Category Classificaion value on the server...
+                // Update the Category Classification value on the server...
 
                 ViewModelApplication.CurrentControlViewModel = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category;
                 //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category;
