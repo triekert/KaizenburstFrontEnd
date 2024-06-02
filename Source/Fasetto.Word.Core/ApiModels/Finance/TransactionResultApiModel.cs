@@ -125,6 +125,17 @@ namespace Fasetto.Word.Core
         /// </summary>
         public string KChangeID { get; set; }
 
+        /// <summary>
+        /// Flag to indicate the transaction classification has changed
+        /// </summary>
+        public bool IsChanged { get; set; }
+
+        /// <summary>
+        /// String representation of GUID for originating transaction
+        /// </summary>
+
+        public string FCatSrchID { get; set; }
+
 
 
 

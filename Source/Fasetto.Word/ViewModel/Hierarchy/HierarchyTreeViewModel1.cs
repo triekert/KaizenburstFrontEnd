@@ -983,7 +983,7 @@ namespace Fasetto.Word
         {
             // Close settings menu
             ViewModelApplication.PopupVisible = false;
-            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            ViewModelApplication.CurrentPopupContent = 0;
             //ViewModelApplication.CurrentPopupViewModel = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
 
         }

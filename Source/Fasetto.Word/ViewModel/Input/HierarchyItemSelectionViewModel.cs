@@ -163,7 +163,7 @@ namespace Fasetto.Word
             });
 
             ViewModelApplication.PopupVisible = true;
-            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            ViewModelApplication.CurrentPopupContent = 0;
 
             ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
 

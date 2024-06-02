@@ -205,6 +205,7 @@ namespace Fasetto.Word
                         KFinTranID = item.KFinTranID,
                         KPartyName = item.KPartyName,
                         KPartyID = item.KPartyID,
+                        FCatSrchID = item.FCatSrchID,
                     };
                     TransactionDetail.Add(mTDVM);
                 }

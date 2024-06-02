@@ -275,6 +275,8 @@ namespace Fasetto.Word
                         KFinTranID = item.KFinTranID,
                         KPartyID = item.KPartyID,
                         KPartyName = item.KPartyName,
+                        IsChanged = false,
+                        FCatSrchID = item.FCatSrchID,
 
                     };
                         Trans_action.Add(mTVM); 
@@ -470,6 +472,7 @@ namespace Fasetto.Word
                     DateEffective = item.DateEffective,
                     KPartyID = item.KPartyID,
                     KPartyName = item.KPartyName,
+                    FCatSrchID = item.FCatSrchID,
 
 
                 };

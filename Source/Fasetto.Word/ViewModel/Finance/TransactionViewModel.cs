@@ -126,7 +126,17 @@ namespace Fasetto.Word
         /// </summary>
         public string KChangeID { get; set; }
 
+        /// <summary>
+        /// Flag to indicate the transaction classification has changed
+        /// </summary>
+        public bool IsChanged { get; set; }
 
+
+        /// <summary>
+        /// String representation of GUID for originating transaction
+        /// </summary>
+
+        public string FCatSrchID { get; set; }
 
 
         /// <summary>
@@ -143,11 +153,7 @@ namespace Fasetto.Word
         public string TextColor => "FF8B0000";
 
 
-        /// <summary>
-        /// Indicates if this item can be expanded
-        /// </summary>
-
-        //public bool CanExpand => Children?.Count(f => f != null) > 0;
+  
 
 
 

@@ -32,8 +32,8 @@ namespace Fasetto.Word
         /// <summary>
         /// Store View Model of current popup to allow reverse navigation
         /// </summary>
-        public ParameterHierarchyItemSelectApiModel  root { get; set; }       
-        
+        public ParameterHierarchyItemSelectApiModel  root { get; set; }
+
         #endregion//Public Properties
 
         #region Public Commands
@@ -174,7 +174,9 @@ namespace Fasetto.Word
             //ViewModelApplication.CurrentPopupViewModel = this;
             PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
             DataContext = mHierarchyTree;
+            //CloseCommand = new RelayCommand(Close);
             InitializeComponent();
+
             //mTimer = DateTime.Now;
             //ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
             //CloseCommand = new RelayCommand(Close);
@@ -366,6 +368,7 @@ namespace Fasetto.Word
             // Close settings menu
             ViewModelApplication.PopupVisible = false;
             ViewModelApplication.CurrentPopupContent = 0;
+            RunSelectedItem();
 
 
         }
