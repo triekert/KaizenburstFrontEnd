@@ -140,6 +140,36 @@ namespace Fasetto.Word
 
 
         /// <summary>
+        /// A document, including images etc, linked to the transaction
+        /// </summary>
+        public DocDataModel Document{ get; set; }
+
+        ///// <summary>
+        ///// String representation of GUID for linked document
+        ///// </summary>
+        //public string KDocID { get; set; }
+
+        ///// <summary>
+        /////  Name of Doc linked to Transaction
+        ///// </summary>
+        //public string DocName { get; set; }
+
+
+        ///// <summary>
+        /////  Image of  Doc linked to Transaction
+        ///// </summary>
+        //public byte[] DocImage { get; set; }
+
+
+        ///// <summary>
+        /////  URL of  Doc linked to Transaction
+        ///// </summary>
+        //public string DocURL { get; set; }
+
+
+
+
+        /// <summary>
         /// Title of Control
         /// </summary>
         public string Title { get; set; } = "Financial Transactions";

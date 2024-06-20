@@ -18,6 +18,7 @@ namespace Fasetto.Word
 
         #endregion
 
+
         /// <summary>
         /// The title of this image file
         /// </summary>
@@ -53,7 +54,11 @@ namespace Fasetto.Word
                 //       Set LocalFilePath value
                 //
                 //       For now, just set the file path directly
-                Task.Delay(2000).ContinueWith(t => LocalFilePath = "/Images/Samples/rusty.jpg");
+                //Task.Delay(2000).ContinueWith(t => LocalFilePath = "/Images/Samples/rusty.jpg");
+                Task.Delay(2000).ContinueWith(t => LocalFilePath = "C:\\Users\\triek\\OneDrive\\Documents\\Timstuff\\Rheebok\\Koorsboom\\Photos\\Kiddies.jpg");
+                //Task.Delay(2000).ContinueWith(t => LocalFilePath = "J:\\My Drive\\JUDGEMENT 001.jpg");
+
+
             }
         }
 

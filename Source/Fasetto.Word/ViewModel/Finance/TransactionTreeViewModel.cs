@@ -255,7 +255,7 @@ namespace Fasetto.Word
                     //Transaction.Clear();
                     mPersist = result.ServerResponse.Response;
                     mChange = new TransactionResultListApiModel();
-                    var matches = result.ServerResponse.Response.OrderByDescending(x=>x.Posted_Date).ThenBy(x=>x.KFinTranID).ThenBy(x=>x.ShortName).ToList();
+                    var matches = result.ServerResponse.Response.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
 
 
                     foreach (var item in matches)

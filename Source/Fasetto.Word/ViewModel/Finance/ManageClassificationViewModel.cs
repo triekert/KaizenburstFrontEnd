@@ -3,11 +3,20 @@ using Fasetto.Word.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
+using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
+using static Fasetto.Word.Core.CoreDI;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Activities.Statements;
+
 
 namespace Fasetto.Word
 {
@@ -111,6 +120,35 @@ namespace Fasetto.Word
         /// 
         public string TransactionDetail { get; set; }
 
+
+        /// <summary>
+        /// A document, including images etc, linked to the transaction
+        /// </summary>
+        public DocDataViewModel Document { get; set; }
+
+        /// <summary>
+        /// String representation of GUID for linked document
+        /// </summary>
+        public string KDocID { get; set; }
+
+        /// <summary>
+        ///  Name of Doc linked to Transaction
+        /// </summary>
+        //public string DocName { get; set; }
+
+
+        ///// <summary>
+        /////  Image of  Doc linked to Transaction
+        ///// </summary>
+        //public byte[] DocImage { get; set; }
+
+
+        ///// <summary>
+        /////  URL of  Doc linked to Transaction
+        ///// </summary>
+        //public string DocURL { get; set; }
+
+
         /// <summary>
         /// API parameter model
         /// </summary>
@@ -130,6 +168,12 @@ namespace Fasetto.Word
         public Func<Task<bool>> CommitAction { get; set; }
 
 
+        /// <summary>
+        /// A flag indicating if the login command is running
+        /// </summary>
+        public bool DocumentRetrievalIsRunning { get; set; }
+
+
 
         #region Transactional Properties
 
@@ -144,25 +188,25 @@ namespace Fasetto.Word
         public bool NodeSaving { get; set; }
 
 
-            /// <summary>
-            /// Indicates if the settings details are currently being loaded
-            /// </summary>
-            public bool SettingsLoading { get; set; }
+        /// <summary>
+        /// Indicates if the settings details are currently being loaded
+        /// </summary>
+        public bool SettingsLoading { get; set; }
 
-            /// <summary>
-            /// Indicates if the user is currently logging out
-            /// </summary>
-            public bool LoggingOut { get; set; }
+        /// <summary>
+        /// Indicates if the user is currently logging out
+        /// </summary>
+        public bool LoggingOut { get; set; }
 
-            /// <summary>
-            /// A flag indicating if the task is running
-            /// </summary>
-            public bool IsRunning { get; set; }
+        /// <summary>
+        /// A flag indicating if the task is running
+        /// </summary>
+        public bool IsRunning { get; set; }
 
-            /// <summary>
-            /// Store View Model of current popup to allow reverse navigation
-            /// </summary>
-            public object PriorPopupViewModel { get; set; }
+        /// <summary>
+        /// Store View Model of current popup to allow reverse navigation
+        /// </summary>
+        public object PriorPopupViewModel { get; set; }
 
         /// <summary>
         /// All allocations linked to the selected transaction
@@ -183,6 +227,8 @@ namespace Fasetto.Word
         /// The selected allocation
         /// </summary>
         public TransactionDetailViewModel New1 { get; set; }
+
+        public DocDataResultListApiModel mRequest;
 
         #endregion
 
@@ -215,6 +261,10 @@ namespace Fasetto.Word
         public ICommand DeleteClassificationCommand { get; set; }
 
 
+        /// <summary>
+        /// The command to search a new image for loading into the image window
+        /// </summary>
+        public ICommand BrowseImageCommand { get; set; }
 
 
 
@@ -227,6 +277,27 @@ namespace Fasetto.Word
         /// </summary>
         public ManageClassificationViewModel(ObservableCollection<TransactionViewModel> source, TransactionViewModel selected)
         {
+            //Retrieve any documents from file server on the web server
+            //If no documents linked previously, add dummy fields to facilitate selection
+            //mRequest = new DocDataResultListApiModel();
+            //var matches = selected.Document.ToList();
+
+            //foreach (var item in selected.Document)
+            //{
+                
+            //}
+            TaskManager.RunAndForget(DocumentRetrievalAsync);
+
+            //var docData = new DocDataModel
+            Document = new DocDataViewModel()
+
+            {
+            DocURL = "\\somepath\\filename.jpg",
+            KDocID = new Guid().ToString(),
+            DocName = "Name of Document.",
+            };
+
+            ;
             // Create Node Name
             Allocation = new TextEntryViewModel
             {
@@ -282,9 +353,9 @@ namespace Fasetto.Word
             // Create commands
             CloseCommand = new RelayCommand(Close);
             AddClassificationCommand = new RelayCommand(AddClassification);
-            EditClassificationCommand = new RelayCommand(AddClassification);
+            //EditClassificationCommand = new RelayCommand(EditClassification);
             DeleteClassificationCommand = new RelayCommand(AddClassification);
-
+            BrowseImageCommand = new RelayCommand(BrowseImage);
 
             // TODO: Get from localization
             AddClassificationButtonText = "Manage Transaction Classification:";
@@ -307,6 +378,92 @@ namespace Fasetto.Word
 
         #endregion
 
+        public async Task DocumentRetrievalAsync()
+        {
+            await RunCommandAsync(() => DocumentRetrievalIsRunning, async () =>
+            {
+
+                // Store single transient instance of client data store
+                var scopedClientDataStore = ClientDataStore;
+                //
+                //return;
+                //
+
+                // Update values from local cache
+                // Get the user token
+                var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+                // Call the server and attempt to register with the provided credentials
+                // If we don't have a token (then not logged in...)
+                if (string.IsNullOrEmpty(token))
+                    // Then do nothing more
+                    return;
+                var result = await WebRequests.PostAsync<ApiResponse<DocDataResultApiModel>>(
+                // Set URL
+                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.ReturnDocument),
+                    mRequest,
+                    bearerToken: token);
+
+                // If the response has an error...
+                if (await result.HandleErrorIfFailedAsync("Transaction retrieval Failed"))
+                    // We are done
+                    return;
+
+                // OK successfully registered (and logged in)... now get appropriate tree view data
+                //for now; keep a snapshot of persisted data
+                //mOriginal = result.ServerResponse.Response;
+
+                ;
+
+                try
+                {
+                    //var hierarchyResultApiModels = mOriginal.ToList();
+                    //make a clone of the persisted data for manipulation on front end
+                    //mPersist = new TransactionResultListApiModel();
+                    //mPersist.Clone(mOriginal, mPersist);
+                    ////Transaction.Clear();
+                    //Trans_action = new ObservableCollection<TransactionViewModel>();
+                    //OrgTransaction = new ObservableCollection<TransactionViewModel>();
+
+                    //Transaction.Clear();
+                    //mPersist = result.ServerResponse.Response;
+                    //mChange = new TransactionResultListApiModel();
+                    //var matches = result.ServerResponse.Response.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
+
+
+                    //foreach (var item in matches)
+                    //{
+
+                    //    var mTVM = new TransactionViewModel
+
+                    //    {
+                    //        Posted_Date = item.Posted_Date,
+                    //        Month = item.Month,
+                    //        Description = item.Description,
+                    //        TransAmount = item.TransAmount,
+                    //        ActualAmount = item.ActualAmount,
+                    //        ShortName = item.ShortName,
+                    //        KCategoryID = item.KCategoryID,
+                    //        KFinActualID = item.KFinActualID,
+                    //        KFinTranID = item.KFinTranID,
+                    //        KPartyID = item.KPartyID,
+                    //        KPartyName = item.KPartyName,
+                    //        IsChanged = false,
+                    //        FCatSrchID = item.FCatSrchID,
+
+                    //    };
+                    //    Trans_action.Add(mTVM);
+                    //    OrgTransaction.Add(mTVM);//create original for reference
+                    //}
+
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
+
+
+            });
+        }
         #region Command Methods
 
         /// <summary>
@@ -330,8 +487,10 @@ namespace Fasetto.Word
 
             ViewModelApplication.CurrentPopupViewModel = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             var mKFinTranID = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransactionDetail[0].KFinTranID;
+
             var matches = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).Trans_action.Where(x => x.KFinTranID == mKFinTranID).ToList();
             var Cnt = matches.Count;
+            ViewModelApplication.ControlParameter1 = null;
 
             if (Cnt ==1)
             {
@@ -343,7 +502,6 @@ namespace Fasetto.Word
             { 
 
                     ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
-                    ViewModelApplication.ControlParameter1 = null;
             }
             ViewModelApplication.PopupVisible = true;
 
@@ -1120,10 +1278,175 @@ namespace Fasetto.Word
             }
 
 
-            //Check for allocation of party or change in allocated party
+            //If new document linked to transaction, load and index document on the webserver fileshare.
+            //Document.DocName
 
             Close();
         }
+
+        //public void EditClassification()
+        private void BrowseImage()
+        {
+            //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            Document.KDocID = Guid.NewGuid().ToString();
+            using (var openFileDialog = new OpenFileDialog())
+            {
+                 //openFileDialog.Filter = "PDF Files|*.pdf";
+                 openFileDialog.Filter = "Images (*.jpg,*.png)|*.jpg;*.png|All Files(*.*)|*.*";
+                 openFileDialog.Multiselect = false;
+                //openFileDialog.InitialDirectory = @"C:\Users\triek\OneDrive\Documents\Timstuff\Rheebok\Images\BrBed";
+                //openFileDialog.fil
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    //var filePath = openFileDialog.FileName;
+                    var filePath = openFileDialog.FileName;
+
+                    var fileName = filePath;
+                    Document.DocURL = fileName;
+                    Document.DocName = GetFileFolderName(Document.DocURL);
+
+                    using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                    {
+                        using (var reader = new BinaryReader(stream))
+                        {
+                            Document.DocImage = reader.ReadBytes((int)stream.Length);
+                        }
+                    }
+
+                    //fileName = Environment.GetFolderPath(Environment.SpecialFolder.Resources);
+                    //try
+                    //{
+                    //    System.IO.File.Copy(filePath, fileName);
+                    //}
+                    //catch (Exception)
+                    //{
+                    //    //this file already exists in the working directory, if physically different, please rename...
+                    //    throw;
+                    //}
+
+
+
+                    //MyImage.
+                    //openFileDialog.
+                }
+            }
+            //    MyImage.Source = new BitmapImage(new Uri(lImagePath.Text));
+
+            //    using (var fs = new FileStream(ImagePath.Text, FileMode.Open, FileAccess.Read))
+            //    {
+            //        _imageBytes = new byte[fs.Length];
+            //        fs.Read(imgBytes, 0, System.Convert.ToInt32(fs.Length));
+            //    }
+            //}
+
+
+        }
+
+        public void OpenDocument()
+        {
+            //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            Document.KDocID = Guid.NewGuid().ToString();
+            using (var openFileDialog = new OpenFileDialog())
+            {
+                Document.DocName = GetFileFolderName(Document.DocURL);
+                var path = Path.GetTempPath();
+                var fileName = path + Document.DocName;
+                Document.DocURL = fileName;
+                using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                {
+                    fs.Write(Document.DocImage, 0, Document.DocImage.Length);
+                    //return true;
+                }
+                Process.Start(Document.DocURL);
+            }
+            //    MyImage.Source = new BitmapImage(new Uri(lImagePath.Text));
+
+            //    using (var fs = new FileStream(ImagePath.Text, FileMode.Open, FileAccess.Read))
+            //    {
+            //        _imageBytes = new byte[fs.Length];
+            //        fs.Read(imgBytes, 0, System.Convert.ToInt32(fs.Length));
+            //    }
+            //}
+
+
+        }
+        public static void DatabaseFilePut(string varFilePath)
+            {
+                byte[] file;
+                using (var stream = new FileStream(varFilePath, FileMode.Open, FileAccess.Read))
+                {
+                    using (var reader = new BinaryReader(stream))
+                    {
+                        file = reader.ReadBytes((int)stream.Length);
+                    }
+                }
+                //using (var varConnection = Locale.sqlConnectOneTime(Locale.sqlDataConnectionDetails))
+                //using (var sqlWrite = new SqlCommand("INSERT INTO Raporty (RaportPlik) Values(@File)", varConnection))
+                //{
+                //    sqlWrite.Parameters.Add("@File", SqlDbType.VarBinary, file.Length).Value = file;
+                //    sqlWrite.ExecuteNonQuery();
+                //}
+            }
+        //private byte[] _imageBytes = null;
+
+        // Browse for an image on your computer
+        //private void BrowseButton_OnClick(object sender, RoutedEventArgs e)
+        //{
+        //    var dialog = new OpenFileDialog
+        //    {
+        //        CheckFileExists = true,
+        //        Multiselect = false,
+        //        Filter = "Images (*.jpg,*.png)|*.jpg;*.png|All Files(*.*)|*.*"
+        //    };
+
+        //    if (dialog.ShowDialog() == true)
+        //    {
+        //        ImagePath.Text = dialog.FileName;
+        //        MyImage.Source = new BitmapImage(new Uri(lImagePath.Text));
+
+        //        using (var fs = new FileStream(ImagePath.Text, FileMode.Open, FileAccess.Read))
+        //        {
+        //            _imageBytes = new byte[fs.Length];
+        //            fs.Read(imgBytes, 0, System.Convert.ToInt32(fs.Length));
+        //        }
+        //    }
+        //}
+
+        // Save the selected image to your database
+        private void SaveButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            //if (!String.IsNullOrEmpty(ImagePath.Text))
+            //{
+            //    var db = new MyDataContext();
+            //    var uploadedImg = new UploadedImage
+            //    {
+            //        ImageID = 0,
+            //        ImageContent = _imageBytes,
+            //        ImageName = ImagePath.Text
+            //    };
+
+            //    db.UploadedImages.InsertOnSubmit(uploadedImg);
+            //    db.SubmitChanges();
+            //}
+        }
+
+        // Load an image from the database
+        private void LoadButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            //// Load 1 image from the database and display it
+            //var db = new ImageInDatabaseDataContext();
+            //var img = (from el in db.UploadedImages
+            //           select el).FirstOrDefault();
+
+
+            //if (img != null)
+            //{
+            //    // Display the loaded image
+            //    ImageFile.Source = new BitmapImage(new Uri(img.ImageName));
+            //}
+        }
+
+
         public async Task BillingPeriodAdjustAsync()
         {
             await RunCommandAsync(() => IsRunning, async () =>
@@ -1180,7 +1503,40 @@ namespace Fasetto.Word
             });
         }
 
-#endregion
+        #endregion
+
+        #region Helpers
+
+        /// <summary>
+        /// Fubd the file or folder name from a full path
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static string GetFileFolderName(string path)
+        {
+            // C:\Something\a folder
+            // C:\Something\a file.png
+            // a file file.png
+
+            // If we have no opath, return empty
+            if (string.IsNullOrEmpty(path))
+                return string.Empty;
+
+            // Make all slashes back slashes
+            var normalizedPath = path.Replace('/', '\\');
+
+            // Find the last backslash in the path
+            var lastIndex = normalizedPath.LastIndexOf('\\');
+
+            // If we dont find a backslash, return the path itself
+            if (lastIndex <= 0)
+                return path;
+
+            // Return the name after the last backslash
+            return path.Substring(lastIndex + 1);
+        }
+
+        #endregion
 
         public void Remove(List<TransactionViewModel> source, ObservableCollection<TransactionViewModel> target)
         {

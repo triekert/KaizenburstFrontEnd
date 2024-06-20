@@ -8,16 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Web;
 using static Dna.FrameworkDI;
-using CsvHelper;
-using System.Globalization;
-using System.IO;
 
 
 namespace Fasetto.Word.Web.Server
@@ -886,9 +883,9 @@ namespace Fasetto.Word.Web.Server
             para[14] = new SqlParameter("@fCatSrchID", SqlDbType.UniqueIdentifier);
             //var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (ShortName,Description,kCategoryID,ParentCategoryID,fIconID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement)" +// ) " +
             //    "VALUES (@ShortName,@Description,@kCategoryID,@ParentCategoryID,@fIconID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement)";//)";
-            var SqlString = "INSERT INTO [Finance].[FinActual]  (ActualAmount,kFinActualID,fFinTranID,kCategoryID,DateEffective,fClientID,fHierarchyID,Month,fPartyID,Name)" +// ) " +
+            var SqlString = "INSERT INTO [Finance].[FinActual]  (ActualAmount,kFinActualID,fFinTranID,kCategoryID,DateEffective,fClientID,fHierarchyID,Month,fPartyID,Name,fCatSrchID,isFinal)" +// ) " +
 
-                "VALUES (@ActualAmount,@kFinActualID,@kFinTranID,@kCategoryID,@DateEffective,@fIconID,@DateEffective,@kClientID,@kHierarchyID,@Month,@kPartyID,@PartyName)";//)";
+                "VALUES (@ActualAmount,@kFinActualID,@kFinTranID,@kCategoryID,@DateEffective,@fIconID,@DateEffective,@kClientID,@kHierarchyID,@Month,@kPartyID,@PartyName, @fCatSrchID),1)";
                                                                                                                                                                                                           //If elements are to be added, insert into backend
             results = mPersist.Where(x => x.ChangeType == "a").OrderBy(x => x.KFinActualID).ToList();//
              var SqlString2 = "";
@@ -937,7 +934,7 @@ namespace Fasetto.Word.Web.Server
 
 
 
-            SqlString = "UPDATE [Finance].[FinActual] SET ActualAmount =@ActualAmount,fCategoryID = @kCategoryID,fPartyID = @kPartyID,fCatSrchID = @fCatSrchID WHERE kFinActualID = @kFinActualID";
+            SqlString = "UPDATE [Finance].[FinActual] SET ActualAmount =@ActualAmount,fCategoryID = @kCategoryID,fPartyID = @kPartyID,fCatSrchID = @fCatSrchID, isFinal =1 WHERE kFinActualID = @kFinActualID";
             var SqlString1 = "UPDATE [Finance].[FinTran] SET fPartyID = @kPartyID WHERE kFinTranID = @kFinTranID";
 
             //If elements are to be updated, insert into backend
@@ -967,7 +964,7 @@ namespace Fasetto.Word.Web.Server
                         para[14].Value = new Guid(row.FCatSrchID);
 
 
-                    SqlString2 = "EXEC [Finance].[spManageCategorySearch] @fClientID = '" + para[9].Value + "' , @HierarchyID = '" + para[10].Value + "', @fCategoryID = '" + para[2].Value + "',@fPartyID = '" + para[13].Value + "' ,@fCatSrchID = '" + para[14].Value + "' ,@Description = '" + para[14].Value + "'";
+                    SqlString2 = "EXEC [Finance].[spManageCategorySearch] @fClientID = '" + para[9].Value + "' , @HierarchyID = '" + para[10].Value + "', @fCategoryID = '" + para[2].Value + "',@fPartyID = '" + para[13].Value + "' ,@fCatSrchID = '" + para[14].Value + "' ,@Description = '" + para[14].Value + "' ,@month = '" + para[11].Value + "'";
 
                     try
 
@@ -1052,22 +1049,139 @@ namespace Fasetto.Word.Web.Server
 
         #endregion
 
+        #region AddDocument
 
-#endregion Financials
+        [Route(ApiRoutes.AddDocument)]
+        public async Task<ApiResponse> AddDocumentAsync([FromBody] DocDataResultApiModel model)
+
+        {
+            #region Get User
+
+            // Get the current user
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            // If we have no user...
+            if (user == null)
+                return new ApiResponse
+                {
+                    // TODO: Localization
+                    ErrorMessage = "User not found"
+                };
+
+            #endregion
+
+            #region AddDocToFileShare
 
 
-        #region Services
-        #region LoadReadings
-        /// <summary>
-        /// Retrieves meter readings from Client API and updates database
-        /// </summary>
-        /// <param name="model">The search credentials</param>
-        /// <returns>
-        ///     Returns a list of hiearchy items if successful, 
-        ///     otherwise returns the error reasons for the failure
-        /// </returns>
 
-        [Route(ApiRoutes.LoadReadings)]
+            ;
+            try
+            {
+                var path = Configuration["FileShare"];
+                var fileName = model.DocName;
+                fileName = path + fileName;
+                model.DocURL = fileName;
+                using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                {
+                    fs.Write(model.DocImage, 0, model.DocImage.Length);
+                    //return true;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // Log error
+                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                // Throw it as normal
+                throw;
+            }
+            return new ApiResponse<DocDataResultApiModel>
+            {
+                //Response = results
+            };
+        }
+
+            #endregion AddDocToFileShare
+            #endregion AddDocument
+
+        #region ReturnDocument
+
+            [Route(ApiRoutes.ReturnDocument)]
+            public async Task<ApiResponse> ReturnDocumentAsync([FromBody] DocDataResultApiModel model)
+
+            {
+                #region Get User
+
+                // Get the current user
+                var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+                // If we have no user...
+                if (user == null)
+                    return new ApiResponse
+                    {
+                        // TODO: Localization
+                        ErrorMessage = "User not found"
+                    };
+
+                #endregion
+
+                #region ReturnDocFromFileShare
+
+
+
+                ;
+                try
+                {
+                    var path = Configuration["FileShare"];
+                    var fileName = model.DocName;
+                    fileName = path + fileName;
+                    model.DocURL = fileName;
+                    using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                    {
+                        fs.Write(model.DocImage, 0, model.DocImage.Length);
+                        //return true;
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    // Log error
+                    //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                    // Throw it as normal
+                    throw;
+                }
+                return new ApiResponse<DocDataResultApiModel>
+                {
+                    //Response = results
+                };
+
+                #endregion AddDocToFileShare
+             }
+
+                #endregion ReturnDocument
+
+
+
+
+
+
+            #endregion Financials
+
+
+            #region Services
+            #region LoadReadings
+            /// <summary>
+            /// Retrieves meter readings from Client API and updates database
+            /// </summary>
+            /// <param name="model">The search credentials</param>
+            /// <returns>
+            ///     Returns a list of hiearchy items if successful, 
+            ///     otherwise returns the error reasons for the failure
+            /// </returns>
+
+            [Route(ApiRoutes.LoadReadings)]
             public async Task<ApiResponse> ReturnMeterReadingsAsync([FromBody] string model)
             {
 
@@ -2317,15 +2431,27 @@ namespace Fasetto.Word.Web.Server
 
 
                 {
-                    using (var newConnection = new SqlConnection(Configuration["ConnectionStrings:DefaultConnection"]))
-                    using (var mySQLAdapter = new SqlDataAdapter(sSQL, newConnection))
-                    {
-                        mySQLAdapter.SelectCommand.CommandType = CommandType.Text;
-                        if (parameters != null) mySQLAdapter.SelectCommand.Parameters.AddRange(parameters);
+                    try
+                    { 
+                    
+                        using (var newConnection = new SqlConnection(Configuration["ConnectionStrings:DefaultConnection"]))
+                        using (var mySQLAdapter = new SqlDataAdapter(sSQL, newConnection))
+                        {
+                            mySQLAdapter.SelectCommand.CommandType = CommandType.Text;
+                            if (parameters != null) mySQLAdapter.SelectCommand.Parameters.AddRange(parameters);
 
-                        var myDataSet = new DataSet();
-                        _ = mySQLAdapter.Fill(myDataSet);
-                        return myDataSet;
+                            var myDataSet = new DataSet();
+                            _ = mySQLAdapter.Fill(myDataSet);
+                            return myDataSet;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log error
+                        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                        // Throw it as normal
+                        throw;
                     }
                 });
             }

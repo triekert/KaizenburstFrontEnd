@@ -226,7 +226,9 @@
     <Compile Include="ValueConverters\PopupContentConverter.cs" />
     <Compile Include="ValueConverters\TimeToStringConverter.cs" />
     <Compile Include="ViewModel\Application\Design\FinanceSelectionDesignModel.cs" />
+    <Compile Include="ViewModel\Finance\DocDataListViewModel.cs" />
     <Compile Include="ViewModel\Finance\Expenditure\CategorySearchViewModel.cs" />
+    <Compile Include="ViewModel\Finance\DocDataViewModel.cs" />
     <Compile Include="ViewModel\Finance\ManageClassificationViewModel.cs" />
     <Compile Include="ViewModel\Finance\ObservableCollectionExtensions.cs" />
     <Compile Include="ViewModel\Finance\TransactionDetailTreeViewModel.cs" />
@@ -655,6 +657,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Temp\" />
     <Folder Include="ViewModel\ApplicationMenu\" />
     <Folder Include="ViewModel\Finance\Investment\" />
   </ItemGroup>

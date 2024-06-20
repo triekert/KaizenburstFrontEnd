@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using static Fasetto.Word.DI;
 
+
 namespace Fasetto.Word
 {
 
@@ -25,6 +26,7 @@ namespace Fasetto.Word
             DataContext = (ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel;   
             
             ViewModelApplication.ControlParameter1= DataContext;
+            //MyImage.Source = MyImage.Source;
 
         }
         
@@ -46,12 +48,19 @@ namespace Fasetto.Word
         {
             //check to determine whether user would like to add an item to the hierarchy
 
-            if (Keyboard.IsKeyDown(Key.Escape))
-            {
-                ((HierarchyElementViewModel)DataContext).Close();
+           if (Keyboard.IsKeyDown(Key.Escape))
+
+ 
+                ((ManageClassificationViewModel)DataContext).Close();
+                //e.Handled = true;
+                //ImagePath
+                 
+           else
+                if (Keyboard.IsKeyDown(Key.F2))
+                    ((ManageClassificationViewModel)DataContext).OpenDocument();
                 e.Handled = true;
-            }
 
         }
+ 
     }
 }

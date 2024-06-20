@@ -105,6 +105,16 @@
         /// The route to the Persist Classificaton Api method
         /// </summary>
         public const string PersistClassification = "api/finance/PersistClassification";
+
+        /// <summary>
+        /// The route to the Insert Document Api method
+        /// </summary>
+        public const string AddDocument = "api/finance/AddDocument";
+
+        /// <summary>
+        /// The route to the Return Document Api method
+        /// </summary>
+        public const string ReturnDocument = "api/finance/ReturnDocument";
         #endregion
 
 
