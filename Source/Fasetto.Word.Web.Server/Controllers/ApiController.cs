@@ -2332,6 +2332,13 @@ namespace Fasetto.Word.Web.Server
                         else
                             //para[14].Value = Guid.NewGuid();
                             para[14].Value = new Guid("00000000-0000-0000-0000-000000000000");
+                        if (row.FClientID != null && row.FClientID != "")
+                        {
+                            para[15].Value = new Guid(row.FClientID);
+                        }
+                        else
+                        //para[14].Value = Guid.NewGuid();
+                        para[15].Value = DBNull.Value;
                     try
                     
                         {

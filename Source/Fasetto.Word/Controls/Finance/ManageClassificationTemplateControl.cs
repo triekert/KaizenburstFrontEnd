@@ -9,11 +9,11 @@ namespace Fasetto.Word
     /// <summary>
     /// Interaction logic for SettingsControl.xaml
     /// </summary>
-    public partial class ManageClassificationControl : UserControl
+    public partial class ManageClassificationTemplateControl : UserControl
     {/// <summary>
      /// This User Control is always linked to the popup component of the ApplicationViewModel
      /// </summary>
-        public ManageClassificationControl()
+        public ManageClassificationTemplateControl()
         {
             InitializeComponent();
 
