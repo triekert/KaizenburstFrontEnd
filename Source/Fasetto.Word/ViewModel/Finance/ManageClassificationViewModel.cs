@@ -1,6 +1,7 @@
 ﻿using Dna;
 using Fasetto.Word.Core;
 using System;
+using System.Activities.Expressions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -10,12 +11,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using System.Windows.Input;
-using static Fasetto.Word.DI;
 using static Fasetto.Word.Core.CoreDI;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using System.Activities.Statements;
+using static Fasetto.Word.DI;
 
 
 namespace Fasetto.Word
@@ -127,6 +127,12 @@ namespace Fasetto.Word
         public DocDataViewModel Document { get; set; }
 
         /// <summary>
+        /// A document, including images etc, linked to the transaction
+        /// </summary>
+        public ObservableCollection<DocDataViewModel> DocumentList { get; set; }
+
+
+        /// <summary>
         /// String representation of GUID for linked document
         /// </summary>
         public string KDocID { get; set; }
@@ -173,6 +179,12 @@ namespace Fasetto.Word
         /// </summary>
         public bool DocumentRetrievalIsRunning { get; set; }
 
+
+
+        /// <summary>
+        /// A flag indicating if the login command is running
+        /// </summary>
+        public bool DocumentStorageIsRunning { get; set; }
 
 
         #region Transactional Properties
@@ -226,7 +238,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The selected allocation
         /// </summary>
-        public TransactionDetailViewModel New1 { get; set; }
+        //public TransactionDetailViewModel New1 { get; set; }
 
         public DocDataResultListApiModel mRequest;
 
@@ -284,20 +296,36 @@ namespace Fasetto.Word
 
             //foreach (var item in selected.Document)
             //{
-                
-            //}
-            TaskManager.RunAndForget(DocumentRetrievalAsync);
 
-            //var docData = new DocDataModel
-            Document = new DocDataViewModel()
+            //}
+            Selected = selected;
+            selected.Document = new DocDataViewModel()
 
             {
             DocURL = "\\somepath\\filename.jpg",
             KDocID = new Guid().ToString(),
             DocName = "Name of Document.",
+            DocDescription = "Name of Document in plain language"
             };
+            Document = selected.Document;
+            if (selected.Document !=null)
+            { 
+            mRequest = new DocDataResultListApiModel();
+            var mRqst = new DocDataResultApiModel
+            {
+                FFintranID = selected.Document.FFintranID,
+                DocImage = selected.Document.DocImage,
+                DocName = selected.Document.DocName,
+                DocURL = selected.Document.DocURL,
+                KDocID = selected.Document.KDocID
+            };
+            mRequest.Add(mRqst);
 
-            ;
+
+            TaskManager.RunAndForget(DocumentRetrievalAsync);}
+            DocumentList = new ObservableCollection<DocDataViewModel>()
+            { Document};
+
             // Create Node Name
             Allocation = new TextEntryViewModel
             {
@@ -350,6 +378,9 @@ namespace Fasetto.Word
 
             HeadingText = "Manage classification of selected Transaction";
 
+            Document = selected.Document;
+
+
             // Create commands
             CloseCommand = new RelayCommand(Close);
             AddClassificationCommand = new RelayCommand(AddClassification);
@@ -360,7 +391,7 @@ namespace Fasetto.Word
             // TODO: Get from localization
             AddClassificationButtonText = "Manage Transaction Classification:";
             Source = source;
-            Selected= selected;
+
             Selected1= new TransactionViewModel();
             PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
         }
@@ -397,14 +428,85 @@ namespace Fasetto.Word
                 if (string.IsNullOrEmpty(token))
                     // Then do nothing more
                     return;
-                var result = await WebRequests.PostAsync<ApiResponse<DocDataResultApiModel>>(
+                var result = await WebRequests.PostAsync<ApiResponse<DocDataResultListApiModel>>(
                 // Set URL
                     RouteHelpers.GetAbsoluteRoute(ApiRoutes.ReturnDocument),
-                    mRequest,
+                    Selected.KFinTranID,
                     bearerToken: token);
 
                 // If the response has an error...
                 if (await result.HandleErrorIfFailedAsync("Transaction retrieval Failed"))
+                    // We are done
+                    return;
+
+                // OK successfully registered (and logged in)... 
+                //If data returned, modify data on classifiaction view model
+
+                if (result.ServerResponse.Response.Count > 0)
+                {
+
+
+
+                    try
+                    {
+                        DocumentList = new ObservableCollection<DocDataViewModel>();
+                        foreach (var doc in result.ServerResponse.Response)
+                        {
+                            var mRqst = new DocDataViewModel
+                            {
+                                DocImage = doc.DocImage,
+                                DocName = doc.DocName,
+                                DocURL = doc.DocURL,
+                                KDocID = doc.KDocID,
+                                DocDescription = doc.DocDescription,
+                                FFintranID = doc.FFintranID
+                            };
+
+                            Selected.Document = mRqst;
+                            Document = mRqst;
+                            DocumentList.Add(mRqst);
+
+                        }
+
+
+                     }
+                    catch (Exception e)
+                    {
+                        throw e;
+                    }
+                }
+
+            });
+        }
+
+
+        public async Task DocumentStorageAsync()
+        {
+            await RunCommandAsync(() => DocumentStorageIsRunning, async () =>
+            {
+
+                // Store single transient instance of client data store
+                var scopedClientDataStore = ClientDataStore;
+                //
+                //return;
+                //
+
+                // Update values from local cache
+                // Get the user token
+                var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+                // Call the server and attempt to register with the provided credentials
+                // If we don't have a token (then not logged in...)
+                if (string.IsNullOrEmpty(token))
+                    // Then do nothing more
+                    return;
+                var result = await WebRequests.PostAsync<ApiResponse<DocDataResultApiModel>>(
+                // Set URL
+                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.AddDocument),
+                    mRequest,
+                    bearerToken: token);
+
+                // If the response has an error...
+                if (await result.HandleErrorIfFailedAsync("Failed to add documents on web server"))
                     // We are done
                     return;
 
@@ -416,6 +518,7 @@ namespace Fasetto.Word
 
                 try
                 {
+
                     //var hierarchyResultApiModels = mOriginal.ToList();
                     //make a clone of the persisted data for manipulation on front end
                     //mPersist = new TransactionResultListApiModel();
@@ -464,6 +567,7 @@ namespace Fasetto.Word
 
             });
         }
+
         #region Command Methods
 
         /// <summary>
@@ -564,6 +668,28 @@ namespace Fasetto.Word
         /// </summary>
         public void AddClassification()
         {
+            //if new document has been linked, copy to file server on web server
+            if (!(Selected.Document == null || !Selected.Document.IsNew))
+            {
+                mRequest = new DocDataResultListApiModel();
+                var mRqst = new DocDataResultApiModel
+                {
+                    DocImage = Selected.Document.DocImage,
+                    DocName = Selected.Document.DocName,
+                    DocURL = Selected.Document.DocURL,
+                    KDocID = Selected.Document.KDocID,
+                    DocDescription = Selected.Document.DocDescription,
+                    FFintranID = Selected.Document.FFintranID
+                };
+                mRequest.Add(mRqst);
+                 if (mRequest.Count >0)
+                    { 
+                    TaskManager.RunAndForget(DocumentStorageAsync); 
+                };
+
+            }
+    
+
             var OrgActual = Selected.ActualAmount;
 
             Selected1.Posted_Date = Selected.Posted_Date;
@@ -1285,10 +1411,10 @@ namespace Fasetto.Word
         }
 
         //public void EditClassification()
-        private void BrowseImage()
+        public void BrowseImage()
         {
             //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
-            Document.KDocID = Guid.NewGuid().ToString();
+            Selected.Document.KDocID = Guid.NewGuid().ToString();
             using (var openFileDialog = new OpenFileDialog())
             {
                  //openFileDialog.Filter = "PDF Files|*.pdf";
@@ -1300,19 +1426,24 @@ namespace Fasetto.Word
                 {
                     //var filePath = openFileDialog.FileName;
                     var filePath = openFileDialog.FileName;
+                    Selected.Document.DocURL = filePath;
 
-                    var fileName = filePath;
-                    Document.DocURL = fileName;
-                    Document.DocName = GetFileFolderName(Document.DocURL);
-
+                    Selected.Document.DocName = GetFileFolderName(Selected.Document.DocURL);
+                    Selected.Document.DocDescription = GetFileFolderName(Document.DocURL);
+                    Selected.Document.DocName = Selected.Document.KDocID + GetFileExtension(Selected.Document.DocDescription);
+                    var path = Path.GetTempPath();
+                    var fileName = path + Selected.Document.DocName;
+                    Selected.Document.DocURL = fileName;
                     using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
                         using (var reader = new BinaryReader(stream))
                         {
-                            Document.DocImage = reader.ReadBytes((int)stream.Length);
+                            Selected.Document.DocImage = reader.ReadBytes((int)stream.Length);
                         }
                     }
-
+                    Selected.Document.IsNew = true;
+                    Selected.Document.FFintranID = Selected.KFinTranID;
+                    //Document = Selected.Document;
                     //fileName = Environment.GetFolderPath(Environment.SpecialFolder.Resources);
                     //try
                     //{
@@ -1345,19 +1476,22 @@ namespace Fasetto.Word
         public void OpenDocument()
         {
             //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
-            Document.KDocID = Guid.NewGuid().ToString();
+            Selected.Document.KDocID = Guid.NewGuid().ToString();
             using (var openFileDialog = new OpenFileDialog())
             {
-                Document.DocName = GetFileFolderName(Document.DocURL);
+                //Selected.Document.DocDescription = GetFileFolderName(Document.DocURL);
+                //Selected.Document.DocName = Selected.Document.KDocID + GetFileExtension( Selected.Document.DocDescription);
+                //Selected.Document.FFintranID = Selected.KFinTranID;
+                //Document.IsNew = true;
                 var path = Path.GetTempPath();
-                var fileName = path + Document.DocName;
-                Document.DocURL = fileName;
+                var fileName = path + Selected.Document.DocName;
+                Selected.Document.DocURL = fileName;
                 using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
                 {
-                    fs.Write(Document.DocImage, 0, Document.DocImage.Length);
+                    fs.Write(Selected.Document.DocImage, 0, Selected.Document.DocImage.Length);
                     //return true;
                 }
-                Process.Start(Document.DocURL);
+                Process.Start(Selected.Document.DocURL);
             }
             //    MyImage.Source = new BitmapImage(new Uri(lImagePath.Text));
 
@@ -1506,6 +1640,35 @@ namespace Fasetto.Word
         #endregion
 
         #region Helpers
+
+        /// <summary>
+        /// Fubd the file or folder name from a full path
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static string GetFileExtension(string path)
+        {
+            // C:\Something\a folder
+            // C:\Something\a file.png
+            // a file file.png
+
+            // If we have no opath, return empty
+            if (string.IsNullOrEmpty(path))
+                return string.Empty;
+
+
+
+            // Find the last backslash in the path
+            var lastIndex = path.LastIndexOf('.');
+
+            // If we dont find a backslash, return the path itself
+            if (lastIndex <= 0)
+                return path;
+
+            // Return the name after the last backslash
+            return path.Substring(lastIndex);
+        }
+
 
         /// <summary>
         /// Fubd the file or folder name from a full path

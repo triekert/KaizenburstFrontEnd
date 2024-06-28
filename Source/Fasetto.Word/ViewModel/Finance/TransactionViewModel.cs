@@ -142,7 +142,7 @@ namespace Fasetto.Word
         /// <summary>
         /// A document, including images etc, linked to the transaction
         /// </summary>
-        public DocDataModel Document{ get; set; }
+        public DocDataViewModel Document{ get; set; }
 
         ///// <summary>
         ///// String representation of GUID for linked document

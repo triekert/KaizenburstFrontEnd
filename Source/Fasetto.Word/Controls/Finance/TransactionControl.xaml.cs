@@ -91,54 +91,28 @@ namespace Fasetto.Word
             //MessageBox.Show($"The timeslot selected is {TransactionRec.TimeSlotStart}", $"The timeslot selected is {TransactionRec.TimeSlotStart}");
         }
 
+        private void TreeView_KeyBoard(object sender, KeyboardEventArgs e)
+        {
+            //check to determine whether user would like to add an item to the hierarchy
+
+            if (Keyboard.IsKeyDown(Key.Escape))
+            { }
+
+               
+        }
+
+
         private void DataGridRow_KeyDown(object sender, KeyEventArgs e)
+        
         {
             if (e.Key == Key.Enter)
             {
-
                 NavigateOn();
-                //_ = (TransactionViewModel)(Transaction.SelectedItems).OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault()).TimeSlotStart;
-                //ViewModelApplication.PopupVisible = false;
-                //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-                //var MKFinTranID = ((TransactionViewModel)Transaction.SelectedItem).KFinTranID;
-                //var RawTable = Transaction.Items;
-
-                ////var tempst = cellInfos[0].Column.Header;
-                ////var tempBR = new ObservableCollection<TransactionViewModel>();
-                ////
-                ////    //foreach (var tBR in Transaction.SelectedItems)
-                ////    tempBR.Add((TransactionViewModel)tBR.Item);
-
-
-                ////var tempT = new ObservableCollection<TransactionViewModel>();
-                ////var tempT = new TransactionViewModel();
-
-                //ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(MKFinTranID);
-                //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Allocation ";
-
-                ////If only one allocation linked to the Transaction, bypass the 'detail' window...
-
-                //if (((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransactionDetail.Count > 1)
-                //{                 //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
-                //    ViewModelApplication.PopupVisible = false;
-                //    //ViewModelApplication.CurrentPopupContent = Null;
-                //    ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
-                //    ViewModelApplication.PopupVisible = true;
-                //}
-                //else
-                //{            //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
-                //    ViewModelApplication.PopupVisible = false;
-                //    //ViewModelApplication.CurrentPopupContent = Null;
-                //    ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
-                //    ViewModelApplication.PopupVisible = true;
-
-                    //}
-
-
-
-
-
-                }
+            }
+            else
+                if (e.Key == Key.F2)
+                { }
+            e.Handled = true;
         }
         private void DataGridRow_MouseRightClick(object sender, MouseButtonEventArgs e)
         {

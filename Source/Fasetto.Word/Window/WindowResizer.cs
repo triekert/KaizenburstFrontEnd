@@ -95,16 +95,16 @@ namespace Fasetto.Word
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GetCursorPos(out POINT lpPoint);
+        private static extern bool GetCursorPos(out POINT lpPoint);
 
         [DllImport("user32.dll")]
-        static extern bool GetMonitorInfo(IntPtr hMonitor, MONITORINFO lpmi);
+        private static extern bool GetMonitorInfo(IntPtr hMonitor, MONITORINFO lpmi);
 
         [DllImport("user32.dll", SetLastError = true)]
-        static extern IntPtr MonitorFromPoint(POINT pt, MonitorOptions dwFlags);
+        private static extern IntPtr MonitorFromPoint(POINT pt, MonitorOptions dwFlags);
 
         [DllImport("user32.dll")]
-        static extern IntPtr MonitorFromWindow(IntPtr hwnd, MonitorOptions dwFlags);
+        private static extern IntPtr MonitorFromWindow(IntPtr hwnd, MonitorOptions dwFlags);
 
         #endregion
 

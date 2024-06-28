@@ -122,6 +122,7 @@ namespace Fasetto.Word
 
 
             //UpdateTreeViewElements();
+            
             CloseCommand = new RelayCommand(Close);
             //mSearchCommand = new SearchCategoryTreeCommand(this);
         }

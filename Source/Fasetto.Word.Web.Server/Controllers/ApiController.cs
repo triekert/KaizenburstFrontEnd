@@ -886,7 +886,8 @@ namespace Fasetto.Word.Web.Server
             var SqlString = "INSERT INTO [Finance].[FinActual]  (ActualAmount,kFinActualID,fFinTranID,kCategoryID,DateEffective,fClientID,fHierarchyID,Month,fPartyID,Name,fCatSrchID,isFinal)" +// ) " +
 
                 "VALUES (@ActualAmount,@kFinActualID,@kFinTranID,@kCategoryID,@DateEffective,@fIconID,@DateEffective,@kClientID,@kHierarchyID,@Month,@kPartyID,@PartyName, @fCatSrchID),1)";
-                                                                                                                                                                                                          //If elements are to be added, insert into backend
+            var SqlString1 = "UPDATE [Finance].[FinTran] SET fPartyID = @kPartyID WHERE kFinTranID = @kFinTranID";
+            //If elements are to be added, insert into backend
             results = mPersist.Where(x => x.ChangeType == "a").OrderBy(x => x.KFinActualID).ToList();//
              var SqlString2 = "";
             if (results.Count > 0)
@@ -910,15 +911,18 @@ namespace Fasetto.Word.Web.Server
                     para[12].Value = row.KPartyName;
                     para[13].Value = new Guid(row.KPartyID);
                     if (row.FCatSrchID == null || row.FCatSrchID == "")
-                        para[14].Value = new Guid();
+                        para[14].Value = Guid.NewGuid();
                     else
                         para[14].Value = new Guid(row.FCatSrchID);
+                    SqlString2 = "EXEC [Finance].[spManageCategorySearch] @fClientID = '" + para[9].Value + "' , @HierarchyID = '" + para[10].Value + "', @fCategoryID = '" + para[2].Value + "',@fPartyID = '" + para[13].Value + "' ,@fCatSrchID = '" + para[14].Value + "' ,@Description = '" + para[1].Value + "' ,@month = '" + para[11].Value + "'";
+
 
                     try
                     {
                         // Try and run the task
                         _ = await ExecuteAsync(SqlString, para);
-
+                        _ = await ExecuteAsync(SqlString1, para);
+                        _ = await GetDataSetAsync(SqlString2);
                     }
                     catch (Exception ex)
                     {
@@ -935,7 +939,7 @@ namespace Fasetto.Word.Web.Server
 
 
             SqlString = "UPDATE [Finance].[FinActual] SET ActualAmount =@ActualAmount,fCategoryID = @kCategoryID,fPartyID = @kPartyID,fCatSrchID = @fCatSrchID, isFinal =1 WHERE kFinActualID = @kFinActualID";
-            var SqlString1 = "UPDATE [Finance].[FinTran] SET fPartyID = @kPartyID WHERE kFinTranID = @kFinTranID";
+            SqlString1 = "UPDATE [Finance].[FinTran] SET fPartyID = @kPartyID WHERE kFinTranID = @kFinTranID";
 
             //If elements are to be updated, insert into backend
             results = mPersist.Where(x => x.ChangeType == "c").OrderBy(x => x.KFinActualID).ToList();//
@@ -959,12 +963,12 @@ namespace Fasetto.Word.Web.Server
                     para[12].Value = row.KPartyName;
                     para[13].Value = new Guid(row.KPartyID);
                     if (row.FCatSrchID == null || row.FCatSrchID == "")
-                        para[14].Value = new Guid();
+                        para[14].Value = Guid.NewGuid();
                     else
                         para[14].Value = new Guid(row.FCatSrchID);
 
 
-                    SqlString2 = "EXEC [Finance].[spManageCategorySearch] @fClientID = '" + para[9].Value + "' , @HierarchyID = '" + para[10].Value + "', @fCategoryID = '" + para[2].Value + "',@fPartyID = '" + para[13].Value + "' ,@fCatSrchID = '" + para[14].Value + "' ,@Description = '" + para[14].Value + "' ,@month = '" + para[11].Value + "'";
+                    SqlString2 = "EXEC [Finance].[spManageCategorySearch] @fClientID = '" + para[9].Value + "' , @HierarchyID = '" + para[10].Value + "', @fCategoryID = '" + para[2].Value + "',@fPartyID = '" + para[13].Value + "' ,@fCatSrchID = '" + para[14].Value + "' ,@Description = '" + para[1].Value + "' ,@month = '" + para[11].Value + "'";
 
                     try
 
@@ -1012,7 +1016,7 @@ namespace Fasetto.Word.Web.Server
                     para[12].Value = row.KPartyName;
                     para[13].Value = new Guid(row.KPartyID);
                     if (row.FCatSrchID == null || row.FCatSrchID == "")
-                        para[14].Value = new Guid();
+                        para[14].Value = Guid.NewGuid();
                     else
                         para[14].Value = new Guid(row.FCatSrchID);
                     try
@@ -1052,7 +1056,7 @@ namespace Fasetto.Word.Web.Server
         #region AddDocument
 
         [Route(ApiRoutes.AddDocument)]
-        public async Task<ApiResponse> AddDocumentAsync([FromBody] DocDataResultApiModel model)
+        public async Task<ApiResponse> AddDocumentAsync([FromBody] DocDataResultListApiModel model)
 
         {
             #region Get User
@@ -1077,14 +1081,31 @@ namespace Fasetto.Word.Web.Server
             ;
             try
             {
-                var path = Configuration["FileShare"];
-                var fileName = model.DocName;
-                fileName = path + fileName;
-                model.DocURL = fileName;
-                using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                foreach(var doc in model)
                 {
-                    fs.Write(model.DocImage, 0, model.DocImage.Length);
-                    //return true;
+                    try
+                    {
+                        var path = Configuration["FileShare"];
+                        var fileName = doc.DocName;
+                        fileName = path + fileName;
+  
+                        using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                        {
+                            fs.Write(doc.DocImage, 0, doc.DocImage.Length);
+                                              //return true;
+                        }
+                        var SqlString = "INSERT INTO [Finance].[TransactionDocument]  (fTransactionID,fChangeID,kDocumentID,DocName,DocDescription,DateEffective)" +// ) " +
+
+                                        "VALUES ('"+doc.FFintranID+"',NULL,'"+doc.KDocID+"','"+doc.DocName+"','"+doc.DocDescription+"',Getdate())";
+                        _ = await ExecuteAsync(SqlString);
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
+
+
                 }
 
             }
@@ -1108,10 +1129,10 @@ namespace Fasetto.Word.Web.Server
         #region ReturnDocument
 
             [Route(ApiRoutes.ReturnDocument)]
-            public async Task<ApiResponse> ReturnDocumentAsync([FromBody] DocDataResultApiModel model)
+            public async Task<ApiResponse> ReturnDocumentAsync([FromBody] string model)
 
             {
-                #region Get User
+             #region Get User
 
                 // Get the current user
                 var user = await mUserManager.GetUserAsync(HttpContext.User);
@@ -1124,64 +1145,92 @@ namespace Fasetto.Word.Web.Server
                         ErrorMessage = "User not found"
                     };
 
-                #endregion
+            #endregion Get User
 
-                #region ReturnDocFromFileShare
+            #region ReturnDocFromFileShare
+
+
+            #region sql query
 
 
 
-                ;
-                try
+            var SqlString = "SELECT [fTransactionID],[kDocumentID],[DocName],[DocDescription] FROM[Finance].[TransactionDocument](NOLOCK) WHERE[fTransactionID] = '" + model + "'";
+            try
+            {
+                // Try and run the task
+                var dataset = await GetDataSetAsync(SqlString);
+                var dt = dataset.Tables[0];
+                var results = new DocDataResultListApiModel();
+                var path = Configuration["FileShare"];
+                var fileName = "";
+                //var results = billingPeriodResultListApiModel;
+
+
+                foreach (DataRow row in dt.Rows)
                 {
-                    var path = Configuration["FileShare"];
-                    var fileName = model.DocName;
-                    fileName = path + fileName;
-                    model.DocURL = fileName;
-                    using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                    var u = new DocDataResultApiModel
                     {
-                        fs.Write(model.DocImage, 0, model.DocImage.Length);
-                        //return true;
+
+                        FFintranID = row[0].ToString(),
+                        KDocID = row[1].ToString(),
+                        DocName = row[2].ToString(),
+                        DocDescription = row[3].ToString(),
+
+                    };
+                    //convert selected file to byte[]
+                    fileName = path + u.DocName;
+                    using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                    {
+                        using (var reader = new BinaryReader(stream))
+                        {
+                            u.DocImage = reader.ReadBytes((int)stream.Length);
+                        }
                     }
+                    results.Add(u);
 
                 }
-                catch (Exception ex)
+                return new ApiResponse<DocDataResultListApiModel>
                 {
-                    // Log error
-                    //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
-
-                    // Throw it as normal
-                    throw;
-                }
-                return new ApiResponse<DocDataResultApiModel>
-                {
-                    //Response = results
+                    Response = results
                 };
+            }
 
-                #endregion AddDocToFileShare
+
+            catch (Exception ex)
+            {
+                // Log error
+                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                // Throw it as normal
+                throw;
+            }
+
+
              }
-
-                #endregion ReturnDocument
-
-
+        #endregion sql query
+        #endregion ReturnDocFromFileShare
 
 
 
+        #endregion ReturnDocument
 
-            #endregion Financials
+
+        #endregion Financials
 
 
-            #region Services
-            #region LoadReadings
-            /// <summary>
-            /// Retrieves meter readings from Client API and updates database
-            /// </summary>
-            /// <param name="model">The search credentials</param>
-            /// <returns>
-            ///     Returns a list of hiearchy items if successful, 
-            ///     otherwise returns the error reasons for the failure
-            /// </returns>
 
-            [Route(ApiRoutes.LoadReadings)]
+        #region Services
+        #region LoadReadings
+        /// <summary>
+        /// Retrieves meter readings from Client API and updates database
+        /// </summary>
+        /// <param name="model">The search credentials</param>
+        /// <returns>
+        ///     Returns a list of hiearchy items if successful, 
+        ///     otherwise returns the error reasons for the failure
+        /// </returns>
+
+        [Route(ApiRoutes.LoadReadings)]
             public async Task<ApiResponse> ReturnMeterReadingsAsync([FromBody] string model)
             {
 
@@ -2160,12 +2209,12 @@ namespace Fasetto.Word.Web.Server
                         para[1].Value = row.Description;
                         para[2].Value = new Guid(row.KCategoryID);
                         if (row.ParentCategoryID == null || row.ParentCategoryID == "")
-                            para[3].Value = new Guid();
+                            para[3].Value = Guid.NewGuid();
                         else
                             para[3].Value = new Guid(row.ParentCategoryID);
 
                         if (row.FIconID == null||row.FIconID =="")
-                        para[4].Value = new Guid();
+                        para[4].Value = Guid.NewGuid();
                         else
                         para[4].Value = new Guid(row.FIconID); 
                         if (row.DateEffective != Convert.ToDateTime("0001/01/01 00:00:00"))
@@ -2180,7 +2229,7 @@ namespace Fasetto.Word.Web.Server
                         if (row.KChangeID != null)
                         { para[7].Value = new Guid(row.KChangeID); }
                         else
-                            para[7].Value = new Guid();
+                            para[7].Value = Guid.NewGuid();
 
                         para[8].Value = row.IsUnderReview;
                         para[9].Value = row.IsNewElement;
@@ -2200,14 +2249,14 @@ namespace Fasetto.Word.Web.Server
                             para[14].Value = new Guid(row.HierarchyTypeID);
                         }
                         else
-                            //para[14].Value = new Guid();
+                            //para[14].Value = Guid.NewGuid();
                             para[14].Value = DBNull.Value;
                         if (row.FClientID != null && row.FClientID != "")
                         {
                             para[15].Value = new Guid(row.FClientID);
                         }
                         else
-                        //para[14].Value = new Guid();
+                        //para[14].Value = Guid.NewGuid();
                         para[15].Value = DBNull.Value;
                     try
                         {
@@ -2243,12 +2292,12 @@ namespace Fasetto.Word.Web.Server
                         para[1].Value = row.Description;
                         para[2].Value = new Guid(row.KCategoryID);
                         if (row.ParentCategoryID == null || row.ParentCategoryID == "")
-                            para[3].Value = new Guid();
+                            para[3].Value = Guid.NewGuid();
                         else
                             para[3].Value = new Guid(row.ParentCategoryID);
 
                         if (row.FIconID == null || row.FIconID == "")
-                            para[4].Value = new Guid();
+                            para[4].Value = Guid.NewGuid();
                         else
                             para[4].Value = new Guid(row.FIconID);
                         if (row.DateEffective != Convert.ToDateTime("0001/01/01 00:00:00"))
@@ -2263,7 +2312,7 @@ namespace Fasetto.Word.Web.Server
                         if (row.KChangeID != null && row.KChangeID != "" )
                         { para[7].Value = new Guid(row.KChangeID); }
                         else
-                            para[7].Value = new Guid();
+                            para[7].Value = Guid.NewGuid();
 
                         para[8].Value = row.IsUnderReview;
                         para[9].Value = row.IsNewElement;
@@ -2281,7 +2330,7 @@ namespace Fasetto.Word.Web.Server
                         { para[14].Value = new Guid(row.HierarchyTypeID);
                         }
                         else
-                            //para[14].Value = new Guid();
+                            //para[14].Value = Guid.NewGuid();
                             para[14].Value = new Guid("00000000-0000-0000-0000-000000000000");
                     try
                     

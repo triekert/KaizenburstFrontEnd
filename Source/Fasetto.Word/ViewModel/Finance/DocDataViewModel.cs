@@ -21,26 +21,7 @@ namespace Fasetto.Word
 
         #region Public Properties
 
-        /// <summary>
-        /// String representation of GUID for linked document
-        /// </summary>
-        //public string KDocID => mElement.KDocID;
 
-        /// <summary>
-        ///  Name of Doc linked to Transaction
-        /// </summary>
-        //public string DocName => mElement.DocName;
-
-
-        /// <summary>
-        ///  Image of  Doc linked to Transaction
-        /// </summary>
-        //public byte[] DocImage => mElement.DocImage;
-
-
-        /// <summary>
-        ///  URL of  Doc linked to Transaction
-        /// </summary>
         //public string DocURL => mElement.DocURL;
         /// <summary>
         /// String representation of GUID for linked document
@@ -54,6 +35,12 @@ namespace Fasetto.Word
 
 
         /// <summary>
+        ///  Readable name of Doc linked to Transaction
+        /// </summary>
+        public string DocDescription { get; set; }
+
+
+        /// <summary>
         ///  Image of  Doc linked to Transaction
         /// </summary>
         public byte[] DocImage { get; set; }
@@ -64,6 +51,19 @@ namespace Fasetto.Word
         /// </summary>
         public string DocURL { get; set; }
 
+
+
+        /// <summary>
+        ///  Flag to indicate whether doc already registered on server
+        /// </summary>
+        public bool IsNew { get; set; }
+
+
+
+        /// <summary>
+        ///  String representation of GUID for selected transaction
+        /// </summary>
+        public string FFintranID{ get; set; }
 
 
         /// <summary>

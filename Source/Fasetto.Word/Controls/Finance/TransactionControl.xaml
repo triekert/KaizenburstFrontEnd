@@ -15,7 +15,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridColumnHeader">
                         <Label Foreground="DarkRed" FontWeight="ExtraBlack" Background="BurlyWood" FontFamily="Lato Heavy" FontSize="20" Content="{TemplateBinding Content}"
-                               HorizontalAlignment="Stretch" HorizontalContentAlignment ="Left"  VerticalAlignment="Center"   />
+                               HorizontalAlignment="Stretch" HorizontalContentAlignment ="Left"  VerticalAlignment="Center"  />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -144,7 +144,10 @@
                                 <Setter Property="Background" Value="Crimson"></Setter>
                                       <Setter Property="Foreground" Value="Beige"></Setter>                              
                             </DataTrigger>
-
+                        <DataTrigger Binding="{Binding KPartyName}" Value ="">
+                            <Setter Property="Background" Value="Crimson"></Setter>
+                            <Setter Property="Foreground" Value="Beige"></Setter>
+                        </DataTrigger>
                         <!--<DataTrigger Binding="{Binding State}" Value="State2">
                                 <Setter Property="Background" Value="Orange"></Setter>
                             </DataTrigger>-->
@@ -161,14 +164,17 @@
             <DataGrid.Columns>
                 <!--<DataGridTextColumn Header ="Bulk Meter" FontWeight="Bold"
                                     Binding="{Binding ShortName}"/>-->
-                <DataGridTemplateColumn Header="Trans Date" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                <DataGridTemplateColumn Header="Trans Date" HeaderStyle="{StaticResource ColumnHeaderStyle}" >
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Path=Posted_Date,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Transaction Description" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                
+                <!--<DataGridTextColumn Header="Posted Date" Binding= "{Binding Path=Posted_Date}"  FontSize="12" FontWeight="Normal" FontFamily="arial" />-->
+
+                <DataGridTemplateColumn Header="Transaction Description" HeaderStyle="{StaticResource ColumnHeaderStyle}" SortDirection="Descending">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Margin="5" TextWrapping="Wrap"  Width="200" Text="{Binding Path= Description}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
