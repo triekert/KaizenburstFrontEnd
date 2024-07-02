@@ -24,6 +24,11 @@ namespace Fasetto.Word
         #region Public Properties
 
         /// <summary>
+        /// String representation of the GUID for the currently selected Client
+        /// </summary>
+        public string FClientID { get; set; }
+
+        /// <summary>
         /// The current page of the application
         /// </summary>
         public ApplicationPage CurrentPage { get; private set; } = ApplicationPage.Login;

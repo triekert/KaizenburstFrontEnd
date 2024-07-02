@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
-
+using System.Collections.ObjectModel;
 
 namespace Fasetto.Word
 {
@@ -50,29 +50,61 @@ namespace Fasetto.Word
 
            if (Keyboard.IsKeyDown(Key.Escape))
 
- 
-                ((ManageClassificationViewModel)DataContext).Close();
-                //e.Handled = true;
+
+            { ((ManageClassificationViewModel)DataContext).Close();
+            e.Handled = true;}
                 //ImagePath
-                 
-           else
-                if (Keyboard.IsKeyDown(Key.F2))
-                    ((ManageClassificationViewModel)DataContext).OpenDocument();
+
+           //else
+           //     if (Keyboard.IsKeyDown(Key.F2))
+           //         ((ManageClassificationViewModel)DataContext).OpenDocument();
  
-                 else
-                    if (Keyboard.IsKeyDown(Key.Insert))
-                        ((ManageClassificationViewModel)DataContext).BrowseImage();
-                    e.Handled = true;
+           //      else
+           //         if (Keyboard.IsKeyDown(Key.Insert))
+           //             ((ManageClassificationViewModel)DataContext).BrowseImage();
+           //         e.Handled = true;
         }
 
         private void DataGridRow_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if (Keyboard.IsKeyDown(Key.F2))
+
             {
-                NavigateOn();
+
+                ((ManageClassificationViewModel)DataContext).OpenDocument((DocDataViewModel)Transaction.SelectedItem);
             }
+
+            else
+                if (Keyboard.IsKeyDown(Key.Insert))
+                ((ManageClassificationViewModel)DataContext).BrowseImage();
+                    e.Handled = true;            
+            //if (e.Key == Key.Enter)
+            //{
+            //    NavigateOn();
+            //}
         }
 
+        private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (((DocDataViewModel)Transaction.SelectedItem).KDocID != null && ((DocDataViewModel)Transaction.SelectedItem).KDocID != "00000000-0000-0000-0000-000000000000")
+                ((ManageClassificationViewModel)DataContext).OpenDocument((DocDataViewModel)Transaction.SelectedItem);
+            else
+                ((ManageClassificationViewModel)DataContext).BrowseImage();
+
+            e.Handled = true;
+            //MessageBox.Show($"The timeslot selected is {TransactionRec.TimeSlotStart}", $"The timeslot selected is {TransactionRec.TimeSlotStart}");
+        }
+
+        private void DataGridRow_MouseRightClick(object sender, MouseButtonEventArgs e)
+        {
+            var tempT = new ObservableCollection<TransactionViewModel>();
+            foreach (var tT in Transaction.ItemsSource)
+                tempT.Add((TransactionViewModel)tT);
+
+            //var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
+            //var mTimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart.AddMinutes(30);
+            //MessageBox.Show($" timeslot ends at {mTimeEnd}", $" The timeslot selected starts at {mTimeStart}");
+        }
         private void NavigateOn()
         { }
 

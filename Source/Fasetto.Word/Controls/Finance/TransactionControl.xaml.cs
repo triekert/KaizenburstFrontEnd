@@ -1,11 +1,19 @@
 ﻿using Fasetto.Word.Core;
+using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Forms.DataVisualization.Charting;
+
+//using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Media;
 using static Fasetto.Word.DI;
 
 namespace Fasetto.Word
@@ -68,9 +76,21 @@ namespace Fasetto.Word
             //mTransactionTreeView.mBulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
             //ViewModelApplication.CurrentControlViewModel = mTransactionTreeView;
 
-            //CloseCommand = new RelayCommand(Close);
+            //Create dependency property
+            //"ItemsSource is a dependency property, so it's easy enough to be notified when the property is changed to something else"
+            //ItemsControl Represents a control that can be used to present a collection of items, ItemsSourceProperty is a dependency property which 
 
+            var dpd = DependencyPropertyDescriptor.FromProperty(ItemsControl.ItemsSourceProperty, typeof(DataGrid));
+            if (dpd != null)
+            {
+                dpd.AddValueChanged(Transaction, ItemsPropertyIsChanged);
+            }
 
+        }
+
+        private void ItemsPropertyIsChanged(object sender, EventArgs e)
+        {
+            SelectRowByIndex(Transaction, ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec);
         }
 
         //public HierarchyControl(string root)
@@ -126,10 +146,152 @@ namespace Fasetto.Word
         }
 
 
+        private void DataGridRow_OnLoaded(object sender, RoutedEventArgs e)
+        {
+
+
+            //var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
+            //var mTimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart.AddMinutes(30);
+            //MessageBox.Show($" timeslot ends at {mTimeEnd}", $" The timeslot selected starts at {mTimeStart}");
+        }
+        private void DataGridRow_OnUnLoaded(object sender, RoutedEventArgs e)
+        {
+            //    var source = ((DataGridRow)sender).ItemsSource;
+            //    var view = (IEditableCollectionView)CollectionViewSource.GetDefaultView(source);
+            //    view.CommitEdit();
+
+            //var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
+            //var mTimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart.AddMinutes(30);
+            //MessageBox.Show($" timeslot ends at {mTimeEnd}", $" The timeslot selected starts at {mTimeStart}");
+        }
+
+        private void DataGrid_OnUnLoaded(object sender, RoutedEventArgs e)
+    {
+        var source = ((DataGrid)sender).ItemsSource;
+    var view = (IEditableCollectionView)CollectionViewSource.GetDefaultView(source);
+    view.CommitEdit();
+
+
+            //var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
+            //var mTimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart.AddMinutes(30);
+            //MessageBox.Show($" timeslot ends at {mTimeEnd}", $" The timeslot selected starts at {mTimeStart}");
+        }
+
+        private void DataGrid_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var source = ((DataGrid)sender).ItemsSource;
+            var view = (IEditableCollectionView)CollectionViewSource.GetDefaultView(source);
+            view.CommitEdit();
+            SelectRowByIndex(Transaction, ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec);
+
+
+            //var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
+            //var mTimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart.AddMinutes(30);
+            //MessageBox.Show($" timeslot ends at {mTimeEnd}", $" The timeslot selected starts at {mTimeStart}");
+        }
+
         /// when called, this method will determine whether more detail is available for further selection and will either
         /// pass control to the Manage Classification window directly or first display transaction detail allocations made
         /// 
         /// </summary>
+        /// 
+
+
+
+        /// when called, this method will determine whether more detail is available for further selection and will either
+        /// pass control to the Manage Classification window directly or first display transaction detail allocations made
+        /// 
+        /// </summary>
+        /// 
+
+        public static T FindVisualChild<T>(DependencyObject obj) where T : DependencyObject
+        {
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+            {
+                var child = VisualTreeHelper.GetChild(obj, i);
+                if (child != null && child is T t)
+                    return t;
+                else
+                {
+                    var childOfChild = FindVisualChild<T>(child);
+                    if (childOfChild != null)
+                        return childOfChild;
+                }
+            }
+            return null;
+        }
+
+        public static void SelectRowByIndex(DataGrid dataGrid, int rowIndex)
+        {
+            if (!dataGrid.SelectionUnit.Equals(DataGridSelectionUnit.FullRow))
+                throw new ArgumentException("The SelectionUnit of the DataGrid must be set to FullRow.");
+
+            if (rowIndex < 0 || rowIndex > (dataGrid.Items.Count - 1))
+                throw new ArgumentException(string.Format("{0} is an invalid row index.", rowIndex));
+
+            dataGrid.SelectedItems.Clear();
+            /* set the SelectedItem property */
+            var item = dataGrid.Items[rowIndex]; // = Product X
+            dataGrid.SelectedItem = item;
+
+            if (!(dataGrid.ItemContainerGenerator.ContainerFromIndex(rowIndex) is DataGridRow row))
+            {
+                /* bring the data item (Product object) into view
+                 * in case it has been virtualized away */
+                dataGrid.ScrollIntoView(item);
+                row = dataGrid.ItemContainerGenerator.ContainerFromIndex(rowIndex) as DataGridRow;
+            }
+            if (row != null)
+            {
+                var cell = GetCell(dataGrid, row, 0);
+                if (cell != null)
+                    cell.Focus();
+            }
+            //TODO: Retrieve and focus a DataGridCell object
+        }
+
+        public static DataGridCell GetCell(DataGrid dataGrid, DataGridRow rowContainer, int column)
+        {
+            if (rowContainer != null)
+            {
+                var presenter = FindVisualChild<DataGridCellsPresenter>(rowContainer);
+                if (presenter == null)
+                {
+                    /* if the row has been virtualized away, call its ApplyTemplate() method 
+                     * to build its visual tree in order for the DataGridCellsPresenter
+                     * and the DataGridCells to be created */
+                    rowContainer.ApplyTemplate();
+                    presenter = FindVisualChild<DataGridCellsPresenter>(rowContainer);
+                }
+                if (presenter != null)
+                {
+                    if (!(presenter.ItemContainerGenerator.ContainerFromIndex(column) is DataGridCell cell))
+                    {
+                        /* bring the column into view
+                         * in case it has been virtualized away */
+                        dataGrid.ScrollIntoView(rowContainer, dataGrid.Columns[column]);
+                        cell = presenter.ItemContainerGenerator.ContainerFromIndex(column) as DataGridCell;
+                    }
+                    return cell;
+                }
+            }
+            return null;
+        }
+
+
+    //    public static void SelectRowByIndex(DataGrid dataGrid, int rowIndex)
+    //    {
+    //        ...
+    //DataGridRow row = dataGrid.ItemContainerGenerator.ContainerFromIndex(rowIndex) as DataGridRow;
+    //        ...
+    //if (row != null)
+    //        {
+    //            DataGridCell cell = GetCell(dataGrid, row, 0);
+    //            if (cell != null)
+    //                cell.Focus();
+    //        }
+    //    }
+
 
         private void NavigateOn()
         {
@@ -137,7 +299,10 @@ namespace Fasetto.Word
                 var MKFinTranID = ((TransactionViewModel)Transaction.SelectedItem).KFinTranID;
                 var RawTable = Transaction.Items;
 
-                ViewModelApplication.PopupVisible = false;
+            ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec = Transaction.SelectedIndex;
+
+             ViewModelApplication.PopupVisible = false;
+
             ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(MKFinTranID);
             ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Allocation ";
 
@@ -197,6 +362,11 @@ namespace Fasetto.Word
                 ViewModelApplication.PopupVisible = true;
 
             }
+        }
+
+        private void Datagrid_TargetUpdated(object sender, DataTransferEventArgs e)
+        {
+
         }
     }
 }

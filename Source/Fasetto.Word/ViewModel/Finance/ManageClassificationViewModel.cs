@@ -317,7 +317,8 @@ namespace Fasetto.Word
                 DocImage = selected.Document.DocImage,
                 DocName = selected.Document.DocName,
                 DocURL = selected.Document.DocURL,
-                KDocID = selected.Document.KDocID
+                KDocID = selected.Document.KDocID,
+                DocDescription = selected.Document.DocDescription
             };
             mRequest.Add(mRqst);
 
@@ -1473,10 +1474,10 @@ namespace Fasetto.Word
 
         }
 
-        public void OpenDocument()
+        public void OpenDocument(DocDataViewModel doccie)
         {
             //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
-            Selected.Document.KDocID = Guid.NewGuid().ToString();
+            //Selected.Document.KDocID = Guid.NewGuid().ToString();
             using (var openFileDialog = new OpenFileDialog())
             {
                 //Selected.Document.DocDescription = GetFileFolderName(Document.DocURL);
@@ -1484,14 +1485,14 @@ namespace Fasetto.Word
                 //Selected.Document.FFintranID = Selected.KFinTranID;
                 //Document.IsNew = true;
                 var path = Path.GetTempPath();
-                var fileName = path + Selected.Document.DocName;
-                Selected.Document.DocURL = fileName;
+                var fileName = path + doccie.DocName;
+                doccie.DocURL = fileName;
                 using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
                 {
-                    fs.Write(Selected.Document.DocImage, 0, Selected.Document.DocImage.Length);
+                    fs.Write(doccie.DocImage, 0,doccie.DocImage.Length);
                     //return true;
                 }
-                Process.Start(Selected.Document.DocURL);
+                Process.Start(doccie.DocURL);
             }
             //    MyImage.Source = new BitmapImage(new Uri(lImagePath.Text));
 

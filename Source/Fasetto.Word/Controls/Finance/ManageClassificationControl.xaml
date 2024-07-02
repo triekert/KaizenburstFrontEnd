@@ -3,11 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Fasetto.Word"
+             xmlns:local="clr-namespace:Fasetto.Word" xmlns:forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" xmlns:sys="clr-namespace:System;assembly=mscorlib" d:DataContext="{d:DesignInstance Type=local:BulkReconViewModel}"
              xmlns:core="clr-namespace:Fasetto.Word.Core;assembly=Fasetto.Word.Core"
-             d:DataContext="{x:Static local:HierarchyElementDesignModel.Instance}"
              mc:Ignorable="d" >
-
+    <UserControl.Resources>
+        <sys:String x:Key="colName">dynamic string...</sys:String>
+        <Style x:Key="ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" >
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridColumnHeader">
+                        <Label Foreground="{StaticResource ForegroundVeryDarkBrush}" FontWeight="UltraBold" Background="{StaticResource WordLightBlueBrush}" FontFamily="Lato Heavy" FontSize="20" Content="{TemplateBinding Content}"
+                               HorizontalAlignment="Stretch" HorizontalContentAlignment ="Left"  VerticalAlignment="Center"  />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
     <Border Background="{DynamicResource BackgroundLightBrush}" 
             Padding="15">
 
@@ -118,13 +129,13 @@
                             <local:HierarchyItemSelectionControl DataContext="{Binding Party}" FontWeight="ExtraBlack"  /> 
                             <!--</StackPanel>-->
                             <!--</StackPanel>-->
-                            <Grid >
+                            <!--<Grid >
                                 <TextBox x:Name="ImagePath" 
                                     
                                      Text ="{Binding Document.DocURL}" FontFamily="{StaticResource LatoRegular}" FontSize="12"
                                      />
                             </Grid>
-                            <!--<Button x:Name="BrowseButton" Content="..." Click="BrowseButton_OnClick"/>
+                            --><!--<Button x:Name="BrowseButton" Content="..." Click="BrowseButton_OnClick"/>
                             <Button x:Name="SaveButton" Content="Save" Click="SaveButton_OnClick"/>
                             <Button x:Name="LoadButton" Content="Load" Click="LoadButton_OnClick" />-->
                             <!--<Image x:Name="MyImage" >
@@ -134,7 +145,7 @@
                                 </Image.Source>
 
 
-                            </Image>-->
+                            </Image>--><!--
                                 
                             <Border CornerRadius="10"
                                 Margin="0 0 0 15">
@@ -147,13 +158,125 @@
                                    MaxWidth="100"
                                    />
 
-                            </Border>
+                            </Border>-->
                         
                                     <!--DataContext="{Binding ImageAttachment}", NotifyOnTargetUpdated=True-->
                             <!--Source="{Binding  DocURL}"-->
                         </StackPanel>
 
+                        <DataGrid x:Name="Transaction" Grid.Row="3"  ItemsSource="{Binding DocumentList}" 
+                 HeadersVisibility="All" RenderTransformOrigin="0.5,0.5"       GridLinesVisibility="None" 
+                   AutoGenerateColumns="False" AlternationCount="2"
+                   SelectionMode="Single" SelectionUnit="FullRow"  VerticalAlignment="Center"  HorizontalAlignment="Center" HorizontalContentAlignment="Center"  CanUserAddRows="False"
+                 >
+                            <DataGrid.ColumnHeaderStyle>
+                               <Style TargetType="{x:Type DataGridColumnHeader}">
+                                   <Setter Property="FontWeight"  Value="ExtraBold" />
+                                   <Setter Property="HorizontalAlignment" Value="Center" />
+                                   <Setter Property="HorizontalContentAlignment" Value="Center" />
+                               </Style>
+                           </DataGrid.ColumnHeaderStyle>
 
+                            <DataGrid.Resources>
+                                <Style TargetType="DataGridRow">
+                                    <EventSetter Event ="MouseDoubleClick"  Handler="DataGridRow_MouseDoubleClick"/>
+                                    <EventSetter Event ="KeyDown"  Handler="DataGridRow_KeyDown"/>
+                                    <EventSetter Event ="PreviewMouseRightButtonDown"  Handler="DataGridRow_MouseRightClick"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="Background" Value ="AliceBlue"/>
+
+                                    <!--Setting highlight-->
+                                    <Style.Triggers>
+                                        <Trigger Property="AlternationIndex" Value="1">
+                                            <Setter Property="Background" Value="{StaticResource  WordOrangeBrush}"/>
+                                            <Setter Property="Foreground" Value="DarkGray"></Setter>
+                                        </Trigger>
+                                        <DataTrigger Binding="{Binding ShortName}" Value ="">
+                                            <Setter Property="Background" Value="Crimson"></Setter>
+                                            <Setter Property="Foreground" Value="Beige"></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding KPartyName}" Value ="">
+                                            <Setter Property="Background" Value="Crimson"></Setter>
+                                            <Setter Property="Foreground" Value="Beige"></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding State}" Value="State2">
+                                            <Setter Property="Background" Value= "{StaticResource  WordOrangeBrush}"></Setter>
+                                       </DataTrigger>
+                                    </Style.Triggers>
+                                    <!--Setting highlight-->
+
+                                </Style>
+                                <Style TargetType="{x:Type DataGridColumnHeader}">
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                </Style>
+
+                            </DataGrid.Resources>
+
+                            <DataGrid.Columns>
+                                <!--<DataGridTextColumn Header ="Bulk Meter" FontWeight="Bold"
+                                   Binding="{Binding ShortName}"/>-->
+
+                                <DataGridTemplateColumn Header="Document Description" HeaderStyle="{StaticResource ColumnHeaderStyle}" SortDirection="Descending">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="5" TextWrapping="Wrap"  Width="200" Text="{Binding Path= DocDescription}"  FontSize="12" FontWeight="Normal" FontFamily="Lato Heavy"  VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="Unique Identifier" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="5" Width="100" Text="{Binding Path= KDocID}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="Linked Document" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image  Source="{Binding DocImage}"
+                                               MaxWidth="100"      
+                                                    />
+                                            <!--<Border CornerRadius="10"
+                                Margin="0 0 0 15">-->
+
+                                                <!--<Image--> 
+
+                                   <!--local:ClipFromBorderProperty.Value="True"
+                                   local:FadeInImageOnLoadProperty.Value="True"
+                                 
+                                  
+                                   />-->
+
+                                            <!--</Border>-->
+                                            <!--<TextBlock Margin="5" TextWrapping="Wrap"  Width="200" Text="{Binding Path= ShortName}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>-->
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Linked Party" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="5" TextWrapping="Wrap"  Width="200" Text="{Binding Path= KPartyName}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="Assigned Value" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="5" Width="100" Text="{Binding Path=ActualAmount,StringFormat=C,ConverterCulture='en-ZA'}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+
+                            </DataGrid.Columns>
+
+
+
+                        </DataGrid>
 
 
 
@@ -184,11 +307,11 @@
                                     ,10,0,10"--><!--
                                 />-->
                             <!--Remove a clasification for a transaction-->
-                            <Button Content="{Binding DeleteClassificationButtonText}"
+                            <!--<Button Content="{Binding DeleteClassificationButtonText}"
                                 Command="{Binding BrowseImageCommand}"
                                 FontSize="{StaticResource FontSizeRegular}"
                              
-                                />
+                                />-->
 
                         </StackPanel>
 
@@ -203,7 +326,7 @@
             </Grid>
 
 
-        </Grid>
+            </Grid>
       </ScrollViewer>
      
     </Border>

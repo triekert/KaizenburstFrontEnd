@@ -103,6 +103,9 @@
     <Compile Include="Controls\Finance\ManageClassificationControl.cs">
       <DependentUpon>ManageClassificationControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Finance\ManageClassificationTemplateControl.xaml.cs">
+      <DependentUpon>ManageClassificationTemplateControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Finance\TransactionDetailControl.xaml.cs" />
     <Compile Include="Controls\Finance\TransactionControl.xaml.cs" />
     <Compile Include="Controls\Input\CostHierarchyComboboxControl .xaml.cs">
@@ -362,6 +365,10 @@
     <Page Include="Controls\Finance\ManageClassificationControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Finance\ManageClassificationTemplateControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Finance\TransactionDetailControl.xaml">
       <Generator>MSBuild:Compile</Generator>

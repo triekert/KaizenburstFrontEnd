@@ -28,7 +28,7 @@ namespace Fasetto.Word
         /// </summary>
         public ObservableCollection<TransactionViewModel>Trans_action{ get; set; }
         public ObservableCollection<TransactionViewModel> OrgTransaction { get; set; }
-
+        public int Trans_actionRec { get; set; }
         //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
         /// <summary>
         /// A flag indicating if the login command is running
@@ -278,12 +278,11 @@ namespace Fasetto.Word
                         KPartyName = item.KPartyName,
                         IsChanged = false,
                         FCatSrchID = item.FCatSrchID,
-
-                    };
+                     };
                         Trans_action.Add(mTVM); 
                         OrgTransaction.Add(mTVM);//create original for reference
                     }
-
+                    Trans_actionRec = 3;
                 }
                  catch (Exception e)
                 {

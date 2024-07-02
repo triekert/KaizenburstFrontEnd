@@ -14,7 +14,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridColumnHeader">
-                        <Label Foreground="DarkRed" FontWeight="ExtraBlack" Background="BurlyWood" FontFamily="Lato Heavy" FontSize="20" Content="{TemplateBinding Content}"
+                        <Label Foreground="{StaticResource ForegroundVeryDarkBrush}" FontWeight="UltraBold" Background="{StaticResource WordLightBlueBrush}" FontFamily="Lato Heavy" FontSize="20" Content="{TemplateBinding Content}"
                                HorizontalAlignment="Stretch" HorizontalContentAlignment ="Left"  VerticalAlignment="Center"  />
                     </ControlTemplate>
                 </Setter.Value>
@@ -103,7 +103,7 @@
                     <StackPanel.Resources>
                         <ControlTemplate x:Key="ButtonTemplate" TargetType="{x:Type Button}">
                             <Border Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" 
-                    BorderBrush="{TemplateBinding BorderBrush}">
+                                     BorderBrush="{TemplateBinding BorderBrush}">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                         </ControlTemplate>
@@ -114,10 +114,13 @@
         </Border>
 
         <DataGrid x:Name="Transaction" Grid.Row="3"  ItemsSource="{Binding Trans_action}" 
-                  HeadersVisibility="All" RenderTransformOrigin="0.5,0.5"       GridLinesVisibility="None" 
-                    AutoGenerateColumns="False" AlternationCount="2"
-                    SelectionMode="Single" SelectionUnit="FullRow"  VerticalAlignment="Center"  HorizontalAlignment="Center" HorizontalContentAlignment="Center"  CanUserAddRows="False"
-                  >
+            HeadersVisibility="All" RenderTransformOrigin="0.5,0.5"       GridLinesVisibility="None" 
+            AutoGenerateColumns="False" AlternationCount="2"
+            SelectionUnit="FullRow"  VerticalAlignment="Center"  HorizontalAlignment="Center" HorizontalContentAlignment="Center"  CanUserAddRows="False" 
+            IsSynchronizedWithCurrentItem="True" SelectedItem="{Binding Trans_actionRec}" SelectionMode="Extended" TargetUpdated="Datagrid_TargetUpdated"
+            Loaded="DataGrid_OnLoaded" Unloaded="DataGrid_OnUnLoaded" 
+        >
+            
             <!--<DataGrid.ColumnHeaderStyle>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="FontWeight"  Value="ExtraBold" />
@@ -127,10 +130,17 @@
             </DataGrid.ColumnHeaderStyle>-->
             
             <DataGrid.Resources>
+                <Style TargetType="DataGrid">
+                     <EventSetter Event ="Unloaded"  Handler="DataGrid_OnUnLoaded"/>                   
+                      <EventSetter Event ="Loaded"  Handler="DataGrid_OnLoaded"/>   
+                  
+                </Style>
                 <Style TargetType="DataGridRow">
                     <EventSetter Event ="MouseDoubleClick"  Handler="DataGridRow_MouseDoubleClick"/>
                     <EventSetter Event ="KeyDown"  Handler="DataGridRow_KeyDown"/>
                     <EventSetter Event ="PreviewMouseRightButtonDown"  Handler="DataGridRow_MouseRightClick"/>
+
+                    <EventSetter Event ="Loaded"  Handler="DataGridRow_OnLoaded"/>
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
                     <Setter Property="Background" Value ="AliceBlue"/>
  
