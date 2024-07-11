@@ -53,7 +53,7 @@ namespace Fasetto.Word
         /// The view model to use for the current Hierarchy Element
         /// when the PopupControl is called to add a new Hierarchy Element
         /// </summary>
-        public HierarchyElementViewModel AddElementViewModel { get; set; } = new HierarchyElementViewModel();
+        //public HierarchyElementViewModel AddElementViewModel { get; set; } = new HierarchyElementViewModel();
 
         /// <summary>
         /// The view model to use for the current page when the CurrentPage changes

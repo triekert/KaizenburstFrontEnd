@@ -225,7 +225,12 @@ namespace Fasetto.Word
         public HierarchyElementViewModel()
         {
             //Enable the reverse navigation by storing the prior popup viewmodel
-            PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+
+
+            if (ViewModelApplication.CurrentPopupViewModel != null)
+            { 
+                PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            }
             // Create Node Name
             ShortName = new TextEntryViewModel
             {
@@ -296,6 +301,10 @@ namespace Fasetto.Word
 
             // TODO: Get from localization
             AddNodeButtonText = "Add Node to selected Parent";
+
+
+
+
         }
         //private void TreeView_KeyBoard(object sender, KeyboardEventArgs e)
         //{
@@ -308,6 +317,8 @@ namespace Fasetto.Word
         //    }
         //    e.Handled = true;
         //}
+
+
 
         #endregion
 

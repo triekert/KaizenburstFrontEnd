@@ -9,7 +9,6 @@
         /// Management of Hierarchy Element information
         /// </summary>
         AddElement = 1,
-
         /// <summary>
         /// A list of contacts
         /// </summary>
