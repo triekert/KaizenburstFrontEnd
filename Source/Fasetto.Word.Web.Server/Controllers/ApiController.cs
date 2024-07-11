@@ -660,6 +660,7 @@ namespace Fasetto.Word.Web.Server
                         KPartyName = row[9].ToString(),
                         KPartyID = row[10].ToString(),
                         FCatSrchID = row[12].ToString(),
+                        KHierarchyID = row[13].ToString(),
                     };
                     results.Add(u);
 
@@ -2076,7 +2077,9 @@ namespace Fasetto.Word.Web.Server
 
             var SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '";
                 if (model.RootID != null)
-                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '" + model.FHierarchyID + "',  @fClientID = '" + model.ClientID + "',  @Level = 100, @fHierarchyTypeID = NULL, @fRootID = '" + model.RootID + "'"; }
+                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fClientID = NULL,  @Level = 100, @fHierarchyTypeID = NULL, @fRootID = '" + model.RootID + "'"; }
+
+                    //{ SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '" + model.FHierarchyID + "',  @fClientID = '" + model.ClientID + "',  @Level = 100, @fHierarchyTypeID = NULL, @fRootID = '" + model.RootID + "'"; }
                 else
                     if (model.FHierarchyID == null)
                     { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fRootID = NULL,  @Level ='" + model.Level + "',  @fClientID = '" + model.ClientID + "', @fHierarchyTypeID = '" + model.HierarchyTypeID + "'"; }

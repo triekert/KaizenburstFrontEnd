@@ -78,9 +78,14 @@ namespace Fasetto.Word
             switch (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label)
             {
                 case "Select Client":
-                    root.FHierarchyID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid;
+                    //root.FHierarchyID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid;
+                    //root.RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid;
+                    //root.ClientID = "4766E825-1B58-410D-B06B-5A2639CA22C8";
+                    //root.Level = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Level;
+
+                    root.FHierarchyID = null;
                     root.RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid;
-                    root.ClientID = "4766E825-1B58-410D-B06B-5A2639CA22C8";
+                    root.ClientID = null;
                     root.Level = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Level;
                     //root.ClientID = "NULL";
                     //root.HierarchyTypeID = "NULL"; 
@@ -165,6 +170,9 @@ namespace Fasetto.Word
                     mHierarchyTree = new HierarchyTreeViewModel1(root);//root);
                     break;
             }
+
+            //search for current original item on hierarchy
+            //mHierarchyTree.mSearchText = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid;
 
 
 
@@ -322,15 +330,21 @@ namespace Fasetto.Word
 
  
                     if (Keyboard.IsKeyDown(Key.Enter))
-                {
+                        {
 
-                ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+                            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
 
-                RunSelectedItem();
-                    e.Handled = true;
+                            RunSelectedItem();
+                                e.Handled = true;
 
-                }
+                        }
+                    else
 
+                        if (Keyboard.IsKeyDown(Key.Insert))
+                            {
+                                AddHierarchyElement();
+                                e.Handled = true;
+                            }
 
         }
 
@@ -438,6 +452,18 @@ namespace Fasetto.Word
             //ViewModelApplication.PopupVisible = false;
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
 
+
+            if (ViewModelApplication.SettingsMenuVisible)
+
+            {
+
+                ViewModelApplication.FClientID = mDraggedItem.KCategoryID;
+                ViewModelApplication.ClientShortName = mDraggedItem.ShortName;
+                ViewModelApplication.PopupVisible = false;
+
+                ViewModelApplication.CurrentPopupContent = 0;
+                return;
+            }
 
             //var Poptype = ViewModelApplication.CurrentControlViewModel.PriorPopupViewModel.GetType().Name;
 

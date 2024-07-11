@@ -79,17 +79,18 @@ namespace Fasetto.Word
             //Create dependency property
             //"ItemsSource is a dependency property, so it's easy enough to be notified when the property is changed to something else"
             //ItemsControl Represents a control that can be used to present a collection of items, ItemsSourceProperty is a dependency property which 
-
+            //check this out
             var dpd = DependencyPropertyDescriptor.FromProperty(ItemsControl.ItemsSourceProperty, typeof(DataGrid));
-            if (dpd != null)
-            {
-                dpd.AddValueChanged(Transaction, ItemsPropertyIsChanged);
-            }
+            dpd?.AddValueChanged(Transaction, ItemsPropertyIsChanged);
 
         }
 
         private void ItemsPropertyIsChanged(object sender, EventArgs e)
         {
+            if (((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_action.Count!= ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mPersist.Count)
+            {
+                return;
+            }
             SelectRowByIndex(Transaction, ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec);
         }
 
@@ -244,8 +245,7 @@ namespace Fasetto.Word
             if (row != null)
             {
                 var cell = GetCell(dataGrid, row, 0);
-                if (cell != null)
-                    cell.Focus();
+                cell?.Focus();
             }
             //TODO: Retrieve and focus a DataGridCell object
         }
@@ -345,6 +345,7 @@ namespace Fasetto.Word
                         KPartyName = item.KPartyName,
                         KPartyID = item.KPartyID,
                         FCatSrchID = item.FCatSrchID,
+                        KHierarchyID = item.KHierarchyID,
                     };
                     TransactionDetail.Add(mTDVM);
                 }

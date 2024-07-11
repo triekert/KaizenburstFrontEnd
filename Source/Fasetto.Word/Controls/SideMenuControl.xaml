@@ -48,7 +48,7 @@
                             <Button 
                                 Style="{StaticResource IconButton}" 
                                 Content="{StaticResource FontAwesomeFinanceIcon}" 
-                                Command="{Binding OpenFinanceCommand}"
+                                Command="{Binding OpenFinanceCommand}" AutomationProperties.HelpText="Financial Management"
                                 />
                             <Button 
                                 Style="{StaticResource IconButton}" 

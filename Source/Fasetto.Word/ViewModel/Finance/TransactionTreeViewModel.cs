@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Input;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
@@ -34,6 +35,8 @@ namespace Fasetto.Word
         /// A flag indicating if the login command is running
         /// </summary>
         public bool TransClassBuildIsRunning { get; set; }
+
+        private object mStocksLock = new object();
         #endregion
 
         #region Data
@@ -60,7 +63,7 @@ namespace Fasetto.Word
         //    MatchingCategoryEnumerator = matchingCategoryEnumerator;
         //}
 
-        private string mSearchText = "", mSearchKCategoryID = string.Empty, mParentCategoryID = string.Empty;
+         private string mSearchText = "", mSearchKCategoryID = string.Empty, mParentCategoryID = string.Empty;
 
         #endregion // Data
         #region Public Commands
@@ -83,7 +86,10 @@ namespace Fasetto.Word
         public TransactionTreeViewModel(string client, DateTime timeStart, DateTime timeEnd)
         {
             #region Build HierarchyViewCollection
+
             Trans_action = new ObservableCollection<TransactionViewModel>();
+            BindingOperations.EnableCollectionSynchronization(Trans_action, mStocksLock);
+
 
             mTVM = new TransactionViewModel
             {
@@ -250,14 +256,20 @@ namespace Fasetto.Word
                     //mPersist = new TransactionResultListApiModel();
                     //mPersist.Clone(mOriginal, mPersist);
                     //Transaction.Clear();
-                    Trans_action = new ObservableCollection<TransactionViewModel>();
+                    //lock (mStocksLock) {
+
+                    //    Trans_action = new ObservableCollection<TransactionViewModel>();
+                    //}
+
+                    //BindingOperations.EnableCollectionSynchronization(Trans_action, mStocksLock);
                     OrgTransaction = new ObservableCollection<TransactionViewModel>();
 
-                    //Transaction.Clear();
+                    Trans_action.Clear();
                     mPersist = result.ServerResponse.Response;
                     mChange = new TransactionResultListApiModel();
-                    var matches = result.ServerResponse.Response.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
+                    var matches = mPersist.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
 
+                    //if (matches.Count>0)
 
                     foreach (var item in matches)
                     {
@@ -278,11 +290,21 @@ namespace Fasetto.Word
                         KPartyName = item.KPartyName,
                         IsChanged = false,
                         FCatSrchID = item.FCatSrchID,
+                        KHierarchyID = item.KHierarchyID,
+                       
                      };
-                        Trans_action.Add(mTVM); 
+
+                        //Lock collection to prevent contention with UI
+                        lock (mStocksLock)
+                        {
+                            Trans_action.Add(mTVM); 
                         OrgTransaction.Add(mTVM);//create original for reference
                     }
-                    Trans_actionRec = 3;
+                    }
+                    Trans_actionRec = 0;
+                    if (Trans_action.Count != mPersist.Count)
+                    { 
+                    };
                 }
                  catch (Exception e)
                 {

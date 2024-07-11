@@ -1,7 +1,6 @@
 ﻿using Dna;
 using Fasetto.Word.Core;
 using System;
-using System.Activities.Expressions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -10,8 +9,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using System.Windows.Input;
 using static Fasetto.Word.Core.CoreDI;
@@ -520,44 +517,7 @@ namespace Fasetto.Word
                 try
                 {
 
-                    //var hierarchyResultApiModels = mOriginal.ToList();
-                    //make a clone of the persisted data for manipulation on front end
-                    //mPersist = new TransactionResultListApiModel();
-                    //mPersist.Clone(mOriginal, mPersist);
-                    ////Transaction.Clear();
-                    //Trans_action = new ObservableCollection<TransactionViewModel>();
-                    //OrgTransaction = new ObservableCollection<TransactionViewModel>();
 
-                    //Transaction.Clear();
-                    //mPersist = result.ServerResponse.Response;
-                    //mChange = new TransactionResultListApiModel();
-                    //var matches = result.ServerResponse.Response.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
-
-
-                    //foreach (var item in matches)
-                    //{
-
-                    //    var mTVM = new TransactionViewModel
-
-                    //    {
-                    //        Posted_Date = item.Posted_Date,
-                    //        Month = item.Month,
-                    //        Description = item.Description,
-                    //        TransAmount = item.TransAmount,
-                    //        ActualAmount = item.ActualAmount,
-                    //        ShortName = item.ShortName,
-                    //        KCategoryID = item.KCategoryID,
-                    //        KFinActualID = item.KFinActualID,
-                    //        KFinTranID = item.KFinTranID,
-                    //        KPartyID = item.KPartyID,
-                    //        KPartyName = item.KPartyName,
-                    //        IsChanged = false,
-                    //        FCatSrchID = item.FCatSrchID,
-
-                    //    };
-                    //    Trans_action.Add(mTVM);
-                    //    OrgTransaction.Add(mTVM);//create original for reference
-                    //}
 
                 }
                 catch (Exception e)
@@ -669,26 +629,38 @@ namespace Fasetto.Word
         /// </summary>
         public void AddClassification()
         {
-            //if new document has been linked, copy to file server on web server
-            if (!(Selected.Document == null || !Selected.Document.IsNew))
-            {
+
+
+        //if new document has been linked, copy to file server on web server
+        //if (!(Selected.Document == null || !Selected.Document.IsNew))
+
+        //{
+
+            var docs = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).DocumentList.Where(x => x.IsNew && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
+            if (docs.Count>0)
+            { 
                 mRequest = new DocDataResultListApiModel();
-                var mRqst = new DocDataResultApiModel
-                {
-                    DocImage = Selected.Document.DocImage,
-                    DocName = Selected.Document.DocName,
-                    DocURL = Selected.Document.DocURL,
-                    KDocID = Selected.Document.KDocID,
-                    DocDescription = Selected.Document.DocDescription,
-                    FFintranID = Selected.Document.FFintranID
-                };
-                mRequest.Add(mRqst);
-                 if (mRequest.Count >0)
+
+                foreach  (var item in docs)
+                { 
+
+                    var mRqst = new DocDataResultApiModel
+                    {
+                        DocImage = item.DocImage,
+                        DocName = item.DocName,
+                        DocURL = item.DocURL,
+                        KDocID = item.KDocID,
+                        DocDescription = item.DocDescription,
+                        FFintranID = item.FFintranID
+                    };
+                    mRequest.Add(mRqst);
+                }
+                    if (mRequest.Count >0)
                     { 
                     TaskManager.RunAndForget(DocumentStorageAsync); 
                 };
-
-            }
+             }
+        //}
     
 
             var OrgActual = Selected.ActualAmount;
@@ -705,6 +677,7 @@ namespace Fasetto.Word
             Selected1.KPartyID = Selected.KPartyID;
             Selected1.KPartyName = Selected.KPartyName;
             Selected1.FCatSrchID = Selected.FCatSrchID;
+            Selected1.KHierarchyID = Selected.KHierarchyID;
 
             decimal.TryParse(Allocation.EditedText??Allocation.OriginalText, NumberStyles.Currency, CultureInfo.CurrentCulture, out var IntAmnt);
             if (Category.EditedName == "Selected Category")
@@ -793,7 +766,7 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "c",
                                     DateEffective = DateTime.Now,
-                                    KHierarchyID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category).EditedKid,
+                                    KHierarchyID = Selected1.KHierarchyID,
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                 };
@@ -826,7 +799,7 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "c",
                                     DateEffective = DateTime.Now,
-                                    KHierarchyID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category).EditedKid,
+                                    KHierarchyID = Selected1.KHierarchyID,
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
 
@@ -849,7 +822,7 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "d",
                                     DateEffective = DateTime.Now,
-                                    KHierarchyID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category).EditedKid,
+                                    KHierarchyID = Selected1.KHierarchyID,
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                  };
@@ -899,7 +872,7 @@ namespace Fasetto.Word
                                 KFinTranID = Selected1.KFinTranID,
                                 ChangeType = "c",
                                 DateEffective = DateTime.Now,
-                                KHierarchyID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category).EditedKid,
+                                KHierarchyID = Selected1.KHierarchyID,
                                 KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                 KPartyID = Selected1.KPartyID,
 
@@ -942,7 +915,7 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "a",
                                     DateEffective = DateTime.Now,
-                                    KHierarchyID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category).EditedKid,
+                                    KHierarchyID = Selected1.KHierarchyID,
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
 
@@ -976,7 +949,7 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "c",
                                     DateEffective = DateTime.Now,
-                                    KHierarchyID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category).EditedKid,
+                                    KHierarchyID = Selected1.KHierarchyID,
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                     FCatSrchID = Selected1.FCatSrchID,
@@ -1039,7 +1012,7 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "c",
                                     DateEffective = DateTime.Now,
-                                    KHierarchyID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category).EditedKid,
+                                    KHierarchyID = Selected1.KHierarchyID,
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                     FCatSrchID = Selected1.FCatSrchID,
@@ -1064,7 +1037,7 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "d",
                                     DateEffective = DateTime.Now,
-                                    KHierarchyID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category).EditedKid,
+                                    KHierarchyID = Selected1.KHierarchyID,
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                     FCatSrchID = Selected1.FCatSrchID,
@@ -1120,7 +1093,7 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "c",
                                     DateEffective = DateTime.Now,
-                                    KHierarchyID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category).EditedKid,
+                                    KHierarchyID = Selected1.KHierarchyID,
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                     FCatSrchID = Selected1.FCatSrchID,
@@ -1170,7 +1143,7 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "c",
                                     DateEffective = DateTime.Now,
-                                    KHierarchyID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category).EditedKid,
+                                    KHierarchyID = Selected1.KHierarchyID,
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                     FCatSrchID = Selected1.FCatSrchID,
@@ -1208,7 +1181,7 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "a",
                                     DateEffective = DateTime.Now,
-                                    KHierarchyID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category).EditedKid,
+                                    KHierarchyID = Selected1.KHierarchyID,
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                     FCatSrchID = Selected1.FCatSrchID,
@@ -1252,7 +1225,7 @@ namespace Fasetto.Word
                                     KFinTranID = Selected1.KFinTranID,
                                     ChangeType = "c",
                                     DateEffective = DateTime.Now,
-                                    KHierarchyID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category).EditedKid,
+                                    KHierarchyID = Selected1.KHierarchyID,
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                     FCatSrchID = Selected1.FCatSrchID,
@@ -1293,7 +1266,7 @@ namespace Fasetto.Word
                                         KFinTranID = Selected1.KFinTranID,
                                         ChangeType = "a",
                                         DateEffective = DateTime.Now,
-                                        KHierarchyID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category).EditedKid,
+                                        KHierarchyID = Selected1.KHierarchyID,
                                         KPartyID = Selected1.KPartyID,
                                         FCatSrchID = Selected1.FCatSrchID,
 
@@ -1322,7 +1295,7 @@ namespace Fasetto.Word
                                         KFinTranID = Selected1.KFinTranID,
                                         ChangeType = "c",
                                         DateEffective = DateTime.Now,
-                                        KHierarchyID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category).EditedKid,
+                                        KHierarchyID = Selected1.KHierarchyID,
                                         KPartyID = Selected1.KPartyID,
                                         KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                         FCatSrchID = Selected1.FCatSrchID,
@@ -1385,7 +1358,7 @@ namespace Fasetto.Word
                         KFinTranID = Selected1.KFinTranID,
                         ChangeType = "c",
                         DateEffective = DateTime.Now,
-                        KHierarchyID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category).EditedKid,
+                        KHierarchyID = Selected1.KHierarchyID,
                         KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                         KPartyID =  ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party).EditedKid,
                         //KPartyID = (Selected1.KPartyID??Selected.KPartyID),
@@ -1473,7 +1446,11 @@ namespace Fasetto.Word
 
 
         }
-
+        /// <summary>
+        /// Open the selected document in the default application on the client machine
+        /// Document is temporarily converted from the bytestream into a physical file in the temp directory
+        /// </summary>
+        /// <param name="doccie"></param>
         public void OpenDocument(DocDataViewModel doccie)
         {
             //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
@@ -1493,6 +1470,7 @@ namespace Fasetto.Word
                     //return true;
                 }
                 Process.Start(doccie.DocURL);
+
             }
             //    MyImage.Source = new BitmapImage(new Uri(lImagePath.Text));
 
@@ -1522,128 +1500,14 @@ namespace Fasetto.Word
                 //    sqlWrite.ExecuteNonQuery();
                 //}
             }
-        //private byte[] _imageBytes = null;
 
-        // Browse for an image on your computer
-        //private void BrowseButton_OnClick(object sender, RoutedEventArgs e)
-        //{
-        //    var dialog = new OpenFileDialog
-        //    {
-        //        CheckFileExists = true,
-        //        Multiselect = false,
-        //        Filter = "Images (*.jpg,*.png)|*.jpg;*.png|All Files(*.*)|*.*"
-        //    };
-
-        //    if (dialog.ShowDialog() == true)
-        //    {
-        //        ImagePath.Text = dialog.FileName;
-        //        MyImage.Source = new BitmapImage(new Uri(lImagePath.Text));
-
-        //        using (var fs = new FileStream(ImagePath.Text, FileMode.Open, FileAccess.Read))
-        //        {
-        //            _imageBytes = new byte[fs.Length];
-        //            fs.Read(imgBytes, 0, System.Convert.ToInt32(fs.Length));
-        //        }
-        //    }
-        //}
-
-        // Save the selected image to your database
-        private void SaveButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            //if (!String.IsNullOrEmpty(ImagePath.Text))
-            //{
-            //    var db = new MyDataContext();
-            //    var uploadedImg = new UploadedImage
-            //    {
-            //        ImageID = 0,
-            //        ImageContent = _imageBytes,
-            //        ImageName = ImagePath.Text
-            //    };
-
-            //    db.UploadedImages.InsertOnSubmit(uploadedImg);
-            //    db.SubmitChanges();
-            //}
-        }
-
-        // Load an image from the database
-        private void LoadButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            //// Load 1 image from the database and display it
-            //var db = new ImageInDatabaseDataContext();
-            //var img = (from el in db.UploadedImages
-            //           select el).FirstOrDefault();
-
-
-            //if (img != null)
-            //{
-            //    // Display the loaded image
-            //    ImageFile.Source = new BitmapImage(new Uri(img.ImageName));
-            //}
-        }
-
-
-        public async Task BillingPeriodAdjustAsync()
-        {
-            await RunCommandAsync(() => IsRunning, async () =>
-            {
-
-                // Store single transcient instance of client data store
-                var scopedClientDataStore = ClientDataStore;
-
-                // Update values from local cache
-                // Get the user token
-                var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
-                // Call the server and attempt to register with the provided credentials
-                // If we don't have a token (then not logged in...)
-                if (string.IsNullOrEmpty(token))
-                    // Then do nothing more
-                    return;
-
-                var result = await WebRequests.PostAsync<ApiResponse>(
-                // Set URL
-                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.BillingPeriodAdjustment),
-                    MAPI ,
-                    bearerToken: token);
-
-
-
-
-                // If the response has an error...
-                if (await result.HandleErrorIfFailedAsync("Capture of Adjustment failed"))
-                    // We are done
-                    return;
-
-                // OK successfully registered (and logged in)... now get aprpropriate tree view data
-                //for now; keep a snapshot of persisted data
-                //mOriginal = result.ServerResponse.Response;
-                //;
-
-                //try
-                //{
-                //    //var hierarchyResultApiModels = mOriginal.ToList();
-                //    //make a clone of the persisted data for manipulation on front end
-                //    mPersist = new HierarchyResultListApiModel();
-                //    mPersist.Clone(mOriginal, mPersist);
-                //}
-                //catch (Exception e)
-                //{
-                //    throw e;
-                //}
-
-
-
-                ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
-
-
-            });
-        }
 
         #endregion
 
         #region Helpers
 
         /// <summary>
-        /// Fubd the file or folder name from a full path
+        /// Extract the file extenstion from a full path
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
@@ -1672,7 +1536,7 @@ namespace Fasetto.Word
 
 
         /// <summary>
-        /// Fubd the file or folder name from a full path
+        /// Extract the file or folder name from a full path
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>

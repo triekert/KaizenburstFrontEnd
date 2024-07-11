@@ -57,6 +57,14 @@ namespace Fasetto.Word
                     var mMenuMenuControl = new MenuControl();
                     return mMenuMenuControl;//mChatListControl;
 
+                // Finance
+                case SideMenuContent.ClientSelection:
+                    /// <summary>
+                    /// An instance of the current Finance Hierarchy control
+                    /// </summary>
+                    var mClientSelectionControl = new MenuControl("7E669DCA-D356-43F0-BB64-5DF6D1499C99");
+                    return mClientSelectionControl;//mChatListControl;
+
                 // Unknown
                 default:
                     return "No UI yet, sorry :)";

@@ -90,6 +90,8 @@
                     <local:TextEntryControl DataContext="{Binding Username}" />
                     <local:PasswordEntryControl DataContext="{Binding Password}" />
                     <local:TextEntryControl DataContext="{Binding Email}" />
+                    <local:HierarchyItemSelectionControl DataContext="{Binding FClientID}" FontWeight="ExtraBlack"  />
+
 
                     <Button Content="{Binding LogoutButtonText}"
                             Command="{Binding LogoutCommand}"

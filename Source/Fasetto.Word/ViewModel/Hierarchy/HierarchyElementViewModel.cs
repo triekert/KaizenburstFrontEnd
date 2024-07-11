@@ -95,6 +95,13 @@ namespace Fasetto.Word
         /// </summary>
         public string KChangeID { get; set; }
 
+
+        /// <summary>
+        /// Store View Model of current popup to allow reverse navigation
+        /// </summary>
+        public object PriorPopupViewModel { get; set; }
+
+
         /// <summary>
         /// The text for the add Node button
         /// </summary>
@@ -121,6 +128,7 @@ namespace Fasetto.Word
         /// </summary>
         /// 
         public string HeadingText { get; set; }
+
         #region Transactional Properties
 
         /// <summary>
@@ -216,6 +224,8 @@ namespace Fasetto.Word
         /// </summary>
         public HierarchyElementViewModel()
         {
+            //Enable the reverse navigation by storing the prior popup viewmodel
+            PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
             // Create Node Name
             ShortName = new TextEntryViewModel
             {

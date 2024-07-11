@@ -116,7 +116,8 @@ namespace Fasetto.Word
             //To Do: Add mTableName as parameter when calling HierarchyAsync to populate hierarchy
             //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
             //ViewModelApplication.PopupVisible = false;
-          TaskManager.RunAndForget(HierarchyAsync);
+            mSearchKCategoryID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid;
+            TaskManager.RunAndForget(HierarchyAsync);
 
 
             // Get the OptFinHierarchies currently configured - first populate 'root hierarchy' variable with all configured root hierarchy elements currently available
@@ -288,6 +289,18 @@ namespace Fasetto.Word
                     throw e;
                 }
 
+                if (mPersist.Count == 1 && mPersist[0].KCategoryID == "00000000-0000-0000-0000-000000000000")
+                {
+                    MessageBox.Show(
+                     " This will be reported to the System Administrator for action",
+                     "No matching records found for this search!",
+                     MessageBoxButton.OK,
+                     MessageBoxImage.Information
+                     );
+                    ViewModelApplication.ControlPopupCostHierarchy = null;
+                    Close();
+
+                }
 
                 RefreshHierarchy();
                 PerformKIdSearch();
@@ -982,12 +995,21 @@ namespace Fasetto.Word
         public void Close()
         {
             // Close settings menu
-            ViewModelApplication.PopupVisible = false;
-            ViewModelApplication.CurrentPopupContent = 0;
-            //ViewModelApplication.CurrentPopupViewModel = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
 
+            //If user escapes from window whilst processing hierarchy control calls on the manage classification window, return to transaction detail
+            var Pgtype = ViewModelApplication.CurrentPageViewModel.GetType().Name;
+            if ((string)Pgtype == "TransactionSelectionPageViewModel" && ViewModelApplication.CurrentPopupViewModel.GetType().Name == "ManageClassificationViewModel")
+
+            {
+                var mViewModel = (ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel;
+                mViewModel.Close();
+            }
+            else
+            {
+                ViewModelApplication.PopupVisible = false;
+                ViewModelApplication.CurrentPopupContent = 0;
+            }
         }
-
         /// <summary>
         /// Persist all items changed or added on hierarchy to back end database. Depending on stage
         /// of change control, changes may be forwarded for recommendation or finally approved and implemented

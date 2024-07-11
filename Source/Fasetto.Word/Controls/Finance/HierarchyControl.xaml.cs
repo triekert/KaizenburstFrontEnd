@@ -225,18 +225,18 @@ namespace Fasetto.Word
                 }
                 else
                     if (Keyboard.IsKeyDown(Key.Enter))
-                {
+                    {
                     EditHierarchyElement();
                     e.Handled = true;
 
-                }
-                else
-                    if (Keyboard.IsKeyDown(Key.Delete))
-                    {
-                        DeleteHierarchyElement();
-                    e.Handled = true;
+                    }
+                    else
+                        if (Keyboard.IsKeyDown(Key.Delete))
+                        {
+                            DeleteHierarchyElement();
+                        e.Handled = true;
 
-                }
+                        }
 
 
             }

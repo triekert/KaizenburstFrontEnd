@@ -18,7 +18,7 @@
         /// <summary>
         /// A list of media from all chat messages
         /// </summary>
-        Media = 3,
+        ClientSelection = 3,
 
         /// <summary>
         /// A list of finance menu options for KaizenBurst
@@ -28,6 +28,11 @@
         /// <summary>
         /// A tree of  menu options for KaizenBurst
         /// </summary>
-        Menu = 5
+        Menu = 5,
+
+       /// <summary>
+       /// A tree of  menu options for KaizenBurst
+       /// </summary>
+        Media = 6
     }
 }

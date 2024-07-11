@@ -30,7 +30,7 @@ namespace Fasetto.Word
         public TransactionSelectionPage(TransactionSelectionPageViewModel specificViewModel) : base(specificViewModel)
         {
 
-            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+            //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
             InitializeComponent();
         }
 
@@ -63,64 +63,64 @@ namespace Fasetto.Word
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void MessageText_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            // Get the text box
-            var textbox = sender as TextBox;
+        //private void MessageText_PreviewKeyDown(object sender, KeyEventArgs e)
+        //{
+        //    // Get the text box
+        //    var textbox = sender as TextBox;
 
-            // Check if we have pressed enter
-            if (e.Key == Key.Enter)
-            {
-                // If we have control pressed...
-                if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
-                {
-                    // Add a new line at the point where the cursor is
-                    var index = textbox.CaretIndex;
+        //    // Check if we have pressed enter
+        //    if (e.Key == Key.Enter)
+        //    {
+        //        // If we have control pressed...
+        //        if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+        //        {
+        //            // Add a new line at the point where the cursor is
+        //            var index = textbox.CaretIndex;
 
-                    // Insert the new line
-                    textbox.Text = textbox.Text.Insert(index, Environment.NewLine);
+        //            // Insert the new line
+        //            textbox.Text = textbox.Text.Insert(index, Environment.NewLine);
 
-                    // Shift the caret forward to the newline
-                    textbox.CaretIndex = index + Environment.NewLine.Length;
+        //            // Shift the caret forward to the newline
+        //            textbox.CaretIndex = index + Environment.NewLine.Length;
 
-                    // Mark this key as handled by us
-                    e.Handled = true;
-                }
-                else
-                    // Send the message
-                    //ViewModel.Send();
+        //            // Mark this key as handled by us
+        //            e.Handled = true;
+        //        }
+        //        else
+        //            // Send the message
+        //            //ViewModel.Send();
 
-                // Mark the key as handled
-                e.Handled = true;
-            }
-        }
+        //        // Mark the key as handled
+        //        e.Handled = true;
+        //    }
+        //}
 
-        private void MeterSelection_Loaded(object sender, System.Windows.RoutedEventArgs e)
-        {
+        //private void MeterSelection_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        //{
 
-        }
+        //}
 
-        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
+        //private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
+        //{
 
-        }
+        //}
 
-        private void SetClient(object sender, System.Windows.RoutedEventArgs e)
-        {
+        //private void SetClient(object sender, System.Windows.RoutedEventArgs e)
+        //{
 
-            ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
-            ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Populate();
-        }
+        //    ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+        //    ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Populate();
+        //}
 
-        private void SetHierarchySelection(object sender, System.Windows.RoutedEventArgs e)
-        {
-            ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
-            ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
-            //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
-            //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
+        //private void SetHierarchySelection(object sender, System.Windows.RoutedEventArgs e)
+        //{
+        //    ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
+        //    ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
+        //    //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+        //    //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
 
 
-        }
+        //}
 
     }
 }

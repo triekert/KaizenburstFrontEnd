@@ -29,6 +29,22 @@ namespace Fasetto.Word
         public string FClientID { get; set; }
 
         /// <summary>
+        ///The name of the currently selected Client
+        /// </summary>
+        public string ClientShortName { get; set; }
+
+        /// <summary>
+        /// String representation of the GUID for the currently selected Client
+        /// </summary>
+        public string FCostHierarchyID { get; set; }
+
+        /// <summary>
+        ///The name of the currently selected Cost Hierarchy
+        /// </summary>
+        public string CostHierarchyShortName { get; set; }
+
+
+        /// <summary>
         /// The current page of the application
         /// </summary>
         public ApplicationPage CurrentPage { get; private set; } = ApplicationPage.Login;
@@ -312,7 +328,7 @@ namespace Fasetto.Word
             var applicationPage = (ApplicationPage)Enum.Parse(typeof(ApplicationPage), page);
 
             ViewModelApplication.GoToPage(applicationPage);
-            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+            //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
             //CurrentSideMenuContent = SideMenuContent.Menu;
 
             //ViewModelApplication.GoToPage(ApplicationPage.Hierarchy);

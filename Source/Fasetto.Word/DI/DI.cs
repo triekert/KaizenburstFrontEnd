@@ -19,7 +19,7 @@ namespace Fasetto.Word
         public static ApplicationViewModel ViewModelApplication => Framework.Service<ApplicationViewModel>();
 
         /// <summary>
-        /// A shortcut to access the <see cref="HierarchyElementViewModel"/>
+        /// A shortcut to access the <see cref="SettingsViewModel"/>
         /// </summary>
         public static SettingsViewModel ViewModelSettings => Framework.Service<SettingsViewModel>();
 

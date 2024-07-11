@@ -1,8 +1,11 @@
-﻿using Fasetto.Word.Core;
+﻿using EnvDTE;
+using Fasetto.Word.Core;
 using System;
+using System.Activities.Expressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Xml.Linq;
 using static Fasetto.Word.DI;
 
 
@@ -271,7 +274,10 @@ namespace Fasetto.Word
         /// Default constructor
         /// </summary>
         public TransactionSelectionPageViewModel()
+
         {
+            //Manually turn side menu on
+            //ViewModelApplication.SideMenuVisible = true;
             //Populate screen title
             //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
             //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
@@ -283,10 +289,10 @@ namespace Fasetto.Word
             {
                 Label = "Select Client",
                 //EditedName = mLoadingText,
-                EditedName = "Client",
-                OriginalName = "Client Lookup",
-                OriginalKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
-                EditedKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                EditedName = (string)ViewModelApplication.ClientShortName ?? "Client",
+                OriginalName = (string)ViewModelApplication.ClientShortName ?? "Client Lookup",
+                OriginalKid = (string)ViewModelApplication.FClientID ?? "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                EditedKid = (string)ViewModelApplication.FClientID ,
                 HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
                 PrepareAction = SetHierarchySelectionAsync,
                 PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
@@ -305,10 +311,10 @@ namespace Fasetto.Word
             {
 
                 Label = "Select Cost Hierarchy",
-                EditedName = "Cost Hierarchy Name",
-                OriginalName = "Cost Hierarchy",
-                OriginalKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
-                EditedKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                EditedName = (string)ViewModelApplication.CostHierarchyShortName ?? "Cost Hierarchy Name",
+                OriginalName = (string)ViewModelApplication.CostHierarchyShortName ?? "Cost Hierarchy",
+                OriginalKid = (string)ViewModelApplication.FCostHierarchyID,
+                EditedKid = (string)ViewModelApplication.FCostHierarchyID,
                 HierarchyTypeID = "64413ae7-822f-4866-9ebe-433083d699ac",
                 PrepareAction = SetHierarchySelectionMeterAsync,
                 Level = 1,
@@ -426,6 +432,10 @@ namespace Fasetto.Word
         public void Reconcile()
         {
             ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            ViewModelApplication.FClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid;
+            ViewModelApplication.ClientShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedName;
+            ViewModelApplication.FCostHierarchyID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid;
+            ViewModelApplication.CostHierarchyShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedName;
             //ViewModelApplication.CurrentPopupContent = 0;
             //To do: Lookup to be user rights and available options driven
             //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
@@ -616,7 +626,11 @@ namespace Fasetto.Word
         // Close settings menu
         ViewModelApplication.SideMenuVisible = true;
             //ViewModelApplication.CurrentSideMenuViewModel = null;
-
+            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            ViewModelApplication.FClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid;
+            ViewModelApplication.ClientShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedName;
+            ViewModelApplication.FCostHierarchyID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid;
+            ViewModelApplication.CostHierarchyShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedName;
             ViewModelApplication.CurrentControlViewModel = null;
             ViewModelApplication.CurrentPopupViewModel = null;
             ViewModelApplication.CurrentPopupContent = 0; 

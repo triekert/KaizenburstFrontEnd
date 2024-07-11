@@ -140,6 +140,13 @@ namespace Fasetto.Word
 
 
         /// <summary>
+        /// String representation of GUID for CostHierarchy
+        /// </summary>
+
+        public string KHierarchyID { get; set; }
+
+
+        /// <summary>
         /// A document, including images etc, linked to the transaction
         /// </summary>
         public DocDataViewModel Document{ get; set; }

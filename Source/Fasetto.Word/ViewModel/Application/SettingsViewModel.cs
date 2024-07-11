@@ -50,6 +50,12 @@ namespace Fasetto.Word
         /// </summary>
         public TextEntryViewModel Email { get; set; }
 
+
+        /// <summary>
+        /// The current users email
+        /// </summary>
+        public HierarchyItemSelectionViewModel FClientID { get; set; }
+
         /// <summary>
         /// The text for the logout button
         /// </summary>
@@ -98,6 +104,12 @@ namespace Fasetto.Word
         /// Indicates if the user is currently logging out
         /// </summary>
         public bool LoggingOut { get; set; }
+
+
+        /// <summary>
+        /// True to show the Hierarchy has been selected
+        /// </summary>
+        public bool SetHierarchyCompleted { get; set; }
 
         #endregion
 
@@ -197,6 +209,24 @@ namespace Fasetto.Word
                 Label = "Email",
                 OriginalText = mLoadingText,
                 CommitAction = SaveEmailAsync
+            };
+
+            FClientID = new HierarchyItemSelectionViewModel
+            {
+                Label = "Select Client",
+                //EditedName = mLoadingText,
+                EditedName = (string)ViewModelApplication.ClientShortName ?? "Client",
+                OriginalName = (string)ViewModelApplication.ClientShortName ?? "Client Lookup",
+                OriginalKid = (string)ViewModelApplication.FClientID ?? "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                EditedKid = (string)ViewModelApplication.FClientID,
+                HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
+                PrepareAction = SetHierarchySelectionAsync,
+                //PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
+                //PrepareAction = ClientSrchAsync,
+
+
+
+                //CommitAction = SaveFirstNameAsync
             };
 
             // Create commands
@@ -477,6 +507,24 @@ namespace Fasetto.Word
                 // Return successful
                 return true;
             });
+        }
+
+        /// <summary>
+        /// Prepare Hierarchy Control for selection of Client
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> SetHierarchySelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the First Name value on the server...
+
+                ViewModelApplication.CurrentControlViewModel = ViewModelSettings.FClientID;
+                return true;
+            });
+
         }
 
         #endregion
