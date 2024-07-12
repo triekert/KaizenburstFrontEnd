@@ -349,14 +349,37 @@ namespace Fasetto.Word
         public void AddNode()
         {
             // Close settings menu
+            var CVM = ViewModelApplication.CurrentControlViewModel.GetType().Name;
 
-            var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
-            var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-            if (mElementViewModel.Description.OriginalText == "Description of New Element" || mElementViewModel.Description.EditedText == "Description of New Element") 
-                { mElementViewModel.Description.OriginalText = null;
-                mElementViewModel.Description.OriginalText = null;
+            if (CVM == "HierarchyItemSelectionViewModel")
+            {
+
+                var mViewModel = (HierarchyTreeViewModel1)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+                var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
+                if (mElementViewModel.Description.OriginalText == "Description of New Element" || mElementViewModel.Description.EditedText == "Description of New Element")
+                {
+                    mElementViewModel.Description.OriginalText = null;
+                    mElementViewModel.Description.OriginalText = null;
+                }
+                mViewModel.AddElement(mElementViewModel);
+                ViewModelApplication.CurrentPopupViewModel = ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+
             }
-            mViewModel.AddElement(mElementViewModel);
+
+            else
+            {
+
+                var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+                var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
+                if (mElementViewModel.Description.OriginalText == "Description of New Element" || mElementViewModel.Description.EditedText == "Description of New Element")
+                {
+                    mElementViewModel.Description.OriginalText = null;
+                    mElementViewModel.Description.OriginalText = null;
+                }
+                mViewModel.AddElement(mElementViewModel);
+
+            }
+
             ViewModelApplication.PopupVisible = false;
         }
 

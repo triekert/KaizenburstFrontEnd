@@ -47,7 +47,7 @@ namespace Fasetto.Word
         private readonly HierarchyTreeViewModel1 mHierarchyTree;
         private string mSourceCategory;
         private string mSourceCategoryName;
-        private string mDestinationCategoryID, mDestinationID,mSourceID,mParentID;
+        private string mDestinationCategoryID, mDestinationID,mSourceID,mParentID,mFHierarchyID;
         private string mDestinationCategoryName;
         private bool mIsSourceObtained = false, mIsEqual = false;
         private Point mLastMouseDown;
@@ -108,6 +108,7 @@ namespace Fasetto.Word
             {
                 case "Select Client":
                     mHierarchyTree = new HierarchyTreeViewModel1(root);//root);
+
                     break;
 
                 case "Select Cost Category":
@@ -124,10 +125,11 @@ namespace Fasetto.Word
                     else
 
                         mHierarchyTree = new HierarchyTreeViewModel1(root);
-                    ViewModelApplication.ControlPopupCostCategory = mHierarchyTree;
+                        ViewModelApplication.ControlPopupCostCategory = mHierarchyTree;
                     break;
 
                 case "Select Linked Party":
+                    //mFHierarchyID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).PartyHierarchy).EditedKid;
                     if (
                         (ViewModelApplication.ControlPopupParty != null)
                          &&
@@ -137,14 +139,16 @@ namespace Fasetto.Word
                          )
                     {
                         mHierarchyTree = (HierarchyTreeViewModel1)ViewModelApplication.ControlPopupParty;
+
                     }
                     else
 
                         mHierarchyTree = new HierarchyTreeViewModel1(root);
-                    ViewModelApplication.ControlPopupParty = mHierarchyTree;
+                        ViewModelApplication.ControlPopupParty = mHierarchyTree;
                     break;
 
                 case "Select Cost Hierarchy":
+                    mFHierarchyID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid;
                     if (
                         (ViewModelApplication.ControlPopupCostHierarchy != null)
                          &&
@@ -154,6 +158,7 @@ namespace Fasetto.Word
                          )
                     {
                         mHierarchyTree = (HierarchyTreeViewModel1)ViewModelApplication.ControlPopupCostHierarchy; 
+
                     }
                     else
 
@@ -171,7 +176,7 @@ namespace Fasetto.Word
 
 
             //ViewModelApplication.ControlParameter5 = ViewModelApplication.CurrentControlViewModel;
-            //ViewModelApplication.CurrentPopupViewModel = this;
+            ViewModelApplication.CurrentPopupViewModel = mHierarchyTree;
             PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
             DataContext = mHierarchyTree;
             //CloseCommand = new RelayCommand(Close);
@@ -321,17 +326,23 @@ namespace Fasetto.Word
 
 
  
-                    if (Keyboard.IsKeyDown(Key.Enter))
+            if (Keyboard.IsKeyDown(Key.Enter))
                 {
 
-                ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+                    ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
 
-                RunSelectedItem();
-                    e.Handled = true;
+                    RunSelectedItem();
+                        e.Handled = true;
 
                 }
 
+                else
 
+                            if (Keyboard.IsKeyDown(Key.Insert))
+                {
+                    AddHierarchyElement();
+                    e.Handled = true;
+                }
         }
 
    
@@ -537,7 +548,8 @@ namespace Fasetto.Word
             if (results.Count > 0)
                 mPage = results.FirstOrDefault().Page;
             var ParentNodeClient = results.FirstOrDefault().FClientID;
-            var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
+            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            var mAddElementViewModel = ViewModelApplication.CurrentPopupViewModel as HierarchyElementViewModel;
             mAddElementViewModel.ShortName.OriginalText = "New Element Name";
             mAddElementViewModel.Description.OriginalText = "Description of New Element";
             mAddElementViewModel.ShortName.EditedText = "New Element Name";
@@ -565,6 +577,10 @@ namespace Fasetto.Word
             mAddElementViewModel.Type.OriginalName = mDraggedItem.HierarchyType;
             mAddElementViewModel.FClientID = ParentNodeClient;
             mAddElementViewModel.HeadingText = "Add new Hierarchy Element";
+            mAddElementViewModel.FHierarchyID = mFHierarchyID;
+
+
+
 
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;

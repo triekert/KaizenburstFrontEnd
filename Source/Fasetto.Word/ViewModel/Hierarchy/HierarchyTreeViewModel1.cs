@@ -46,6 +46,7 @@ namespace Fasetto.Word
         public HierarchyDataModel mHDM;
         public ParameterHierarchyItemSelectApiModel mHierarchy;
         public HierarchyElementViewModel mElement;
+        public string mTableName;
 
         //IEnumerator<HierarchyManagementViewModel> mMatchingCategoryEnumerator;
 
@@ -118,6 +119,7 @@ namespace Fasetto.Word
             //ViewModelApplication.PopupVisible = false;
             mSearchKCategoryID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid;
             TaskManager.RunAndForget(HierarchyAsync);
+            mTableName = hierarchyparam.FHierarchyID;
 
 
             // Get the OptFinHierarchies currently configured - first populate 'root hierarchy' variable with all configured root hierarchy elements currently available
@@ -915,7 +917,7 @@ namespace Fasetto.Word
                 IsUnderReview = true,
                 IsNewElement= true,
                 Page = element.Page,
-                //FHierarchyID = mTableName,
+                FHierarchyID = element.FHierarchyID,
                 //Create new root element if not already existing
                 Root = mRoot
             };
@@ -927,6 +929,7 @@ namespace Fasetto.Word
             //TO DO: Add code to create root element of hierarchy when creating a new hierarchy type menu item
             //if page == 'Hierarchy', create new element guid(), use hierarchy name +description, parent = 00000000
 
+            Send();
         }
 
         /// <summary>
@@ -1010,6 +1013,51 @@ namespace Fasetto.Word
                 ViewModelApplication.CurrentPopupContent = 0;
             }
         }
+
+        /// <summary>
+        /// When the user clicks the send button, sends the message
+        /// </summary>
+        public void Send()
+        {
+
+            if (mPersist == null)
+            {
+                return;
+            }
+            var results =mPersist.Where(x => x.IsUnderReview || x.IsDeleteElement).ToList();
+            var mPersistElement = new HierarchyResultApiModel();
+            //var results = mViewModel.mPersist.OrderBy(x => x.ShortName).ToList();
+            if (results.Count > 0)
+                //mViewModel.mPersistTmp = (HierarchyResultApiModel)results;
+                //ToDo:Where a new hierarchy is referred to in the a new menu item, Create the root element for this new hierarchy
+
+                results = mPersist.Where(x => (x.IsNewElement) & x.Page == "Hierarchy").ToList();
+            if (results.Count > 0)
+            {
+                //mViewModel.mPersist.AddRange(results);
+                foreach (var row in results)
+
+                {
+                    mPersistElement.DateDiscontinued = row.DateDiscontinued;
+                    mPersistElement.DateEffective = row.DateEffective;
+                    mPersistElement.ShortName = row.ShortName;
+                    mPersistElement.Description = row.Description;
+                    mPersistElement.KCategoryID = row.Root;
+                    mPersistElement.Page = row.Page;
+                    mPersistElement.IsNewElement = row.IsNewElement;
+                    mPersistElement.IsUnderReview = row.IsUnderReview;
+                    mPersistElement.ParentCategoryID = "00000000-0000-0000-0000-000000000000";
+                    mPersistElement.FHierarchyID = row.Root;
+                    mPersistElement.HierarchyTypeID = row.HierarchyTypeID;
+                }
+                mPersist.Add(mPersistElement);
+
+            }
+            PersistHierarchyChangesAsync();
+        }
+
+
+
         /// <summary>
         /// Persist all items changed or added on hierarchy to back end database. Depending on stage
         /// of change control, changes may be forwarded for recommendation or finally approved and implemented
