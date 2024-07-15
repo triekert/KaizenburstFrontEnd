@@ -586,7 +586,7 @@ namespace Fasetto.Word
             mAddElementViewModel.HierarchyTypeID = mDraggedItem.HierarchyTypeID;
             mAddElementViewModel.Type.OriginalKid = mDraggedItem.HierarchyTypeID;
             mAddElementViewModel.Type.OriginalName = mDraggedItem.HierarchyType;
-            mAddElementViewModel.FClientID = ParentNodeClient;
+            mAddElementViewModel.FClientID = mDraggedItem.FClientID;
             mAddElementViewModel.HeadingText= "Add new Hierarchy Element";
             
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;

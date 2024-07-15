@@ -183,10 +183,12 @@ namespace Fasetto.Word
                 //ViewModelApplication.ControlParameter5 = ViewModelApplication.CurrentControlViewModel;
                 ViewModelApplication.CurrentPopupViewModel = mHierarchyTree;
                 PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
-                DataContext = mHierarchyTree;
-                //CloseCommand = new RelayCommand(Close);
-                InitializeComponent();
+
             }
+
+            DataContext = mHierarchyTree;
+            //CloseCommand = new RelayCommand(Close);
+            InitializeComponent();
             //mTimer = DateTime.Now;
             //ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
             //CloseCommand = new RelayCommand(Close);

@@ -384,10 +384,12 @@ namespace Fasetto.Word
 
 
                 }
-                ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
-                ViewModelApplication.ControlParameter1 = null;
-                ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
-                ViewModelApplication.PopupVisible = true;
+                ViewModelApplication.CurrentPopupViewModel = ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+                ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
+                //ViewModelApplication.ControlParameter1 = null;
+                //ViewModelApplication.PopupVisible = false;
+                //ViewModelApplication.PopupVisible = true;
+                //ViewModelApplication.PopupVisible = true;
 
 
             }

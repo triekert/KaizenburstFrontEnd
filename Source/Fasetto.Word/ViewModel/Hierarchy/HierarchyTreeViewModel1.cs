@@ -352,7 +352,7 @@ namespace Fasetto.Word
             foreach (var category in matches)
             { category.ParentShortName = matches.First(x => x.ParentCategoryID == category.ParentCategoryID).ShortName; }
             //Update the viewModel with the returned values
-
+            //ViewModelApplication.CurrentPopupViewModel = ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             UpdateTreeViewElements();
 
 
@@ -905,7 +905,7 @@ namespace Fasetto.Word
         {
             mSearchText = element.KCategoryID;
             //Gemerate GUID for root of new hierarchy element
-            var mRoot = element.Root.EditedText == element.Root.OriginalText ? Guid.NewGuid().ToString().ToUpper() : element.Root.EditedText;
+            //var mRoot = element.Root.EditedText == element.Root.OriginalText ? Guid.NewGuid().ToString().ToUpper() : element.Root.EditedText;
             var mPersistElement = new HierarchyResultApiModel
             {
                 ShortName = (element.ShortName.EditedText ?? element.ShortName.OriginalText),
@@ -922,17 +922,20 @@ namespace Fasetto.Word
                 FClientID = element.FClientID,
                 HierarchyTypeID = element.HierarchyTypeID,
                 //Create new root element if not already existing
-                Root = mRoot
+                //Root = mRoot
             };
             mPersist.Add(mPersistElement);
 
-
+            //ViewModelApplication.CurrentPopupViewModel = ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             RefreshHierarchy();
+            ViewModelApplication.CurrentPopupViewModel = ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             PerformKIdSearch();
+            //ViewModelApplication.CurrentPopupViewModel = ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             //TO DO: Add code to create root element of hierarchy when creating a new hierarchy type menu item
             //if page == 'Hierarchy', create new element guid(), use hierarchy name +description, parent = 00000000
 
             Send();
+            //ViewModelApplication.CurrentPopupViewModel = ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
         }
 
         /// <summary>
@@ -1004,7 +1007,7 @@ namespace Fasetto.Word
 
             //If user escapes from window whilst processing hierarchy control calls on the manage classification window, return to transaction detail
             var Pgtype = ViewModelApplication.CurrentPageViewModel.GetType().Name;
-            if ((string)Pgtype == "TransactionSelectionPageViewModel" && ViewModelApplication.CurrentControlViewModel.GetType().Name == "ManageClassificationViewModel")
+            if ((string)Pgtype == "TransactionSelectionPageViewModel" && ViewModelApplication.CurrentPopupViewModel.GetType().Name == "ManageClassificationViewModel")
 
             {
                 var mViewModel = (ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel;
@@ -1070,7 +1073,7 @@ namespace Fasetto.Word
         {
             await PersistHierarchyAsync();
             //ViewModelApplication.CurrentPageViewModel
-            Close();
+            //Close();
         }
         public async Task PersistHierarchyAsync()
         {

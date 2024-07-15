@@ -843,8 +843,10 @@ namespace Fasetto.Word
                 IsUnderReview = true,
                 IsNewElement= true,
                 Page = element.Page,
-                FHierarchyID = mTableName,
+                FHierarchyID = element.FHierarchyID,
                 FClientID = element.FClientID,
+                HierarchyTypeID = element.HierarchyTypeID,
+
                 //Create new root element if not already existing
                 Root = mRoot
             };
