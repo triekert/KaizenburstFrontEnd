@@ -215,6 +215,7 @@ namespace Fasetto.Word
         private void TreeView_KeyBoard(object sender, KeyboardEventArgs e)
         {
             //check to determine whether user would like to add an item to the hierarchy
+            
             if (ViewModelApplication.PopupVisible == false)
             { 
 

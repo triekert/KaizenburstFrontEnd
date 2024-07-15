@@ -2102,7 +2102,7 @@ namespace Fasetto.Word.Web.Server
                             Description = (string)row[1],
                             KCategoryID = (string)row[2],
                             ParentCategoryID = (string)row[3],
-                            FHierarchyID = model.FHierarchyID,
+                            FHierarchyID = (string)row[13],
                             FIconID = (string)row[4],
                             DateEffective = (DateTime)row[5],
                             DateDiscontinued = (DateTime)row[6],
@@ -2115,6 +2115,7 @@ namespace Fasetto.Word.Web.Server
                             IsMenuItem = (row[12] != DBNull.Value) ? (bool)row[12] : false,
                             Level = (int)row[14],
                             FClientID = (string)row[15],
+                            HierarchyTypeID = (string)row[16],
                         };
                         var mShortName = u.ShortName;
                         results.Add(u);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fasetto.Word.Core;
+using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
@@ -356,13 +357,38 @@ namespace Fasetto.Word
 
                 var mViewModel = (HierarchyTreeViewModel1)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
                 var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-                if (mElementViewModel.Description.OriginalText == "Description of New Element" || mElementViewModel.Description.EditedText == "Description of New Element")
+                if (mElementViewModel.Description.OriginalText == null &&  mElementViewModel.Description.EditedText == "Description of New Element")
                 {
                     mElementViewModel.Description.OriginalText = null;
                     mElementViewModel.Description.OriginalText = null;
                 }
                 mViewModel.AddElement(mElementViewModel);
-                ViewModelApplication.CurrentPopupViewModel = ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid = mElementViewModel.KCategoryID;
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid = mElementViewModel.KCategoryID;
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalName = mElementViewModel.ShortName.EditedText;
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName = mElementViewModel.ShortName.EditedText;
+                //((HierarchyTreeViewModel1)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).;
+                if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Cost Category")
+                { ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Category.EditedKid = mElementViewModel.KCategoryID;
+                  ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Category.EditedName = mElementViewModel.ShortName.EditedText;
+                  ViewModelApplication.ControlPopupCostCategory = null; 
+                }
+                else
+                {
+                    if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Linked Party")
+                    {   ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Party.EditedKid = mElementViewModel.KCategoryID;
+                        ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Party.EditedName = mElementViewModel.ShortName.EditedText;
+                        ViewModelApplication.ControlPopupParty = null;
+                    }
+
+
+                }
+                ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
+                ViewModelApplication.ControlParameter1 = null;
+                ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                ViewModelApplication.PopupVisible = true;
+
 
             }
 
@@ -377,10 +403,11 @@ namespace Fasetto.Word
                     mElementViewModel.Description.OriginalText = null;
                 }
                 mViewModel.AddElement(mElementViewModel);
+            ViewModelApplication.PopupVisible = false;
 
             }
 
-            ViewModelApplication.PopupVisible = false;
+
         }
 
         /// <summary>

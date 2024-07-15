@@ -300,12 +300,11 @@
 
                             <!--Change a classification for a transaction -classifcation type or allocation amount-->
 
-                            <!--<Button  Content="..."
-                                  Command="{Binding BrowseButton_OnClick}"
+                            <Button  Content="{Binding AlterTemplateButtonText}"
+                                Command="{Binding AlterTemplateCommand}"
                                 FontSize="{StaticResource FontSizeRegular}"
-                                --><!--Visibility="{Binding EditClassificationText, ConverterParameter=True, Converter={local:TextToVisiblityConverter}}" Margin="50
-                                    ,10,0,10"--><!--
-                                />-->
+                                Visibility="{Binding AlterTemplateButtonText, ConverterParameter=True, Converter={local:TextToVisiblityConverter}}" Margin="-0,10,0,10" d:IsHidden="True" 
+                                />
                             <!--Remove a clasification for a transaction-->
                             <!--<Button Content="{Binding DeleteClassificationButtonText}"
                                 Command="{Binding BrowseImageCommand}"

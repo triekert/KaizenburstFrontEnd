@@ -137,6 +137,10 @@ namespace Fasetto.Word.Core
         public string FCatSrchID { get; set; }
 
 
+        /// <summary>
+        ///  Bool set true if template to be modified
+        /// </summary>
+        public bool IsTemplate { get; set; }
 
 
 

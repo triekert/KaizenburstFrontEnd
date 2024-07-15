@@ -406,6 +406,8 @@ namespace Fasetto.Word
                     Root = item.Root,
                     IsMenuItem = item.IsMenuItem,
                     FClientID = item.FClientID,
+                    FHierarchyID =item.FHierarchyID,
+                    HierarchyTypeID = item.HierarchyTypeID,
 
 
                     //To Do: make provision to add Icons to make the UI more intuitive and attractive
@@ -624,8 +626,7 @@ namespace Fasetto.Word
                     //terminate the previous position of the element, and link to the change control
 
                 }
-                RefreshHierarchy();
-                PerformKIdSearch();
+                TaskManager.RunAndForget(HierarchyAsync);
 
             return;
 
@@ -918,6 +919,8 @@ namespace Fasetto.Word
                 IsNewElement= true,
                 Page = element.Page,
                 FHierarchyID = element.FHierarchyID,
+                FClientID = element.FClientID,
+                HierarchyTypeID = element.HierarchyTypeID,
                 //Create new root element if not already existing
                 Root = mRoot
             };
@@ -1001,7 +1004,7 @@ namespace Fasetto.Word
 
             //If user escapes from window whilst processing hierarchy control calls on the manage classification window, return to transaction detail
             var Pgtype = ViewModelApplication.CurrentPageViewModel.GetType().Name;
-            if ((string)Pgtype == "TransactionSelectionPageViewModel" && ViewModelApplication.CurrentPopupViewModel.GetType().Name == "ManageClassificationViewModel")
+            if ((string)Pgtype == "TransactionSelectionPageViewModel" && ViewModelApplication.CurrentControlViewModel.GetType().Name == "ManageClassificationViewModel")
 
             {
                 var mViewModel = (ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel;
