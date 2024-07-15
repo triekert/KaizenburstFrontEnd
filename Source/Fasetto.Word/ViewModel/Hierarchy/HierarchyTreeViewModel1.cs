@@ -921,6 +921,7 @@ namespace Fasetto.Word
                 FHierarchyID = element.FHierarchyID,
                 FClientID = element.FClientID,
                 HierarchyTypeID = element.HierarchyTypeID,
+                Level = element.Level,
                 //Create new root element if not already existing
                 //Root = mRoot
             };
@@ -928,7 +929,7 @@ namespace Fasetto.Word
 
             //ViewModelApplication.CurrentPopupViewModel = ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             RefreshHierarchy();
-            ViewModelApplication.CurrentPopupViewModel = ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+            //ViewModelApplication.CurrentPopupViewModel = ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             PerformKIdSearch();
             //ViewModelApplication.CurrentPopupViewModel = ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             //TO DO: Add code to create root element of hierarchy when creating a new hierarchy type menu item

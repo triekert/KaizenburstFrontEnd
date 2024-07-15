@@ -96,6 +96,10 @@ namespace Fasetto.Word
         /// </summary>
         public string KChangeID { get; set; }
 
+        /// <summary>
+        /// the hierarchy level of the item
+        /// </summary>
+        public int Level { get; set; }
 
         /// <summary>
         /// Store View Model of current popup to allow reverse navigation
@@ -357,7 +361,7 @@ namespace Fasetto.Word
 
                 var mViewModel = (HierarchyTreeViewModel1)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
                 var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-                if (mElementViewModel.Description.OriginalText == null &&  mElementViewModel.Description.EditedText == "Description of New Element")
+                if (mElementViewModel.Description.OriginalText == null && mElementViewModel.Description.EditedText == "Description of New Element")
                 {
                     mElementViewModel.Description.OriginalText = null;
                     mElementViewModel.Description.OriginalText = null;
@@ -369,29 +373,39 @@ namespace Fasetto.Word
                 ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalName = mElementViewModel.ShortName.EditedText;
                 ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName = mElementViewModel.ShortName.EditedText;
                 //((HierarchyTreeViewModel1)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).;
+
                 if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Cost Category")
-                { ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Category.EditedKid = mElementViewModel.KCategoryID;
-                  ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Category.EditedName = mElementViewModel.ShortName.EditedText;
-                  ViewModelApplication.ControlPopupCostCategory = null; 
+                {
+                    ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Category.EditedKid = mElementViewModel.KCategoryID;
+                    ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Category.EditedName = mElementViewModel.ShortName.EditedText;
+                    ViewModelApplication.ControlPopupCostCategory = null;
                 }
                 else
                 {
                     if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Linked Party")
-                    {   ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Party.EditedKid = mElementViewModel.KCategoryID;
+                    {
+                        ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Party.EditedKid = mElementViewModel.KCategoryID;
                         ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Party.EditedName = mElementViewModel.ShortName.EditedText;
                         ViewModelApplication.ControlPopupParty = null;
                     }
 
 
                 }
-                ViewModelApplication.CurrentPopupViewModel = ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
-                ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
-                //ViewModelApplication.ControlParameter1 = null;
-                //ViewModelApplication.PopupVisible = false;
-                //ViewModelApplication.PopupVisible = true;
-                //ViewModelApplication.PopupVisible = true;
+                var Pgtype = ViewModelApplication.CurrentPageViewModel.GetType().Name;
+                if (ViewModelApplication.CurrentPopupViewModel == null || (ViewModelApplication.CurrentPopupViewModel.GetType().Name != "ManageClassificationViewModel"))
+                {
+                    if ((string)Pgtype == "TransactionSelectionPageViewModel")
+                    {
+                        if (ViewModelApplication.ControlParameter1 != null)
+                        {
+                            ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
+                            ViewModelApplication.ControlParameter1 = null;
+                            ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                            ViewModelApplication.PopupVisible = true;
+                        }
 
-
+                    }
+                }
             }
 
             else
@@ -405,11 +419,12 @@ namespace Fasetto.Word
                     mElementViewModel.Description.OriginalText = null;
                 }
                 mViewModel.AddElement(mElementViewModel);
-            ViewModelApplication.PopupVisible = false;
+                ViewModelApplication.PopupVisible = false;
 
             }
 
 
+            
         }
 
         /// <summary>

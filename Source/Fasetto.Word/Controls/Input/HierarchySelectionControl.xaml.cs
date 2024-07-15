@@ -587,6 +587,7 @@ namespace Fasetto.Word
             mAddElementViewModel.FClientID = mDraggedItem.FClientID;
             mAddElementViewModel.HeadingText = "Add new Hierarchy Element";
             mAddElementViewModel.FHierarchyID = mDraggedItem.FHierarchyID;
+            mAddElementViewModel.Level = mDraggedItem.Level + 1;
 
 
 
