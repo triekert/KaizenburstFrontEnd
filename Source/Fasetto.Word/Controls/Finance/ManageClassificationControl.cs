@@ -67,17 +67,25 @@ namespace Fasetto.Word
 
         private void DataGridRow_KeyDown(object sender, KeyEventArgs e)
         {
-            if (Keyboard.IsKeyDown(Key.F2))
+            if (Keyboard.IsKeyDown(Key.F2) && ((DocDataViewModel)Transaction.SelectedItem).DocURL != "\\somepath\\filename.jpg")
 
             {
-
                 ((ManageClassificationViewModel)DataContext).OpenDocument((DocDataViewModel)Transaction.SelectedItem);
             }
 
             else
                 if (Keyboard.IsKeyDown(Key.Insert))
+            //link a new document if the placeholder is still not used, otherwise, create a new placeholder and fill
+                {
                 ((ManageClassificationViewModel)DataContext).BrowseImage();
-                    e.Handled = true;            
+                }
+
+                else
+                    if (Keyboard.IsKeyDown(Key.Delete))
+                //link a new document if the placeholder is still not used, otherwise, create a new placeholder and fill
+                //((ManageClassificationViewModel)DataContext).RemoveImage((DocDataViewModel)Transaction.SelectedItem);
+                ((ManageClassificationViewModel)DataContext).RemoveDocument((DocDataViewModel)Transaction.SelectedItem);
+            e.Handled = true;
             //if (e.Key == Key.Enter)
             //{
             //    NavigateOn();
@@ -86,7 +94,8 @@ namespace Fasetto.Word
 
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (((DocDataViewModel)Transaction.SelectedItem).KDocID != null && ((DocDataViewModel)Transaction.SelectedItem).KDocID != "00000000-0000-0000-0000-000000000000")
+            //if no document has been linked to the dummy placeholder yet, adda document into the placeholder...
+            if (((DocDataViewModel)Transaction.SelectedItem).DocURL != "\\somepath\\filename.jpg")
                 ((ManageClassificationViewModel)DataContext).OpenDocument((DocDataViewModel)Transaction.SelectedItem);
             else
                 ((ManageClassificationViewModel)DataContext).BrowseImage();

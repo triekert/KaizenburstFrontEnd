@@ -553,13 +553,13 @@ namespace Fasetto.Word
         {
             //Prepopulate
             mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
-            if (mDraggedItem == null)
-                return;
-            var results = mHierarchyTree.mPersist.Where(x => x.KCategoryID == mDraggedItem.ParentCategoryID).OrderBy(x => x.ShortName).ToList();
-            var mPage = "";
-            if (results.Count > 0)
-             mPage = results.FirstOrDefault().Page;
-            var ParentNodeClient = results.FirstOrDefault().FClientID;
+            //if (mDraggedItem == null)
+            //    return;
+            //var results = mHierarchyTree.mPersist.Where(x => x.KCategoryID == mDraggedItem.ParentCategoryID).OrderBy(x => x.ShortName).ToList();
+            //var mPage = "";
+            //if (results.Count > 0)
+            // mPage = results.FirstOrDefault().Page;
+            //var ParentNodeClient = results.FirstOrDefault().FClientID;
             var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mAddElementViewModel.ShortName.OriginalText = "New Element Name";
             mAddElementViewModel.Description.OriginalText = "Description of New Element";
@@ -588,9 +588,9 @@ namespace Fasetto.Word
             mAddElementViewModel.Type.OriginalName = mDraggedItem.HierarchyType;
             mAddElementViewModel.FClientID = mDraggedItem.FClientID;
             mAddElementViewModel.HeadingText= "Add new Hierarchy Element";
-            
-            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-            ViewModelApplication.PopupVisible = true;
+            mAddElementViewModel.FHierarchyID = mDraggedItem.FHierarchyID;
+           //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+           ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
         }
         /// <summary>

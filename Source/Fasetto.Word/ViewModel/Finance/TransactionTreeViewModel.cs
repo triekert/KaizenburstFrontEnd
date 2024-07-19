@@ -291,6 +291,7 @@ namespace Fasetto.Word
                         IsChanged = false,
                         FCatSrchID = item.FCatSrchID,
                         KHierarchyID = item.KHierarchyID,
+                        IsDocLinked = item.IsDocLinked,
                        
                      };
 
@@ -495,6 +496,7 @@ namespace Fasetto.Word
                     KPartyID = item.KPartyID,
                     KPartyName = item.KPartyName,
                     FCatSrchID = item.FCatSrchID,
+                    IsTemplate = item.IsTemplate,
 
 
                 };

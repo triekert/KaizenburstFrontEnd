@@ -53,6 +53,15 @@ namespace Fasetto.Word.Core
 
 
 
+
+        /// <summary>
+        ///  Flag to indicate whether doc to be unlinked on server
+        /// </summary>
+        public bool IsRemove { get; set; }
+
+
+
+
         /// <summary>
         ///  String representation of GUID for selected transaction
         /// </summary>

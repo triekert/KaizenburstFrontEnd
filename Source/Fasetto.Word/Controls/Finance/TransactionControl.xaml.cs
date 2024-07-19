@@ -1,5 +1,6 @@
 ﻿using Fasetto.Word.Core;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
@@ -27,8 +28,13 @@ namespace Fasetto.Word
         #region Public Properties
 
         //public string ControlTitle { get; set; } = "Title of Control";
+        private int MaxKeyCount = 3;
+        private List<Key> PressedKeys = new List<Key>();
+        private List<Key> AllowedKeys = new List<Key>();
+        private string comboKeys;
 
         #endregion//Public Properties
+
 
         #region Public Commands
         /// <summary>
@@ -45,6 +51,8 @@ namespace Fasetto.Word
         public TransactionTreeViewModel mTransactionTreeView;
         //public TransactionListDataModel mBRDML;
         public string mBulkMeter;
+
+
 
 
         //private readonly HierarchyTreeViewModel mHierarchyTree;
@@ -123,6 +131,8 @@ namespace Fasetto.Word
         }
 
 
+
+
         private void DataGridRow_KeyDown(object sender, KeyEventArgs e)
         
         {
@@ -133,6 +143,37 @@ namespace Fasetto.Word
             else
                 if (e.Key == Key.F2)
                 { }
+                else
+                if (Keyboard.IsKeyDown(Key.PageDown) && (Keyboard.IsKeyDown(Key.RightCtrl) || Keyboard.IsKeyDown(Key.LeftCtrl)))
+                {
+                    SelectRowByIndex(Transaction, Transaction.Items.Count -1);
+                }
+                else
+                    if (Keyboard.IsKeyDown(Key.PageUp) && (Keyboard.IsKeyDown(Key.RightCtrl) || Keyboard.IsKeyDown(Key.LeftCtrl)))
+                    {
+                        SelectRowByIndex(Transaction, 0);
+                    }
+                    else
+                        if (Keyboard.IsKeyDown(Key.Up))
+                        {
+                            SelectRowByIndex(Transaction, (Transaction.SelectedIndex -1 <0)?0:(Transaction.SelectedIndex -1));
+                        }
+                        else
+                            if (Keyboard.IsKeyDown(Key.Down))
+                            {
+                                SelectRowByIndex(Transaction, (Transaction.SelectedIndex + 1 > Transaction.Items.Count - 1) ? Transaction.Items.Count - 1 : Transaction.SelectedIndex + 1);
+                            }
+                        else
+                            if (Keyboard.IsKeyDown(Key.PageUp))
+                            {
+                                SelectRowByIndex(Transaction, (Transaction.SelectedIndex - 10 < 0) ? Transaction.Items.Count - 1 : Transaction.SelectedIndex - 10);
+                            }
+                        else
+                            if (Keyboard.IsKeyDown(Key.PageDown))
+                            {
+                                SelectRowByIndex(Transaction, (Transaction.SelectedIndex + 10 > Transaction.Items.Count - 1) ? Transaction.Items.Count - 1 : Transaction.SelectedIndex + 10);
+                            }
+
             e.Handled = true;
         }
         private void DataGridRow_MouseRightClick(object sender, MouseButtonEventArgs e)

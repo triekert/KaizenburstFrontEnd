@@ -661,6 +661,7 @@ namespace Fasetto.Word.Web.Server
                         KPartyID = row[10].ToString(),
                         FCatSrchID = row[12].ToString(),
                         KHierarchyID = row[13].ToString(),
+                        IsDocLinked = (row[14] != DBNull.Value) ? (bool)row[14] : false,
                     };
                     results.Add(u);
 
@@ -906,7 +907,7 @@ namespace Fasetto.Word.Web.Server
                     para[6].Value = Convert.ToDecimal(row.TransAmount);
                     para[7].Value = Convert.ToDecimal(row.ActualAmount);
                     para[8].Value = row.Posted_Date;
-                    para[9].Value = 
+                    para[9].Value = new Guid(row.KClientID);
                     para[10].Value = new Guid(row.KHierarchyID);
                     para[11].Value = row.Month;
                     para[12].Value = row.KPartyName;
@@ -977,7 +978,10 @@ namespace Fasetto.Word.Web.Server
                         // Try and run the task
                         _ = await ExecuteAsync(SqlString, para);
                         _ = await ExecuteAsync(SqlString1, para);
-                        _ = await GetDataSetAsync(SqlString2);
+                        if (row.IsTemplate)
+                        {
+                            _ = await GetDataSetAsync(SqlString2);
+                        }
 
                     }
                     catch (Exception ex)
@@ -1082,7 +1086,8 @@ namespace Fasetto.Word.Web.Server
             ;
             try
             {
-                foreach(var doc in model)
+                var newdocs = model.Where(x => x.IsNew).ToList();
+                foreach (var doc in newdocs)
                 {
                     try
                     {
@@ -1106,6 +1111,21 @@ namespace Fasetto.Word.Web.Server
                         throw;
                     }
 
+                }
+                var remdocs = model.Where(x => x.IsRemove).ToList();
+                foreach (var doc in remdocs)
+                {
+                    try
+                    {
+
+                        var SqlString = "UPDATE [Finance].[TransactionDocument]  SET fTransactionID = '00000000-0000-0000-0000-000000000000NULL'  WHERE fTransactionID = '" + doc.FFintranID + "'AND kDocumentID = '" + doc.KDocID + "'" ;
+                        _ = await ExecuteAsync(SqlString);
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
 
                 }
 

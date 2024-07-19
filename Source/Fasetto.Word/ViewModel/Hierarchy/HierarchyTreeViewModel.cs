@@ -847,6 +847,7 @@ namespace Fasetto.Word
                 FClientID = element.FClientID,
                 HierarchyTypeID = element.HierarchyTypeID,
 
+
                 //Create new root element if not already existing
                 Root = mRoot
             };

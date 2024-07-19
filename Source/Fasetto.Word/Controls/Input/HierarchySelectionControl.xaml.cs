@@ -345,7 +345,7 @@ namespace Fasetto.Word
 
                 else
 
-                            if (Keyboard.IsKeyDown(Key.Insert))
+                if (Keyboard.IsKeyDown(Key.Insert))
                 {
                     AddHierarchyElement();
                     e.Handled = true;

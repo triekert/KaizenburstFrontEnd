@@ -108,6 +108,20 @@ namespace Fasetto.Word
         /// </summary>
         public string KPartyName { get; set; }
 
+        /// <summary>
+        /// String representation of GUID for linked Account
+        /// </summary>
+
+
+        public string KAccountID { get; set; }
+
+
+        /// <summary>
+        /// Name of linked account
+        /// </summary>
+        public string KAccountName { get; set; }
+
+
 
         /// <summary>
         /// String representation of GUID for linked Plant (Including any portion of plant down to lowest BOM level)
@@ -133,6 +147,18 @@ namespace Fasetto.Word
 
 
         /// <summary>
+        /// Flag to indicate at least one document linked 
+        /// </summary>
+        public bool IsDocLinked { get; set; }
+
+
+
+        /// <summary>
+        /// Flag to indicate at least one document linked 
+        /// </summary>
+        public bool IsTemplate { get; set; }
+
+        /// <summary>
         /// String representation of GUID for originating transaction
         /// </summary>
 
@@ -144,6 +170,7 @@ namespace Fasetto.Word
         /// </summary>
 
         public string KHierarchyID { get; set; }
+
 
 
         /// <summary>

@@ -199,9 +199,10 @@
                                             <Setter Property="Background" Value="Crimson"></Setter>
                                             <Setter Property="Foreground" Value="Beige"></Setter>
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding State}" Value="State2">
-                                            <Setter Property="Background" Value= "{StaticResource  WordOrangeBrush}"></Setter>
-                                       </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsRemove}" Value = "true">
+                                            <Setter Property="Background" Value="Beige"></Setter>
+                                            <Setter Property="Foreground" Value="DarkCyan"></Setter>
+                                        </DataTrigger>
                                     </Style.Triggers>
                                     <!--Setting highlight-->
 

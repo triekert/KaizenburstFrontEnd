@@ -139,7 +139,7 @@
                     <EventSetter Event ="MouseDoubleClick"  Handler="DataGridRow_MouseDoubleClick"/>
                     <EventSetter Event ="KeyDown"  Handler="DataGridRow_KeyDown"/>
                     <EventSetter Event ="PreviewMouseRightButtonDown"  Handler="DataGridRow_MouseRightClick"/>
-
+                    <!--<EventSetter Event ="PreviewKeyDown"  Handler="DataGridRow_PreviewKeyDown"/>-->                    
                     <EventSetter Event ="Loaded"  Handler="DataGridRow_OnLoaded"/>
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
                     <Setter Property="Background" Value ="AliceBlue"/>
@@ -148,16 +148,21 @@
                         <Style.Triggers>
                             <Trigger Property="AlternationIndex" Value="1">
                                 <Setter Property="Background" Value="Beige"/>
-                                       <Setter Property="Foreground" Value="DarkGray"></Setter>                                
+                                       <Setter Property="Foreground" Value="Black"></Setter>                                
                             </Trigger>
                             <DataTrigger Binding="{Binding ShortName}" Value ="">
                                 <Setter Property="Background" Value="Crimson"></Setter>
                                       <Setter Property="Foreground" Value="Beige"></Setter>                              
                             </DataTrigger>
-                        <DataTrigger Binding="{Binding KPartyName}" Value ="">
-                            <Setter Property="Background" Value="Crimson"></Setter>
-                            <Setter Property="Foreground" Value="Beige"></Setter>
+                            <DataTrigger Binding="{Binding KPartyName}" Value ="">
+                                <Setter Property="Background" Value="DarkCyan"></Setter>
+                                <Setter Property="Foreground" Value="Beige"></Setter>
+                            </DataTrigger>
+                        <DataTrigger Binding="{Binding IsDocLinked}" Value = "true">
+                            <Setter Property="Background" Value="Beige"></Setter>
+                            <Setter Property="Foreground" Value="DarkCyan"></Setter>
                         </DataTrigger>
+
                         <!--<DataTrigger Binding="{Binding State}" Value="State2">
                                 <Setter Property="Background" Value="Orange"></Setter>
                             </DataTrigger>-->

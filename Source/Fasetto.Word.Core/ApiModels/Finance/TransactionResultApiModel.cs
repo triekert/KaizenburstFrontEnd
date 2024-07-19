@@ -131,8 +131,16 @@ namespace Fasetto.Word.Core
         public bool IsChanged { get; set; }
 
         /// <summary>
+        /// Flag to indicate at least one document linked 
+        /// </summary>
+
+        public bool IsDocLinked { get; set; }        
+
+
+        /// <summary>
         /// String representation of GUID for originating transaction
         /// </summary>
+
 
         public string FCatSrchID { get; set; }
 

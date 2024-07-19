@@ -378,6 +378,11 @@ namespace Fasetto.Word
                 {
                     ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Category.EditedKid = mElementViewModel.KCategoryID;
                     ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Category.EditedName = mElementViewModel.ShortName.EditedText;
+                    var tmp = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).PriorPopupViewModel).PriorPopupViewModel).Trans_actionRec;
+                    var tmp1 = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).PriorPopupViewModel).PriorPopupViewModel).Trans_action[tmp];
+                    ((TransactionViewModel)tmp1).KCategoryID = mElementViewModel.KCategoryID;
+                    ((TransactionViewModel)tmp1).ShortName = mElementViewModel.ShortName.EditedText;
+
                     ViewModelApplication.ControlPopupCostCategory = null;
                 }
                 else
@@ -386,6 +391,10 @@ namespace Fasetto.Word
                     {
                         ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Party.EditedKid = mElementViewModel.KCategoryID;
                         ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Party.EditedName = mElementViewModel.ShortName.EditedText;
+                        var tmp = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).PriorPopupViewModel).PriorPopupViewModel).Trans_actionRec;
+                        var tmp1 = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).PriorPopupViewModel).PriorPopupViewModel).Trans_action[tmp];
+                        ((TransactionViewModel)tmp1).KPartyID = mElementViewModel.KCategoryID;
+                        ((TransactionViewModel)tmp1).KPartyName = mElementViewModel.ShortName.EditedText;
                         ViewModelApplication.ControlPopupParty = null;
                     }
 
@@ -398,6 +407,7 @@ namespace Fasetto.Word
                     {
                         if (ViewModelApplication.ControlParameter1 != null)
                         {
+                            ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Category.EditedName = mElementViewModel.ShortName.EditedText;
                             ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
                             ViewModelApplication.ControlParameter1 = null;
                             ViewModelApplication.CurrentPopupContent = PopupContent.Classify;

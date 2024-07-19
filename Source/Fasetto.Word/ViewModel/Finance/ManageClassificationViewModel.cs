@@ -300,17 +300,17 @@ namespace Fasetto.Word
 
             //}
             Selected = selected;
-            selected.Document = new DocDataViewModel()
+            Selected.Document = new DocDataViewModel()
 
             {
             DocURL = "\\somepath\\filename.jpg",
-            KDocID = new Guid().ToString(),
+            KDocID = "00000000 - 0000 - 0000 - 0000 - 000000000000",
             DocName = "Name of Document.",
             DocDescription = "Name of Document in plain language"
             };
-            Document = selected.Document;
-            if (selected.Document !=null)
-            { 
+            //Document = selected.Document;
+            //if (selected.Document !=null)
+            //{ 
             mRequest = new DocDataResultListApiModel();
             var mRqst = new DocDataResultApiModel
             {
@@ -323,10 +323,9 @@ namespace Fasetto.Word
             };
             mRequest.Add(mRqst);
 
-
-            TaskManager.RunAndForget(DocumentRetrievalAsync);}
+            TaskManager.RunAndForget(DocumentRetrievalAsync);
             DocumentList = new ObservableCollection<DocDataViewModel>()
-            { Document};
+            { Selected.Document};
 
             // Create Node Name
             Allocation = new TextEntryViewModel
@@ -513,9 +512,8 @@ namespace Fasetto.Word
                     // We are done
                     return;
 
-                // OK successfully registered (and logged in)... now get appropriate tree view data
-                //for now; keep a snapshot of persisted data
-                //mOriginal = result.ServerResponse.Response;
+
+                ////((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_action
 
                 ;
 
@@ -656,7 +654,7 @@ namespace Fasetto.Word
 
         //{
 
-            var docs = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).DocumentList.Where(x => x.IsNew && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
+            var docs = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).DocumentList.Where(x => (x.IsNew || x.IsRemove) && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
             if (docs.Count>0)
             { 
                 mRequest = new DocDataResultListApiModel();
@@ -671,21 +669,37 @@ namespace Fasetto.Word
                         DocURL = item.DocURL,
                         KDocID = item.KDocID,
                         DocDescription = item.DocDescription,
-                        FFintranID = item.FFintranID
+                        FFintranID = item.FFintranID,
+                        IsNew = item.IsNew,
+                        IsRemove =item.IsRemove,
                     };
                     mRequest.Add(mRqst);
                 }
-                    if (mRequest.Count >0)
-                    { 
-                    TaskManager.RunAndForget(DocumentStorageAsync); 
+                    var docsl= mRequest.Where(x => x.IsNew  && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
+
+                    if (docsl.Count >0)
+                    {
+                    var tmp = ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel;
+                    var tmp1 = ((TransactionTreeViewModel)tmp).Trans_action;
+                    var tmp2 = ((TransactionTreeViewModel)tmp).Trans_actionRec;
+                    var rec = tmp1[tmp2];
+                    rec.IsDocLinked = true;
+
+
+                    Selected.IsDocLinked = true;
+                    Selected1.IsDocLinked = true;
                 };
+                TaskManager.RunAndForget(DocumentStorageAsync);
+
              }
         //}
     
 
             var OrgActual = Selected.ActualAmount;
 
+
             Selected1.Posted_Date = Selected.Posted_Date;
+
             Selected1.Month = Selected.Month;
             Selected1.Description = Selected.Description;
             Selected1.TransAmount = Selected.TransAmount;
@@ -714,16 +728,20 @@ namespace Fasetto.Word
             if (Math.Abs(IntAmnt) > Math.Abs(Selected.ActualAmount)) { IntAmnt = Selected.ActualAmount; }
             if (Category.EditedKid != Category.OriginalKid || IntAmnt != OrgActual||Party.EditedKid!=Party.OriginalKid) 
                 //Don't do anything if cost category hasn't changed, the allocated amount has not changed, OR the linked party has not changed
-            {  
+            {
+                    var tmp0 = ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel;
                     var tmp = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel).Trans_action;
                     var tmp1 = ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).TransactionDetail;
                     var tmp2 = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel).mChange;
-                    //If full amount is not allocated to cost classificaton, create an additional (null) allocation for the remainder
-                    //if null allocation already exists, add this new portion
+                    var tmp3 = ((TransactionTreeViewModel)tmp0).Trans_actionRec;
+                    var rec = tmp[tmp3];
+                    rec.IsTemplate = IsTemplate;
+                //If full amount is not allocated to cost classificaton, create an additional (null) allocation for the remainder
+                //if null allocation already exists, add this new portion
 
 
-                    //if classificaton being used already exists for this transaction,increase previous allocation
-                    var exists = tmp.Where(x => x.KCategoryID == Category.EditedKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                //if classificaton being used already exists for this transaction,increase previous allocation
+                var exists = tmp.Where(x => x.KCategoryID == Category.EditedKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
                     var exxist = exists.FirstOrDefault();
                     var exists1 = tmp.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
                     var exxist1 = exists1.FirstOrDefault();
@@ -1413,8 +1431,6 @@ namespace Fasetto.Word
             }
 
 
-            //If new document linked to transaction, load and index document on the webserver fileshare.
-            //Document.DocName
 
             Close();
         }
@@ -1423,7 +1439,21 @@ namespace Fasetto.Word
         public void BrowseImage()
         {
             //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
-            Selected.Document.KDocID = Guid.NewGuid().ToString();
+            //First check for any document holders not filled with a document
+
+            var exists = DocumentList.Where(x => x.DocURL == "\\somepath\\filename.jpg").ToList();
+            if (exists.Count > 0 && exists.FirstOrDefault().DocURL == "\\somepath\\filename.jpg")
+            {  
+                Document = exists.FirstOrDefault(); 
+            }
+            else
+            //...create a new document holder
+            {
+                Document = new DocDataViewModel();
+                DocumentList.Add(Document);
+            }
+
+            Document.KDocID = Guid.NewGuid().ToString();
             using (var openFileDialog = new OpenFileDialog())
             {
                  //openFileDialog.Filter = "PDF Files|*.pdf";
@@ -1435,23 +1465,23 @@ namespace Fasetto.Word
                 {
                     //var filePath = openFileDialog.FileName;
                     var filePath = openFileDialog.FileName;
-                    Selected.Document.DocURL = filePath;
+                    Document.DocURL = filePath;
 
-                    Selected.Document.DocName = GetFileFolderName(Selected.Document.DocURL);
-                    Selected.Document.DocDescription = GetFileFolderName(Document.DocURL);
-                    Selected.Document.DocName = Selected.Document.KDocID + GetFileExtension(Selected.Document.DocDescription);
+                    Document.DocName = GetFileFolderName(Document.DocURL);
+                    Document.DocDescription = GetFileFolderName(Document.DocURL);
+                    Selected.Document.DocName = Selected.Document.KDocID + GetFileExtension(Document.DocDescription);
                     var path = Path.GetTempPath();
-                    var fileName = path + Selected.Document.DocName;
-                    Selected.Document.DocURL = fileName;
+                    var fileName = path + Document.DocName;
+                   Document.DocURL = fileName;
                     using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
                         using (var reader = new BinaryReader(stream))
                         {
-                            Selected.Document.DocImage = reader.ReadBytes((int)stream.Length);
+                            Document.DocImage = reader.ReadBytes((int)stream.Length);
                         }
                     }
-                    Selected.Document.IsNew = true;
-                    Selected.Document.FFintranID = Selected.KFinTranID;
+                    Document.IsNew = true;
+                    Document.FFintranID = Selected.KFinTranID;
                     //Document = Selected.Document;
                     //fileName = Environment.GetFolderPath(Environment.SpecialFolder.Resources);
                     //try
@@ -1507,18 +1537,38 @@ namespace Fasetto.Word
                 Process.Start(doccie.DocURL);
 
             }
-            //    MyImage.Source = new BitmapImage(new Uri(lImagePath.Text));
-
-            //    using (var fs = new FileStream(ImagePath.Text, FileMode.Open, FileAccess.Read))
-            //    {
-            //        _imageBytes = new byte[fs.Length];
-            //        fs.Read(imgBytes, 0, System.Convert.ToInt32(fs.Length));
-            //    }
-            //}
 
 
+                //    MyImage.Source = new BitmapImage(new Uri(lImagePath.Text));
+
+                //    using (var fs = new FileStream(ImagePath.Text, FileMode.Open, FileAccess.Read))
+                //    {
+                //        _imageBytes = new byte[fs.Length];
+                //        fs.Read(imgBytes, 0, System.Convert.ToInt32(fs.Length));
+                //    }
+                //}
+
+
+            }
+
+        /// Open the selected document in the default application on the client machine
+        /// Document is temporarily converted from the bytestream into a physical file in the temp directory
+        /// </summary>
+        /// <param name="doccie"></param>
+        public void RemoveDocument(DocDataViewModel doccie)
+        {
+
+            {
+                //Selected.Document.DocDescription = GetFileFolderName(Document.DocURL);
+                //Selected.Document.DocName = Selected.Document.KDocID + GetFileExtension( Selected.Document.DocDescription);
+                //Selected.Document.FFintranID = Selected.KFinTranID;
+                //Document.IsNew = true;
+                doccie.IsRemove = true;
+
+            }
         }
-        public static void DatabaseFilePut(string varFilePath)
+
+            public static void DatabaseFilePut(string varFilePath)
             {
                 byte[] file;
                 using (var stream = new FileStream(varFilePath, FileMode.Open, FileAccess.Read))
