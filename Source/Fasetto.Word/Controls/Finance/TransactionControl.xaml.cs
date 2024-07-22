@@ -387,6 +387,7 @@ namespace Fasetto.Word
                         KPartyID = item.KPartyID,
                         FCatSrchID = item.FCatSrchID,
                         KHierarchyID = item.KHierarchyID,
+                        Notes = item.Notes,
                     };
                     TransactionDetail.Add(mTDVM);
                 }

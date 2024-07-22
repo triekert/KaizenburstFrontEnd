@@ -29,6 +29,18 @@ namespace Fasetto.Word
         #endregion
 
         #region Public Properties
+
+
+        /// <summary>
+        /// Field containing notes added to the transaction allocation (a transaction may have one or more allocations linked)
+        /// </summary>
+        public TextEntryViewModel TransactionNotes { get; set; }
+
+        /// <summary>
+        /// Field containing description of the transaction
+        /// </summary>
+        public TextEntryViewModel TransactionDescription { get; set; }
+
         /// <summary>
         /// Field containing actual allocation  of the total transaction to the selected cost category
         /// </summary>
@@ -326,6 +338,22 @@ namespace Fasetto.Word
             TaskManager.RunAndForget(DocumentRetrievalAsync);
             DocumentList = new ObservableCollection<DocDataViewModel>()
             { Selected.Document};
+
+            TransactionNotes = new TextEntryViewModel
+            {
+                Label = "Notes linked to transaction (allocation)",
+                OriginalText = selected.Notes,
+                EditedText = selected.Notes,
+                //CommitAction = SaveFirstNameAsync
+            };
+
+            TransactionDescription = new TextEntryViewModel
+            {
+                Label = "Transaction Description",
+                OriginalText = selected.Description,
+                //CommitAction = SaveFirstNameAsync
+            };
+
 
             // Create Node Name
             Allocation = new TextEntryViewModel
@@ -712,6 +740,7 @@ namespace Fasetto.Word
             Selected1.KPartyName = Selected.KPartyName;
             Selected1.FCatSrchID = Selected.FCatSrchID;
             Selected1.KHierarchyID = Selected.KHierarchyID;
+            Selected1.Notes = Selected.Notes;
 
             decimal.TryParse(Allocation.EditedText??Allocation.OriginalText, NumberStyles.Currency, CultureInfo.CurrentCulture, out var IntAmnt);
             if (Category.EditedName == "Selected Category")
@@ -723,19 +752,26 @@ namespace Fasetto.Word
                 Party.EditedName = Party.OriginalName;
                 Party.EditedKid = Party.OriginalKid;
             }
-            //var TstEqual = false;
+            var TstNotes = false;
             //if (Math.Abs(IntAmnt) == Math.Abs(Selected.ActualAmount)) { TstEqual = true; }
             if (Math.Abs(IntAmnt) > Math.Abs(Selected.ActualAmount)) { IntAmnt = Selected.ActualAmount; }
-            if (Category.EditedKid != Category.OriginalKid || IntAmnt != OrgActual||Party.EditedKid!=Party.OriginalKid) 
+            if ((TransactionNotes.EditedText != null) && (Selected.Notes == null || TransactionNotes.EditedText != Selected.Notes))
+            {
+                TstNotes = true;
+                Selected.Notes = Selected1.Notes = TransactionNotes.EditedText;
+            }
+            if (Category.EditedKid != Category.OriginalKid || IntAmnt != OrgActual || Party.EditedKid != Party.OriginalKid || TstNotes)
                 //Don't do anything if cost category hasn't changed, the allocated amount has not changed, OR the linked party has not changed
             {
-                    var tmp0 = ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel;
-                    var tmp = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel).Trans_action;
-                    var tmp1 = ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).TransactionDetail;
-                    var tmp2 = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel).mChange;
-                    var tmp3 = ((TransactionTreeViewModel)tmp0).Trans_actionRec;
-                    var rec = tmp[tmp3];
-                    rec.IsTemplate = IsTemplate;
+                var tmp0 = ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel;
+                var tmp = ((TransactionTreeViewModel)tmp0).Trans_action;
+                var tmp1 = ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).TransactionDetail;
+                var tmp2 = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel).mChange;
+                var tmp3 = ((TransactionTreeViewModel)tmp0).Trans_actionRec;
+                var rec = tmp[tmp3];
+                rec.Notes =TransactionNotes.EditedText;
+
+                    //rec.IsTemplate = IsTemplate;
                 //If full amount is not allocated to cost classificaton, create an additional (null) allocation for the remainder
                 //if null allocation already exists, add this new portion
 
@@ -808,6 +844,8 @@ namespace Fasetto.Word
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                     IsTemplate = IsTemplate,
+                                    FCatSrchID = Selected1.FCatSrchID,
+                                    Notes = Selected1.Notes,
 
                                 };
                                 tmp2.Add(u);
@@ -843,6 +881,8 @@ namespace Fasetto.Word
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                     IsTemplate = IsTemplate,
+                                    Notes = Selected1.Notes,
+                                    FCatSrchID = Selected1.FCatSrchID,
 
                                 };
                                 tmp2.Add(u);
@@ -867,6 +907,8 @@ namespace Fasetto.Word
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                     IsTemplate = IsTemplate,
+                                    Notes = Selected1.Notes,
+                                    FCatSrchID = Selected1.FCatSrchID,
                                 };
                                 tmp2.Add(u);
 
@@ -962,7 +1004,8 @@ namespace Fasetto.Word
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                     IsTemplate = IsTemplate,
-
+                                    Notes = Selected1.Notes,
+                                    FCatSrchID = Selected1.FCatSrchID,
                                 };
                                 tmp2.Add(u);
 
@@ -997,6 +1040,7 @@ namespace Fasetto.Word
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                     IsTemplate = IsTemplate,
+                                    Notes = Selected1.Notes,
                                     FCatSrchID = Selected1.FCatSrchID,
                                 };
                                 tmp2.Add(u);
@@ -1061,6 +1105,7 @@ namespace Fasetto.Word
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                     IsTemplate = IsTemplate,
+                                    Notes = Selected1.Notes,
                                     FCatSrchID = Selected1.FCatSrchID,
 
                                 };
@@ -1087,6 +1132,7 @@ namespace Fasetto.Word
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                     IsTemplate = IsTemplate,
+                                    Notes = Selected1.Notes,
                                     FCatSrchID = Selected1.FCatSrchID,
 
                                 };
@@ -1144,6 +1190,7 @@ namespace Fasetto.Word
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                     IsTemplate = IsTemplate,
+                                    Notes = Selected1.Notes,
                                     FCatSrchID = Selected1.FCatSrchID,
 
                                 };
@@ -1195,6 +1242,7 @@ namespace Fasetto.Word
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                     IsTemplate = IsTemplate,
+                                    Notes = Selected1.Notes,
                                     FCatSrchID = Selected1.FCatSrchID,
 
                                 };
@@ -1234,6 +1282,7 @@ namespace Fasetto.Word
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                     IsTemplate = IsTemplate,
+                                    Notes = Selected1.Notes,
                                     FCatSrchID = Selected1.FCatSrchID,
 
                                 };
@@ -1279,6 +1328,7 @@ namespace Fasetto.Word
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                     KPartyID = Selected1.KPartyID,
                                     IsTemplate = IsTemplate,
+                                    Notes = Selected1.Notes,
                                     FCatSrchID = Selected1.FCatSrchID,
 
                                 };
@@ -1320,6 +1370,7 @@ namespace Fasetto.Word
                                         KHierarchyID = Selected1.KHierarchyID,
                                         KPartyID = Selected1.KPartyID,
                                         IsTemplate = IsTemplate,
+                                        Notes = Selected1.Notes,
                                         FCatSrchID = Selected1.FCatSrchID,
 
                                         //KClientID =((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
@@ -1350,6 +1401,7 @@ namespace Fasetto.Word
                                         KHierarchyID = Selected1.KHierarchyID,
                                         KPartyID = Selected1.KPartyID,
                                         IsTemplate = IsTemplate,
+                                        Notes = Selected1.Notes,
                                         KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
                                         FCatSrchID = Selected1.FCatSrchID,
                                     };
@@ -1417,7 +1469,8 @@ namespace Fasetto.Word
                         //KPartyID = (Selected1.KPartyID??Selected.KPartyID),
                         KPartyName = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party).EditedName,
                         FCatSrchID = Selected1.FCatSrchID,
-
+                        Notes = Selected.Notes,
+                      
                     };
                     tmp2.Add(u);
                     Selected1.KPartyID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party).EditedKid;
@@ -1650,18 +1703,49 @@ namespace Fasetto.Word
         }
 
         #endregion
-
+        /// <summary>
+        /// This function removes items from the target list included in the source
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
         public void Remove(List<TransactionViewModel> source, ObservableCollection<TransactionViewModel> target)
         {
             foreach (var item in source)
                 target.Remove(item);
         }
-        public void Clone(List<TransactionViewModel> source,ObservableCollection<TransactionViewModel>  target)
+
+        /// <summary>
+        /// This method will make a clone of the source List of objects
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        public void Clone(List<TransactionViewModel> source, ObservableCollection<TransactionViewModel> target)
         {
             foreach (var item in source)
-                target.Add(item);
-        }
+            {
+                var mTR = new TransactionViewModel
+                {
+                    Posted_Date = item.Posted_Date,
+                    Month = item.Month,
+                    Description = item.Description,
+                    TransAmount = item.TransAmount,
+                    ActualAmount = item.ActualAmount,
+                    ShortName = item.ShortName,
+                    KCategoryID = item.KCategoryID,
+                    KFinActualID = item.KFinActualID,
+                    KFinTranID = item.KFinTranID,
+                    KHierarchyID = item.KHierarchyID,
+                    DateEffective = item.DateEffective,
+                    KPartyID = item.KPartyID,
+                    KPartyName = item.KPartyName,
+                    FCatSrchID = item.FCatSrchID,
+                    IsTemplate = item.IsTemplate,
+                    Notes = item.Notes,
+                };
+                target.Add(mTR);
+            }
 
+        }
 
 
 

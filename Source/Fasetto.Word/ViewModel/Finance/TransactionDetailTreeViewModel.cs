@@ -127,6 +127,7 @@ namespace Fasetto.Word
                     KPartyName = item.KPartyName,
                     KPartyID = item.KPartyID,
                     FCatSrchID = item.FCatSrchID,
+                    Notes = item.Notes,
 
 
                 };

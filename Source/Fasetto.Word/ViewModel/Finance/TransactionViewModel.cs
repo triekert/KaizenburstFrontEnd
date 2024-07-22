@@ -174,6 +174,12 @@ namespace Fasetto.Word
 
 
         /// <summary>
+        /// Ad hoc notes linked to processed transaction
+        /// </summary>
+
+        public string Notes { get; set; }
+
+        /// <summary>
         /// A document, including images etc, linked to the transaction
         /// </summary>
         public DocDataViewModel Document{ get; set; }

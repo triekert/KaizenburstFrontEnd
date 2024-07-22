@@ -97,7 +97,7 @@
                             <VisualBrush Visual="{Binding ElementName=Mask}" />
                         </Grid.OpacityMask>
 
-                        <Image Source="/Images/Samples/rusty.jpg" Stretch="UniformToFill" />
+                        <Image Source="/Images/Logo/KaizenPNG.PNG" Stretch="UniformToFill" />
                     </Grid>
 
                 </Grid>
@@ -119,10 +119,13 @@
                                 <TextBlock  Text ="Transaction Description: " FontFamily="{StaticResource LatoRegular}" 
                                                Padding="10 10 10 10" FontWeight="Bold"/>
                                 <TextBlock  Text ="{Binding TransactionDetail}" FontFamily="{StaticResource LatoRegular}" 
-                                        Padding="10 10 10 10" FontWeight="Bold"/>                    
-                            </StackPanel>
-                            <local:TextEntryControl DataContext="{Binding Allocation}" FontWeight="ExtraBlack"  />
+                                        Padding="10 10 10 10" FontWeight="Bold"/>
 
+
+                            </StackPanel>
+                            <local:TextEntryControl DataContext="{Binding TransactionDescription}" FontWeight="ExtraBlack"  />
+                            <local:TextEntryControl DataContext="{Binding TransactionNotes}" FontWeight="ExtraBlack"  />
+                            <local:TextEntryControl DataContext="{Binding Allocation}" FontWeight="ExtraBlack"  />
                             <!--<StackPanel MouseEnter="SetHierarchySelection">-->
                             <local:HierarchyItemSelectionControl DataContext="{Binding Category}" FontWeight="ExtraBlack"  />
                             <!--<StackPanel MouseEnter="SetHierarchySelection">-->
@@ -200,7 +203,7 @@
                                             <Setter Property="Foreground" Value="Beige"></Setter>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding IsRemove}" Value = "true">
-                                            <Setter Property="Background" Value="Beige"></Setter>
+                                            <Setter Property="Background" Value="{StaticResource  WordOrangeBrush}"></Setter>
                                             <Setter Property="Foreground" Value="DarkCyan"></Setter>
                                         </DataTrigger>
                                     </Style.Triggers>

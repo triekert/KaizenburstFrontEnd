@@ -1118,7 +1118,7 @@ namespace Fasetto.Word.Web.Server
                     try
                     {
 
-                        var SqlString = "UPDATE [Finance].[TransactionDocument]  SET fTransactionID = '00000000-0000-0000-0000-000000000000NULL'  WHERE fTransactionID = '" + doc.FFintranID + "'AND kDocumentID = '" + doc.KDocID + "'" ;
+                        var SqlString = "UPDATE [Finance].[TransactionDocument]  SET fTransactionID = '00000000-0000-0000-0000-000000000000'  WHERE fTransactionID = '" + doc.FFintranID + "'AND kDocumentID = '" + doc.KDocID + "'" ;
                         _ = await ExecuteAsync(SqlString);
                     }
                     catch (Exception)

@@ -265,10 +265,10 @@ namespace Fasetto.Word
                     OrgTransaction = new ObservableCollection<TransactionViewModel>();
 
                     Trans_action.Clear();
-                    mPersist = result.ServerResponse.Response;
-                    mChange = new TransactionResultListApiModel();
-                    var matches = mPersist.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
 
+                    mChange = new TransactionResultListApiModel();
+                    var matches = result.ServerResponse.Response.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
+                    //mPersist = result.ServerResponse.Response;
                     //if (matches.Count>0)
 
                     foreach (var item in matches)
@@ -292,6 +292,7 @@ namespace Fasetto.Word
                         FCatSrchID = item.FCatSrchID,
                         KHierarchyID = item.KHierarchyID,
                         IsDocLinked = item.IsDocLinked,
+                        Notes = item.Notes,
                        
                      };
 
@@ -299,10 +300,47 @@ namespace Fasetto.Word
                         lock (mStocksLock)
                         {
                             Trans_action.Add(mTVM); 
-                        OrgTransaction.Add(mTVM);//create original for reference
+
+                        }
                     }
+                    Clone(Trans_action, OrgTransaction);
+
+                    mPersist = new TransactionResultListApiModel();
+
+                    foreach (var item in matches)
+                    {
+
+                        var mTVM = new TransactionResultApiModel
+
+                        {
+                            Posted_Date = item.Posted_Date,
+                            Month = item.Month,
+                            Description = item.Description,
+                            TransAmount = item.TransAmount,
+                            ActualAmount = item.ActualAmount,
+                            ShortName = item.ShortName,
+                            KCategoryID = item.KCategoryID,
+                            KFinActualID = item.KFinActualID,
+                            KFinTranID = item.KFinTranID,
+                            KPartyID = item.KPartyID,
+                            KPartyName = item.KPartyName,
+                            IsChanged = false,
+                            FCatSrchID = item.FCatSrchID,
+                            KHierarchyID = item.KHierarchyID,
+                            IsDocLinked = item.IsDocLinked,
+                            Notes = item.Notes,
+                            KClientID = item.KClientID,
+
+                        };
+
+                        //Lock collection to prevent contention with UI
+
+                            mPersist.Add(mTVM);
                     }
+
+
                     Trans_actionRec = 0;
+                    
                     if (Trans_action.Count != mPersist.Count)
                     { 
                     };
@@ -450,13 +488,13 @@ namespace Fasetto.Word
             //              join on orgn in OPersist
             //              where updt.KFinActualID == orgn.KFinActualID
             // select updt
-            var results =
-            from t1 in UpPersist
-            from t2 in OPersist.Where(x => t1.KFinActualID == x.KFinActualID && x.KCategoryID == t1.KCategoryID && x.KPartyID == t1.KPartyID)
-            //from t2 in OPersist.Where(x => t1.KFinActualID == x.KFinActualID && x.KCategoryID == t1.KCategoryID )
+            //var results =
+            //from t1 in UpPersist
+            //from t2 in OPersist.Where(x => t1.KFinActualID == x.KFinActualID && x.KCategoryID == t1.KCategoryID && x.KPartyID == t1.KPartyID)
+            ////from t2 in OPersist.Where(x => t1.KFinActualID == x.KFinActualID && x.KCategoryID == t1.KCategoryID )
 
-                //.DefaultIfEmpty()
-            select new { t1.KFinActualID, t1.ShortName };
+            //    //.DefaultIfEmpty()
+            //select new { t1.KFinActualID, t1.ShortName };
 
            
 
@@ -497,6 +535,7 @@ namespace Fasetto.Word
                     KPartyName = item.KPartyName,
                     FCatSrchID = item.FCatSrchID,
                     IsTemplate = item.IsTemplate,
+                    Notes = item.Notes,
 
 
                 };
@@ -512,7 +551,8 @@ namespace Fasetto.Word
             //                       .FirstOrDefault();
 
             //ViewModelApplication.PopupVisible = true;
-            if (mPersist.Count > 0)
+            //mPersist
+            if (mChange.Count > 0)
                 //if changes have been made, persist these on the database...
             {
             TaskManager.RunAndForget(PersistTransClassAsync);
@@ -541,7 +581,7 @@ namespace Fasetto.Word
                 var result = await WebRequests.PostAsync<ApiResponse<TransactionResultListApiModel>>(
                 // Set URL
                     RouteHelpers.GetAbsoluteRoute(ApiRoutes.PersistClassification),
-                    mPersist,
+                    mChange,
                     bearerToken: token);
 
                 // If the response has an error...
@@ -555,7 +595,49 @@ namespace Fasetto.Word
             });
         }
 
+        /// <summary>
+        /// This function removes items from the target list included in the source
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        public void Remove(ObservableCollection<TransactionViewModel> source, ObservableCollection<TransactionViewModel> target)
+        {
+            foreach (var item in source)
+                target.Remove(item);
+        }
 
+        /// <summary>
+        /// This method will make a clone of the source List of objects
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        public void Clone(ObservableCollection<TransactionViewModel> source, ObservableCollection<TransactionViewModel> target)
+        {
+            foreach (var item in source)
+            {
+                var mTR = new TransactionViewModel
+                {
+                    Posted_Date = item.Posted_Date,
+                    Month = item.Month,
+                    Description = item.Description,
+                    TransAmount = item.TransAmount,
+                    ActualAmount = item.ActualAmount,
+                    ShortName = item.ShortName,
+                    KCategoryID = item.KCategoryID,
+                    KFinActualID = item.KFinActualID,
+                    KFinTranID = item.KFinTranID,
+                    KHierarchyID = item.KHierarchyID,
+                    DateEffective = item.DateEffective,
+                    KPartyID = item.KPartyID,
+                    KPartyName = item.KPartyName,
+                    FCatSrchID = item.FCatSrchID,
+                    IsTemplate = item.IsTemplate,
+                    Notes = item.Notes,
+                };
+                target.Add(mTR);
+            }
+
+        }
 
     }
 

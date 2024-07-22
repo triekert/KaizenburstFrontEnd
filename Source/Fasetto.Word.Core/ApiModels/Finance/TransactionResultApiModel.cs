@@ -151,6 +151,11 @@ namespace Fasetto.Word.Core
         public bool IsTemplate { get; set; }
 
 
+        /// <summary>
+        /// Ad hoc notes linked to processed transaction
+        /// </summary>
+
+        public string Notes { get; set; }
 
 
         /// <summary>
