@@ -30,7 +30,7 @@ namespace Fasetto.Word
         public object PriorPopupViewModel { get; set; }
 
         /// <summary>
-        /// Store View Model of current popup to allow reverse navigation
+        /// Populate parameters for retrieval of required hierarchy tree
         /// </summary>
         public ParameterHierarchyItemSelectApiModel  root { get; set; }
 
@@ -534,7 +534,7 @@ namespace Fasetto.Word
                 ViewModelApplication.PopupVisible = true;
             }
 
-            //return;
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Save();
 
 
 

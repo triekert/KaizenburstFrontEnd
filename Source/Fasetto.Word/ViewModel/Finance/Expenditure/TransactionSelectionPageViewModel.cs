@@ -1,5 +1,6 @@
 ﻿using EnvDTE;
 using Fasetto.Word.Core;
+using Fasetto.Word.Core.ApiModels.Controls;
 using System;
 using System.Activities.Expressions;
 using System.Threading.Tasks;
@@ -87,7 +88,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The Client for which Bulk Meter reconciliation is to be processed
         /// </summary>
-        public HierarchyItemSelectionViewModel Root { get; set; }
+        public HierarchyItemSelectionViewModel Client { get; set; }
 
         /// <summary>
         /// The CostHierarchy for Transaction processing for the selected client
@@ -157,6 +158,18 @@ namespace Fasetto.Word
         /// True to show the attachment menu, false to hide it
         /// </summary>
         public bool SetHierarchyCompleted { get; set; }
+
+
+        /// <summary>
+        /// True to show the attachment menu, false to hide it
+        /// </summary>
+        public bool UpdateHierarchyCompleted { get; set; }
+
+
+        /// <summary>
+        /// Populate parameters for retrieval of required hierarchy tree
+        /// </summary>
+        public ParameterHierarchyItemSelectApiModel HierarchyParam { get; set; }
 
         /// <summary>
         /// The text to search for when we do a search
@@ -285,7 +298,7 @@ namespace Fasetto.Word
             BulkMeter = "5249FFEB-6907-46AA-9204-D4527E11F9CE";
             ViewModelApplication.CurrentControlViewModel=ViewModelApplication.CurrentControlViewModel;
 
-            Root = new HierarchyItemSelectionViewModel
+            Client = new HierarchyItemSelectionViewModel
             {
                 Label = "Select Client",
                 //EditedName = mLoadingText,
@@ -294,17 +307,13 @@ namespace Fasetto.Word
                 OriginalKid = (string)ViewModelApplication.FClientID ?? "4766E825-1B58-410D-B06B-5A2639CA22C8",
                 EditedKid = (string)ViewModelApplication.FClientID ,
                 HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
-                PrepareAction = SetHierarchySelectionAsync,
+                PrepareAction = SetClientHierarchySelectionAsync,
                 PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
-                //PrepareAction = ClientSrchAsync,
-
-
-
-                //CommitAction = SaveFirstNameAsync
+                CommitAction = UpdateClientSelectionAsync,
             };
 
             //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
-            ViewModelApplication.CurrentControlViewModel = Root;
+            ViewModelApplication.CurrentControlViewModel = Client;
 
 
             CostHierarchy = new HierarchyItemSelectionViewModel
@@ -316,15 +325,14 @@ namespace Fasetto.Word
                 OriginalKid = (string)ViewModelApplication.FCostHierarchyID,
                 EditedKid = (string)ViewModelApplication.FCostHierarchyID,
                 HierarchyTypeID = "64413ae7-822f-4866-9ebe-433083d699ac",
-                PrepareAction = SetHierarchySelectionMeterAsync,
+                PrepareAction = SetCostHierarchySelectionAsync,
                 Level = 1,
                 PriorPopupViewModel =ViewModelApplication.CurrentPopupViewModel,
-
-                //CommitAction = SaveFirstNameAsync
+                CommitAction = UpdateCostHierarchySelectionAsync,
             };
 
             //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
-            ViewModelApplication.CurrentControlViewModel = Root;
+            ViewModelApplication.CurrentControlViewModel = Client;
 
 
             //Meter = new HierarchyItemSelectionViewModel
@@ -432,8 +440,8 @@ namespace Fasetto.Word
         public void Reconcile()
         {
             ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-            ViewModelApplication.FClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid;
-            ViewModelApplication.ClientShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedName;
+            ViewModelApplication.FClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid;
+            ViewModelApplication.ClientShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedName;
             ViewModelApplication.FCostHierarchyID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid;
             ViewModelApplication.CostHierarchyShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedName;
             //ViewModelApplication.CurrentPopupContent = 0;
@@ -496,7 +504,7 @@ namespace Fasetto.Word
 
         }
 
-        public async Task<bool> SetHierarchySelectionMeterAsync()
+        public async Task<bool> SetCostHierarchySelectionAsync()
         {
             // Lock this command to ignore any other requests while processing
 
@@ -504,15 +512,23 @@ namespace Fasetto.Word
             {
                 // Update the First Name value on the server...
 
-                ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.ClientID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root.EditedKid;
-                ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.RootID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root.RootID;
+                //((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.ClientID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedKid;
+                //((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.RootID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.RootID;
                 ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                {
+
+                    ClientID = ViewModelApplication.FClientID,
+                    Level = 1,
+                    HierarchyTypeID = CostHierarchy.HierarchyTypeID
+                };
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
                 return true;
             });
 
         }
 
-        public async Task<bool> SetHierarchySelectionAsync()
+        public async Task<bool> SetClientHierarchySelectionAsync()
         {
             // Lock this command to ignore any other requests while processing
 
@@ -520,13 +536,73 @@ namespace Fasetto.Word
             {
                 // Update the First Name value on the server...
 
-                ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
+                ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
+                HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                {
+                    //ClientID = Client.ClientID,
+                    //FHierarchyID = Client.OriginalKid,
+                    //RootID = Client.OriginalKid,
+                    //Level = 1
+
+                    RootID = ViewModelApplication.FClientID ?? "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                    Level = 1
+                };
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
+                return true;
+            });
+
+        }
+        ///<summary>
+        /// Update Client selection for current session
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> UpdateClientSelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => UpdateHierarchyCompleted, async () =>
+            {
+                // Update the First Name value on the server...
+                if (ViewModelApplication.FClientID != Client.EditedKid)
+                { 
+                    CostHierarchy.OriginalKid = null;
+                    CostHierarchy.OriginalName = null;
+                    ViewModelApplication.FCostHierarchyID = null;
+                    ViewModelApplication.CostHierarchyShortName = null;
+                }
+                ViewModelApplication.FClientID = Client.EditedKid;
+                ViewModelApplication.ClientShortName = Client.EditedName;
+                ViewModelApplication.PopupVisible = false;
+                ViewModelApplication.CurrentPopupViewModel = null;
+                ViewModelApplication.CurrentPopupContent = 0;
+
                 return true;
             });
 
         }
 
+        ///<summary>
+        /// Update Client selection for current session
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> UpdateCostHierarchySelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
 
+            return await RunCommandAsync(() => UpdateHierarchyCompleted, async () =>
+            {
+                // Update the First Name value on the server...
+
+                ViewModelApplication.FCostHierarchyID = Client.EditedKid;
+                ViewModelApplication.CostHierarchyShortName = Client.EditedName;
+                ViewModelApplication.PopupVisible = false;
+                ViewModelApplication.CurrentPopupViewModel = null;
+                ViewModelApplication.CurrentPopupContent = 0;
+                return true;
+            });
+
+        }
+        
 
         /// <summary>
         /// Searches the current message list and filters the view
@@ -613,7 +689,7 @@ namespace Fasetto.Word
             return await RunCommandAsync(() => CostHierarchySrchIsSaving, async () =>
             {
 
-                ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
+                ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
                 return true;
             });
         }
@@ -627,8 +703,8 @@ namespace Fasetto.Word
         ViewModelApplication.SideMenuVisible = true;
             //ViewModelApplication.CurrentSideMenuViewModel = null;
             ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-            ViewModelApplication.FClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid;
-            ViewModelApplication.ClientShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedName;
+            ViewModelApplication.FClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid;
+            ViewModelApplication.ClientShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedName;
             ViewModelApplication.FCostHierarchyID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid;
             ViewModelApplication.CostHierarchyShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedName;
             ViewModelApplication.CurrentControlViewModel = null;

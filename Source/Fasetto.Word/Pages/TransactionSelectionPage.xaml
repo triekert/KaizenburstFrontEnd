@@ -72,7 +72,7 @@
                         <!--<StackPanel MouseEnter="SetHierarchySelection">
 
                         </StackPanel>-->
-                            <local:HierarchyItemSelectionControl DataContext="{Binding Root}" FontWeight="ExtraBlack"  />
+                            <local:HierarchyItemSelectionControl DataContext="{Binding Client}" FontWeight="ExtraBlack"  />
 
                         <!--<StackPanel MouseEnter="SetClient">
 

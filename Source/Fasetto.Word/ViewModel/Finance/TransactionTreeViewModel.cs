@@ -500,7 +500,7 @@ namespace Fasetto.Word
 
             //ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
             //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
-            ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
+            ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
 
             var except = UpPersist.Except(OPersist);
             //TO DO: Map PopupViewModel to PopupContent with converter

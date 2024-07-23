@@ -171,6 +171,43 @@ namespace Fasetto.Word
         }
 
         /// <summary>
+        /// Commits the content and exits out of edit mode
+        /// </summary>
+        public void Save()
+        {
+            // Store the result of a commit call
+            var result = default(bool);
+
+
+            RunCommandAsync(() => Working, async () =>
+            {
+                // While working, come out of edit mode
+                Editing = false;
+
+                EditedKid = EditedKid;
+                EditedName = EditedName;
+
+                // Try and do the work
+                result = CommitAction == null ? true : await CommitAction();
+
+            }).ContinueWith(t =>
+            {
+                // If we succeeded...
+                // Nothing to do
+                // If we fail...
+                if (!result)
+                {
+                    // Restore original value
+                    //OriginalText = currentSavedValue;
+
+                    // Go back into edit mode
+                    Editing = true;
+                }
+            });
+        }
+
+
+        /// <summary>
         /// Cancels out of edit mode
         /// </summary>
         public void Cancel()

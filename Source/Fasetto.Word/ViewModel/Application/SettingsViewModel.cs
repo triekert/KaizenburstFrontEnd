@@ -111,6 +111,10 @@ namespace Fasetto.Word
         /// </summary>
         public bool SetHierarchyCompleted { get; set; }
 
+        /// <summary>
+        /// True to show if Client Selection completed
+        /// </summary>
+        public bool UpdateHierarchyCompleted { get; set; }
         #endregion
 
         #endregion
@@ -162,6 +166,10 @@ namespace Fasetto.Word
         /// </summary>
         public ICommand SaveEmailCommand { get; set; }
 
+        /// <summary>
+        /// Update client selection for current session
+        /// </summary>
+        public ICommand UpdateClientSelectionCommand { get; set; }
         #endregion
 
         #region Constructor
@@ -221,12 +229,7 @@ namespace Fasetto.Word
                 EditedKid = (string)ViewModelApplication.FClientID,
                 HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
                 PrepareAction = SetHierarchySelectionAsync,
-                //PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
-                //PrepareAction = ClientSrchAsync,
-
-
-
-                //CommitAction = SaveFirstNameAsync
+                CommitAction = UpdateClientSelectionAsync,
             };
 
             // Create commands
@@ -239,7 +242,7 @@ namespace Fasetto.Word
             SaveLastNameCommand = new RelayCommand(async () => await SaveLastNameAsync());
             SaveUsernameCommand = new RelayCommand(async () => await SaveUsernameAsync());
             SaveEmailCommand = new RelayCommand(async () => await SaveEmailAsync());
-
+            UpdateClientSelectionCommand = new RelayCommand(async () => await UpdateClientSelectionAsync());
             // TODO: Get from localization
             LogoutButtonText = "Logout";
         }
@@ -522,6 +525,25 @@ namespace Fasetto.Word
                 // Update the First Name value on the server...
 
                 ViewModelApplication.CurrentControlViewModel = ViewModelSettings.FClientID;
+                return true;
+            });
+
+        }
+
+        /// <summary>
+        /// Prepare Hierarchy Control for selection of Client
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> UpdateClientSelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => UpdateHierarchyCompleted, async () =>
+            {
+                // Update the First Name value on the server...
+
+                ViewModelApplication.FClientID = FClientID.EditedKid;
+                ViewModelApplication.ClientShortName = FClientID.EditedName;
                 return true;
             });
 
