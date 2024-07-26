@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 
 namespace Fasetto.Word
@@ -181,7 +182,7 @@ namespace Fasetto.Word
         public ParameterBillingAdjustmentApiModel MAPI { get; set; }
 
         /// <summary>
-        /// True to show the attachment menu, false to hide it
+        /// True to show the hierarchy retrieval command is running
         /// </summary>
         public bool SetHierarchyCompleted { get; set; }
 
@@ -194,16 +195,27 @@ namespace Fasetto.Word
 
 
         /// <summary>
-        /// A flag indicating if the login command is running
+        /// A flag indicating if the document retrieval command is running
         /// </summary>
         public bool DocumentRetrievalIsRunning { get; set; }
 
 
 
         /// <summary>
-        /// A flag indicating if the login command is running
+        /// A flag indicating if the document storage  command is running
         /// </summary>
         public bool DocumentStorageIsRunning { get; set; }
+
+        /// <summary>
+        /// A flag indicating if the cost category selection is complete
+        /// </summary>
+        public bool SelectCategoryCompleted { get; set; }
+
+
+        /// <summary>
+        /// A flag indicating if the party selection is complete
+        /// </summary>
+        public bool SelectPartyCompleted { get; set; }
 
 
         #region Transactional Properties
@@ -386,7 +398,7 @@ namespace Fasetto.Word
 
                 //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
 
-                CommitAction = AddClassificationAsync
+                CommitAction = SelectCategoryAsync,           
             };
             Party = new HierarchyItemSelectionViewModel
             {
@@ -402,7 +414,7 @@ namespace Fasetto.Word
                 //HierarchyTypeID = ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).f,
                 //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
                 PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
-                CommitAction = AddClassificationAsync
+                CommitAction = SelectPartyAsync,
             };
 
 
@@ -476,7 +488,7 @@ namespace Fasetto.Word
                     return;
 
                 // OK successfully registered (and logged in)... 
-                //If data returned, modify data on classifiaction view model
+                //If data returned, modify data on classification view model
 
                 if (result.ServerResponse.Response.Count > 0)
                 {
@@ -663,15 +675,23 @@ namespace Fasetto.Word
         /// Initialises the Cost Hierarchy Search
         /// </summary>
         /// <returns>Returns true if successful, false otherwise</returns>
-        public async Task<bool> AddClassificationAsync()
+        public async Task<bool> SelectCategoryAsync()
         {
             // Lock this command to ignore any other requests while processing
 
 
-            return await RunCommandAsync(() => CostClassificationIsSaving, async () =>
+            return await RunCommandAsync(() => SelectCategoryCompleted, async () =>
             {
 
                 ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                Category.OriginalName = Category.EditedName;
+                if (ViewModelApplication.ControlParameter1 != null)
+                {
+                    ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
+                    ViewModelApplication.ControlParameter1 = null;
+                    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    ViewModelApplication.PopupVisible = true;
+                }
                 //((ManageClassificationViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
                 //{
                 //    MSelectedCostHierarchy = new CostHierarchyViewModel()
@@ -681,7 +701,35 @@ namespace Fasetto.Word
             });
         }
 
+        /// <summary>
+        /// Initialises the Cost Hierarchy Search
+        /// </summary>
+        /// <returns>Returns true if successful, false otherwise</returns>
+        public async Task<bool> SelectPartyAsync()
+        {
+            // Lock this command to ignore any other requests while processing
 
+
+            return await RunCommandAsync(() => SelectPartyCompleted, async () =>
+            {
+
+                ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                Party.OriginalName = Party.EditedName;
+                if (ViewModelApplication.ControlParameter1 != null)
+                {
+                    ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
+                    ViewModelApplication.ControlParameter1 = null;
+                    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    ViewModelApplication.PopupVisible = true;
+                }
+                //((ManageClassificationViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
+                //{
+                //    MSelectedCostHierarchy = new CostHierarchyViewModel()
+                //};
+                //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                return true;
+            });
+        }
         /// <summary>
         /// Used tp insert a new node with the currently selected node as parent
         /// </summary>
@@ -937,6 +985,8 @@ namespace Fasetto.Word
                                 tmp1.Remove(category1);
                                 tmp.Remove(category);
 
+
+
                             }
 
                         }
@@ -1005,7 +1055,8 @@ namespace Fasetto.Word
                                 Selected1.Month = Selected1.Month;
                                 Selected1.TransAmount = Selected1.TransAmount;
 
-                                tmp.Add(Selected1);
+                                //tmp.Add(Selected1);
+                                ((TransactionTreeViewModel)tmp0).AddItem(Selected1);
                                 tmp1.Add(Selected1);
 
 
@@ -1090,6 +1141,7 @@ namespace Fasetto.Word
 
                             //Add record for change on API model
                             matches = tmp.Where(x => x.KCategoryID == Category.EditedKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                            
                             category = matches.FirstOrDefault();
                             if (category != null) 
                             //check whether this allocation category is already in use for the transaction
@@ -1282,7 +1334,8 @@ namespace Fasetto.Word
                                 Selected1.TransAmount = Selected1.TransAmount;
                                 Selected1.FCatSrchID = Selected1.FCatSrchID;
 
-                                tmp.Add(Selected1);
+                                //tmp.Add(Selected1);
+                                ((TransactionTreeViewModel)tmp0).AddItem(Selected1);
                                 tmp1.Add(Selected1);
 
 
@@ -1361,7 +1414,7 @@ namespace Fasetto.Word
                                 matches1 = tmp1.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
                                 category1 = matches1.FirstOrDefault();
 
-                                if (category == null)
+                                if (category1 == null)
                                 {
                                     //add a null allocation record
                                     Selected1.ActualAmount = OrgActual - IntAmnt;

@@ -276,6 +276,7 @@ namespace Fasetto.Word
             var item = dataGrid.Items[rowIndex]; // = Product X
             dataGrid.SelectedItem = item;
 
+
             if (!(dataGrid.ItemContainerGenerator.ContainerFromIndex(rowIndex) is DataGridRow row))
             {
                 /* bring the data item (Product object) into view

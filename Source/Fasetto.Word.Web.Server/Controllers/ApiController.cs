@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -887,9 +888,9 @@ namespace Fasetto.Word.Web.Server
             para[15] = new SqlParameter("@Notes", SqlDbType.NVarChar);
             //var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (ShortName,Description,kCategoryID,ParentCategoryID,fIconID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement)" +// ) " +
             //    "VALUES (@ShortName,@Description,@kCategoryID,@ParentCategoryID,@fIconID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement)";//)";
-            var SqlString = "INSERT INTO [Finance].[FinActual]  (ActualAmount,kFinActualID,fFinTranID,kCategoryID,DateEffective,fClientID,fHierarchyID,Month,fPartyID,Name,fCatSrchID,isFinal,Notes)" +// ) " +
+            var SqlString = "INSERT INTO [Finance].[FinActual]  (ActualAmount,kFinActualID,fFinTranID,fCategoryID,fClientID,fHierarchyID,Month,fPartyID,fCatSrchID,isFinal,Notes)" +// ) " +
 
-                "VALUES (@ActualAmount,@kFinActualID,@kFinTranID,@kCategoryID,@DateEffective,@fIconID,@DateEffective,@kClientID,@kHierarchyID,@Month,@kPartyID,@PartyName, @fCatSrchID),1,@Notes)";
+                "VALUES (@ActualAmount,@kFinActualID,@kFinTranID,@kCategoryID,@kClientID,@kHierarchyID,@Month,@kPartyID, @fCatSrchID,1,@Notes)";
             var SqlString1 = "UPDATE [Finance].[FinTran] SET fPartyID = @kPartyID WHERE kFinTranID = @kFinTranID";
             //If elements are to be added, insert into backend
             results = mPersist.Where(x => x.ChangeType == "a").OrderBy(x => x.KFinActualID).ToList();//
@@ -902,7 +903,11 @@ namespace Fasetto.Word.Web.Server
                 {
                     para[0].Value = row.ShortName;
                     para[1].Value = row.Description;
-                    para[2].Value = new Guid(row.KCategoryID);
+                    para[2].Value = !string.IsNullOrEmpty(row.KCategoryID) ? row.KCategoryID : (object)DBNull.Value;
+                    //if (row.KCategoryID == null || row.KCategoryID == "")
+                    //    para[2].Value = Guid.NewGuid();
+                    //else
+                    //    para[2].Value = new Guid(row.KCategoryID);
                     para[3].Value = new Guid(row.KFinActualID);
                     para[4].Value = new Guid(row.KFinTranID);
                     para[5].Value = row.DateEffective;
@@ -912,13 +917,13 @@ namespace Fasetto.Word.Web.Server
                     para[9].Value = new Guid(row.KClientID);
                     para[10].Value = new Guid(row.KHierarchyID);
                     para[11].Value = row.Month;
-                    para[12].Value = row.KPartyName;
+                    para[12].Value = row.KPartyName??"";
                     para[13].Value = new Guid(row.KPartyID);
                     if (row.FCatSrchID == null || row.FCatSrchID == "")
                         para[14].Value = Guid.NewGuid();
                     else
                         para[14].Value = new Guid(row.FCatSrchID);
-                    para[15].Value = row.Notes;
+                    para[15].Value = row.Notes ?? "";
 
                     SqlString2 = "EXEC [Finance].[spManageCategorySearch] @fClientID = '" + para[9].Value + "' , @HierarchyID = '" + para[10].Value + "', @fCategoryID = '" + para[2].Value + "',@fPartyID = '" + para[13].Value + "' ,@fCatSrchID = '" + para[14].Value + "' ,@Description = '" + para[1].Value + "' ,@month = '" + para[11].Value + "'";
 
@@ -927,7 +932,7 @@ namespace Fasetto.Word.Web.Server
                     {
                         // Try and run the task
                         _ = await ExecuteAsync(SqlString, para);
-                        _ = await ExecuteAsync(SqlString1, para);
+                        //_ = await ExecuteAsync(SqlString1, para);
                         _ = await GetDataSetAsync(SqlString2);
                     }
                     catch (Exception ex)
@@ -966,13 +971,14 @@ namespace Fasetto.Word.Web.Server
                     para[9].Value = new Guid(row.KClientID);
                     para[10].Value = new Guid(row.KHierarchyID);
                     para[11].Value = row.Month;
-                    para[12].Value = row.KPartyName;
+                    para[12].Value = row.KPartyName ?? ""; 
                     para[13].Value = new Guid(row.KPartyID);
                     if (row.FCatSrchID == null || row.FCatSrchID == "")
                         para[14].Value = Guid.NewGuid();
                     else
                         para[14].Value = new Guid(row.FCatSrchID);
-                    para[15].Value = row.Notes;
+                    para[15].Value = row.Notes ?? "";
+
 
                     SqlString2 = "EXEC [Finance].[spManageCategorySearch] @fClientID = '" + para[9].Value + "' , @HierarchyID = '" + para[10].Value + "', @fCategoryID = '" + para[2].Value + "',@fPartyID = '" + para[13].Value + "' ,@fCatSrchID = '" + para[14].Value + "' ,@Description = '" + para[1].Value + "' ,@month = '" + para[11].Value + "'";
 
@@ -1022,13 +1028,15 @@ namespace Fasetto.Word.Web.Server
                     para[9].Value = new Guid(row.KClientID);
                     para[10].Value = new Guid(row.KHierarchyID);
                     para[11].Value = row.Month;
-                    para[12].Value = row.KPartyName;
+                    para[12].Value = row.KPartyName ?? "";
                     para[13].Value = new Guid(row.KPartyID);
                     if (row.FCatSrchID == null || row.FCatSrchID == "")
                         para[14].Value = Guid.NewGuid();
                     else
                         para[14].Value = new Guid(row.FCatSrchID);
+                    para[15].Value = row.Notes ?? "";
                     try
+
                     {
                         // Try and run the task
                         _ = await ExecuteAsync(SqlString, para);
@@ -2223,9 +2231,9 @@ namespace Fasetto.Word.Web.Server
 
                 //var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (ShortName,Description,kCategoryID,ParentCategoryID,fIconID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement)" +// ) " +
                 //    "VALUES (@ShortName,@Description,@kCategoryID,@ParentCategoryID,@fIconID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement)";//)";
-                var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (fHierarchyID,ShortName,Description,kCategoryID,ParentCategoryID,fIconID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement,Page,Root,isMenuItem,fHierarchyTypeID,fClientID)" +// ) " +
+                var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (fHierarchyID,ShortName,Description,kCategoryID,ParentCategoryID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement,Page,Root,isMenuItem,fHierarchyTypeID,fClientID)" +// ) " +
 
-                    "VALUES (@fHierarchyID,@ShortName,@Description,@kCategoryID,@ParentCategoryID,@fIconID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement,@Page,@Root,@isMenuItem,@HierarchyTypeID,@ClientID)";//)";
+                    "VALUES (@fHierarchyID,@ShortName,@Description,@kCategoryID,@ParentCategoryID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement,@Page,@Root,@isMenuItem,@HierarchyTypeID,@ClientID)";//)";
                 //If elements are to be added, insert into backend
                 results = mPersist.Where(x => x.IsNewElement == true).OrderBy(x => x.ShortName).ToList();//
                 if (results.Count >0)

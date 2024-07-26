@@ -118,7 +118,7 @@
             AutoGenerateColumns="False" AlternationCount="2"
             SelectionUnit="FullRow"  VerticalAlignment="Center"  HorizontalAlignment="Center" HorizontalContentAlignment="Center"  CanUserAddRows="False" 
             IsSynchronizedWithCurrentItem="True" SelectedItem="{Binding Trans_actionRec}" SelectionMode="Extended" TargetUpdated="Datagrid_TargetUpdated"
-            Loaded="DataGrid_OnLoaded" Unloaded="DataGrid_OnUnLoaded" 
+            Loaded="DataGrid_OnLoaded" Unloaded="DataGrid_OnUnLoaded"
         >
             
             <!--<DataGrid.ColumnHeaderStyle>
@@ -150,7 +150,7 @@
                                 <Setter Property="Background" Value="Beige"/>
                                        <Setter Property="Foreground" Value="Black"></Setter>                                
                             </Trigger>
-                            <DataTrigger Binding="{Binding ShortName}" Value ="">
+                        <DataTrigger Binding="{Binding ShortName}" Value ="">
                                 <Setter Property="Background" Value="Crimson"></Setter>
                                       <Setter Property="Foreground" Value="Beige"></Setter>                              
                             </DataTrigger>
@@ -162,10 +162,6 @@
                             <Setter Property="Background" Value="Beige"></Setter>
                             <Setter Property="Foreground" Value="DarkCyan"></Setter>
                         </DataTrigger>
-
-                        <!--<DataTrigger Binding="{Binding State}" Value="State2">
-                                <Setter Property="Background" Value="Orange"></Setter>
-                            </DataTrigger>-->
                         </Style.Triggers>
                     <!--Setting highlight-->
 

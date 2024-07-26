@@ -75,13 +75,13 @@ namespace Fasetto.Word
 
         #region Constructor
         /// <summary>
-        /// The HierarchyTreeViewModel is a visual inteface for interacting with hiearchical
+        /// The HierarchyTreeViewModel is a visual interface for interacting with hierarchical
         /// Structures persisted on the database linked to the application
         /// Generic hierarchy structures with parent-child relationships may be used to represent
         /// appropriate data sets
         /// </summary>
         /// <param name="hierarchyTable"></param>
-        /// The hierarchyTable passed through as a paremeter identifies the specific hierarchy set to be retrieved
+        /// The hierarchyTable passed through as a parameter identifies the specific hierarchy set to be retrieved
         /// from persistent s
         public TransactionTreeViewModel(string client, DateTime timeStart, DateTime timeEnd)
         {
@@ -263,8 +263,11 @@ namespace Fasetto.Word
 
                     //BindingOperations.EnableCollectionSynchronization(Trans_action, mStocksLock);
                     OrgTransaction = new ObservableCollection<TransactionViewModel>();
-
+                    lock (mStocksLock)
+                    {
                     Trans_action.Clear();
+                    }
+
 
                     mChange = new TransactionResultListApiModel();
                     var matches = result.ServerResponse.Response.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
@@ -297,11 +300,10 @@ namespace Fasetto.Word
                      };
 
                         //Lock collection to prevent contention with UI
-                        lock (mStocksLock)
-                        {
-                            Trans_action.Add(mTVM); 
 
-                        }
+
+                            AddItem(mTVM);
+
                     }
                     Clone(Trans_action, OrgTransaction);
 
@@ -594,6 +596,36 @@ namespace Fasetto.Word
 
             });
         }
+
+
+        /// <summary>
+        /// This function allows the addition of an TransactionViewModel to the Trans_action collection
+        /// </summary>
+        /// <param name="item"></param>
+        public void AddItem( TransactionViewModel item)
+        {
+            lock (mStocksLock)
+            {
+                Trans_action.Add(item);
+
+            }
+        }
+
+
+        /// <summary>
+        /// This function allows the removal of a TransactionViewModel from the Trans_action collection
+        /// </summary>
+        /// <param name="item"></param>
+        public void RemoveItem(TransactionViewModel item)
+        {
+            lock (mStocksLock)
+            {
+                Trans_action.Remove(item);
+
+            }
+        }
+
+
 
         /// <summary>
         /// This function removes items from the target list included in the source

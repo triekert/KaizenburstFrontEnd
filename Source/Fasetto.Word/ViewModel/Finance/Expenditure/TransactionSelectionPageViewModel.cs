@@ -572,8 +572,10 @@ namespace Fasetto.Word
                 }
                 ViewModelApplication.FClientID = Client.EditedKid;
                 ViewModelApplication.ClientShortName = Client.EditedName;
+                Client.OriginalName = Client.EditedName;
                 ViewModelApplication.PopupVisible = false;
                 ViewModelApplication.CurrentPopupViewModel = null;
+
                 ViewModelApplication.CurrentPopupContent = 0;
 
                 return true;
@@ -593,11 +595,12 @@ namespace Fasetto.Word
             {
                 // Update the First Name value on the server...
 
-                ViewModelApplication.FCostHierarchyID = Client.EditedKid;
-                ViewModelApplication.CostHierarchyShortName = Client.EditedName;
+                ViewModelApplication.FCostHierarchyID = CostHierarchy.EditedKid;
+                ViewModelApplication.CostHierarchyShortName = CostHierarchy.EditedName;
                 ViewModelApplication.PopupVisible = false;
                 ViewModelApplication.CurrentPopupViewModel = null;
                 ViewModelApplication.CurrentPopupContent = 0;
+                CostHierarchy.OriginalName = CostHierarchy.EditedName;
                 return true;
             });
 
