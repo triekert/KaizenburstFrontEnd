@@ -107,6 +107,18 @@ namespace Fasetto.Word.Core
         /// </summary>
         public string KPartyName { get; set; }
 
+        /// <summary>
+        /// String representation of GUID for linked Party (legal person including supplier, membership, family etc)
+        /// </summary>
+
+
+        public string KAccountID { get; set; }
+
+
+        /// <summary>
+        /// Name of linked party
+        /// </summary>
+        public string KAccountName { get; set; }
 
         /// <summary>
         /// String representation of GUID for linked Plant (Including any portion of plant down to lowest BOM level)
@@ -156,6 +168,14 @@ namespace Fasetto.Word.Core
         /// </summary>
 
         public string Notes { get; set; }
+
+
+
+        /// <summary>
+        /// No of units of items sold/purchased/returned when relevant and  linked to processed transaction
+        /// </summary>
+
+        public int Units { get; set; }
 
 
         /// <summary>

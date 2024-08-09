@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
@@ -29,6 +30,8 @@ namespace Fasetto.Word
         /// </summary>
         public ObservableCollection<TransactionViewModel>Trans_action{ get; set; }
         public ObservableCollection<TransactionViewModel> OrgTransaction { get; set; }
+        public ObservableCollection<TransactionViewModel> mPersist { get; set; }
+
         public int Trans_actionRec { get; set; }
         //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
         /// <summary>
@@ -46,7 +49,8 @@ namespace Fasetto.Word
         //protected TransactionViewModel mRootHierarchyElement1;
         //private readonly ICommand mSearchCommand;
         public TransactionListDataModel mTDML;
-        public TransactionResultListApiModel mPersist,mChange;
+
+        public TransactionResultListApiModel mChange;
   
         public TransactionViewModel mTVM;
         public ParameterTransactionApiModel mRequest;
@@ -263,56 +267,20 @@ namespace Fasetto.Word
 
                     //BindingOperations.EnableCollectionSynchronization(Trans_action, mStocksLock);
                     OrgTransaction = new ObservableCollection<TransactionViewModel>();
-                    lock (mStocksLock)
-                    {
-                    Trans_action.Clear();
-                    }
+
 
 
                     mChange = new TransactionResultListApiModel();
+
+
+
+
+                    mPersist = new ObservableCollection<TransactionViewModel>();
                     var matches = result.ServerResponse.Response.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
-                    //mPersist = result.ServerResponse.Response;
-                    //if (matches.Count>0)
-
                     foreach (var item in matches)
                     {
 
-                    var mTVM = new TransactionViewModel
-
-                    {
-                        Posted_Date = item.Posted_Date,
-                        Month = item.Month,
-                        Description = item.Description,
-                        TransAmount = item.TransAmount,
-                        ActualAmount = item.ActualAmount,
-                        ShortName = item.ShortName,
-                        KCategoryID = item.KCategoryID,
-                        KFinActualID = item.KFinActualID,
-                        KFinTranID = item.KFinTranID,
-                        KPartyID = item.KPartyID,
-                        KPartyName = item.KPartyName,
-                        IsChanged = false,
-                        FCatSrchID = item.FCatSrchID,
-                        KHierarchyID = item.KHierarchyID,
-                        IsDocLinked = item.IsDocLinked,
-                        Notes = item.Notes,
-                       
-                     };
-
-                        //Lock collection to prevent contention with UI
-
-
-                            AddItem(mTVM);
-
-                    }
-                    Clone(Trans_action, OrgTransaction);
-
-                    mPersist = new TransactionResultListApiModel();
-
-                    foreach (var item in matches)
-                    {
-
-                        var mTVM = new TransactionResultApiModel
+                        var mTVM = new TransactionViewModel
 
                         {
                             Posted_Date = item.Posted_Date,
@@ -331,8 +299,10 @@ namespace Fasetto.Word
                             KHierarchyID = item.KHierarchyID,
                             IsDocLinked = item.IsDocLinked,
                             Notes = item.Notes,
-                            KClientID = item.KClientID,
-
+                            //KClientID = item.KClientID,
+                            KAccountID = item.KAccountID,
+                            KAccountName = item.KPartyName,
+                            Units = item.Units,
                         };
 
                         //Lock collection to prevent contention with UI
@@ -341,11 +311,16 @@ namespace Fasetto.Word
                     }
 
 
+                    RefreshTransactionList();
+                    //Clone(Trans_action, OrgTransaction);
+
                     Trans_actionRec = 0;
                     
-                    if (Trans_action.Count != mPersist.Count)
-                    { 
-                    };
+                    //if (Trans_action.Count != mPersist.Count)
+                    //{ 
+                    //};
+
+
                 }
                  catch (Exception e)
                 {
@@ -504,6 +479,7 @@ namespace Fasetto.Word
             //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
             ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
 
+            if (UpPersist == null || OPersist == null) { return; }
             var except = UpPersist.Except(OPersist);
             //TO DO: Map PopupViewModel to PopupContent with converter
             //ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
@@ -512,37 +488,38 @@ namespace Fasetto.Word
                       group c by new { c.KFinActualID, c.ChangeType } into transApi
                       select transApi.OrderByDescending(x => x.DateEffective)
                                       .FirstOrDefault();
-            mPersist = new TransactionResultListApiModel();
-
-            foreach (var item in res)
-            {
-
-                var mTR = new TransactionResultApiModel
-
-                {
-                    Posted_Date = item.Posted_Date,
-                    Month = item.Month,
-                    Description = item.Description,
-                    TransAmount = item.TransAmount,
-                    ActualAmount = item.ActualAmount,
-                    ShortName = item.ShortName,
-                    KCategoryID = item.KCategoryID,
-                    KFinActualID = item.KFinActualID,
-                    KFinTranID = item.KFinTranID,
-                    KClientID = item.KClientID,
-                    KHierarchyID = item.KHierarchyID,
-                    ChangeType = item.ChangeType,
-                    DateEffective = item.DateEffective,
-                    KPartyID = item.KPartyID,
-                    KPartyName = item.KPartyName,
-                    FCatSrchID = item.FCatSrchID,
-                    IsTemplate = item.IsTemplate,
-                    Notes = item.Notes,
 
 
-                };
-                mPersist.Add(mTR);
-            }
+            //foreach (var item in res)
+            //{
+
+            //    var mTR = new TransactionTreeViewModel
+
+            //    {
+            //        Posted_Date = item.Posted_Date,
+            //        Month = item.Month,
+            //        Description = item.Description,
+            //        TransAmount = item.TransAmount,
+            //        ActualAmount = item.ActualAmount,
+            //        ShortName = item.ShortName,
+            //        KCategoryID = item.KCategoryID,
+            //        KFinActualID = item.KFinActualID,
+            //        KFinTranID = item.KFinTranID,
+            //        KClientID = item.KClientID,
+            //        KHierarchyID = item.KHierarchyID,
+            //        ChangeType = item.ChangeType,
+            //        DateEffective = item.DateEffective,
+            //        KPartyID = item.KPartyID,
+            //        KPartyName = item.KPartyName,
+            //        FCatSrchID = item.FCatSrchID,
+            //        IsTemplate = item.IsTemplate,
+            //        Notes = item.Notes,
+            //        Units = item.Units,
+
+
+            //    };
+            //    mPersist.Add(mTR);
+            //}
 
 
                 ViewModelApplication.CurrentPopupViewModel = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
@@ -606,7 +583,7 @@ namespace Fasetto.Word
         {
             lock (mStocksLock)
             {
-                Trans_action.Add(item);
+               Trans_action.Add(item);
 
             }
         }
@@ -620,7 +597,7 @@ namespace Fasetto.Word
         {
             lock (mStocksLock)
             {
-                Trans_action.Remove(item);
+                mPersist.Remove(item);
 
             }
         }
@@ -668,6 +645,55 @@ namespace Fasetto.Word
                 };
                 target.Add(mTR);
             }
+
+        }
+
+        public void RefreshTransactionList()
+        {
+            lock (mStocksLock)
+            {
+                Trans_action.Clear();
+            }
+            var mTest = mPersist.GroupBy(x => x.KFinTranID)
+            .Select(g => g.First()).ToList();
+            var matches = mTest.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
+            //mPersist = result.ServerResponse.Response;
+            //if (matches.Count>0)
+
+            foreach (var item in matches)
+            {
+
+                var mTVM = new TransactionViewModel
+
+                {
+                    Posted_Date = item.Posted_Date,
+                    Month = item.Month,
+                    Description = item.Description,
+                    TransAmount = item.TransAmount,
+                    ActualAmount = item.ActualAmount,
+                    ShortName = item.ShortName,
+                    KCategoryID = item.KCategoryID,
+                    KFinActualID = item.KFinActualID,
+                    KFinTranID = item.KFinTranID,
+                    KPartyID = item.KPartyID,
+                    KPartyName = item.KPartyName,
+                    IsChanged = false,
+                    FCatSrchID = item.FCatSrchID,
+                    KHierarchyID = item.KHierarchyID,
+                    IsDocLinked = item.IsDocLinked,
+                    Notes = item.Notes,
+                    KAccountID = item.KAccountID,
+                    KAccountName = item.KAccountName,
+                    Units = item.Units
+                };
+
+                //Lock collection to prevent contention with UI
+
+
+                AddItem(mTVM);
+
+            }
+
 
         }
 

@@ -129,7 +129,7 @@ namespace Fasetto.Word
                         }
                         else
 
-                            mHierarchyTree = new HierarchyTreeViewModel1(root);
+                        mHierarchyTree = new HierarchyTreeViewModel1(root);
                         ViewModelApplication.ControlPopupCostCategory = mHierarchyTree;
                         break;
 

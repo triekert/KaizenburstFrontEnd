@@ -306,6 +306,7 @@ namespace Fasetto.Word
 
                 RefreshHierarchy();
                 PerformKIdSearch();
+                SearchText = "";
 
                 ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
 
@@ -455,12 +456,11 @@ namespace Fasetto.Word
         {
             if (MatchingCategoryEnumerator == null || !MatchingCategoryEnumerator.MoveNext())
                 VerifyMatchingCategoryEnumerator();
-
-            var Category = MatchingCategoryEnumerator.Current;
-
-            if (Category == null)
+            if (MatchingCategoryEnumerator == null)
                 return;
-
+            var Category = MatchingCategoryEnumerator.Current;
+            if (Category ==null)
+                return;
             // Ensure that this Category is in view.
             if (Category.mParent != null)
                 Category.mParent.IsExpanded = true;
@@ -502,7 +502,7 @@ namespace Fasetto.Word
 
         #endregion // SearchKCategoryID
         #region Search Logic //KCategoryID
-        private void PerformKIdSearch()
+        public void PerformKIdSearch()
         {
 
             if (MatchingKCategoryEnumerator == null || !MatchingKCategoryEnumerator.MoveNext())
@@ -1011,9 +1011,12 @@ namespace Fasetto.Word
             if ((string)Pgtype == "TransactionSelectionPageViewModel" && ViewModelApplication.ControlParameter1 != null)
 
             {
-                ViewModelApplication.CurrentPopupViewModel = (ManageClassificationViewModel)ViewModelApplication.ControlParameter1;
-                var mViewModel = (ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel;
-                mViewModel.Close();
+                //ViewModelApplication.CurrentPopupViewModel = (ManageClassificationViewModel)ViewModelApplication.ControlParameter1;
+                var mViewModel = (HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel;
+                //var mViewModel = (ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel;
+               
+                mViewModel.Save();
+
             }
 
             else

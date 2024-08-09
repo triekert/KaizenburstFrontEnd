@@ -1,4 +1,5 @@
 ﻿using Fasetto.Word.Core;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -163,16 +164,21 @@ namespace Fasetto.Word
                             {
                                 SelectRowByIndex(Transaction, (Transaction.SelectedIndex + 1 > Transaction.Items.Count - 1) ? Transaction.Items.Count - 1 : Transaction.SelectedIndex + 1);
                             }
-                        else
-                            if (Keyboard.IsKeyDown(Key.PageUp))
-                            {
-                                SelectRowByIndex(Transaction, (Transaction.SelectedIndex - 10 < 0) ? Transaction.Items.Count - 1 : Transaction.SelectedIndex - 10);
-                            }
-                        else
-                            if (Keyboard.IsKeyDown(Key.PageDown))
-                            {
-                                SelectRowByIndex(Transaction, (Transaction.SelectedIndex + 10 > Transaction.Items.Count - 1) ? Transaction.Items.Count - 1 : Transaction.SelectedIndex + 10);
-                            }
+                            else
+                                if (Keyboard.IsKeyDown(Key.PageUp))
+                                {
+                                    SelectRowByIndex(Transaction, (Transaction.SelectedIndex - 10 < 0) ? Transaction.Items.Count - 1 : Transaction.SelectedIndex - 10);
+                                }
+                                else
+                                    if (Keyboard.IsKeyDown(Key.PageDown))
+                                    {
+                                        SelectRowByIndex(Transaction, (Transaction.SelectedIndex + 10 > Transaction.Items.Count - 1) ? Transaction.Items.Count - 1 : Transaction.SelectedIndex + 10);
+                                    }
+                                    else
+                                        if (Keyboard.IsKeyDown(Key.Insert))
+                                            {
+                                                Insert();                                                       
+                                            }
 
             e.Handled = true;
         }
@@ -388,7 +394,10 @@ namespace Fasetto.Word
                         KPartyID = item.KPartyID,
                         FCatSrchID = item.FCatSrchID,
                         KHierarchyID = item.KHierarchyID,
+                        KAccountID = item.KAccountID,
+                        KAccountName = item.KAccountName,
                         Notes = item.Notes,
+                        Units = item.Units,
                     };
                     TransactionDetail.Add(mTDVM);
                 }
@@ -406,6 +415,62 @@ namespace Fasetto.Word
                 ViewModelApplication.PopupVisible = true;
 
             }
+        }
+
+
+
+        private void Insert()
+        {
+
+             var NewTransaction = new TransactionViewModel()
+            {
+                KFinTranID = "00000000-0000-0000-0000-000000000001",
+                KFinActualID = Guid.NewGuid().ToString().ToUpper(),
+                Posted_Date = ((TransactionViewModel)Transaction.SelectedItem).Posted_Date,
+                KHierarchyID =((TransactionViewModel)Transaction.SelectedItem).KHierarchyID,
+                Month =  ((TransactionViewModel)Transaction.SelectedItem).Month,
+            };
+            ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).AddItem(NewTransaction);
+
+            var RawTable = Transaction.Items;
+
+            ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec = Transaction.SelectedIndex;
+
+            ViewModelApplication.PopupVisible = false;
+
+            ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(((TransactionViewModel)NewTransaction).KFinTranID);
+            ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Allocation ";
+
+            //Only one allocation linked to the Transaction, bypass the 'detail' window...
+
+                ViewModelApplication.PopupVisible = false;
+                //ViewModelApplication.CurrentPopupContent = Null;
+                ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+
+
+                var TransactionDetail = new ObservableCollection<TransactionViewModel>();
+                //(TransactionViewModel)(TransactionDetail.SelectedItem;
+
+
+                    var mTDVM = new TransactionViewModel
+
+                    {
+                        Posted_Date = NewTransaction.Posted_Date,
+                        Month = NewTransaction.Month,
+                        KFinActualID = NewTransaction.KFinActualID,
+                        KFinTranID = NewTransaction.KFinTranID,
+                        KHierarchyID = NewTransaction.KHierarchyID,
+                    };
+                    TransactionDetail.Add(mTDVM);
+
+
+                //var RawTable = ((ObservableCollection<TransactionViewModel>)((TransactionDetailTreeViewModel)(ViewModelApplication.CurrentPopupViewModel)).TransactionDetail).Items;
+                ViewModelApplication.CurrentPopupViewModel = new ManageClassificationViewModel(TransactionDetail, TransactionDetail[0]);
+
+                //ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+                ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                ViewModelApplication.PopupVisible = true;
         }
 
         private void Datagrid_TargetUpdated(object sender, DataTransferEventArgs e)

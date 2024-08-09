@@ -93,6 +93,8 @@ namespace Fasetto.Word
         {
             var row = sender as DataGridRow;
             var TransactionDetailRec = row.DataContext as TransactionDetailViewModel;
+                NavigateOn();
+
             //MessageBox.Show($"The timeslot selected is {TransactionDetailRec.TimeStart}") ;
         }
         /// <summary>
@@ -202,6 +204,7 @@ namespace Fasetto.Word
             ViewModelApplication.PopupVisible = false;
             var MSelected = (TransactionViewModel)TransactionDetail.SelectedItem;
             var RawTable = TransactionDetail.Items.SourceCollection;
+            
             var tempTDList = new ObservableCollection<TransactionViewModel>();
             foreach (var tBR in RawTable)
                 tempTDList.Add((TransactionViewModel)tBR);

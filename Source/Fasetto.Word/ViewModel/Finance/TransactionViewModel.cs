@@ -179,9 +179,19 @@ namespace Fasetto.Word
 
         public string Notes { get; set; }
 
+
+        /// <summary>
+        /// No of units of items sold/purchased/returned when relevant and  linked to processed transaction
+        /// </summary>
+
+        public int Units { get; set; }
+
+
         /// <summary>
         /// A document, including images etc, linked to the transaction
         /// </summary>
+        /// 
+
         public DocDataViewModel Document{ get; set; }
 
         ///// <summary>

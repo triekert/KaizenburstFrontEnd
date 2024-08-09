@@ -655,15 +655,18 @@ namespace Fasetto.Word.Web.Server
                         TransAmount = (decimal)row[3],
                         ActualAmount = (decimal)row[4],
                         ShortName = row[5].ToString(),
-                        KCategoryID = row[6].ToString(),
-                        KFinActualID = row[7].ToString(),
-                        KFinTranID = row[8].ToString(),
-                        KPartyName = row[9].ToString(),
-                        KPartyID = row[10].ToString(),
-                        FCatSrchID = row[12].ToString(),
-                        KHierarchyID = row[13].ToString(),
-                        IsDocLinked = (row[15] != DBNull.Value) ? (bool)row[15] : false,
+                        KCategoryID = row[6].ToString().ToUpper(),
+                        KFinActualID = row[7].ToString().ToUpper(),
+                        KFinTranID = row[8].ToString().ToUpper(),
+                        KPartyName = row[9].ToString().ToUpper(),
+                        KPartyID = row[10].ToString().ToUpper(),
+                        FCatSrchID = row[12].ToString().ToUpper(),
+                        KHierarchyID = row[13].ToString().ToUpper(),
+                        IsDocLinked = (row[18] != DBNull.Value) ? (bool)row[18] : false,
                         Notes = row[14].ToString(),
+                        KAccountName = row[16].ToString(),
+                        KAccountID = row[15].ToString().ToUpper(),
+                        Units = (int)row[17],
                     };
                     results.Add(u);
 
@@ -869,7 +872,7 @@ namespace Fasetto.Word.Web.Server
 
 
 
-            var para = new SqlParameter[16];
+            var para = new SqlParameter[19];
             para[0] = new SqlParameter("@ShortName", SqlDbType.NVarChar);
             para[1] = new SqlParameter("@Description", SqlDbType.NVarChar);
             para[2] = new SqlParameter("@kCategoryID", SqlDbType.UniqueIdentifier);
@@ -886,15 +889,18 @@ namespace Fasetto.Word.Web.Server
             para[13] = new SqlParameter("@kPartyID", SqlDbType.UniqueIdentifier);
             para[14] = new SqlParameter("@fCatSrchID", SqlDbType.UniqueIdentifier);
             para[15] = new SqlParameter("@Notes", SqlDbType.NVarChar);
+            para[16] = new SqlParameter("@kAccountID", SqlDbType.UniqueIdentifier);
+            para[17] = new SqlParameter("@kAccountName", SqlDbType.NVarChar);
+            para[18] = new SqlParameter("@Units", SqlDbType.Int);
+
             //var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (ShortName,Description,kCategoryID,ParentCategoryID,fIconID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement)" +// ) " +
             //    "VALUES (@ShortName,@Description,@kCategoryID,@ParentCategoryID,@fIconID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement)";//)";
-            var SqlString = "INSERT INTO [Finance].[FinActual]  (ActualAmount,kFinActualID,fFinTranID,fCategoryID,fClientID,fHierarchyID,Month,fPartyID,fCatSrchID,isFinal,Notes)" +// ) " +
 
-                "VALUES (@ActualAmount,@kFinActualID,@kFinTranID,@kCategoryID,@kClientID,@kHierarchyID,@Month,@kPartyID, @fCatSrchID,1,@Notes)";
             var SqlString1 = "UPDATE [Finance].[FinTran] SET fPartyID = @kPartyID WHERE kFinTranID = @kFinTranID";
             //If elements are to be added, insert into backend
-            results = mPersist.Where(x => x.ChangeType == "a").OrderBy(x => x.KFinActualID).ToList();//
-             var SqlString2 = "";
+            results = mPersist.Where(x => x.ChangeType == "a").OrderBy(x => x.KFinActualID).ThenBy(x => x.KCategoryID).ThenByDescending(x => Math.Abs(x.ActualAmount)).ToList();//
+            var SqlString2 = "";
+            var SqlString = "";
             if (results.Count > 0)
 
 
@@ -903,11 +909,7 @@ namespace Fasetto.Word.Web.Server
                 {
                     para[0].Value = row.ShortName;
                     para[1].Value = row.Description;
-                    para[2].Value = !string.IsNullOrEmpty(row.KCategoryID) ? row.KCategoryID : (object)DBNull.Value;
-                    //if (row.KCategoryID == null || row.KCategoryID == "")
-                    //    para[2].Value = Guid.NewGuid();
-                    //else
-                    //    para[2].Value = new Guid(row.KCategoryID);
+                    para[2].Value = !string.IsNullOrEmpty(row.KCategoryID) ? new Guid(row.KCategoryID) : (object)DBNull.Value;
                     para[3].Value = new Guid(row.KFinActualID);
                     para[4].Value = new Guid(row.KFinTranID);
                     para[5].Value = row.DateEffective;
@@ -918,22 +920,28 @@ namespace Fasetto.Word.Web.Server
                     para[10].Value = new Guid(row.KHierarchyID);
                     para[11].Value = row.Month;
                     para[12].Value = row.KPartyName??"";
-                    para[13].Value = new Guid(row.KPartyID);
-                    if (row.FCatSrchID == null || row.FCatSrchID == "")
-                        para[14].Value = Guid.NewGuid();
-                    else
-                        para[14].Value = new Guid(row.FCatSrchID);
+                    para[13].Value = !string.IsNullOrEmpty(row.KPartyID) ? new Guid(row.KPartyID) : (object)DBNull.Value;
+                    para[14].Value = !string.IsNullOrEmpty(row.FCatSrchID) ? new Guid(row.FCatSrchID) : (object)DBNull.Value;
                     para[15].Value = row.Notes ?? "";
+                    para[16].Value = !string.IsNullOrEmpty(row.KAccountID) ? new Guid(row.KAccountID) : (object)DBNull.Value;
+                    para[17].Value = row.KAccountName??"";
+                    para[18].Value = row.Units;
 
-                    SqlString2 = "EXEC [Finance].[spManageCategorySearch] @fClientID = '" + para[9].Value + "' , @HierarchyID = '" + para[10].Value + "', @fCategoryID = '" + para[2].Value + "',@fPartyID = '" + para[13].Value + "' ,@fCatSrchID = '" + para[14].Value + "' ,@Description = '" + para[1].Value + "' ,@month = '" + para[11].Value + "'";
 
-
+                    SqlString2 = "EXEC [Finance].[spManageCategorySearch] @fClientID = '" + para[9].Value + "' , @HierarchyID = '" + para[10].Value + "', @fPartyID = '" + para[13].Value + "' ,@fCatSrchID = '" + para[14].Value + "' ,@Description = '" + para[1].Value + "' ,@month = '" + para[11].Value + "'";
+                    SqlString = "EXEC [Finance].[spAddTransactionAllocation] @ActualAmount ,@TransAmount ,@kFinActualID ,@kFinTranID,@kCategoryID,@kClientID,@kHierarchyID ,@Month ,@kPartyID ,@fCatSrchID,@Notes ,@kAccountId ,@Description ,@Posted_Date";
+                    //SqlString = "EXEC [Finance].[spAddTransactionAllocation] @ActualAmount = '" + para[7].Value + "',@kFinActualID = '" + para[3].Value + "',@kFinTranID = '" + para[4].Value +
+                    //    "',@kCategoryID = '" + para[2].Value + "',@kClientID = '" + para[9].Value + "',@kHierarchyID = '" + para[10].Value + "',@Month = '" + para[11].Value + "',@kPartyID = '" + para[13].Value +
+                    //    "' ,@fCatSrchID = '" + para[14].Value + "',@Notes = '" + para[15].Value + "',@kAccountId = '" + para[16].Value + "' ,@Description = '" + para[1].Value + "' ,@PostedDate = '" + para[8].Value + "'";
                     try
                     {
                         // Try and run the task
                         _ = await ExecuteAsync(SqlString, para);
                         //_ = await ExecuteAsync(SqlString1, para);
-                        _ = await GetDataSetAsync(SqlString2);
+                        if (row.IsTemplate)
+                        {
+                            _ = await ExecuteAsync(SqlString2, para); ;
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -949,8 +957,8 @@ namespace Fasetto.Word.Web.Server
 
 
 
-            SqlString = "UPDATE [Finance].[FinActual] SET ActualAmount =@ActualAmount,fCategoryID = @kCategoryID,fPartyID = @kPartyID,fCatSrchID = @fCatSrchID, isFinal =1,Notes = @Notes WHERE kFinActualID = @kFinActualID";
-            SqlString1 = "UPDATE [Finance].[FinTran] SET fPartyID = @kPartyID WHERE kFinTranID = @kFinTranID";
+            SqlString = "UPDATE [Finance].[FinActual] SET ActualAmount =@ActualAmount,fCategoryID = @kCategoryID,fPartyID = @kPartyID,fCatSrchID = @fCatSrchID, isFinal =1,Notes = @Notes,fAccountID = @kAccountID ,Units = @Units WHERE kFinActualID = @kFinActualID";
+            SqlString1 = "UPDATE [Finance].[FinTran] SET fPartyID = @kPartyID,Description = @Description ,[Posted Date] = @Posted_Date ,fAccountID = @kAccountID WHERE kFinTranID = @kFinTranID";
 
             //If elements are to be updated, insert into backend
             results = mPersist.Where(x => x.ChangeType == "c").OrderBy(x => x.KFinActualID).ToList();//
@@ -961,7 +969,7 @@ namespace Fasetto.Word.Web.Server
                 {
                     para[0].Value = row.ShortName;
                     para[1].Value = row.Description;
-                    para[2].Value = new Guid(row.KCategoryID);
+                    para[2].Value = !string.IsNullOrEmpty(row.KCategoryID) ? new Guid(row.KCategoryID) : (object)DBNull.Value;
                     para[3].Value = new Guid(row.KFinActualID);
                     para[4].Value = new Guid(row.KFinTranID);
                     para[5].Value = row.DateEffective;
@@ -971,13 +979,15 @@ namespace Fasetto.Word.Web.Server
                     para[9].Value = new Guid(row.KClientID);
                     para[10].Value = new Guid(row.KHierarchyID);
                     para[11].Value = row.Month;
-                    para[12].Value = row.KPartyName ?? ""; 
-                    para[13].Value = new Guid(row.KPartyID);
-                    if (row.FCatSrchID == null || row.FCatSrchID == "")
-                        para[14].Value = Guid.NewGuid();
-                    else
-                        para[14].Value = new Guid(row.FCatSrchID);
+                    para[12].Value = row.KPartyName ?? "";
+                    para[13].Value = !string.IsNullOrEmpty(row.KPartyID) ? new Guid(row.KPartyID) : (object)DBNull.Value;
+                    para[14].Value = !string.IsNullOrEmpty(row.FCatSrchID) ? new Guid(row.FCatSrchID) : Guid.NewGuid();
                     para[15].Value = row.Notes ?? "";
+                    para[16].Value = !string.IsNullOrEmpty(row.KAccountID) ? new Guid(row.KAccountID) : (object)DBNull.Value;
+                    para[17].Value = row.KAccountName ?? "";
+                    para[18].Value = row.Units;
+
+
 
 
                     SqlString2 = "EXEC [Finance].[spManageCategorySearch] @fClientID = '" + para[9].Value + "' , @HierarchyID = '" + para[10].Value + "', @fCategoryID = '" + para[2].Value + "',@fPartyID = '" + para[13].Value + "' ,@fCatSrchID = '" + para[14].Value + "' ,@Description = '" + para[1].Value + "' ,@month = '" + para[11].Value + "'";
@@ -1018,7 +1028,7 @@ namespace Fasetto.Word.Web.Server
                 {
                     para[0].Value = row.ShortName;
                     para[1].Value = row.Description;
-                    para[2].Value = new Guid(row.KCategoryID);
+                    para[2].Value = !string.IsNullOrEmpty(row.KCategoryID) ? new Guid(row.KCategoryID) : (object)DBNull.Value;
                     para[3].Value = new Guid(row.KFinActualID);
                     para[4].Value = new Guid(row.KFinTranID);
                     para[5].Value = row.DateEffective;
@@ -1029,12 +1039,12 @@ namespace Fasetto.Word.Web.Server
                     para[10].Value = new Guid(row.KHierarchyID);
                     para[11].Value = row.Month;
                     para[12].Value = row.KPartyName ?? "";
-                    para[13].Value = new Guid(row.KPartyID);
-                    if (row.FCatSrchID == null || row.FCatSrchID == "")
-                        para[14].Value = Guid.NewGuid();
-                    else
-                        para[14].Value = new Guid(row.FCatSrchID);
+                    para[13].Value = !string.IsNullOrEmpty(row.KPartyID) ? new Guid(row.KPartyID) : (object)DBNull.Value;
+                    para[14].Value = !string.IsNullOrEmpty(row.FCatSrchID) ? new Guid(row.FCatSrchID) : Guid.NewGuid();
                     para[15].Value = row.Notes ?? "";
+                    para[16].Value = !string.IsNullOrEmpty(row.KAccountID) ? new Guid(row.KAccountID) : (object)DBNull.Value;
+                    para[17].Value = row.KAccountName ?? "";
+                    para[18].Value = row.Units;
                     try
 
                     {
@@ -2549,51 +2559,7 @@ namespace Fasetto.Word.Web.Server
             }
         //}
 
-        /// <summary>
-        /// Attempts to Load Readings from third party API provider
-        /// </summary>
-        /// <param name="parameter">The <see cref="SecureString"/> passed in from the view for the users password</param>
-        /// <returns></returns>
-        //public async Task LoadReadingsAsync()
-        //{
 
-        //    {
-
-        //        // If the response has an error...
-        //        //if (await result.ContentEncoding
-
-        //        //HandleErrorIfFailedAsync("LoadReadings Failed"))
-        //        //    // We are done
-        //        //    return;
-
-        //        // OK successfully registered (and logged in)... now get users data
-        //        //var loginResult = result.ServerResponse.Response;
-        //        var result = await Get1Async();
-
-        //        var readings = result.ContentLength;
-        //        var content = result.ResponseUri;
-        //        var headers = result.Headers;
-
-
-        //        var serverResponse = default(HttpWebResponse);
-        //        serverResponse = await Get1Async();
-
-        //        var result1 = serverResponse.CreateWebRequestResult<WaterReading>();
-        //        //if (result1.RawServerResponse.IsNullOrEmpty())
-        //        //    // Done
-        //        //    return result1;
-
-        //        // Deserialize raw response
-        //        //var myObject = JsonConvert.DeserializeObject<WaterReading>(result1.RawServerResponse);
-        //        var ObjOrderList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<WaterReading>>(result1.RawServerResponse);
-
-        //        }
-
-
-
-        //        return;
-
-        // }
             
     
             

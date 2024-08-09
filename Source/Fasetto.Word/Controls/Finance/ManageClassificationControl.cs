@@ -15,7 +15,7 @@ namespace Fasetto.Word
      /// </summary>
         public ManageClassificationControl()
         {
-            InitializeComponent();
+
 
 
             // Set data context to settings view model
@@ -27,7 +27,7 @@ namespace Fasetto.Word
             
             ViewModelApplication.ControlParameter1= DataContext;
             //MyImage.Source = MyImage.Source;
-
+            InitializeComponent();
         }
         
 
