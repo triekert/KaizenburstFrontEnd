@@ -52,9 +52,15 @@ namespace Fasetto.Word
 
 
         /// <summary>
-        /// The current users email
+        /// The current users Selected Client
         /// </summary>
         public HierarchyItemSelectionViewModel FClientID { get; set; }
+
+
+        /// <summary>
+        /// The current users selected cost hierarchy for the Selected Client
+        /// </summary>
+        public HierarchyItemSelectionViewModel CostCategoryID { get; set; }
 
         /// <summary>
         /// The text for the logout button
@@ -115,9 +121,20 @@ namespace Fasetto.Word
         /// True to show if Client Selection completed
         /// </summary>
         public bool UpdateHierarchyCompleted { get; set; }
+
+
+        /// <summary>
+        /// True to show the Hierarchy has been selected
+        /// </summary>
+        public bool SetCostHierarchyCompleted { get; set; }
+
+        /// <summary>
+        /// True to show if Client Selection completed
+        /// </summary>
+        public bool UpdateCostHierarchyCompleted { get; set; }
         #endregion
 
-        #endregion
+#endregion
 
         #region Public Commands
 
@@ -232,6 +249,20 @@ namespace Fasetto.Word
                 CommitAction = UpdateClientSelectionAsync,
             };
 
+            CostCategoryID = new HierarchyItemSelectionViewModel
+            {
+                Label = "Select Cost Category",
+                //EditedName = mLoadingText,
+                EditedName = (string)ViewModelApplication.ClientShortName ?? "Cost Category",
+                OriginalName = (string)ViewModelApplication.ClientShortName ?? "Cost Category Lookup",
+                OriginalKid = (string)ViewModelApplication.FCostHierarchyID,
+                EditedKid = (string)ViewModelApplication.FCostHierarchyID,
+                HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
+                PrepareAction = SetHierarchySelectionAsync,
+                CommitAction = UpdateClientSelectionAsync,
+            };
+
+
             // Create commands
             OpenCommand = new RelayCommand(Open);
             CloseCommand = new RelayCommand(Close);
@@ -320,11 +351,15 @@ namespace Fasetto.Word
                 // Get the user token
                 var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
 
+
+
                 // If we don't have a token (so we are not logged in...)
                 if (string.IsNullOrEmpty(token))
                     // Then do nothing more
                     return;
 
+                //Add default client for selection of models
+                ViewModelApplication.FClientID =  (await scopedClientDataStore.GetLoginCredentialsAsync())?.ClientID;
                 // Load user profile details from server
                 //var path = RouteHelpers.GetAbsoluteRoute(WebRoutes.Private);
                 var result = await WebRequests.PostAsync<ApiResponse<UserProfileDetailsApiModel>>(
@@ -525,6 +560,9 @@ namespace Fasetto.Word
                 // Update the First Name value on the server...
 
                 ViewModelApplication.CurrentControlViewModel = ViewModelSettings.FClientID;
+
+
+
                 return true;
             });
 
@@ -534,20 +572,43 @@ namespace Fasetto.Word
         /// Prepare Hierarchy Control for selection of Client
         /// </summary>
         /// <returns></returns>
-        public async Task<bool> UpdateClientSelectionAsync()
-        {
+        public async Task<bool> UpdateClientSelectionAsync() =>
             // Lock this command to ignore any other requests while processing
 
-            return await RunCommandAsync(() => UpdateHierarchyCompleted, async () =>
+            await RunCommandAsync(() => UpdateHierarchyCompleted, async () =>
             {
                 // Update the First Name value on the server...
 
                 ViewModelApplication.FClientID = FClientID.EditedKid;
                 ViewModelApplication.ClientShortName = FClientID.EditedName;
-                return true;
-            });
 
-        }
+                // Update the Client value on the server...
+
+                //  _= UpdateUserCredentialsValueAsync(
+                //  // Display name
+                //  "Client",
+                //  // Update the first name
+                //  propertyToUpdate: (credentials) => credentials.ClientID,
+                //  // To new value
+                //  newValue: FClientID.EditedKid,
+                //  // Set Api model value
+                //  setApiModel: (apiModel, value) => apiModel.ClientID = value
+                //  );
+
+                //   return await UpdateUserCredentialsValueAsync(
+                //// Display name
+                //"Client Name",
+                //   // Update the first name
+                //   propertyToUpdate: (credentials) => credentials.ClientShortName,
+                //   // To new value
+                //   newValue: FClientID.EditedName,
+                //   // Set Api model value
+                //   setApiModel: (apiModel, value) => apiModel.ClientShortName = value
+                //   );
+                return true;
+
+
+            });
 
         #endregion
 

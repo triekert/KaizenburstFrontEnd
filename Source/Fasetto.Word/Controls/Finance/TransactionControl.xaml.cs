@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Principal;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -346,74 +347,109 @@ namespace Fasetto.Word
 
                 var MKFinTranID = ((TransactionViewModel)Transaction.SelectedItem).KFinTranID;
                 var RawTable = Transaction.Items;
+                var Merge = Transaction.SelectedItems;
 
-            ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec = Transaction.SelectedIndex;
+            if (Merge.Count == 2)
+            {
+                //If 2 items have been selected, merge the first transaction with the second,moving all the allocations from the second to the first
+                //and deleting the second transaction thereafter
+                //var matches = Merge.
 
-             ViewModelApplication.PopupVisible = false;
-
-            ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(MKFinTranID);
-            ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Allocation ";
-
-            //If only one allocation linked to the Transaction, bypass the 'detail' window...
-
-            if (((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransactionDetail.Count > 1)
-            {                 //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
-                ViewModelApplication.PopupVisible = false;
-                //ViewModelApplication.CurrentPopupContent = Null;
-                ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
-                ViewModelApplication.PopupVisible = true;
+                foreach (var item in Merge)
+                {
+                    var u = new TransactionResultApiModel
+                    {
+                        Posted_Date = ((TransactionViewModel)item).Posted_Date,
+                        Month = ((TransactionViewModel)item).Month,
+                        Description = ((TransactionViewModel)item).Description,
+                        TransAmount = ((TransactionViewModel)item).TransAmount,
+                        ActualAmount = ((TransactionViewModel)item).ActualAmount,
+                        ShortName = ((TransactionViewModel)item).ShortName,
+                        KCategoryID = ((TransactionViewModel)item).KCategoryID,
+                        KFinActualID = ((TransactionViewModel)item).KFinActualID,
+                        KFinTranID = ((TransactionViewModel)item).KFinTranID,
+                        KPartyName = ((TransactionViewModel)item).KPartyName,
+                        KPartyID = ((TransactionViewModel)item).KPartyID,
+                        FCatSrchID = ((TransactionViewModel)item).FCatSrchID,
+                        KHierarchyID = ((TransactionViewModel)item).KHierarchyID,
+                        KAccountID = ((TransactionViewModel)item).KAccountID,
+                        KAccountName = ((TransactionViewModel)item).KAccountName,
+                        Notes = ((TransactionViewModel)item).Notes,
+                        Units = ((TransactionViewModel)item).Units,
+                    };
+                    //    //tmp2.Add(u);
+                }
             }
             else
-            {            //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
-                ViewModelApplication.PopupVisible = false;
-                //ViewModelApplication.CurrentPopupContent = Null;
-                ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+            { 
+                ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec = Transaction.SelectedIndex;
 
-                var MSelected = new TransactionViewModel();
+                 ViewModelApplication.PopupVisible = false;
 
-                var TransactionDetail = new ObservableCollection<TransactionViewModel>();
-                //(TransactionViewModel)(TransactionDetail.SelectedItem;
-                var matches = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).Trans_action.Where(x => x.KFinTranID == MKFinTranID).ToList();
+                ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(MKFinTranID);
+                ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Allocation ";
 
-                foreach (var item in matches)
-                {
+                //If only one allocation linked to the Transaction, bypass the 'detail' window...
 
-                    var mTDVM = new TransactionViewModel
-
-                    {
-                        Posted_Date = item.Posted_Date,
-                        Month = item.Month,
-                        Description = item.Description,
-                        TransAmount = item.TransAmount,
-                        ActualAmount = item.ActualAmount,
-                        ShortName = item.ShortName,
-                        KCategoryID = item.KCategoryID,
-                        KFinActualID = item.KFinActualID,
-                        KFinTranID = item.KFinTranID,
-                        KPartyName = item.KPartyName,
-                        KPartyID = item.KPartyID,
-                        FCatSrchID = item.FCatSrchID,
-                        KHierarchyID = item.KHierarchyID,
-                        KAccountID = item.KAccountID,
-                        KAccountName = item.KAccountName,
-                        Notes = item.Notes,
-                        Units = item.Units,
-                    };
-                    TransactionDetail.Add(mTDVM);
+                if (((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransactionDetail.Count > 1)
+                {                 //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+                    ViewModelApplication.PopupVisible = false;
+                    //ViewModelApplication.CurrentPopupContent = Null;
+                    ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+                    ViewModelApplication.PopupVisible = true;
                 }
+                else
+                {            //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+                    ViewModelApplication.PopupVisible = false;
+                    //ViewModelApplication.CurrentPopupContent = Null;
+                    ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+
+                    var MSelected = new TransactionViewModel();
+
+                    var TransactionDetail = new ObservableCollection<TransactionViewModel>();
+                    //(TransactionViewModel)(TransactionDetail.SelectedItem;
+                    var matches = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).Trans_action.Where(x => x.KFinTranID == MKFinTranID).ToList();
+
+                    foreach (var item in matches)
+                    {
+
+                        var mTDVM = new TransactionViewModel
+
+                        {
+                            Posted_Date = item.Posted_Date,
+                            Month = item.Month,
+                            Description = item.Description,
+                            TransAmount = item.TransAmount,
+                            ActualAmount = item.ActualAmount,
+                            ShortName = item.ShortName,
+                            KCategoryID = item.KCategoryID,
+                            KFinActualID = item.KFinActualID,
+                            KFinTranID = item.KFinTranID,
+                            KPartyName = item.KPartyName,
+                            KPartyID = item.KPartyID,
+                            FCatSrchID = item.FCatSrchID,
+                            KHierarchyID = item.KHierarchyID,
+                            KAccountID = item.KAccountID,
+                            KAccountName = item.KAccountName,
+                            Notes = item.Notes,
+                            Units = item.Units,
+                        };
+                        TransactionDetail.Add(mTDVM);
+                    }
 
 
-                //var RawTable = ((ObservableCollection<TransactionViewModel>)((TransactionDetailTreeViewModel)(ViewModelApplication.CurrentPopupViewModel)).TransactionDetail).Items;
-                var tempTDList = new ObservableCollection<TransactionViewModel>();
-                foreach (var tBR in RawTable)
-                    tempTDList.Add((TransactionViewModel)tBR);
-                ViewModelApplication.CurrentPopupViewModel = new ManageClassificationViewModel(TransactionDetail, TransactionDetail[0]);
+                    //var RawTable = ((ObservableCollection<TransactionViewModel>)((TransactionDetailTreeViewModel)(ViewModelApplication.CurrentPopupViewModel)).TransactionDetail).Items;
+                    var tempTDList = new ObservableCollection<TransactionViewModel>();
+                    foreach (var tBR in RawTable)
+                        tempTDList.Add((TransactionViewModel)tBR);
+                    ViewModelApplication.CurrentPopupViewModel = new ManageClassificationViewModel(TransactionDetail, TransactionDetail[0]);
 
-                //ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
-                ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
-                ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
-                ViewModelApplication.PopupVisible = true;
+                    //ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+                    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    ViewModelApplication.PopupVisible = true;
 
+                }
             }
         }
 
@@ -431,46 +467,51 @@ namespace Fasetto.Word
                 Month =  ((TransactionViewModel)Transaction.SelectedItem).Month,
             };
             ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).AddItem(NewTransaction);
+            ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mPersist.Add(NewTransaction);
+
+            Transaction.SelectedItem = NewTransaction;
+
+            //((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_action.SelectedItem = (TransactionViewModel)Transaction[Transaction.Items.Count()];
 
             var RawTable = Transaction.Items;
 
-            ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec = Transaction.SelectedIndex;
+            //((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec = Transaction.Items.Count;
+            //ViewModelApplication.PopupVisible = false;
 
-            ViewModelApplication.PopupVisible = false;
+            //ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(((TransactionViewModel)NewTransaction).KFinTranID);
+            //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Allocation ";
 
-            ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(((TransactionViewModel)NewTransaction).KFinTranID);
-            ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Allocation ";
+            ////Only one allocation linked to the Transaction, bypass the 'detail' window...
 
-            //Only one allocation linked to the Transaction, bypass the 'detail' window...
-
-                ViewModelApplication.PopupVisible = false;
-                //ViewModelApplication.CurrentPopupContent = Null;
-                ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
-
-
-                var TransactionDetail = new ObservableCollection<TransactionViewModel>();
-                //(TransactionViewModel)(TransactionDetail.SelectedItem;
+            //    ViewModelApplication.PopupVisible = false;
+            //    //ViewModelApplication.CurrentPopupContent = Null;
+            //    ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
 
 
-                    var mTDVM = new TransactionViewModel
-
-                    {
-                        Posted_Date = NewTransaction.Posted_Date,
-                        Month = NewTransaction.Month,
-                        KFinActualID = NewTransaction.KFinActualID,
-                        KFinTranID = NewTransaction.KFinTranID,
-                        KHierarchyID = NewTransaction.KHierarchyID,
-                    };
-                    TransactionDetail.Add(mTDVM);
+            //    var TransactionDetail = new ObservableCollection<TransactionViewModel>();
+            //    //(TransactionViewModel)(TransactionDetail.SelectedItem;
 
 
-                //var RawTable = ((ObservableCollection<TransactionViewModel>)((TransactionDetailTreeViewModel)(ViewModelApplication.CurrentPopupViewModel)).TransactionDetail).Items;
-                ViewModelApplication.CurrentPopupViewModel = new ManageClassificationViewModel(TransactionDetail, TransactionDetail[0]);
+            //        var mTDVM = new TransactionViewModel
 
-                //ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
-                ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
-                ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
-                ViewModelApplication.PopupVisible = true;
+            //        {
+            //            Posted_Date = NewTransaction.Posted_Date,
+            //            Month = NewTransaction.Month,
+            //            KFinActualID = NewTransaction.KFinActualID,
+            //            KFinTranID = NewTransaction.KFinTranID,
+            //            KHierarchyID = NewTransaction.KHierarchyID,
+            //        };
+            //        TransactionDetail.Add(mTDVM);
+
+
+            //    //var RawTable = ((ObservableCollection<TransactionViewModel>)((TransactionDetailTreeViewModel)(ViewModelApplication.CurrentPopupViewModel)).TransactionDetail).Items;
+            //    ViewModelApplication.CurrentPopupViewModel = new ManageClassificationViewModel(TransactionDetail, TransactionDetail[0]);
+
+            //    //ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+            //    ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+            //    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+            //    ViewModelApplication.PopupVisible = true;
+            NavigateOn();
         }
 
         private void Datagrid_TargetUpdated(object sender, DataTransferEventArgs e)

@@ -24,5 +24,29 @@
         /// The new username, or null to leave unchanged
         /// </summary>
         public string Username { get; set; }
+
+
+        /// <summary>
+        /// The users default Client Setting
+        /// </summary>
+        public string ClientID { get; set; }
+
+        /// <summary>
+        /// The users default Client Setting
+        /// </summary>
+        public string CostHierarchyID { get; set; }
+
+
+        /// <summary>
+        /// The users default Client Setting Name
+        /// </summary>
+        public string ClientShortName { get; set; }
+
+        /// <summary>
+        /// The users default Client Setting Name
+        /// </summary>
+        public string CostHierarchyShortName { get; set; }
+
+
     }
 }

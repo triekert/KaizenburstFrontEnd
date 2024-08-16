@@ -1,6 +1,7 @@
 ﻿using EnvDTE;
 using Fasetto.Word.Core;
 using Fasetto.Word.Core.ApiModels.Controls;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Activities.Expressions;
 using System.Threading.Tasks;
@@ -310,6 +311,8 @@ namespace Fasetto.Word
                 PrepareAction = SetClientHierarchySelectionAsync,
                 PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
                 CommitAction = UpdateClientSelectionAsync,
+                //OriginalKid = (await ClientDataStore.GetLoginCredentialsAsync() ?).ClientID,
+
             };
 
             //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;

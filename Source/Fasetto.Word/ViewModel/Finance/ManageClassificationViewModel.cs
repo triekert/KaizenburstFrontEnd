@@ -2,6 +2,7 @@
 using Fasetto.Word.Core;
 using Fasetto.Word.Core.ApiModels.Controls;
 using System;
+using System.Activities.Expressions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -9,6 +10,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
@@ -16,6 +18,7 @@ using System.Windows.Input;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 
 namespace Fasetto.Word
@@ -474,9 +477,9 @@ namespace Fasetto.Word
 
             // Create commands
             CloseCommand = new RelayCommand(Close);
-            AddClassificationCommand = new RelayCommand(AddClassification);
+            AddClassificationCommand = new RelayCommand(AddClassificationAsync);
             AlterTemplateCommand = new RelayCommand(AlterTemplate);
-            DeleteClassificationCommand = new RelayCommand(AddClassification);
+            DeleteClassificationCommand = new RelayCommand(AddClassificationAsync);
             BrowseImageCommand = new RelayCommand(BrowseImage);
 
             // TODO: Get from localization
@@ -656,7 +659,9 @@ namespace Fasetto.Word
                 ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;
             }
             else
-            { 
+            {
+                ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).RefreshTransactionList(mKFinTranID, ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).mPersist);
+
 
                     ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
             }
@@ -839,13 +844,13 @@ namespace Fasetto.Word
         {
             //set flag to allow template update
             IsTemplate = true;
-            AddClassification();
+            AddClassificationAsync();
         }
 
             /// <summary>
             /// Used tp insert a new node with the currently selected node as parent
             /// </summary>
-            public void AddClassification()
+            public async void AddClassificationAsync()
         {
 
 
@@ -945,32 +950,62 @@ namespace Fasetto.Word
                     //display message to user
                     
                     return;}
+                var matches = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                var category = matches.FirstOrDefault();
                 Selected.KFinTranID = Guid.NewGuid().ToString().ToUpper();
-                Selected1.KFinTranID = Selected.KFinTranID;
+                Selected.Posted_Date = DateTime.Parse(TransactionDate);
+                Selected.Description = TransactionDescription.EditedText;
+                Selected.TransAmount = IntAmnt;
+                Selected.ActualAmount = IntAmnt;
+                Selected.ShortName = Category.EditedName ?? Category.OriginalName;
+                Selected.KCategoryID = Category.EditedKid ?? Category.OriginalKid;
+                Selected.KFinActualID = Selected1.KFinActualID;
+                Selected.DateEffective = DateTime.Now;
+                Selected.KPartyID = Party.EditedKid ?? Party.OriginalKid;
+                Selected.IsTemplate = IsTemplate;
+                Selected.Notes = TransactionNotes.EditedText;
+                Selected.KAccountID = Account.EditedKid ?? Account.OriginalKid;
+                Selected.KAccountName = Account.EditedName  ?? Account.OriginalName;
+                Selected.Units = IntUnits;
+                ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).TransactionDetail[0].KFinTranID = Selected.KFinTranID;
 
-
+                category.KFinTranID = Selected.KFinTranID;
+                category.Posted_Date = Selected.Posted_Date;
+                category.Description = Selected.Description;
+                category.TransAmount = Selected.TransAmount;
+                category.ActualAmount = Selected.ActualAmount;
+                category.ShortName = Selected.ShortName;
+                category.KCategoryID = Selected.KCategoryID;
+                category.KFinActualID = Selected.KFinActualID;
+                category.DateEffective = Selected.DateEffective;
+                category.KPartyID = Selected.KPartyID;
+                category.IsTemplate = Selected.IsTemplate;
+                category.Notes = Selected.Notes;
+                category.KAccountID = Selected.KAccountID;
+                category.KAccountName = Selected.KAccountName;
+                category.Units = Selected.Units;
 
 
                 var u = new TransactionResultApiModel
                 {
                     Posted_Date = DateTime.Parse(TransactionDate),
-                    Month = Selected1.Month,
+                    Month = Selected.Month,
                     Description = TransactionDescription.EditedText,
                     TransAmount = IntAmnt,
                     ActualAmount = IntAmnt,
                     ShortName = Category.EditedName??Category.OriginalName,
                     KCategoryID = Category.EditedKid ?? Category.OriginalKid,
-                    KFinActualID = Selected1.KFinActualID,
-                    KFinTranID = Selected1.KFinTranID,
+                    KFinActualID = Selected.KFinActualID,
+                    KFinTranID = Selected.KFinTranID,
                     ChangeType = "a",
                     DateEffective = DateTime.Now,
-                    KHierarchyID = Selected1.KHierarchyID,
+                    KHierarchyID = Selected.KHierarchyID,
                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
                     KPartyID = Party.EditedKid??Party.OriginalKid,
                     IsTemplate = IsTemplate,
                     Notes = TransactionNotes.EditedText,
-                    FCatSrchID = Selected1.FCatSrchID,
                     KAccountID = Account.EditedKid??Account.OriginalKid,
+                    KAccountName = Selected.KAccountName,
                     Units = IntUnits,
                 };
                 tmp2.Add(u);
@@ -2048,6 +2083,7 @@ namespace Fasetto.Word
                     ((TransactionTreeViewModel)tmp0).RefreshTransactionList();
                     //Refresh UI for Transaction Detail List
                     ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).RefreshTransactionList(Selected.KFinTranID,tmp);
+                    await ((TransactionTreeViewModel)tmp0).PersistTransClassAsync();
 
                     //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
 

@@ -304,7 +304,7 @@ namespace Fasetto.Word.Web.Server
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Email = user.Email,
-                    Username = user.UserName
+                    Username = user.UserName,
                 }
             };
         }
@@ -658,7 +658,7 @@ namespace Fasetto.Word.Web.Server
                         KCategoryID = row[6].ToString().ToUpper(),
                         KFinActualID = row[7].ToString().ToUpper(),
                         KFinTranID = row[8].ToString().ToUpper(),
-                        KPartyName = row[9].ToString().ToUpper(),
+                        KPartyName = row[9].ToString(),
                         KPartyID = row[10].ToString().ToUpper(),
                         FCatSrchID = row[12].ToString().ToUpper(),
                         KHierarchyID = row[13].ToString().ToUpper(),
@@ -990,7 +990,7 @@ namespace Fasetto.Word.Web.Server
 
 
 
-                    SqlString2 = "EXEC [Finance].[spManageCategorySearch] @fClientID = '" + para[9].Value + "' , @HierarchyID = '" + para[10].Value + "', @fCategoryID = '" + para[2].Value + "',@fPartyID = '" + para[13].Value + "' ,@fCatSrchID = '" + para[14].Value + "' ,@Description = '" + para[1].Value + "' ,@month = '" + para[11].Value + "'";
+                    SqlString2 = "EXEC [Finance].[spManageCategorySearch] @kClientID = '" + para[9].Value + "' , @kHierarchyID = '" + para[10].Value + "', @kCategoryID = '" + para[2].Value + "',@kPartyID = '" + para[13].Value + "' ,@fCatSrchID = '" + para[14].Value + "' ,@Description = '" + para[1].Value + "' ,@month = '" + para[11].Value + "'";
 
                     try
 

@@ -301,7 +301,7 @@ namespace Fasetto.Word
                             Notes = item.Notes,
                             //KClientID = item.KClientID,
                             KAccountID = item.KAccountID,
-                            KAccountName = item.KPartyName,
+                            KAccountName = item.KAccountName,
                             Units = item.Units,
                         };
 
@@ -564,9 +564,10 @@ namespace Fasetto.Word
                     bearerToken: token);
 
                 // If the response has an error...
-                if (await result.HandleErrorIfFailedAsync("Hierarchy retrieval Failed"))
+                if (await result.HandleErrorIfFailedAsync("Classification Update Failed"))
                     // We are done
                     return;
+                mChange.Clear();
 
                 // return to menu
 
@@ -597,7 +598,7 @@ namespace Fasetto.Word
         {
             lock (mStocksLock)
             {
-                mPersist.Remove(item);
+                Trans_action.Remove(item);
 
             }
         }

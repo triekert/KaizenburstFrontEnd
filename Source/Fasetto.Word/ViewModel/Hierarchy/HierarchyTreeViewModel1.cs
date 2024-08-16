@@ -1021,6 +1021,7 @@ namespace Fasetto.Word
 
             else
             {
+
                 ViewModelApplication.PopupVisible = false;
                 ViewModelApplication.CurrentPopupContent = 0;
             }
