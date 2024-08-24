@@ -17,6 +17,23 @@
         /// </summary>
         public string Password { get; set; }
 
+        /// <summary>
+        /// The users default Client Setting
+        /// </summary>
+        public string CostHierarchyID { get; set; }
+
+
+        /// <summary>
+        /// The users default Client Setting Name
+        /// </summary>
+        public string ClientShortName { get; set; }
+
+        /// <summary>
+        /// The users default Client Setting Name
+        /// </summary>
+        public string CostHierarchyShortName { get; set; }
+
+
         #endregion
 
         #region Constructor

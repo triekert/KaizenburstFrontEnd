@@ -33,6 +33,28 @@
         /// </summary>
         public string Email { get; set; }
 
+        /// <summary>
+        /// The users default Client Setting
+        /// </summary>
+        public string ClientID { get; set; }
+
+        /// <summary>
+        /// The users default Client Setting
+        /// </summary>
+        public string CostHierarchyID { get; set; }
+
+
+        /// <summary>
+        /// The users default Client Setting Name
+        /// </summary>
+        public string ClientShortName { get; set; }
+
+        /// <summary>
+        /// The users default Client Setting Name
+        /// </summary>
+        public string CostHierarchyShortName { get; set; }
+
+
         #endregion
 
         #region Constructor
@@ -62,7 +84,11 @@
                 FirstName = FirstName,
                 LastName = LastName,
                 Username = Username,
-                Token = Token
+                Token = Token,
+                ClientID = ClientID,
+                CostHierarchyID = CostHierarchyID,
+                ClientShortName = ClientShortName,
+                CostHierarchyShortName = CostHierarchyShortName
             };
         }
 

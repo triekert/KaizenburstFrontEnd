@@ -305,6 +305,10 @@ namespace Fasetto.Word.Web.Server
                     LastName = user.LastName,
                     Email = user.Email,
                     Username = user.UserName,
+                    ClientID = user.ClientID,
+                    CostHierarchyID = user.CostHierarchyID,
+                    ClientShortName = user.ClientShortName,
+                    CostHierarchyShortName = user.CostHierarchyShortName
                 }
             };
         }
@@ -376,6 +380,26 @@ namespace Fasetto.Word.Web.Server
             if (model.Username != null)
                 // Update the profile details
                 user.UserName = model.Username;
+
+            // If we have a Client assignment...
+            if (model.ClientID != null)
+                // Update the profile details
+                user.ClientID = model.ClientID;
+
+            // If we have a Cost Category assignment...
+            if (model.CostHierarchyID != null)
+                // Update the profile details
+                user.CostHierarchyID = model.CostHierarchyID;
+
+            // If we have a Cost Category assignment...
+            if (model.ClientShortName != null)
+                // Update the profile details
+                user.ClientShortName = model.ClientShortName;
+
+            // If we have a Cost Category assignment...
+            if (model.CostHierarchyShortName != null)
+                // Update the profile details
+                user.CostHierarchyShortName = model.CostHierarchyShortName;
 
             #endregion
 
@@ -1017,9 +1041,28 @@ namespace Fasetto.Word.Web.Server
                 }
             }
 
-            SqlString = "Delete from [Finance].[FinActual]  WHERE kFinActualID = @kFinActualID";
 
             //If elements are to be deleted, find and remove
+            results = mPersist.Where(x => x.ChangeType == "m").OrderBy(x => x.KFinActualID).ToList();////
+            if (results.Count == 2)
+
+            {
+
+                SqlString = "EXEC [Finance].[spMergeTransactions]  @TargetTransaction = '" + ((TransactionResultApiModel)mPersist[0]).KFinTranID + "', @CostHierarchy = '" + ((TransactionResultApiModel)mPersist[0]).KHierarchyID + "',@SourceTransaction = '" + ((TransactionResultApiModel)mPersist[1]).KFinTranID + "'";
+                try
+                {
+                    _ = await GetDataSetAsync(SqlString);
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+            //If elements are to be deleted, find and remove
+
+            SqlString = SqlString = "Delete from [Finance].[FinActual]  WHERE kFinActualID = @kFinActualID"; 
+
             results = mPersist.Where(x => x.ChangeType == "d").OrderBy(x => x.KFinActualID).ToList();////
             if (results.Count > 0)
 
@@ -1062,7 +1105,6 @@ namespace Fasetto.Word.Web.Server
                     }
                 }
             }
-
 
 
             #region sql query

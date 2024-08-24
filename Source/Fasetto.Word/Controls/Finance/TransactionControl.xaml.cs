@@ -1,18 +1,14 @@
 ﻿using Fasetto.Word.Core;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Principal;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Forms.DataVisualization.Charting;
 
 //using System.Windows.Forms;
 using System.Windows.Input;
@@ -118,7 +114,7 @@ namespace Fasetto.Word
         {
             var row = sender as DataGridRow;
             var TransactionRec = row.DataContext as TransactionViewModel;
-            NavigateOn();
+            NavigateOnAsync();
             //MessageBox.Show($"The timeslot selected is {TransactionRec.TimeSlotStart}", $"The timeslot selected is {TransactionRec.TimeSlotStart}");
         }
 
@@ -140,7 +136,7 @@ namespace Fasetto.Word
         {
             if (e.Key == Key.Enter)
             {
-                NavigateOn();
+                NavigateOnAsync();
             }
             else
                 if (e.Key == Key.F2)
@@ -342,7 +338,7 @@ namespace Fasetto.Word
     //    }
 
 
-        private void NavigateOn()
+        private async void NavigateOnAsync()
         {
 
                 var MKFinTranID = ((TransactionViewModel)Transaction.SelectedItem).KFinTranID;
@@ -354,6 +350,46 @@ namespace Fasetto.Word
                 //If 2 items have been selected, merge the first transaction with the second,moving all the allocations from the second to the first
                 //and deleting the second transaction thereafter
                 //var matches = Merge.
+                if (((TransactionViewModel)Merge[0]).TransAmount !=((TransactionViewModel)Merge[1]).TransAmount || ((TransactionViewModel)Merge[0]).KAccountID !=((TransactionViewModel)Merge[1]).KAccountID )
+                {
+                    //if transaction totals differ, or if the account is different, they cannot be merged
+                    System.Windows.MessageBox.Show($"Only transactions having the same transaction value and Account Name may be merged!");
+                    return;
+                }
+                                foreach (var item in Merge)
+                {
+                    var u = new TransactionResultApiModel
+                    {
+                        Posted_Date = ((TransactionViewModel)item).Posted_Date,
+                        Month = ((TransactionViewModel)item).Month,
+                        Description = ((TransactionViewModel)item).Description,
+                        TransAmount = ((TransactionViewModel)item).TransAmount,
+                        ActualAmount = ((TransactionViewModel)item).ActualAmount,
+                        ShortName = ((TransactionViewModel)item).ShortName,
+                        KCategoryID = ((TransactionViewModel)item).KCategoryID,
+                        KFinActualID = ((TransactionViewModel)item).KFinActualID,
+                        KFinTranID = ((TransactionViewModel)item).KFinTranID,
+                        KPartyName = ((TransactionViewModel)item).KPartyName,
+                        KPartyID = ((TransactionViewModel)item).KPartyID,
+                        FCatSrchID = ((TransactionViewModel)item).FCatSrchID,
+                        KHierarchyID = ((TransactionViewModel)item).KHierarchyID,
+                        KAccountID = ((TransactionViewModel)item).KAccountID,
+                        KAccountName = ((TransactionViewModel)item).KAccountName,
+                        Notes = ((TransactionViewModel)item).Notes,
+                        Units = ((TransactionViewModel)item).Units,
+                        ChangeType = "m",
+                        KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                    };
+
+                    ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mChange.Add(u);
+                }
+                await ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PersistTransClassAsync();
+                ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mChange.Clear();
+                //COnfirm with user that 2 transactions are to be merged irreversibly...
+
+                if (MessageBox.Show("Merging of Transactions - Irreversible!", "Confirm",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
 
                 foreach (var item in Merge)
                 {
@@ -376,9 +412,20 @@ namespace Fasetto.Word
                         KAccountName = ((TransactionViewModel)item).KAccountName,
                         Notes = ((TransactionViewModel)item).Notes,
                         Units = ((TransactionViewModel)item).Units,
+                        ChangeType = "m",
+                        KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
                     };
-                    //    //tmp2.Add(u);
+
+                    ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mChange.Add(u);
                 }
+                await ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PersistTransClassAsync();
+                ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mChange.Clear();
+                }
+                else 
+                {
+                    return;
+                }
+
             }
             else
             { 
@@ -511,7 +558,7 @@ namespace Fasetto.Word
             //    ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
             //    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
             //    ViewModelApplication.PopupVisible = true;
-            NavigateOn();
+            NavigateOnAsync();
         }
 
         private void Datagrid_TargetUpdated(object sender, DataTransferEventArgs e)

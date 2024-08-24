@@ -872,38 +872,7 @@ namespace Fasetto.Word
             var tmp3 = ((TransactionTreeViewModel)tmp0).Trans_actionRec;
             var rec = tmp[tmp3];
             rec.IsDocLinked = true;            
-            if (docs.Count>0)
-            { 
-                mRequest = new DocDataResultListApiModel();
 
-                foreach (var item in docs)
-                {
-
-                    var mRqst = new DocDataResultApiModel
-                    {
-                        DocImage = item.DocImage,
-                        DocName = item.DocName,
-                        DocURL = item.DocURL,
-                        KDocID = item.KDocID,
-                        DocDescription = item.DocDescription,
-                        FFintranID = item.FFintranID,
-                        IsNew = item.IsNew,
-                        IsRemove = item.IsRemove,
-                    };
-                    mRequest.Add(mRqst);
-                }
-                var docsl = mRequest.Where(x => x.IsNew && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
-
-                if (docsl.Count > 0)
-                {
-
-                    Selected.IsDocLinked = true;
-                    Selected1.IsDocLinked = true;
-                    TaskManager.RunAndForget(DocumentStorageAsync);
-                }
-
-
-            };
 
 
         
@@ -962,6 +931,7 @@ namespace Fasetto.Word
                 Selected.KFinActualID = Selected1.KFinActualID;
                 Selected.DateEffective = DateTime.Now;
                 Selected.KPartyID = Party.EditedKid ?? Party.OriginalKid;
+                Selected.KPartyName = Party.EditedName ?? Party.OriginalName;
                 Selected.IsTemplate = IsTemplate;
                 Selected.Notes = TransactionNotes.EditedText;
                 Selected.KAccountID = Account.EditedKid ?? Account.OriginalKid;
@@ -979,6 +949,7 @@ namespace Fasetto.Word
                 category.KFinActualID = Selected.KFinActualID;
                 category.DateEffective = Selected.DateEffective;
                 category.KPartyID = Selected.KPartyID;
+                category.KPartyName = Selected.KPartyName;
                 category.IsTemplate = Selected.IsTemplate;
                 category.Notes = Selected.Notes;
                 category.KAccountID = Selected.KAccountID;
@@ -1009,10 +980,74 @@ namespace Fasetto.Word
                     Units = IntUnits,
                 };
                 tmp2.Add(u);
+                if (docs.Count > 0)
+                {
+                    mRequest = new DocDataResultListApiModel();
+
+                    foreach (var item in docs)
+                    {
+
+                        var mRqst = new DocDataResultApiModel
+                        {
+                            DocImage = item.DocImage,
+                            DocName = item.DocName,
+                            DocURL = item.DocURL,
+                            KDocID = item.KDocID,
+                            DocDescription = item.DocDescription,
+                            FFintranID = Selected.KFinTranID,
+                            IsNew = item.IsNew,
+                            IsRemove = item.IsRemove,
+                        };
+                        mRequest.Add(mRqst);
+                    }
+                    var docsl = mRequest.Where(x => x.IsNew && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
+
+                    if (docsl.Count > 0)
+                    {
+
+                        Selected.IsDocLinked = true;
+                        Selected1.IsDocLinked = true;
+                        TaskManager.RunAndForget(DocumentStorageAsync);
+                    }
+
+
+                };
 
             }
             else
-            { 
+            {
+                if (docs.Count > 0)
+                {
+                    mRequest = new DocDataResultListApiModel();
+
+                    foreach (var item in docs)
+                    {
+
+                        var mRqst = new DocDataResultApiModel
+                        {
+                            DocImage = item.DocImage,
+                            DocName = item.DocName,
+                            DocURL = item.DocURL,
+                            KDocID = item.KDocID,
+                            DocDescription = item.DocDescription,
+                            FFintranID = item.FFintranID,
+                            IsNew = item.IsNew,
+                            IsRemove = item.IsRemove,
+                        };
+                        mRequest.Add(mRqst);
+                    }
+                    var docsl = mRequest.Where(x => x.IsNew && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
+
+                    if (docsl.Count > 0)
+                    {
+
+                        Selected.IsDocLinked = true;
+                        Selected1.IsDocLinked = true;
+                        TaskManager.RunAndForget(DocumentStorageAsync);
+                    }
+
+
+                };
                 var TstNotes = false;
                 //if (Math.Abs(IntAmnt) == Math.Abs(Selected.ActualAmount)) { TstEqual = true; }
 
@@ -1022,6 +1057,11 @@ namespace Fasetto.Word
                     TstNotes = true;
                     Selected.Notes = TransactionNotes.EditedText;
                 }
+
+                if (Math.Sign(Selected.ActualAmount) != Math.Sign(Selected.TransAmount) && Selected.ActualAmount != 0)
+                {
+                    MessageBox.Show($"The allocation amount {Selected.ActualAmount} must be of the same sign ", $"as the transaction total {Selected.TransAmount}");
+                    return; }
 
                 if (Math.Abs(IntAmnt) > Math.Abs(Selected.ActualAmount)&& Selected.KFinTranID != "00000000-0000-0000-0000-000000000001")
 
@@ -2070,28 +2110,21 @@ namespace Fasetto.Word
                         tmp2.Add(u);
                     }
 
-                    //Selected1.KPartyID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party).EditedKid;
-                    //Selected1.KPartyName = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party).EditedName;
-                    //Selected.KPartyID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party).EditedKid;
-                    //Selected.KPartyName = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party).EditedName;
-                    //Selected1.KAccountID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Account).EditedKid;
-                    //Selected1.KAccountName = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Account).EditedName;
-                    //Selected.KAccountID = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Account).EditedKid;
-                    //Selected.KAccountName = ((HierarchyItemSelectionViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Account).EditedName;
-                    
-                    //Refresh UI for Transaction List
-                    ((TransactionTreeViewModel)tmp0).RefreshTransactionList();
-                    //Refresh UI for Transaction Detail List
-                    ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).RefreshTransactionList(Selected.KFinTranID,tmp);
-                    await ((TransactionTreeViewModel)tmp0).PersistTransClassAsync();
 
-                    //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+
 
 
                 }
 
+ 
+
             }
 
+            //Refresh UI for Transaction List
+            ((TransactionTreeViewModel)tmp0).RefreshTransactionList();
+            //Refresh UI for Transaction Detail List
+            ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).RefreshTransactionList(Selected.KFinTranID,tmp);
+            await ((TransactionTreeViewModel)tmp0).PersistTransClassAsync();
 
 
             Close();

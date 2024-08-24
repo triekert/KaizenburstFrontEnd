@@ -1,12 +1,13 @@
 ﻿using Dna;
 using Fasetto.Word.Core;
+using Fasetto.Word.Core.ApiModels.Controls;
+//using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using static Dna.FrameworkDI;
 using static Fasetto.Word.DI;
-
 namespace Fasetto.Word
 {
     /// <summary>
@@ -52,16 +53,28 @@ namespace Fasetto.Word
 
 
         /// <summary>
-        /// The current users Selected Client
+        /// The Client for which Bulk Meter reconciliation is to be processed
         /// </summary>
-        public HierarchyItemSelectionViewModel FClientID { get; set; }
+        public HierarchyItemSelectionViewModel Client { get; set; }
 
 
         /// <summary>
         /// The current users selected cost hierarchy for the Selected Client
         /// </summary>
-        public HierarchyItemSelectionViewModel CostCategoryID { get; set; }
+        public HierarchyItemSelectionViewModel CostHierarchy { get; set; }
 
+
+        /// <summary>
+        /// Populate parameters for retrieval of required hierarchy tree
+        /// </summary>
+        public ParameterHierarchyItemSelectApiModel HierarchyParam { get; set; }
+
+
+
+        /// <summary>
+        /// The current LoginCredentials for the current user
+        /// </summary>
+        public LoginCredentialsDataModel LoginCredentials { get; set; }
         /// <summary>
         /// The text for the logout button
         /// </summary>
@@ -196,6 +209,7 @@ namespace Fasetto.Word
         /// </summary>
         public SettingsViewModel()
         {
+            LoginCredentials = new LoginCredentialsDataModel();
             // Create First Name
             FirstName = new TextEntryViewModel
             {
@@ -236,7 +250,8 @@ namespace Fasetto.Word
                 CommitAction = SaveEmailAsync
             };
 
-            FClientID = new HierarchyItemSelectionViewModel
+
+            Client = new HierarchyItemSelectionViewModel
             {
                 Label = "Select Client",
                 //EditedName = mLoadingText,
@@ -245,22 +260,41 @@ namespace Fasetto.Word
                 OriginalKid = (string)ViewModelApplication.FClientID ?? "4766E825-1B58-410D-B06B-5A2639CA22C8",
                 EditedKid = (string)ViewModelApplication.FClientID,
                 HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
-                PrepareAction = SetHierarchySelectionAsync,
+                PrepareAction = SetClientHierarchySelectionAsync,
+                PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
                 CommitAction = UpdateClientSelectionAsync,
+                //OriginalKid = (await ClientDataStore.GetLoginCredentialsAsync() ?).ClientID,
+
             };
 
-            CostCategoryID = new HierarchyItemSelectionViewModel
+            //CostCategoryID = new HierarchyItemSelectionViewModel
+            //{
+            //    Label = "Select Cost Category",
+            //    //EditedName = mLoadingText,
+            //    EditedName = (string)ViewModelApplication.CostHierarchyShortName ?? "Cost Category",
+            //    OriginalName = (string)ViewModelApplication.CostHierarchyShortName ?? "Cost Category Lookup",
+            //    OriginalKid = (string)ViewModelApplication.FCostHierarchyID,
+            //    EditedKid = (string)ViewModelApplication.FCostHierarchyID,
+            //    HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
+            //    PrepareAction = SetHierarchySelectionAsync,
+            //    CommitAction = UpdateClientSelectionAsync,
+            //};
+
+            CostHierarchy = new HierarchyItemSelectionViewModel
             {
-                Label = "Select Cost Category",
-                //EditedName = mLoadingText,
-                EditedName = (string)ViewModelApplication.ClientShortName ?? "Cost Category",
-                OriginalName = (string)ViewModelApplication.ClientShortName ?? "Cost Category Lookup",
+
+                Label = "Select Cost Hierarchy",
+                EditedName = (string)ViewModelApplication.CostHierarchyShortName ?? "Cost Hierarchy Name",
+                OriginalName = (string)ViewModelApplication.CostHierarchyShortName ?? "Cost Hierarchy",
                 OriginalKid = (string)ViewModelApplication.FCostHierarchyID,
                 EditedKid = (string)ViewModelApplication.FCostHierarchyID,
-                HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
-                PrepareAction = SetHierarchySelectionAsync,
-                CommitAction = UpdateClientSelectionAsync,
+                HierarchyTypeID = "64413ae7-822f-4866-9ebe-433083d699ac",
+                PrepareAction = SetCostHierarchySelectionAsync,
+                Level = 1,
+                PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
+                CommitAction = UpdateCostHierarchySelectionAsync,
             };
+
 
 
             // Create commands
@@ -551,7 +585,7 @@ namespace Fasetto.Word
         /// Prepare Hierarchy Control for selection of Client
         /// </summary>
         /// <returns></returns>
-        public async Task<bool> SetHierarchySelectionAsync()
+        public async Task<bool> SetClientHierarchySelectionAsync()
         {
             // Lock this command to ignore any other requests while processing
 
@@ -559,41 +593,181 @@ namespace Fasetto.Word
             {
                 // Update the First Name value on the server...
 
-                ViewModelApplication.CurrentControlViewModel = ViewModelSettings.FClientID;
-
-
-
+                ViewModelApplication.CurrentControlViewModel = Client;
+                HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                {
+                    //ClientID = Client.ClientID,
+                    //FHierarchyID = Client.OriginalKid,
+                    //RootID = Client.OriginalKid,
+                    //Level = 1
+                    //Always allow the user to reset the default client
+                    RootID =  "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                    Level = 1
+                };
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
                 return true;
             });
 
         }
 
-        /// <summary>
-        /// Prepare Hierarchy Control for selection of Client
-        /// </summary>
-        /// <returns></returns>
-        public async Task<bool> UpdateClientSelectionAsync() =>
+
+        public async Task<bool> SetCostHierarchySelectionAsync()
+        {
             // Lock this command to ignore any other requests while processing
 
-            await RunCommandAsync(() => UpdateHierarchyCompleted, async () =>
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
             {
                 // Update the First Name value on the server...
 
-                ViewModelApplication.FClientID = FClientID.EditedKid;
-                ViewModelApplication.ClientShortName = FClientID.EditedName;
+                //((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.ClientID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedKid;
+                //((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.RootID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.RootID;
+                ViewModelApplication.CurrentControlViewModel =CostHierarchy;
+                HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                {
+
+                    ClientID = ViewModelApplication.FClientID,
+                    Level = 1,
+                    HierarchyTypeID = CostHierarchy.HierarchyTypeID
+                };
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
+                return true;
+            });
+
+        }
+
+
+        ///// <summary>
+        ///// Prepare Hierarchy Control for selection of Client
+        ///// </summary>
+        ///// <returns></returns>
+        //public async Task<bool> UpdateClientSelectionAsync() =>
+        //    // Lock this command to ignore any other requests while processing
+
+        //    await RunCommandAsync(() => UpdateHierarchyCompleted, async () =>
+        //    {
+        //        // Update the First Name value on the server...
+
+        //        ViewModelApplication.FClientID = FClientID.EditedKid;
+        //        ViewModelApplication.ClientShortName = FClientID.EditedName;
+        //        LoginCredentials.ClientID = FClientID.EditedKid;
+        //        LoginCredentials.ClientShortName = FClientID.EditedName;
+        //        await ClientDataStore.SaveLoginCredentialsAsync(LoginCredentials);
+        //        //LoginCredentials = DbContext.LoginCredentials.FirstOrDefault();
+        //        LoginCredentials = await ClientDataStore.GetLoginCredentialsAsync();
+
+
+                ///<summary>
+                /// Update Client selection for current session
+                /// </summary>
+                /// <returns></returns>
+                public async Task<bool> UpdateClientSelectionAsync()
+                {
+                    // Lock this command to ignore any other requests while processing
+
+                    return await RunCommandAsync(() => UpdateHierarchyCompleted, async () =>
+                    {
+                        // Update the First Name value on the server...
+                        if (ViewModelApplication.FClientID != Client.EditedKid)
+                        {
+                            CostHierarchy.OriginalKid = null;
+                            CostHierarchy.OriginalName = null;
+                            ViewModelApplication.FCostHierarchyID = null;
+                            ViewModelApplication.CostHierarchyShortName = null;
+                        }
+                        ViewModelApplication.FClientID = Client.EditedKid;
+                        ViewModelApplication.ClientShortName = Client.EditedName;
+                        Client.OriginalName = Client.EditedName;
+
+                        ViewModelApplication.PopupVisible = false;
+                        ViewModelApplication.CurrentPopupViewModel = null;
+
+                        ViewModelApplication.CurrentPopupContent = 0;
+
+                        // Update the Client value on the server...
+                        var Test = await UpdateUserCredentialsValueAsync(
+                        // Display name
+                        "Client",
+                        // Update the first name
+                        propertyToUpdate: (credentials) => credentials.ClientID,
+                        // To new value
+                        newValue: Client.EditedKid,
+                        // Set Api model value
+                        setApiModel: (apiModel, value) => apiModel.ClientID = value
+                        );
+
+
+                        // Update the Client value on the server...
+                        return await UpdateUserCredentialsValueAsync(
+                        // Display name
+                        "ClientShortName",
+                        // Update the first name
+                        propertyToUpdate: (credentials) => credentials.ClientShortName,
+                        // To new value
+                        newValue: Client.EditedName,
+                        // Set Api model value
+                        setApiModel: (apiModel, value) => apiModel.ClientShortName = value
+                        ); 
+
+
+                    });
+
+                }
+
+        ///<summary>
+        /// Update Client selection for current session
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> UpdateCostHierarchySelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => UpdateHierarchyCompleted, async () =>
+            {
+                // Update the First Name value on the server...
+
+                ViewModelApplication.FCostHierarchyID = CostHierarchy.EditedKid;
+                ViewModelApplication.CostHierarchyShortName = CostHierarchy.EditedName;
+                ViewModelApplication.PopupVisible = false;
+                ViewModelApplication.CurrentPopupViewModel = null;
+                ViewModelApplication.CurrentPopupContent = 0;
+                CostHierarchy.OriginalName = CostHierarchy.EditedName;
+                ViewModelApplication.PopupVisible = false;
+                ViewModelApplication.CurrentPopupViewModel = null;
+
+                ViewModelApplication.CurrentPopupContent = 0;
 
                 // Update the Client value on the server...
+                var Test = await UpdateUserCredentialsValueAsync(
+                // Display name
+                "CostHierarchy",
+                // Update the first name
+                propertyToUpdate: (credentials) => credentials.CostHierarchyID,
+                // To new value
+                newValue: CostHierarchy .EditedKid,
+                // Set Api model value
+                setApiModel: (apiModel, value) => apiModel.CostHierarchyID = value
+                );
 
-                //  _= UpdateUserCredentialsValueAsync(
-                //  // Display name
-                //  "Client",
-                //  // Update the first name
-                //  propertyToUpdate: (credentials) => credentials.ClientID,
-                //  // To new value
-                //  newValue: FClientID.EditedKid,
-                //  // Set Api model value
-                //  setApiModel: (apiModel, value) => apiModel.ClientID = value
-                //  );
+
+                // Update the Client value on the server...
+                return await UpdateUserCredentialsValueAsync(
+                // Display name
+                "CostHierarchyShortName",
+                // Update the first name
+                propertyToUpdate: (credentials) => credentials.CostHierarchyShortName,
+                // To new value
+                newValue: CostHierarchy.EditedName,
+                // Set Api model value
+                setApiModel: (apiModel, value) => apiModel.CostHierarchyShortName = value
+                );
+
+
+            });
+
+        }
+
+
+
 
                 //   return await UpdateUserCredentialsValueAsync(
                 //// Display name
@@ -605,10 +779,10 @@ namespace Fasetto.Word
                 //   // Set Api model value
                 //   setApiModel: (apiModel, value) => apiModel.ClientShortName = value
                 //   );
-                return true;
+            //    return true;
 
 
-            });
+            //});
 
         #endregion
 
@@ -635,6 +809,20 @@ namespace Fasetto.Word
 
             // Set email
             Email.OriginalText = storedCredentials?.Email;
+
+            //Set Client Root
+            ViewModelApplication.ClientShortName = storedCredentials?.ClientShortName;
+            ViewModelApplication.FClientID = storedCredentials?.ClientID;
+            Client.OriginalName = storedCredentials?.ClientShortName;
+            Client.OriginalKid = storedCredentials?.ClientID;
+
+
+            //Set CostHierarchy
+            ViewModelApplication.CostHierarchyShortName = storedCredentials?.CostHierarchyShortName;
+            ViewModelApplication.FCostHierarchyID = storedCredentials?.CostHierarchyID;
+            CostHierarchy.OriginalName = storedCredentials? .CostHierarchyShortName;
+            CostHierarchy.OriginalKid = storedCredentials?.CostHierarchyID;
+
         }
 
         /// <summary>

@@ -19,6 +19,28 @@ namespace Fasetto.Word.Web.Server
         /// </summary>
         public string LastName { get; set; }
 
+
+        /// <summary>
+        /// The users Root Client ID
+        /// </summary>
+        public string ClientID { get; set; }
+
+        /// <summary>
+        /// The users default Client Setting
+        /// </summary>
+        public string CostHierarchyID { get; set; }
+
+
+        /// <summary>
+        /// The users default Client Setting Name
+        /// </summary>
+        public string ClientShortName { get; set; }
+
+        /// <summary>
+        /// The users default Client Setting Name
+        /// </summary>
+        public string CostHierarchyShortName { get; set; }
+
         #endregion
     }
 }
