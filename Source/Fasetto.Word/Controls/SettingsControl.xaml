@@ -75,7 +75,7 @@
                             <VisualBrush Visual="{Binding ElementName=Mask}" />
                         </Grid.OpacityMask>
                         
-                        <Image Source="/Images/Samples/rusty.jpg" Stretch="UniformToFill" />
+                        <Image Source="/Images/Logo/KaizenPNG.png" Stretch="UniformToFill" />
                     </Grid>
 
                 </Grid>

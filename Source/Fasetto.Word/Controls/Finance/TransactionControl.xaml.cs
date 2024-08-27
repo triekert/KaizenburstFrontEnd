@@ -356,72 +356,46 @@ namespace Fasetto.Word
                     System.Windows.MessageBox.Show($"Only transactions having the same transaction value and Account Name may be merged!");
                     return;
                 }
-                                foreach (var item in Merge)
-                {
-                    var u = new TransactionResultApiModel
-                    {
-                        Posted_Date = ((TransactionViewModel)item).Posted_Date,
-                        Month = ((TransactionViewModel)item).Month,
-                        Description = ((TransactionViewModel)item).Description,
-                        TransAmount = ((TransactionViewModel)item).TransAmount,
-                        ActualAmount = ((TransactionViewModel)item).ActualAmount,
-                        ShortName = ((TransactionViewModel)item).ShortName,
-                        KCategoryID = ((TransactionViewModel)item).KCategoryID,
-                        KFinActualID = ((TransactionViewModel)item).KFinActualID,
-                        KFinTranID = ((TransactionViewModel)item).KFinTranID,
-                        KPartyName = ((TransactionViewModel)item).KPartyName,
-                        KPartyID = ((TransactionViewModel)item).KPartyID,
-                        FCatSrchID = ((TransactionViewModel)item).FCatSrchID,
-                        KHierarchyID = ((TransactionViewModel)item).KHierarchyID,
-                        KAccountID = ((TransactionViewModel)item).KAccountID,
-                        KAccountName = ((TransactionViewModel)item).KAccountName,
-                        Notes = ((TransactionViewModel)item).Notes,
-                        Units = ((TransactionViewModel)item).Units,
-                        ChangeType = "m",
-                        KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                    };
-
-                    ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mChange.Add(u);
-                }
-                await ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PersistTransClassAsync();
-                ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mChange.Clear();
-                //COnfirm with user that 2 transactions are to be merged irreversibly...
+                //Confirm with user that 2 transactions are to be merged irreversibly...
 
                 if (MessageBox.Show("Merging of Transactions - Irreversible!", "Confirm",
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
 
-                foreach (var item in Merge)
-                {
-                    var u = new TransactionResultApiModel
-                    {
-                        Posted_Date = ((TransactionViewModel)item).Posted_Date,
-                        Month = ((TransactionViewModel)item).Month,
-                        Description = ((TransactionViewModel)item).Description,
-                        TransAmount = ((TransactionViewModel)item).TransAmount,
-                        ActualAmount = ((TransactionViewModel)item).ActualAmount,
-                        ShortName = ((TransactionViewModel)item).ShortName,
-                        KCategoryID = ((TransactionViewModel)item).KCategoryID,
-                        KFinActualID = ((TransactionViewModel)item).KFinActualID,
-                        KFinTranID = ((TransactionViewModel)item).KFinTranID,
-                        KPartyName = ((TransactionViewModel)item).KPartyName,
-                        KPartyID = ((TransactionViewModel)item).KPartyID,
-                        FCatSrchID = ((TransactionViewModel)item).FCatSrchID,
-                        KHierarchyID = ((TransactionViewModel)item).KHierarchyID,
-                        KAccountID = ((TransactionViewModel)item).KAccountID,
-                        KAccountName = ((TransactionViewModel)item).KAccountName,
-                        Notes = ((TransactionViewModel)item).Notes,
-                        Units = ((TransactionViewModel)item).Units,
-                        ChangeType = "m",
-                        KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                    };
 
-                    ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mChange.Add(u);
+                    foreach (var item in Merge)
+                    {
+                        var u = new TransactionResultApiModel
+                        {
+                            Posted_Date = ((TransactionViewModel)item).Posted_Date,
+                            Month = ((TransactionViewModel)item).Month,
+                            Description = ((TransactionViewModel)item).Description,
+                            TransAmount = ((TransactionViewModel)item).TransAmount,
+                            ActualAmount = ((TransactionViewModel)item).ActualAmount,
+                            ShortName = ((TransactionViewModel)item).ShortName,
+                            KCategoryID = ((TransactionViewModel)item).KCategoryID,
+                            KFinActualID = ((TransactionViewModel)item).KFinActualID,
+                            KFinTranID = ((TransactionViewModel)item).KFinTranID,
+                            KPartyName = ((TransactionViewModel)item).KPartyName,
+                            KPartyID = ((TransactionViewModel)item).KPartyID,
+                            FCatSrchID = ((TransactionViewModel)item).FCatSrchID,
+                            KHierarchyID = ((TransactionViewModel)item).KHierarchyID,
+                            KAccountID = ((TransactionViewModel)item).KAccountID,
+                            KAccountName = ((TransactionViewModel)item).KAccountName,
+                            Notes = ((TransactionViewModel)item).Notes,
+                            Units = ((TransactionViewModel)item).Units,
+                            ChangeType = "m",
+                            KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                        };
+
+                        ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mChange.Add(u);
+                    }
+                    await ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PersistTransClassAsync();
+                    ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mChange.Clear();
+
+
                 }
-                await ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PersistTransClassAsync();
-                ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mChange.Clear();
-                }
-                else 
+                else
                 {
                     return;
                 }

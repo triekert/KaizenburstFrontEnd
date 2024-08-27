@@ -113,7 +113,7 @@
             </Grid>
 
             <!-- Working spinner container -->
-            <!--<Grid Grid.Column="2" 
+            <Grid Grid.Column="2" 
                   HorizontalAlignment="Right"
                   VerticalAlignment="Center"
                   local:AnimateFadeInProperty.Value="{Binding Working}">
@@ -123,7 +123,7 @@
                 </Border>
                 
 
-            </Grid>-->
+            </Grid>
 
             <!--<StackPanel Grid.Column="2"
                         Orientation="Horizontal"

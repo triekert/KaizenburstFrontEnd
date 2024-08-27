@@ -854,12 +854,15 @@ namespace Fasetto.Word
         {
 
 
-        //if new document has been linked, copy to file server on web server
-        //if (!(Selected.Document == null || !Selected.Document.IsNew))
+            //if new document has been linked, copy to file server on web server
+            //if (!(Selected.Document == null || !Selected.Document.IsNew))
 
-        //{
+            //{
 
-            var docs = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).DocumentList.Where(x => (x.IsNew || x.IsRemove) && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
+            //return await RunCommandAsync(() => SelectAccountCompleted, async () =>
+            //{
+
+                var docs = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).DocumentList.Where(x => (x.IsNew || x.IsRemove) && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
                     //var tmp = ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel;
                     //var tmp1 = ((TransactionTreeViewModel)tmp).Trans_action;
                     //var tmp2 = ((TransactionTreeViewModel)tmp).Trans_actionRec;
@@ -1101,8 +1104,6 @@ namespace Fasetto.Word
                     {
 
 
-
-
                         if ((Category.EditedKid ?? Category.OriginalKid) == Category.OriginalKid && IntAmnt != OrgActual)
                         {
                             //Update the classification being modified
@@ -1315,10 +1316,10 @@ namespace Fasetto.Word
                                         Description = TransactionDescription.EditedText ?? Selected.Description,
                                         TransAmount = Selected1.TransAmount,
                                         ActualAmount = Selected1.ActualAmount,
-                                        ShortName = (Category.EditedKid == null) ? category1.ShortName : (Category.EditedName ?? Category.OriginalName),
-                                        KCategoryID = Category.EditedKid ?? Category.OriginalKid,
-                                        KFinActualID = Selected1.KFinActualID,
+                                        ShortName = "",
+                                        KCategoryID = "",
                                         KFinTranID = Selected1.KFinTranID,
+                                        KFinActualID = Selected1.KFinActualID,
                                         ChangeType = "a",
                                         DateEffective = DateTime.Now,
                                         KHierarchyID = Selected1.KHierarchyID,
@@ -1545,7 +1546,7 @@ namespace Fasetto.Word
                                         Month = Selected1.Month,
                                         Description = TransactionDescription.EditedText ?? Selected.Description,
                                         TransAmount = Selected1.TransAmount,
-                                        ActualAmount = Selected1.ActualAmount,
+                                        ActualAmount = category1.ActualAmount,
                                         ShortName = (Category.EditedKid == null) ? category1.ShortName : (Category.EditedName ?? Category.OriginalName),
                                         KCategoryID = Category.EditedKid ?? Category.OriginalKid,
                                         KFinActualID = Selected1.KFinActualID,
@@ -1567,7 +1568,8 @@ namespace Fasetto.Word
                                     //then delete the original assignment
                                     matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
                                     category1 = matches1.FirstOrDefault();
-
+                                    matches1 = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                    category = matches1.FirstOrDefault();
                                     u = new TransactionResultApiModel
                                     {
                                         Posted_Date = Selected1.Posted_Date,
@@ -1577,7 +1579,7 @@ namespace Fasetto.Word
                                         ActualAmount = Selected1.ActualAmount,
                                         ShortName = Selected1.ShortName,
                                         KCategoryID = Selected1.KCategoryID,
-                                        KFinActualID = Category.OriginalKid,
+                                        KFinActualID = category1.KFinActualID,
                                         KFinTranID = Selected1.KFinTranID,
                                         ChangeType = "d",
                                         DateEffective = DateTime.Now,
@@ -2128,6 +2130,7 @@ namespace Fasetto.Word
 
 
             Close();
+            //});
         }
 
         //public void EditClassification()
