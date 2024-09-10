@@ -8,6 +8,10 @@
         #region Public Properties
 
         /// <summary>
+        /// The users username or email
+        /// </summary>
+        public string Id { get; set; }
+        /// <summary>
         /// The authentication token used to stay authenticated through future requests
         /// </summary>
         /// <remarks>The Token is only provided when called from the login methods</remarks>
@@ -88,7 +92,8 @@
                 ClientID = ClientID,
                 CostHierarchyID = CostHierarchyID,
                 ClientShortName = ClientShortName,
-                CostHierarchyShortName = CostHierarchyShortName
+                CostHierarchyShortName = CostHierarchyShortName,
+                Id = Id
             };
         }
 

@@ -1,16 +1,12 @@
 ﻿
 using Dna;
 using Fasetto.Word.Core;
-using Fasetto.Word.Core.ApiModels.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Forms.DataVisualization.Charting;
 using System.Windows.Input;
-using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
 
 namespace Fasetto.Word
@@ -171,7 +167,7 @@ namespace Fasetto.Word
 
 
         /// <summary>
-        /// Return Hierarchy of interest from Object persistance infrastructure
+        /// Return Hierarchy of interest from Object persistence infrastructure
         /// User credentials are used to determine access authorisation
         /// </summary>
         /// <returns></returns>

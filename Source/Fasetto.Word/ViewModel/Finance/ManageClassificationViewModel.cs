@@ -2,7 +2,6 @@
 using Fasetto.Word.Core;
 using Fasetto.Word.Core.ApiModels.Controls;
 using System;
-using System.Activities.Expressions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -799,6 +798,7 @@ namespace Fasetto.Word
                 //ViewModelApplication.ControlPopupParty = ViewModelApplication.CurrentPopupViewModel;
                 if (Category.EditedName != "Selected Party")
                     Party.OriginalName = Party.EditedName;
+                   ViewModelApplication.ControlPopupParty = ViewModelApplication.CurrentPopupViewModel;
                 if (ViewModelApplication.ControlParameter1 != null)
                 {
                     ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
@@ -976,6 +976,7 @@ namespace Fasetto.Word
                     KHierarchyID = Selected.KHierarchyID,
                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
                     KPartyID = Party.EditedKid??Party.OriginalKid,
+                    KPartyName = Party.EditedName ?? Party.OriginalName,
                     IsTemplate = IsTemplate,
                     Notes = TransactionNotes.EditedText,
                     KAccountID = Account.EditedKid??Account.OriginalKid,
@@ -1061,7 +1062,7 @@ namespace Fasetto.Word
                     Selected.Notes = TransactionNotes.EditedText;
                 }
 
-                if (Math.Sign(Selected.ActualAmount) != Math.Sign(Selected.TransAmount) && Selected.ActualAmount != 0)
+                if (Math.Sign(IntAmnt) != Math.Sign(Selected.TransAmount) && IntAmnt != 0)
                 {
                     MessageBox.Show($"The allocation amount {Selected.ActualAmount} must be of the same sign ", $"as the transaction total {Selected.TransAmount}");
                     return; }
@@ -1146,6 +1147,7 @@ namespace Fasetto.Word
                                         KHierarchyID = Selected1.KHierarchyID,
                                         KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
                                         KPartyID = Party.EditedKid ?? Party.OriginalKid,
+                                        KPartyName = Party.EditedName??Party.OriginalName,
                                         IsTemplate = IsTemplate,
                                         FCatSrchID = Selected1.FCatSrchID,
                                         Notes = TransactionNotes.EditedText,
@@ -1186,6 +1188,7 @@ namespace Fasetto.Word
                                         KHierarchyID = Selected1.KHierarchyID,
                                         KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
                                         KPartyID = Party.EditedKid ?? Party.OriginalKid,
+                                        KPartyName = Party.EditedName ?? Party.OriginalName,
                                         IsTemplate = IsTemplate,
                                         FCatSrchID = Selected1.FCatSrchID,
                                         Notes = TransactionNotes.EditedText,
@@ -1195,6 +1198,7 @@ namespace Fasetto.Word
 
                                     };
                                     tmp2.Add(u);
+
                                     matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
                                     category1 = matches1.FirstOrDefault();
                                     matches = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
@@ -1215,6 +1219,7 @@ namespace Fasetto.Word
                                         KHierarchyID = Selected1.KHierarchyID,
                                         KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
                                         KPartyID = Selected1.KPartyID,
+                                        KPartyName = Selected1.KPartyName,
                                         IsTemplate = IsTemplate,
                                         Notes = Selected1.Notes,
                                         FCatSrchID = Selected1.FCatSrchID,
@@ -1275,6 +1280,7 @@ namespace Fasetto.Word
                                     KHierarchyID = Selected1.KHierarchyID,
                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
                                     KPartyID = Party.EditedKid ?? Party.OriginalKid,
+                                    KPartyName = Party.EditedName ?? Party.OriginalName,
                                     IsTemplate = IsTemplate,
                                     FCatSrchID = Selected1.FCatSrchID,
                                     Notes = TransactionNotes.EditedText,
@@ -1325,6 +1331,7 @@ namespace Fasetto.Word
                                         KHierarchyID = Selected1.KHierarchyID,
                                         KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
                                         KPartyID = Party.EditedKid ?? Party.OriginalKid,
+                                        KPartyName = Party.EditedName ?? Party.OriginalName,
                                         IsTemplate = IsTemplate,
                                         FCatSrchID = Selected1.FCatSrchID,
                                         Notes = TransactionNotes.EditedText,
@@ -1415,6 +1422,7 @@ namespace Fasetto.Word
                                                 KHierarchyID = Selected1.KHierarchyID,
                                                 KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
                                                 KPartyID = Selected1.KPartyID,
+                                                KPartyName = Selected1.KPartyName,
                                                 IsTemplate = IsTemplate,
                                                 Notes = Selected1.Notes,
                                                 FCatSrchID = Selected1.FCatSrchID,
@@ -1501,7 +1509,7 @@ namespace Fasetto.Word
 
                         }
                         else
-                        //category has changed - and this category may already be used for the transaction
+                        //category has not changed - and this category may already be used for the transaction
                         //if total amount has been allocated, no new record required, but could require a record deletion if allocation has previously been made to this category
                         //if portion has been allocated, and the same category is not already linked to the transaction
                         {
@@ -1523,21 +1531,26 @@ namespace Fasetto.Word
                                 {
 
                                     //update transaction view model
-                                    matches = tmp.Where(x => x.KCategoryID == Category.EditedKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                    matches = tmp.Where(x => x.KCategoryID == (Category.EditedKid ?? Category.OriginalKid) && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
                                     category = matches.FirstOrDefault();
-                                    matches1 = tmp1.Where(x => x.KCategoryID == Category.EditedKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                    matches1 = tmp1.Where(x => x.KCategoryID == (Category.EditedKid ?? Category.OriginalKid) && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
                                     category1 = matches1.FirstOrDefault();
                                     //var matches3= tmp4.Where(x => x.KCategoryID == Category.EditedKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
                                     //var category0 = matches1.FirstOrDefault();
 
                                     {
-                                        //category.ActualAmount += IntAmnt;
+                                        category.ActualAmount += IntAmnt;
                                         category1.ActualAmount += IntAmnt;
                                         category.ActualAmount = category1.ActualAmount;
-                                        category1.Units = IntUnits;
-                                        category.Units = IntUnits;
+                                        category1.Units += IntUnits;
+                                        category.Units += IntUnits;
                                         Selected1.ActualAmount = category1.ActualAmount;
-
+                                        Selected.KPartyName = Party.EditedName ?? Party.OriginalName;
+                                        Selected1.KPartyName = Selected.KPartyName;
+                                        category.KPartyName = Selected.KPartyName;
+                                        category1.KPartyName = Selected.KPartyName;
+                                        //category.KPartyId = Category.EditedKid ?? Category.OriginalKid;
+                                        //category1.KPartyId= Category.EditedKid ?? Category.OriginalKid;
                                     }
 
                                     var u = new TransactionResultApiModel
@@ -1556,6 +1569,7 @@ namespace Fasetto.Word
                                         KHierarchyID = Selected1.KHierarchyID,
                                         KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
                                         KPartyID = Party.EditedKid ?? Party.OriginalKid,
+                                        KPartyName = Party.EditedName ?? Party.OriginalName,
                                         IsTemplate = IsTemplate,
                                         FCatSrchID = Selected1.FCatSrchID,
                                         Notes = TransactionNotes.EditedText,
@@ -1586,6 +1600,7 @@ namespace Fasetto.Word
                                         KHierarchyID = Selected1.KHierarchyID,
                                         KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
                                         KPartyID = Selected1.KPartyID,
+                                        KPartyName = Selected1.KPartyName,
                                         IsTemplate = IsTemplate,
                                         Notes = Selected1.Notes,
                                         FCatSrchID = Selected1.FCatSrchID,
@@ -1646,6 +1661,7 @@ namespace Fasetto.Word
                                         KHierarchyID = Selected1.KHierarchyID,
                                         KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
                                         KPartyID = Party.EditedKid ?? Party.OriginalKid,
+                                        KPartyName = Party.EditedName ?? Party.OriginalName,
                                         IsTemplate = IsTemplate,
                                         FCatSrchID = Selected1.FCatSrchID,
                                         Notes = TransactionNotes.EditedText,
@@ -1758,6 +1774,7 @@ namespace Fasetto.Word
                                                 KHierarchyID = Selected1.KHierarchyID,
                                                 KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
                                                 KPartyID = Party.EditedKid ?? Party.OriginalKid,
+                                                KPartyName = Party.EditedName ?? Party.OriginalName,
                                                 IsTemplate = IsTemplate,
                                                 FCatSrchID = Selected1.FCatSrchID,
                                                 Notes = TransactionNotes.EditedText,
@@ -1861,6 +1878,7 @@ namespace Fasetto.Word
                                             KHierarchyID = Selected1.KHierarchyID,
                                             KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
                                             KPartyID = Party.EditedKid ?? Party.OriginalKid,
+                                            KPartyName = Party.EditedName ?? Party.OriginalName,
                                             IsTemplate = IsTemplate,
                                             FCatSrchID = Selected1.FCatSrchID,
                                             Notes = TransactionNotes.EditedText,
@@ -1905,6 +1923,7 @@ namespace Fasetto.Word
                                             KHierarchyID = Selected1.KHierarchyID,
                                             KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
                                             KPartyID = Party.EditedKid ?? Party.OriginalKid,
+                                            KPartyName = Party.EditedName ?? Party.OriginalName,
                                             IsTemplate = IsTemplate,
                                             FCatSrchID = Selected1.FCatSrchID,
                                             Notes = TransactionNotes.EditedText,
@@ -1952,6 +1971,7 @@ namespace Fasetto.Word
                                                 KHierarchyID = Selected1.KHierarchyID,
                                                 KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
                                                 KPartyID = Selected.KPartyID,
+                                                KPartyName = Selected1.KPartyName,
                                                 IsTemplate = IsTemplate,
                                                 FCatSrchID = Selected1.FCatSrchID,
                                                 Notes = "",
@@ -1988,6 +2008,7 @@ namespace Fasetto.Word
                                                     KHierarchyID = Selected1.KHierarchyID,
                                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
                                                     KPartyID = Selected1.KPartyID,
+                                                    KPartyName = Selected1.KPartyName,
                                                     IsTemplate = IsTemplate,
                                                     Notes = Selected1.Notes,
                                                     FCatSrchID = Selected1.FCatSrchID,
@@ -2019,6 +2040,7 @@ namespace Fasetto.Word
                                                 KHierarchyID = Selected1.KHierarchyID,
                                                 KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
                                                 KPartyID = Party.EditedKid ?? Party.OriginalKid,
+                                                KPartyName = Party.EditedName ?? Party.OriginalName,
                                                 IsTemplate = IsTemplate,
                                                 FCatSrchID = Selected1.FCatSrchID,
                                                 Notes = TransactionNotes.EditedText,
@@ -2101,6 +2123,7 @@ namespace Fasetto.Word
                             KHierarchyID = Selected1.KHierarchyID,
                             KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
                             KPartyID = Selected1.KPartyID,
+                            KPartyName = Selected1.KPartyName,
                             IsTemplate = IsTemplate,
                             FCatSrchID = Selected1.FCatSrchID,
                             Notes = Selected.Notes,
@@ -2232,7 +2255,8 @@ namespace Fasetto.Word
                     fs.Write(doccie.DocImage, 0,doccie.DocImage.Length);
                     //return true;
                 }
-                Process.Start(doccie.DocURL);
+                Process.Start(new ProcessStartInfo(doccie.DocURL) { UseShellExecute = true });
+
 
             }
 

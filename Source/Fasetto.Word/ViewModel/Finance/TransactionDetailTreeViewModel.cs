@@ -1,11 +1,8 @@
 ﻿using Fasetto.Word.Core;
-using System.Activities.Statements;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Fasetto.Word
 {

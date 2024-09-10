@@ -7,6 +7,11 @@
     {
         #region Public Properties
 
+
+        /// <summary>
+        /// The users username or email
+        /// </summary>
+        public string Id { get; set; }
         /// <summary>
         /// The users username or email
         /// </summary>

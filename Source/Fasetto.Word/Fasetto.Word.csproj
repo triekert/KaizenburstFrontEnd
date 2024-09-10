@@ -1,44 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E69312C9-96E1-44CB-8CAA-237E09DFE433}</ProjectGuid>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Fasetto.Word</RootNamespace>
-    <AssemblyName>Fasetto.Word</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
-    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
     <IntermediateOutputPath>C:\Users\triek\AppData\Local\Temp\vs8D42.tmp\Debug\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE;RELEASE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
     <IntermediateOutputPath>C:\Users\triek\AppData\Local\Temp\vs8D42.tmp\Release\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup>
@@ -51,541 +24,6 @@
     <StartupObject>Fasetto.Word.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Activities" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.Linq" />
-    <Reference Include="System.IO.Log" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Windows" />
-    <Reference Include="System.Windows.Controls.Ribbon" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Forms.DataVisualization" />
-    <Reference Include="System.Windows.Forms.DataVisualization.Design" />
-    <Reference Include="System.Windows.Input.Manipulations" />
-    <Reference Include="System.Windows.Presentation" />
-    <Reference Include="System.Workflow.Activities" />
-    <Reference Include="System.Workflow.ComponentModel" />
-    <Reference Include="System.Workflow.Runtime" />
-    <Reference Include="System.WorkflowServices" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Xaml.dll</HintPath>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-  </ItemGroup>
-  <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="Animation\AnimationSlideInDirection.cs" />
-    <Compile Include="Animation\FrameworkElementAnimations.cs" />
-    <Compile Include="Animation\PageAnimation.cs" />
-    <Compile Include="Animation\PageAnimations.cs" />
-    <Compile Include="Animation\StoryboardHelpers.cs" />
-    <Compile Include="AttachedProperties\BaseAttachedProperty.cs" />
-    <Compile Include="AttachedProperties\BorderAttachedProperties.cs" />
-    <Compile Include="AttachedProperties\PanelChildMarginProperty.cs" />
-    <Compile Include="AttachedProperties\ScrollViewerAttachedProperties.cs" />
-    <Compile Include="AttachedProperties\TextAttachedProperties.cs" />
-    <Compile Include="AttachedProperties\ButtonAttachedProperty.cs" />
-    <Compile Include="AttachedProperties\FrameworkElementAnimationAttachedProperties.cs" />
-    <Compile Include="AttachedProperties\NoFrameHistory.cs" />
-    <Compile Include="AttachedProperties\PasswordBoxAttachedProperties.cs" />
-    <Compile Include="AttachedProperties\TextEntryWidthMatcherProperty.cs" />
-    <Compile Include="Controls\Finance\ManageClassificationControl.cs">
-      <DependentUpon>ManageClassificationControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Finance\ManageClassificationTemplateControl.xaml.cs">
-      <DependentUpon>ManageClassificationTemplateControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Finance\TransactionDetailControl.xaml.cs" />
-    <Compile Include="Controls\Finance\TransactionControl.xaml.cs" />
-    <Compile Include="Controls\Input\CostHierarchyComboboxControl .xaml.cs">
-      <DependentUpon>CostHierarchyComboboxControl .xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Input\DateTimeControl.xaml.cs">
-      <DependentUpon>DateTimeControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Input\BillingPeriodComboboxControl.xaml.cs">
-      <DependentUpon>BillingPeriodComboboxControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Input\HierarchyItemSelectionControl.xaml.cs">
-      <DependentUpon>HierarchyItemSelectionControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Input\HierarchySelectionControl.xaml.cs" />
-    <Compile Include="Controls\Services\SWBillingDetailControl.xaml.cs" />
-    <Compile Include="Controls\Services\WaterReadingControl.xaml .cs" />
-    <Compile Include="Controls\Services\BulkReconDetailControl.xaml.cs" />
-    <Compile Include="Controls\Services\BulkReconControl.xaml.cs" />
-    <Compile Include="Controls\BubbleContent.xaml.cs">
-      <DependentUpon>BubbleContent.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Chat\ChatMessage\ChatMessageListControl.xaml.cs">
-      <DependentUpon>ChatMessageListControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Chat\ChatList\ChatListControl.xaml.cs">
-      <DependentUpon>ChatListControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Chat\ChatList\ChatListItemControl.xaml.cs">
-      <DependentUpon>ChatListItemControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Chat\ChatMessage\ChatMessageListItemControl.xaml.cs">
-      <DependentUpon>ChatMessageListItemControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Finance\ExpenditureControl.xaml.cs">
-      <DependentUpon>ExpenditureControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Finance\HierarchyControl.xaml.cs" />
-    <Compile Include="Controls\Finance\HierarchyElementControl.cs">
-      <DependentUpon>HierarchyElementControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Input\PasswordEntryControl.xaml.cs">
-      <DependentUpon>PasswordEntryControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Input\TextEntryControl.xaml.cs">
-      <DependentUpon>TextEntryControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\List\ListControl.xaml.cs" />
-    <Compile Include="Controls\Menu Tree\MenuControl.xaml.cs" />
-    <Compile Include="Controls\Menu\VerticalMenu.xaml.cs">
-      <DependentUpon>VerticalMenu.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\PageHost.xaml.cs">
-      <DependentUpon>PageHost.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Finance\FinanceSelectionControl.xaml.cs">
-      <DependentUpon>FinanceSelectionControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Services\BulkMeterSelectionControl.cs">
-      <DependentUpon>BulkMeterSelectionControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Services\SWAdjustControl.cs">
-      <DependentUpon>SWAdjustControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Services\SWBillingControl.xaml.cs" />
-    <Compile Include="Controls\Services\MeterSelectionControl.xaml.cs" />
-    <Compile Include="Controls\SettingsControl.xaml.cs">
-      <DependentUpon>SettingsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Popup\PopupControl .xaml.cs">
-      <DependentUpon>PopupControl .xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\SideMenuControl.xaml.cs">
-      <DependentUpon>SideMenuControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\BaseDialogUserControl.cs" />
-    <Compile Include="Dialogs\DialogMessageBox.xaml.cs">
-      <DependentUpon>DialogMessageBox.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="DI\DI.cs" />
-    <Compile Include="DI\FrameworkConstructionExtensions.cs" />
-    <Compile Include="DI\UI\IUIManager.cs" />
-    <Compile Include="DI\UI\UIManager.cs" />
-    <Compile Include="DialogWindow.xaml.cs">
-      <DependentUpon>DialogWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MarkupExtension\EnumBindingSourceExtension.cs" />
-    <Compile Include="Pages\ActualsPage.xaml.cs">
-      <DependentUpon>ActualsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\BulkReconPage.xaml.cs">
-      <DependentUpon>BulkReconPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\HierarchyBillingPage.xaml.cs">
-      <DependentUpon>HierarchyBillingPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\TransactionSelectionPage.xaml.cs">
-      <DependentUpon>TransactionSelectionPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\SWBillingPage.xaml.cs">
-      <DependentUpon>SWBillingPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\MeterSelectionPage.xaml.cs">
-      <DependentUpon>MeterSelectionPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\HierarchyPage.xaml.cs">
-      <DependentUpon>HierarchyPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\LoadReadingsPage.xaml.cs">
-      <DependentUpon>LoadReadingsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="ValueConverters\HierarchyTypeToVisibilityConverter.cs" />
-    <Compile Include="ValueConverters\TimeToItemConverter.cs" />
-    <Compile Include="ValueConverters\PageToIndexConverter.cs" />
-    <Compile Include="ValueConverters\TextToVisiblityConverter.cs" />
-    <Compile Include="ValueConverters\PopupContentConverter.cs" />
-    <Compile Include="ValueConverters\TimeToStringConverter.cs" />
-    <Compile Include="ViewModel\Application\Design\FinanceSelectionDesignModel.cs" />
-    <Compile Include="ViewModel\Finance\DocDataListViewModel.cs" />
-    <Compile Include="ViewModel\Finance\Expenditure\CategorySearchViewModel.cs" />
-    <Compile Include="ViewModel\Finance\DocDataViewModel.cs" />
-    <Compile Include="ViewModel\Finance\ManageClassificationViewModel.cs" />
-    <Compile Include="ViewModel\Finance\ObservableCollectionExtensions.cs" />
-    <Compile Include="ViewModel\Finance\TransactionDetailTreeViewModel.cs" />
-    <Compile Include="ViewModel\Finance\TransactionDetailViewModel.cs" />
-    <Compile Include="ViewModel\Finance\TransactionTreeViewModel.cs" />
-    <Compile Include="ViewModel\Finance\TransactionViewModel.cs" />
-    <Compile Include="ViewModel\Finance\Expenditure\TransactionSelectionPageViewModel.cs" />
-    <Compile Include="ViewModel\Input\CostHierarchyListViewModel.cs" />
-    <Compile Include="ViewModel\Input\CostHierarchyViewModel .cs" />
-    <Compile Include="ViewModel\Services\SWBillingDetailViewModel.cs" />
-    <Compile Include="ViewModel\Services\SWBillingDetailTreeViewModel.cs" />
-    <Compile Include="ViewModel\Services\WaterReadingTreeViewModel.cs" />
-    <Compile Include="ViewModel\FinancePageViewModel.cs" />
-    <Compile Include="ViewModel\Finance\Expenditure\Design\HierarchyElementDesignModel.cs" />
-    <Compile Include="Pages\BasePage.cs" />
-    <Compile Include="Pages\FinancePage.xaml.cs">
-      <DependentUpon>FinancePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\ChatPage.xaml.cs">
-      <DependentUpon>ChatPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\RegisterPage.xaml.cs">
-      <DependentUpon>RegisterPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\LoginPage.xaml.cs">
-      <DependentUpon>LoginPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ValueConverters\ApplicationPageHelpers.cs" />
-    <Compile Include="ValueConverters\BaseValueConverter.cs" />
-    <Compile Include="ValueConverters\SideMenuContentConverter.cs" />
-    <Compile Include="ValueConverters\BooleanInvertConverter.cs" />
-    <Compile Include="ValueConverters\BooleanToBorderThicknessConverter.cs" />
-    <Compile Include="ValueConverters\BooleanToVisibilityConverter.cs" />
-    <Compile Include="ValueConverters\BooleanToVisiblityGoneConverter.cs" />
-    <Compile Include="ValueConverters\IconTypeToFontAwesomeConverter.cs" />
-    <Compile Include="ValueConverters\MenuItemTypeVisiblityConverter.cs" />
-    <Compile Include="ValueConverters\PopupMenuContentConverter.cs" />
-    <Compile Include="ValueConverters\SentByMeToAlignmentConverter.cs" />
-    <Compile Include="ValueConverters\SentByMeToBackgroundConverter.cs" />
-    <Compile Include="ValueConverters\StringRGBToBrushConverter.cs" />
-    <Compile Include="ValueConverters\TimeToDisplayTimeConverter.cs" />
-    <Compile Include="ValueConverters\HorizontalAlignmentConverter.cs" />
-    <Compile Include="ValueConverters\TimeToReadTimeConverter.cs" />
-    <Compile Include="ViewModel\Finance\Expenditure\ExpenditureElementViewModel.cs" />
-    <Compile Include="ViewModel\ActualsPageViewModel.cs" />
-    <Compile Include="ViewModel\Hierarchy\HierarchyElementViewModel.cs" />
-    <Compile Include="ViewModel\Finance\Expenditure\ExpenditureTreeViewModel.cs" />
-    <Compile Include="ViewModel\Finance\Expenditure\FinanceTreeViewModel.cs" />
-    <Compile Include="ViewModel\Hierarchy\HierarchyTreeViewModel1.cs" />
-    <Compile Include="ViewModel\Hierarchy\HierarchyTreeViewModel.cs" />
-    <Compile Include="ViewModel\Finance\Expenditure\ExpenditureViewModel.cs" />
-    <Compile Include="ViewModel\Finance\Expenditure\FinanceViewModel .cs" />
-    <Compile Include="ViewModel\Hierarchy\HierarchyViewModel.cs" />
-    <Compile Include="ViewModel\Hierarchy\HierarchyManagementViewModel1.cs" />
-    <Compile Include="ViewModel\Finance\FinanceSelectionViewModel.cs" />
-    <Compile Include="ViewModel\Input\DateTimeViewModel.cs" />
-    <Compile Include="ViewModel\Input\HierarchyItemSelectionViewModel.cs" />
-    <Compile Include="ViewModel\Menu\HierarchyPageViewModel .cs" />
-    <Compile Include="ViewModel\Input\BillingPeriodListViewModel.cs" />
-    <Compile Include="ViewModel\Input\BillingPeriodViewModel.cs" />
-    <Compile Include="ViewModel\Services\WaterReadinglViewModel .cs" />
-    <Compile Include="ViewModel\Services\HierarchyBillingPageViewModel .cs" />
-    <Compile Include="ViewModel\Services\HierarchyBillingTreeViewModel.cs" />
-    <Compile Include="ViewModel\Services\HierarchyBillingViewModel.cs" />
-    <Compile Include="ViewModel\Services\SWAdjustViewModel.cs" />
-    <Compile Include="ViewModel\Services\SWBillingPageViewModel.cs" />
-    <Compile Include="ViewModel\Services\MeterSelectionPageViewModel.cs" />
-    <Compile Include="ViewModel\Services\BulkReconDetailTreeViewModel.cs" />
-    <Compile Include="ViewModel\Services\BulkReconTreeViewModel.cs" />
-    <Compile Include="ViewModel\Services\BulkReconDetailViewModel.cs" />
-    <Compile Include="ViewModel\Services\BulkReconViewModel.cs" />
-    <Compile Include="ViewModel\Services\BulkReconPageViewModel.cs" />
-    <Compile Include="ViewModel\Services\LoadReadingsPageViewModel.cs" />
-    <Compile Include="WebRequests\WebRequestResultExtensions.cs" />
-    <Compile Include="WPFViewModels\DialogWindowViewModel.cs" />
-    <Compile Include="WPFViewModels\ViewModelLocator.cs" />
-    <Compile Include="WPFViewModels\WindowViewModel.cs" />
-    <Compile Include="ViewModel\Application\ApplicationViewModel.cs" />
-    <Compile Include="ViewModel\Application\Design\SettingsDesignModel.cs" />
-    <Compile Include="ViewModel\Application\LoginViewModel.cs" />
-    <Compile Include="ViewModel\Application\RegisterViewModel.cs" />
-    <Compile Include="ViewModel\Application\SettingsViewModel.cs" />
-    <Compile Include="ViewModel\Base\BaseViewModel.cs" />
-    <Compile Include="ViewModel\Base\IHavePassword.cs" />
-    <Compile Include="ViewModel\Base\RelayCommand.cs" />
-    <Compile Include="ViewModel\Base\RelayParameterizedCommand.cs" />
-    <Compile Include="ViewModel\Chat\ChatList\ChatListItemViewModel.cs" />
-    <Compile Include="ViewModel\Chat\ChatList\ChatListViewModel.cs" />
-    <Compile Include="ViewModel\Chat\ChatList\Design\ChatListDesignModel.cs" />
-    <Compile Include="ViewModel\Chat\ChatList\Design\ChatListItemDesignModel.cs" />
-    <Compile Include="ViewModel\Chat\ChatMessage\ChatMessageListItemImageAttachmentViewModel.cs" />
-    <Compile Include="ViewModel\Chat\ChatMessage\ChatMessageListItemViewModel.cs" />
-    <Compile Include="ViewModel\Chat\ChatMessage\ChatMessageListViewModel.cs" />
-    <Compile Include="ViewModel\Chat\ChatMessage\Design\ChatMessageListDesignModel.cs" />
-    <Compile Include="ViewModel\Chat\ChatMessage\Design\ChatMessageListItemDesignModel.cs" />
-    <Compile Include="ViewModel\Dialogs\BaseDialogViewModel.cs" />
-    <Compile Include="ViewModel\Dialogs\Design\MessageBoxDialogDesignModel.cs" />
-    <Compile Include="ViewModel\Dialogs\MessageBoxDialogViewModel.cs" />
-    <Compile Include="ViewModel\Input\Design\PasswordEntryDesignModel.cs" />
-    <Compile Include="ViewModel\Input\Design\TextEntryDesignModel.cs" />
-    <Compile Include="ViewModel\Input\PasswordEntryViewModel.cs" />
-    <Compile Include="ViewModel\Input\TextEntryViewModel.cs" />
-    <Compile Include="ViewModel\Menu\Design\MenuDesignModel.cs" />
-    <Compile Include="ViewModel\Menu\Design\MenuItemDesignModel.cs" />
-    <Compile Include="ViewModel\Menu\MenuItemViewModel.cs" />
-    <Compile Include="ViewModel\Menu\MenuViewModel.cs" />
-    <Compile Include="ViewModel\PopupMenu\BasePopupViewModel.cs" />
-    <Compile Include="ViewModel\PopupMenu\ChatAttachmentPopupMenuViewModel.cs" />
-    <Compile Include="ViewModel\PopupMenu\Design\ChatAttachmentPopupMenuDesignModel.cs" />
-    <Compile Include="Window\WindowResizer.cs" />
-    <Page Include="Controls\BubbleContent.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Chat\ChatMessage\ChatMessageListControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Chat\ChatList\ChatListControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Chat\ChatList\ChatListItemControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Chat\ChatMessage\ChatMessageListItemControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Finance\ManageClassificationControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Finance\ManageClassificationTemplateControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Finance\TransactionDetailControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Finance\TransactionControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Finance\ExpenditureControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Finance\HierarchyControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Finance\HierarchyElementControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Input\CostHierarchyComboboxControl .xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Input\BillingPeriodComboboxControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Input\PasswordEntryControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Input\DateTimeControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Input\HierarchyItemSelectionControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Input\TextEntryControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\List\ListControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Input\HierarchySelectionControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Menu Tree\MenuControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Menu\VerticalMenu.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\PageHost.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Finance\FinanceSelectionControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Services\SWBillingDetailControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Services\WaterReadingControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Services\BulkReconDetailControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Services\BulkReconControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Services\BulkMeterSelectionControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Services\SWAdjustControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Services\SWBillingControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Services\MeterSelectionControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\SettingsControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Popup\PopupControl .xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\SideMenuControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dialogs\DialogMessageBox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="DialogWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Pages\ActualsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Pages\BulkReconPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Pages\HierarchyBillingPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Pages\TransactionSelectionPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Pages\SWBillingPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Pages\MeterSelectionPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Pages\HierarchyPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Pages\FinancePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Pages\ChatPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Pages\LoadReadingsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Pages\RegisterPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Pages\LoginPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="Styles\Scroll.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Styles\Texts.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Styles\Buttons.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Styles\Colors.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Styles\Fonts.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <Resource Include="Fonts\Lato-Black.ttf" />
     <Resource Include="Fonts\Lato-BlackItalic.ttf" />
     <Resource Include="Fonts\Lato-Bold.ttf" />
@@ -605,19 +43,9 @@
     <Resource Include="Fonts\Lato-Thin.ttf" />
     <Resource Include="Fonts\Lato-ThinItalic.ttf" />
     <Resource Include="Fonts\fontawesome-webfont.ttf" />
-    <None Include="app.manifest" />
-    <None Include="appsettings.json">
+    <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Fasetto.Word.csproj.vsspell" />
-    <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Logo\icon.ico" />
@@ -625,20 +53,11 @@
     <Resource Include="Images\Logo\logo.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="FodyWeavers.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\Backgrounds\emoji-background.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Fasetto.Word.Core\Fasetto.Word.Core.csproj">
-      <Project>{cac0a047-d879-4a29-8136-be1e33f5f35c}</Project>
-      <Name>Fasetto.Word.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Fasetto.Word.Relational\Fasetto.Word.Relational.csproj">
-      <Project>{95bce913-1777-4823-acd3-b9a853117f1e}</Project>
-      <Name>Fasetto.Word.Relational</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\Fasetto.Word.Core\Fasetto.Word.Core.csproj" />
+    <ProjectReference Include="..\Fasetto.Word.Relational\Fasetto.Word.Relational.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Samples\rusty.jpg" />
@@ -648,22 +67,28 @@
       <Version>1.1.0</Version>
     </PackageReference>
     <PackageReference Include="CsvHelper">
-      <Version>30.0.1</Version>
+      <Version>33.0.1</Version>
     </PackageReference>
     <PackageReference Include="Fody">
-      <Version>6.6.4</Version>
+      <Version>6.8.1</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite">
-      <Version>2.2.6</Version>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions">
-      <Version>2.2.0</Version>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="PropertyChanged.Fody">
       <Version>4.1.0</Version>
     </PackageReference>
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Temp\" />
@@ -717,5 +142,86 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.Shell" Version="3.0.1.0" />
+    <PackageReference Include="Ninject" Version="3.3.6" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Controls\Finance\HierarchyElementControl - Copy.cs" />
+    <Compile Remove="Fonts\Controls\BubbleContent.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Chat\ChatList\ChatListControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Chat\ChatList\ChatListItemControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Chat\ChatMessage\ChatMessageListControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Chat\ChatMessage\ChatMessageListItemControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Finance\ExpenditureControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Finance\FinanceSelectionControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Finance\HierarchyControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Finance\HierarchyElementControl - Copy.cs" />
+    <Compile Remove="Fonts\Controls\Finance\HierarchyElementControl.cs" />
+    <Compile Remove="Fonts\Controls\Finance\ManageClassificationControl.cs" />
+    <Compile Remove="Fonts\Controls\Finance\TransactionControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Finance\TransactionDetailControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Input\BillingPeriodComboboxControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Input\CostHierarchyComboboxControl .xaml.cs" />
+    <Compile Remove="Fonts\Controls\Input\DateTimeControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Input\HierarchyItemSelectionControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Input\HierarchySelectionControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Input\PasswordEntryControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Input\TextEntryControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\List\ListControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Menu Tree\MenuControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Menu\VerticalMenu.xaml.cs" />
+    <Compile Remove="Fonts\Controls\PageHost.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Popup\PopupControl .xaml.cs" />
+    <Compile Remove="Fonts\Controls\Services\BulkMeterSelectionControl.cs" />
+    <Compile Remove="Fonts\Controls\Services\BulkReconControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Services\BulkReconDetailControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Services\MeterSelectionControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Services\SWAdjustControl.cs" />
+    <Compile Remove="Fonts\Controls\Services\SWBillingControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Services\SWBillingDetailControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\Services\WaterReadingControl.xaml .cs" />
+    <Compile Remove="Fonts\Controls\SettingsControl.xaml.cs" />
+    <Compile Remove="Fonts\Controls\SideMenuControl.xaml.cs" />
+    <Compile Remove="ViewModel\Application\FinanceSelectionViewModel .cs" />
+    <Compile Remove="ViewModel\Base\TreeViewItemModel.cs" />
+    <Compile Remove="ViewModel\Finance\Expenditure\HierarchyManagementDesignViewModel.cs" />
+    <Compile Remove="ViewModel\Finance\Expenditure\SettingsViewModel.cs" />
+    <Page Remove="Controls\Finance\TransactionClassificationControl.xaml" />
+    <Page Remove="Fonts\Controls\BubbleContent.xaml" />
+    <Page Remove="Fonts\Controls\Chat\ChatList\ChatListControl.xaml" />
+    <Page Remove="Fonts\Controls\Chat\ChatList\ChatListItemControl.xaml" />
+    <Page Remove="Fonts\Controls\Chat\ChatMessage\ChatMessageListControl.xaml" />
+    <Page Remove="Fonts\Controls\Chat\ChatMessage\ChatMessageListItemControl.xaml" />
+    <Page Remove="Fonts\Controls\Finance\ExpenditureControl.xaml" />
+    <Page Remove="Fonts\Controls\Finance\FinanceSelectionControl.xaml" />
+    <Page Remove="Fonts\Controls\Finance\HierarchyControl.xaml" />
+    <Page Remove="Fonts\Controls\Finance\HierarchyElementControl.xaml" />
+    <Page Remove="Fonts\Controls\Finance\ManageClassificationControl.xaml" />
+    <Page Remove="Fonts\Controls\Finance\TransactionClassificationControl.xaml" />
+    <Page Remove="Fonts\Controls\Finance\TransactionControl.xaml" />
+    <Page Remove="Fonts\Controls\Finance\TransactionDetailControl.xaml" />
+    <Page Remove="Fonts\Controls\Input\BillingPeriodComboboxControl.xaml" />
+    <Page Remove="Fonts\Controls\Input\CostHierarchyComboboxControl .xaml" />
+    <Page Remove="Fonts\Controls\Input\DateTimeControl.xaml" />
+    <Page Remove="Fonts\Controls\Input\HierarchyItemSelectionControl.xaml" />
+    <Page Remove="Fonts\Controls\Input\HierarchySelectionControl.xaml" />
+    <Page Remove="Fonts\Controls\Input\PasswordEntryControl.xaml" />
+    <Page Remove="Fonts\Controls\Input\TextEntryControl.xaml" />
+    <Page Remove="Fonts\Controls\List\ListControl.xaml" />
+    <Page Remove="Fonts\Controls\Menu Tree\MenuControl.xaml" />
+    <Page Remove="Fonts\Controls\Menu\VerticalMenu.xaml" />
+    <Page Remove="Fonts\Controls\PageHost.xaml" />
+    <Page Remove="Fonts\Controls\Popup\PopupControl .xaml" />
+    <Page Remove="Fonts\Controls\Services\BulkMeterSelectionControl.xaml" />
+    <Page Remove="Fonts\Controls\Services\BulkReconControl.xaml" />
+    <Page Remove="Fonts\Controls\Services\BulkReconDetailControl.xaml" />
+    <Page Remove="Fonts\Controls\Services\MeterSelectionControl.xaml" />
+    <Page Remove="Fonts\Controls\Services\SWAdjustControl.xaml" />
+    <Page Remove="Fonts\Controls\Services\SWBillingControl.xaml" />
+    <Page Remove="Fonts\Controls\Services\SWBillingDetailControl.xaml" />
+    <Page Remove="Fonts\Controls\Services\WaterReadingControl.xaml" />
+    <Page Remove="Fonts\Controls\SettingsControl.xaml" />
+    <Page Remove="Fonts\Controls\SideMenuControl.xaml" />
+  </ItemGroup>
 </Project>
