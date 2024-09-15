@@ -116,7 +116,7 @@ namespace Fasetto.Word
         }
         private void NavigateOn()
         { }
-
+        //TO Do: add spinners to commit buttons
 
         }
 }

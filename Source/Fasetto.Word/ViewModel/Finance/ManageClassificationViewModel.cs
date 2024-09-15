@@ -199,6 +199,12 @@ namespace Fasetto.Word
         /// </summary>
         public bool SetHierarchyCompleted { get; set; }
 
+        /// <summary>
+        /// Indicates if the current control is pending an update (in progress)
+        /// </summary>
+        public bool Working { get; set; }
+
+
 
         /// <summary>
         /// The action to run when saving the text.
@@ -476,9 +482,9 @@ namespace Fasetto.Word
 
             // Create commands
             CloseCommand = new RelayCommand(Close);
-            AddClassificationCommand = new RelayCommand(AddClassificationAsync);
+            AddClassificationCommand = new RelayCommand(async () => await AddClassificationAsync());
             AlterTemplateCommand = new RelayCommand(AlterTemplate);
-            DeleteClassificationCommand = new RelayCommand(AddClassificationAsync);
+            DeleteClassificationCommand = new RelayCommand(async () => await AddClassificationAsync());
             BrowseImageCommand = new RelayCommand(BrowseImage);
 
             // TODO: Get from localization
@@ -844,251 +850,259 @@ namespace Fasetto.Word
         {
             //set flag to allow template update
             IsTemplate = true;
+            //new RelayCommand(async () => await AddClassificationAsync());
             AddClassificationAsync();
         }
 
-            /// <summary>
-            /// Used tp insert a new node with the currently selected node as parent
-            /// </summary>
-            public async void AddClassificationAsync()
+
+
+
+
+        /// <summary>
+        /// Used to update the classification of a transaction component - Cost category, amount, account, etc
+        /// </summary>
+        public async Task<bool> AddClassificationAsync()
         {
+            return await RunCommandAsync(() => Working, async () =>
+            {
 
+                //if new document has been linked, copy to file server on web server
+                //if (!(Selected.Document == null || !Selected.Document.IsNew))
 
-            //if new document has been linked, copy to file server on web server
-            //if (!(Selected.Document == null || !Selected.Document.IsNew))
+                //{
 
-            //{
-
-            //return await RunCommandAsync(() => SelectAccountCompleted, async () =>
-            //{
+                //return await RunCommandAsync(() => SelectAccountCompleted, async () =>
+                //{
 
                 var docs = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).DocumentList.Where(x => (x.IsNew || x.IsRemove) && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
-                    //var tmp = ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel;
-                    //var tmp1 = ((TransactionTreeViewModel)tmp).Trans_action;
-                    //var tmp2 = ((TransactionTreeViewModel)tmp).Trans_actionRec;
-                    //var rec = tmp1[tmp2];
-            var tmp0 = ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel;
-            //var tmp = ((TransactionTreeViewModel)tmp0).Trans_action;
-            var tmp = ((TransactionTreeViewModel)tmp0).mPersist;
-            var tmp1 = ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).TransactionDetail;
-            var tmp2 = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel).mChange;
-            var tmp3 = ((TransactionTreeViewModel)tmp0).Trans_actionRec;
-            var rec = tmp[tmp3];
-            rec.IsDocLinked = true;            
+                //var tmp = ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel;
+                //var tmp1 = ((TransactionTreeViewModel)tmp).Trans_action;
+                //var tmp2 = ((TransactionTreeViewModel)tmp).Trans_actionRec;
+                //var rec = tmp1[tmp2];
+                var tmp0 = ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel;
+                //var tmp = ((TransactionTreeViewModel)tmp0).Trans_action;
+                var tmp = ((TransactionTreeViewModel)tmp0).mPersist;
+                var tmp1 = ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).TransactionDetail;
+                var tmp2 = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel).mChange;
+                var tmp3 = ((TransactionTreeViewModel)tmp0).Trans_actionRec;
+                var rec = tmp[tmp3];
+                rec.IsDocLinked = true;
 
 
 
-        
 
 
-            var OrgActual = Selected.ActualAmount;
+
+                var OrgActual = Selected.ActualAmount;
 
 
-            Selected1.Posted_Date = Selected.Posted_Date;
+                Selected1.Posted_Date = Selected.Posted_Date;
 
-            Selected1.Month = Selected.Month;
-            Selected1.Description = Selected.Description;
-            Selected1.TransAmount = Selected.TransAmount;
-            Selected1.ActualAmount = Selected.ActualAmount;
-            Selected1.ShortName = Selected.ShortName;
-            Selected1.KCategoryID = Selected.KCategoryID;
-            Selected1.KFinActualID = Selected.KFinActualID;
-            Selected1.KFinTranID = Selected.KFinTranID;
-            Selected1.KPartyID = Selected.KPartyID;
-            Selected1.KPartyName = Selected.KPartyName;
-            Selected1.FCatSrchID = Selected.FCatSrchID;
-            Selected1.KHierarchyID = Selected.KHierarchyID;
-            Selected1.Notes = Selected.Notes;
-            Selected1.KAccountID = Selected.KAccountID;
-            Selected1.KAccountName = Selected.KAccountName;
-            Selected1.Units = Selected.Units;
-
-
-            rec.Notes = Selected.Notes;
-            if (TransactionNotes.EditedText != "") { rec.Notes = TransactionNotes.EditedText;} 
-            var IntAmnt = Selected.ActualAmount;
-            if (!(Allocation.EditedText == null ||Allocation.EditedText == ""))
-                          {decimal. TryParse(Allocation.EditedText, NumberStyles.Currency, CultureInfo.CurrentCulture, out IntAmnt); }
-            var IntUnits = Selected.Units; 
-            if (!(Units.EditedText==null||Units.EditedText == ""))
-                          {int. TryParse(Units.EditedText, out IntUnits); }
-   
-
-            if (Selected.KFinTranID == "00000000-0000-0000-0000-000000000001")
-
-            { 
-                if (Account.EditedKid == null)
-                { 
-                    //display message to user
-                    
-                    return;}
-                var matches = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                var category = matches.FirstOrDefault();
-                Selected.KFinTranID = Guid.NewGuid().ToString().ToUpper();
-                Selected.Posted_Date = DateTime.Parse(TransactionDate);
-                Selected.Description = TransactionDescription.EditedText;
-                Selected.TransAmount = IntAmnt;
-                Selected.ActualAmount = IntAmnt;
-                Selected.ShortName = Category.EditedName ?? Category.OriginalName;
-                Selected.KCategoryID = Category.EditedKid ?? Category.OriginalKid;
-                Selected.KFinActualID = Selected1.KFinActualID;
-                Selected.DateEffective = DateTime.Now;
-                Selected.KPartyID = Party.EditedKid ?? Party.OriginalKid;
-                Selected.KPartyName = Party.EditedName ?? Party.OriginalName;
-                Selected.IsTemplate = IsTemplate;
-                Selected.Notes = TransactionNotes.EditedText;
-                Selected.KAccountID = Account.EditedKid ?? Account.OriginalKid;
-                Selected.KAccountName = Account.EditedName  ?? Account.OriginalName;
-                Selected.Units = IntUnits;
-                ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).TransactionDetail[0].KFinTranID = Selected.KFinTranID;
-
-                category.KFinTranID = Selected.KFinTranID;
-                category.Posted_Date = Selected.Posted_Date;
-                category.Description = Selected.Description;
-                category.TransAmount = Selected.TransAmount;
-                category.ActualAmount = Selected.ActualAmount;
-                category.ShortName = Selected.ShortName;
-                category.KCategoryID = Selected.KCategoryID;
-                category.KFinActualID = Selected.KFinActualID;
-                category.DateEffective = Selected.DateEffective;
-                category.KPartyID = Selected.KPartyID;
-                category.KPartyName = Selected.KPartyName;
-                category.IsTemplate = Selected.IsTemplate;
-                category.Notes = Selected.Notes;
-                category.KAccountID = Selected.KAccountID;
-                category.KAccountName = Selected.KAccountName;
-                category.Units = Selected.Units;
+                Selected1.Month = Selected.Month;
+                Selected1.Description = Selected.Description;
+                Selected1.TransAmount = Selected.TransAmount;
+                Selected1.ActualAmount = Selected.ActualAmount;
+                Selected1.ShortName = Selected.ShortName;
+                Selected1.KCategoryID = Selected.KCategoryID;
+                Selected1.KFinActualID = Selected.KFinActualID;
+                Selected1.KFinTranID = Selected.KFinTranID;
+                Selected1.KPartyID = Selected.KPartyID;
+                Selected1.KPartyName = Selected.KPartyName;
+                Selected1.FCatSrchID = Selected.FCatSrchID;
+                Selected1.KHierarchyID = Selected.KHierarchyID;
+                Selected1.Notes = Selected.Notes;
+                Selected1.KAccountID = Selected.KAccountID;
+                Selected1.KAccountName = Selected.KAccountName;
+                Selected1.Units = Selected.Units;
 
 
-                var u = new TransactionResultApiModel
+                rec.Notes = Selected.Notes;
+                if (TransactionNotes.EditedText != "") { rec.Notes = TransactionNotes.EditedText; }
+                var IntAmnt = Selected.ActualAmount;
+                if (!(Allocation.EditedText == null || Allocation.EditedText == ""))
+                { decimal.TryParse(Allocation.EditedText, NumberStyles.Currency, CultureInfo.CurrentCulture, out IntAmnt); }
+                var IntUnits = Selected.Units;
+                if (!(Units.EditedText == null || Units.EditedText == ""))
+                { int.TryParse(Units.EditedText, out IntUnits); }
+
+
+                if (Selected.KFinTranID == "00000000-0000-0000-0000-000000000001")
+
                 {
-                    Posted_Date = DateTime.Parse(TransactionDate),
-                    Month = Selected.Month,
-                    Description = TransactionDescription.EditedText,
-                    TransAmount = IntAmnt,
-                    ActualAmount = IntAmnt,
-                    ShortName = Category.EditedName??Category.OriginalName,
-                    KCategoryID = Category.EditedKid ?? Category.OriginalKid,
-                    KFinActualID = Selected.KFinActualID,
-                    KFinTranID = Selected.KFinTranID,
-                    ChangeType = "a",
-                    DateEffective = DateTime.Now,
-                    KHierarchyID = Selected.KHierarchyID,
-                    KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                    KPartyID = Party.EditedKid??Party.OriginalKid,
-                    KPartyName = Party.EditedName ?? Party.OriginalName,
-                    IsTemplate = IsTemplate,
-                    Notes = TransactionNotes.EditedText,
-                    KAccountID = Account.EditedKid??Account.OriginalKid,
-                    KAccountName = Selected.KAccountName,
-                    Units = IntUnits,
-                };
-                tmp2.Add(u);
-                if (docs.Count > 0)
-                {
-                    mRequest = new DocDataResultListApiModel();
-
-                    foreach (var item in docs)
+                    if (Account.EditedKid == null)
                     {
+                        //display message to user
 
-                        var mRqst = new DocDataResultApiModel
-                        {
-                            DocImage = item.DocImage,
-                            DocName = item.DocName,
-                            DocURL = item.DocURL,
-                            KDocID = item.KDocID,
-                            DocDescription = item.DocDescription,
-                            FFintranID = Selected.KFinTranID,
-                            IsNew = item.IsNew,
-                            IsRemove = item.IsRemove,
-                        };
-                        mRequest.Add(mRqst);
+                        return false;
                     }
-                    var docsl = mRequest.Where(x => x.IsNew && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
-
-                    if (docsl.Count > 0)
-                    {
-
-                        Selected.IsDocLinked = true;
-                        Selected1.IsDocLinked = true;
-                        TaskManager.RunAndForget(DocumentStorageAsync);
-                    }
-
-
-                };
-
-            }
-            else
-            {
-                if (docs.Count > 0)
-                {
-                    mRequest = new DocDataResultListApiModel();
-
-                    foreach (var item in docs)
-                    {
-
-                        var mRqst = new DocDataResultApiModel
-                        {
-                            DocImage = item.DocImage,
-                            DocName = item.DocName,
-                            DocURL = item.DocURL,
-                            KDocID = item.KDocID,
-                            DocDescription = item.DocDescription,
-                            FFintranID = item.FFintranID,
-                            IsNew = item.IsNew,
-                            IsRemove = item.IsRemove,
-                        };
-                        mRequest.Add(mRqst);
-                    }
-                    var docsl = mRequest.Where(x => x.IsNew && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
-
-                    if (docsl.Count > 0)
-                    {
-
-                        Selected.IsDocLinked = true;
-                        Selected1.IsDocLinked = true;
-                        TaskManager.RunAndForget(DocumentStorageAsync);
-                    }
-
-
-                };
-                var TstNotes = false;
-                //if (Math.Abs(IntAmnt) == Math.Abs(Selected.ActualAmount)) { TstEqual = true; }
-
-                var TstAmnt = false;
-                if ((TransactionNotes.EditedText != null) && (Selected.Notes == ""|| TransactionNotes.EditedText != Selected.Notes))
-                {
-                    TstNotes = true;
+                    var matches = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                    var category = matches.FirstOrDefault();
+                    Selected.KFinTranID = Guid.NewGuid().ToString().ToUpper();
+                    Selected.Posted_Date = DateTime.Parse(TransactionDate);
+                    Selected.Description = TransactionDescription.EditedText;
+                    Selected.TransAmount = IntAmnt;
+                    Selected.ActualAmount = IntAmnt;
+                    Selected.ShortName = Category.EditedName ?? Category.OriginalName;
+                    Selected.KCategoryID = Category.EditedKid ?? Category.OriginalKid;
+                    Selected.KFinActualID = Selected1.KFinActualID;
+                    Selected.DateEffective = DateTime.Now;
+                    Selected.KPartyID = Party.EditedKid ?? Party.OriginalKid;
+                    Selected.KPartyName = Party.EditedName ?? Party.OriginalName;
+                    Selected.IsTemplate = IsTemplate;
                     Selected.Notes = TransactionNotes.EditedText;
+                    Selected.KAccountID = Account.EditedKid ?? Account.OriginalKid;
+                    Selected.KAccountName = Account.EditedName ?? Account.OriginalName;
+                    Selected.Units = IntUnits;
+                    ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).TransactionDetail[0].KFinTranID = Selected.KFinTranID;
+
+                    category.KFinTranID = Selected.KFinTranID;
+                    category.Posted_Date = Selected.Posted_Date;
+                    category.Description = Selected.Description;
+                    category.TransAmount = Selected.TransAmount;
+                    category.ActualAmount = Selected.ActualAmount;
+                    category.ShortName = Selected.ShortName;
+                    category.KCategoryID = Selected.KCategoryID;
+                    category.KFinActualID = Selected.KFinActualID;
+                    category.DateEffective = Selected.DateEffective;
+                    category.KPartyID = Selected.KPartyID;
+                    category.KPartyName = Selected.KPartyName;
+                    category.IsTemplate = Selected.IsTemplate;
+                    category.Notes = Selected.Notes;
+                    category.KAccountID = Selected.KAccountID;
+                    category.KAccountName = Selected.KAccountName;
+                    category.Units = Selected.Units;
+
+
+                    var u = new TransactionResultApiModel
+                    {
+                        Posted_Date = DateTime.Parse(TransactionDate),
+                        Month = Selected.Month,
+                        Description = TransactionDescription.EditedText,
+                        TransAmount = IntAmnt,
+                        ActualAmount = IntAmnt,
+                        ShortName = Category.EditedName ?? Category.OriginalName,
+                        KCategoryID = Category.EditedKid ?? Category.OriginalKid,
+                        KFinActualID = Selected.KFinActualID,
+                        KFinTranID = Selected.KFinTranID,
+                        ChangeType = "a",
+                        DateEffective = DateTime.Now,
+                        KHierarchyID = Selected.KHierarchyID,
+                        KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                        KPartyID = Party.EditedKid ?? Party.OriginalKid,
+                        KPartyName = Party.EditedName ?? Party.OriginalName,
+                        IsTemplate = IsTemplate,
+                        Notes = TransactionNotes.EditedText,
+                        KAccountID = Account.EditedKid ?? Account.OriginalKid,
+                        KAccountName = Selected.KAccountName,
+                        Units = IntUnits,
+                    };
+                    tmp2.Add(u);
+                    if (docs.Count > 0)
+                    {
+                        mRequest = new DocDataResultListApiModel();
+
+                        foreach (var item in docs)
+                        {
+
+                            var mRqst = new DocDataResultApiModel
+                            {
+                                DocImage = item.DocImage,
+                                DocName = item.DocName,
+                                DocURL = item.DocURL,
+                                KDocID = item.KDocID,
+                                DocDescription = item.DocDescription,
+                                FFintranID = Selected.KFinTranID,
+                                IsNew = item.IsNew,
+                                IsRemove = item.IsRemove,
+                            };
+                            mRequest.Add(mRqst);
+                        }
+                        var docsl = mRequest.Where(x => x.IsNew && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
+
+                        if (docsl.Count > 0)
+                        {
+
+                            Selected.IsDocLinked = true;
+                            Selected1.IsDocLinked = true;
+                            TaskManager.RunAndForget(DocumentStorageAsync);
+                        }
+
+
+                    };
+
                 }
-
-                if (Math.Sign(IntAmnt) != Math.Sign(Selected.TransAmount) && IntAmnt != 0)
+                else
                 {
-                    MessageBox.Show($"The allocation amount {Selected.ActualAmount} must be of the same sign ", $"as the transaction total {Selected.TransAmount}");
-                    return; }
+                    if (docs.Count > 0)
+                    {
+                        mRequest = new DocDataResultListApiModel();
 
-                if (Math.Abs(IntAmnt) > Math.Abs(Selected.ActualAmount)&& Selected.KFinTranID != "00000000-0000-0000-0000-000000000001")
+                        foreach (var item in docs)
+                        {
 
-                { TstAmnt = true; }
-                //{ IntAmnt = Selected.ActualAmount; }
+                            var mRqst = new DocDataResultApiModel
+                            {
+                                DocImage = item.DocImage,
+                                DocName = item.DocName,
+                                DocURL = item.DocURL,
+                                KDocID = item.KDocID,
+                                DocDescription = item.DocDescription,
+                                FFintranID = item.FFintranID,
+                                IsNew = item.IsNew,
+                                IsRemove = item.IsRemove,
+                            };
+                            mRequest.Add(mRqst);
+                        }
+                        var docsl = mRequest.Where(x => x.IsNew && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
+
+                        if (docsl.Count > 0)
+                        {
+
+                            Selected.IsDocLinked = true;
+                            Selected1.IsDocLinked = true;
+                            TaskManager.RunAndForget(DocumentStorageAsync);
+                        }
+
+
+                    };
+                    var TstNotes = false;
+                    //if (Math.Abs(IntAmnt) == Math.Abs(Selected.ActualAmount)) { TstEqual = true; }
+
+                    var TstAmnt = false;
+                    if ((TransactionNotes.EditedText != null) && (Selected.Notes == "" || TransactionNotes.EditedText != Selected.Notes))
+                    {
+                        TstNotes = true;
+                        Selected.Notes = TransactionNotes.EditedText;
+                    }
+
+                    if (Math.Sign(IntAmnt) != Math.Sign(Selected.TransAmount) && IntAmnt != 0)
+                    {
+                        MessageBox.Show($"The allocation amount {Selected.ActualAmount} must be of the same sign ", $"as the transaction total {Selected.TransAmount}");
+                        return true;
+                    }
+
+                    if (Math.Abs(IntAmnt) > Math.Abs(Selected.ActualAmount) && Selected.KFinTranID != "00000000-0000-0000-0000-000000000001")
+
+                    { TstAmnt = true; }
+                    //{ IntAmnt = Selected.ActualAmount; }
 
 
 
 
 
 
-                if ((Category.EditedKid ?? Category.OriginalKid) != Category.OriginalKid || IntAmnt != OrgActual || (Party.EditedKid ?? Party.OriginalKid)!= Party.OriginalKid || Account.EditedKid != Account.OriginalKid || TstNotes || Selected.Description != TransactionDescription.EditedText||Selected.Posted_Date.Date != DateTime.Parse(TransactionDate).Date||IntUnits !=Selected.Units)
+                    if ((Category.EditedKid ?? Category.OriginalKid) != Category.OriginalKid || IntAmnt != OrgActual || (Party.EditedKid ?? Party.OriginalKid) != Party.OriginalKid || Account.EditedKid != Account.OriginalKid || TstNotes || Selected.Description != TransactionDescription.EditedText || Selected.Posted_Date.Date != DateTime.Parse(TransactionDate).Date || IntUnits != Selected.Units)
                     //Don't do anything if cost category hasn't changed, the allocated amount has not changed,  the linked party has not changed,Notes have not changed, linked account has not changed , or Date of transaction has changed
-                {
+                    {
 
 
                         //rec.IsTemplate = IsTemplate;
-                    //If full amount is not allocated to cost classificaton, create an additional (null) allocation for the remainder
-                    //if null allocation already exists, add this new portion
+                        //If full amount is not allocated to cost classificaton, create an additional (null) allocation for the remainder
+                        //if null allocation already exists, add this new portion
 
 
-                    //if classificaton being used already exists for this transaction,increase previous allocation
-                    var exists = tmp.Where(x => x.KCategoryID == (Category.EditedKid?? Category.OriginalKid) && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                        //if classificaton being used already exists for this transaction,increase previous allocation
+                        var exists = tmp.Where(x => x.KCategoryID == (Category.EditedKid ?? Category.OriginalKid) && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
                         var exxist = exists.FirstOrDefault();
                         var exists1 = tmp.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
                         var exxist1 = exists1.FirstOrDefault();
@@ -1099,769 +1113,38 @@ namespace Fasetto.Word
 
 
 
-                    if ((Category.EditedKid??Category.OriginalKid)  != Category.OriginalKid || Category.OriginalKid == "" || IntAmnt != OrgActual)
-                    //unprocessed amount cannot be adjusted without adding a classification first
-                    //ToDo: message box in this regard
-                    {
-
-
-                        if ((Category.EditedKid ?? Category.OriginalKid) == Category.OriginalKid && IntAmnt != OrgActual)
+                        if ((Category.EditedKid ?? Category.OriginalKid) != Category.OriginalKid || Category.OriginalKid == "" || IntAmnt != OrgActual)
+                        //unprocessed amount cannot be adjusted without adding a classification first
+                        //ToDo: message box in this regard
                         {
-                            //Update the classification being modified
-                            Selected.ActualAmount = IntAmnt;
-
-                            if (IntAmnt == 0)
-                            //whole allocation removed from previous category
-                            {
-                                matches = tmp.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                category = matches.FirstOrDefault();
-                                if (category == null)
-                                {
-                                    //no existing null allocation for transaction
-                                    matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category1 = matches1.FirstOrDefault();
-                                    matches = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category = matches.FirstOrDefault();
-                                    {
-                                        category1.ShortName = "";
-                                        category1.KCategoryID = "";
-                                        category.ShortName = "";
-                                        //category1.ActualAmount = 12000;
-                                        category.KCategoryID = "";
-                                        Selected1.ShortName = "";
-                                        Selected1.KCategoryID = "";
-                                    }
-                                    var u = new TransactionResultApiModel
-                                    {
-                                        Posted_Date = DateTime.Parse(TransactionDate),
-                                        Month = Selected1.Month,
-                                        Description = TransactionDescription.EditedText??Selected.Description,
-                                        TransAmount = Selected1.TransAmount,
-                                        ActualAmount = Selected1.ActualAmount,
-                                        ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                        KCategoryID = Category.EditedKid??Category.OriginalKid,
-                                        KFinActualID = Selected1.KFinActualID,
-                                        KFinTranID = Selected1.KFinTranID,
-                                        ChangeType = "c",
-                                        DateEffective = DateTime.Now,
-                                        KHierarchyID = Selected1.KHierarchyID,
-                                        KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                                        KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                        KPartyName = Party.EditedName??Party.OriginalName,
-                                        IsTemplate = IsTemplate,
-                                        FCatSrchID = Selected1.FCatSrchID,
-                                        Notes = TransactionNotes.EditedText,
-                                        KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                        KAccountName = (Account.EditedKid == null) ?Account.OriginalName:(Account.EditedName ?? Account.OriginalName),
-                                        Units = IntUnits,
-
-                                    };
-                                    tmp2.Add(u);
-
-                                }
-                                else
-                                //update existing null allocation and remove record that has been reduced to zero
-                                {
-                                    matches = tmp.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category = matches.FirstOrDefault();
-                                    matches1 = tmp1.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category1 = matches1.FirstOrDefault();
-                                    {
-
-                                        category1.ActualAmount = category1.ActualAmount + (OrgActual - IntAmnt);
-                                        Selected1.ActualAmount = category1.ActualAmount;
-                                        category.ActualAmount = category.ActualAmount + (OrgActual - IntAmnt);
-                                    }
-                                    var u = new TransactionResultApiModel
-                                    {
-                                        Posted_Date = DateTime.Parse(TransactionDate),
-                                        Month = Selected1.Month,
-                                        Description = TransactionDescription.EditedText ?? Selected.Description,
-                                        TransAmount = Selected1.TransAmount,
-                                        ActualAmount = Selected1.ActualAmount,
-                                        ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                        KCategoryID = Category.EditedKid ?? Category.OriginalKid,
-                                        KFinActualID = Selected1.KFinActualID,
-                                        KFinTranID = Selected1.KFinTranID,
-                                        ChangeType = "c",
-                                        DateEffective = DateTime.Now,
-                                        KHierarchyID = Selected1.KHierarchyID,
-                                        KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                                        KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                        KPartyName = Party.EditedName ?? Party.OriginalName,
-                                        IsTemplate = IsTemplate,
-                                        FCatSrchID = Selected1.FCatSrchID,
-                                        Notes = TransactionNotes.EditedText,
-                                        KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                        KAccountName = (Account.EditedKid == null) ?Account.OriginalName:(Account.EditedName ?? Account.OriginalName),
-                                        Units = IntUnits,
-
-                                    };
-                                    tmp2.Add(u);
-
-                                    matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category1 = matches1.FirstOrDefault();
-                                    matches = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category = matches.FirstOrDefault();
-                                    u = new TransactionResultApiModel
-                                    {
-                                        Posted_Date = Selected1.Posted_Date,
-                                        Month = Selected1.Month,
-                                        Description = Selected1.Description,
-                                        TransAmount = Selected1.TransAmount,
-                                        ActualAmount = Selected1.ActualAmount,
-                                        ShortName = Selected1.ShortName,
-                                        KCategoryID = Selected1.KCategoryID,
-                                        KFinActualID = Category.OriginalKid,
-                                        KFinTranID = Selected1.KFinTranID,
-                                        ChangeType = "d",
-                                        DateEffective = DateTime.Now,
-                                        KHierarchyID = Selected1.KHierarchyID,
-                                        KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                                        KPartyID = Selected1.KPartyID,
-                                        KPartyName = Selected1.KPartyName,
-                                        IsTemplate = IsTemplate,
-                                        Notes = Selected1.Notes,
-                                        FCatSrchID = Selected1.FCatSrchID,
-                                        KAccountID = Selected1.KAccountID,
-                                        KAccountName = Selected1.KAccountName,
-                                        Units = IntUnits,
-                                    };
-                                    tmp2.Add(u);
-
-                                    tmp1.Remove(category1);
-                                    tmp.Remove(category);
 
 
-
-                                }
-
-                            }
-                            else
-                            {
-                                //Add record for change on API model
-
-                                if (!TstAmnt)
-                                { 
-                                //update transaction view modelSelected.
-
-                                matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                category1 = matches1.FirstOrDefault();
-                                matches = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                category = matches.FirstOrDefault();
-                                {
-                                    category1.ActualAmount = IntAmnt;
-                                    category1.ShortName = Selected.ShortName;
-                                    category1.KCategoryID = Selected.KCategoryID;
-
-
-                                    category.ActualAmount = IntAmnt;
-                                    category.ShortName = Selected.ShortName;
-                                    category.KCategoryID = Selected.KCategoryID;
-                                    Selected1.ActualAmount = IntAmnt;
-                                    Selected1.ShortName = Selected.ShortName;
-                                    Selected1.KCategoryID = Selected.KCategoryID;
-
-                                }
-
-                                var u = new TransactionResultApiModel
-                                {
-                                    Posted_Date = DateTime.Parse(TransactionDate),
-                                    Month = Selected1.Month,
-                                    Description = TransactionDescription.EditedText ?? Selected.Description,
-                                    TransAmount = Selected1.TransAmount,
-                                    ActualAmount = Selected1.ActualAmount,
-                                    ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                    KCategoryID = Category.EditedKid ?? Category.OriginalKid,
-                                    KFinActualID = Selected1.KFinActualID,
-                                    KFinTranID = Selected1.KFinTranID,
-                                    ChangeType = "c",
-                                    DateEffective = DateTime.Now,
-                                    KHierarchyID = Selected1.KHierarchyID,
-                                    KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                                    KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                    KPartyName = Party.EditedName ?? Party.OriginalName,
-                                    IsTemplate = IsTemplate,
-                                    FCatSrchID = Selected1.FCatSrchID,
-                                    Notes = TransactionNotes.EditedText,
-                                    KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                    KAccountName = (Account.EditedKid == null) ?Account.OriginalName:(Account.EditedName ?? Account.OriginalName),
-                                    Units = IntUnits,
-
-                                };
-                                tmp2.Add(u);
-                                matches = tmp.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                category = matches.FirstOrDefault();
-                                if (category == null)
-                                {
-                                    //no existing null allocation for transaction
-                                    matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category1 = matches1.FirstOrDefault();
-
-                                    // deal with unassigne amount
-                                    Selected1.ActualAmount = (OrgActual - IntAmnt);
-                                    Selected1.ShortName = "";
-                                    Selected1.KCategoryID = "";
-                                    Selected1.KFinActualID = Guid.NewGuid().ToString().ToUpper();
-                                    Selected1.Description = Selected1.Description;
-                                    Selected1.KFinTranID = Selected1.KFinTranID;
-                                    Selected1.KChangeID = Selected1.KChangeID;
-                                    Selected1.Posted_Date = Selected1.Posted_Date;
-                                    Selected1.Month = Selected1.Month;
-                                    Selected1.TransAmount = Selected1.TransAmount;
-
-                                    //tmp.Add(Selected1);
-                                    tmp.Add(Selected1);
-                                    tmp1.Add(Selected1);
-
-
-                                    u = new TransactionResultApiModel
-                                    {
-                                        Posted_Date = DateTime.Parse(TransactionDate),
-                                        Month = Selected1.Month,
-                                        Description = TransactionDescription.EditedText ?? Selected.Description,
-                                        TransAmount = Selected1.TransAmount,
-                                        ActualAmount = Selected1.ActualAmount,
-                                        ShortName = "",
-                                        KCategoryID = "",
-                                        KFinTranID = Selected1.KFinTranID,
-                                        KFinActualID = Selected1.KFinActualID,
-                                        ChangeType = "a",
-                                        DateEffective = DateTime.Now,
-                                        KHierarchyID = Selected1.KHierarchyID,
-                                        KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                                        KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                        KPartyName = Party.EditedName ?? Party.OriginalName,
-                                        IsTemplate = IsTemplate,
-                                        FCatSrchID = Selected1.FCatSrchID,
-                                        Notes = TransactionNotes.EditedText,
-                                        KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                        KAccountName = (Account.EditedKid == null) ?Account.OriginalName:(Account.EditedName ?? Account.OriginalName),
-                                        Units = IntUnits,
-                                    };
-                                    tmp2.Add(u);
-
-                                }
-                                else
-                                //update existing null allocation and remove record that has been reduced to zero
-                                {
-                                    matches = tmp.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category = matches.FirstOrDefault();
-                                    matches1 = tmp1.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category1 = matches1.FirstOrDefault();
-                                    {
-
-                                        category1.ActualAmount = category1.ActualAmount + (OrgActual - IntAmnt);
-                                        Selected1.ActualAmount = category1.ActualAmount;
-                                        category.ActualAmount = category1.ActualAmount;
-                                    }
-                                    u = new TransactionResultApiModel
-                                    {
-                                        Posted_Date = category.Posted_Date,
-                                        Month = Selected1.Month,
-                                        Description = category.Description,
-                                        TransAmount =category.TransAmount,
-                                        ActualAmount = Selected1.ActualAmount,
-                                        ShortName = category.ShortName,
-                                        KCategoryID = category.KCategoryID,
-                                        KFinActualID = category.KFinActualID,
-                                        KFinTranID = category.KFinTranID,
-                                        ChangeType = "c",
-                                        DateEffective = DateTime.Now,
-                                        KHierarchyID = category.KHierarchyID,
-                                        KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                                        KPartyID = category.KPartyID,
-                                        IsTemplate = IsTemplate,
-                                        FCatSrchID = category.FCatSrchID,
-                                        Notes = category.Notes,
-                                        KAccountID = category.KAccountID,
-                                        KAccountName = category.KAccountName,
-                                        Units = IntUnits,
-                                    };
-                                    tmp2.Add(u);
-
-
-
-                                }
-                            }
-                                else
-                                {
-                                    matches = tmp.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category = matches.FirstOrDefault();
-                                    matches1 = tmp1.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category1 = matches1.FirstOrDefault();
-                                    if (category != null)
-                                    {
-                                        if ((Math.Abs(IntAmnt) > Math.Abs(Selected.ActualAmount + category.ActualAmount)))
-                                        { IntAmnt = (Selected.ActualAmount + category.ActualAmount) - IntAmnt; }
-
-
-                                        //update the unassigned allocation first..
-
-                                        category.ActualAmount = category.ActualAmount + (OrgActual - IntAmnt);
-                                        Selected.ActualAmount = category.ActualAmount;
-                                        category1.ActualAmount = category.ActualAmount;
-
-                                        if (category1.ActualAmount == 0)
-                                        //if balance is zero, destroy the null allocation
-                                        {
-
-                                            var u = new TransactionResultApiModel
-                                            {
-                                                Posted_Date = Selected1.Posted_Date,
-                                                Month = Selected1.Month,
-                                                Description = Selected1.Description,
-                                                TransAmount = Selected1.TransAmount,
-                                                ActualAmount = Selected1.ActualAmount,
-                                                ShortName = Selected1.ShortName,
-                                                KCategoryID = Selected1.KCategoryID,
-                                                KFinActualID = category.KFinActualID,
-                                                KFinTranID = category.KFinTranID,
-                                                ChangeType = "d",
-                                                DateEffective = DateTime.Now,
-                                                KHierarchyID = Selected1.KHierarchyID,
-                                                KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                                                KPartyID = Selected1.KPartyID,
-                                                KPartyName = Selected1.KPartyName,
-                                                IsTemplate = IsTemplate,
-                                                Notes = Selected1.Notes,
-                                                FCatSrchID = Selected1.FCatSrchID,
-                                                KAccountID = Selected1.KAccountID,
-                                                KAccountName = Selected1.KAccountName,
-                                                Units = IntUnits,
-                                            };
-                                            tmp2.Add(u);
-
-                                            tmp1.Remove(category1);
-                                            tmp.Remove(category);
-                                        }
-
-                                        else
-                                        {
-
-
-                                            var u = new TransactionResultApiModel
-                                            {
-                                                Posted_Date = category.Posted_Date,
-                                                Month = category.Month,
-                                                Description = category.Description,
-                                                TransAmount = category.TransAmount,
-                                                //calculate the amount to come from the unassigned portion
-                                                ActualAmount = category.ActualAmount,
-                                                ShortName = category.ShortName,
-                                                KCategoryID = category.KCategoryID,
-                                                KFinActualID = category.KFinActualID,
-                                                KFinTranID = category.KFinTranID,
-                                                ChangeType = "c",
-                                                DateEffective = DateTime.Now,
-                                                KHierarchyID = category.KHierarchyID,
-                                                KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                                                KPartyID = category.KPartyID,
-                                                IsTemplate = IsTemplate,
-                                                FCatSrchID = category.FCatSrchID,
-                                                Notes = category.Notes,
-                                                KAccountID = category.KAccountID,
-                                                KAccountName = category.KAccountName,
-                                                Units = IntUnits,
-                                            };
-                                            tmp2.Add(u);
-////////////////////////////////
-                                        }
-                                        matches = tmp.Where(x => x.KCategoryID == Selected.KCategoryID && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                        category = matches.FirstOrDefault();
-                                        matches1 = tmp1.Where(x => x.KCategoryID == Selected.KCategoryID && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                        category1 = matches1.FirstOrDefault();
-                                        if (category != null)
-                                        {
-                                            var u = new TransactionResultApiModel
-                                            {
-                                                Posted_Date = category.Posted_Date,
-                                                Month = category.Month,
-                                                Description = category.Description,
-                                                TransAmount = category.TransAmount,
-                                                ActualAmount = IntAmnt,
-                                                ShortName = category.ShortName,
-                                                KCategoryID = category.KCategoryID,
-                                                KFinActualID = category.KFinActualID,
-                                                KFinTranID = category.KFinTranID,
-                                                ChangeType = "c",
-                                                DateEffective = DateTime.Now,
-                                                KHierarchyID = category.KHierarchyID,
-                                                KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                                                KPartyID = category.KPartyID,
-                                                IsTemplate = IsTemplate,
-                                                FCatSrchID = category.FCatSrchID,
-                                                Notes = category.Notes,
-                                                KAccountID = category.KAccountID,
-                                                KAccountName = category.KAccountName,
-                                                Units = IntUnits,
-                                            };
-                                            tmp2.Add(u);
-                                            category.ActualAmount = IntAmnt;
-                                            category1.ActualAmount = IntAmnt;
-                                            Selected.ActualAmount = IntAmnt;
-                                        }
-
-                                    }
-
-                                }
-                                }
-
-                        }
-                        else
-                        //category has not changed - and this category may already be used for the transaction
-                        //if total amount has been allocated, no new record required, but could require a record deletion if allocation has previously been made to this category
-                        //if portion has been allocated, and the same category is not already linked to the transaction
-                        {
-                            if (IntAmnt == OrgActual)
+                            if ((Category.EditedKid ?? Category.OriginalKid) == Category.OriginalKid && IntAmnt != OrgActual)
                             {
                                 //Update the classification being modified
-                                //Selected.ActualAmount = IntAmnt;
-                                //Selected.ShortName = Category.EditedName;
-                                //Selected.KCategoryID = Category.EditedKid;
+                                Selected.ActualAmount = IntAmnt;
 
-
-
-                                //Add record for change on API model
-                                matches = tmp.Where(x => x.KCategoryID == (Category.EditedKid??Category.OriginalKid) && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-
-                                category = matches.FirstOrDefault();
-                                if (category != null)
-                                //check whether this allocation category is already in use for the transaction
+                                if (IntAmnt == 0)
+                                //whole allocation removed from previous category
                                 {
-
-                                    //update transaction view model
-                                    matches = tmp.Where(x => x.KCategoryID == (Category.EditedKid ?? Category.OriginalKid) && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                    matches = tmp.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
                                     category = matches.FirstOrDefault();
-                                    matches1 = tmp1.Where(x => x.KCategoryID == (Category.EditedKid ?? Category.OriginalKid) && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category1 = matches1.FirstOrDefault();
-                                    //var matches3= tmp4.Where(x => x.KCategoryID == Category.EditedKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    //var category0 = matches1.FirstOrDefault();
-
+                                    if (category == null)
                                     {
-                                        category.ActualAmount += IntAmnt;
-                                        category1.ActualAmount += IntAmnt;
-                                        category.ActualAmount = category1.ActualAmount;
-                                        category1.Units += IntUnits;
-                                        category.Units += IntUnits;
-                                        Selected1.ActualAmount = category1.ActualAmount;
-                                        Selected.KPartyName = Party.EditedName ?? Party.OriginalName;
-                                        Selected1.KPartyName = Selected.KPartyName;
-                                        category.KPartyName = Selected.KPartyName;
-                                        category1.KPartyName = Selected.KPartyName;
-                                        //category.KPartyId = Category.EditedKid ?? Category.OriginalKid;
-                                        //category1.KPartyId= Category.EditedKid ?? Category.OriginalKid;
-                                    }
-
-                                    var u = new TransactionResultApiModel
-                                    {
-                                        Posted_Date = DateTime.Parse(TransactionDate),
-                                        Month = Selected1.Month,
-                                        Description = TransactionDescription.EditedText ?? Selected.Description,
-                                        TransAmount = Selected1.TransAmount,
-                                        ActualAmount = category1.ActualAmount,
-                                        ShortName = (Category.EditedKid == null) ? category1.ShortName : (Category.EditedName ?? Category.OriginalName),
-                                        KCategoryID = Category.EditedKid ?? Category.OriginalKid,
-                                        KFinActualID = Selected1.KFinActualID,
-                                        KFinTranID = Selected1.KFinTranID,
-                                        ChangeType = "c",
-                                        DateEffective = DateTime.Now,
-                                        KHierarchyID = Selected1.KHierarchyID,
-                                        KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                                        KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                        KPartyName = Party.EditedName ?? Party.OriginalName,
-                                        IsTemplate = IsTemplate,
-                                        FCatSrchID = Selected1.FCatSrchID,
-                                        Notes = TransactionNotes.EditedText,
-                                        KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                        KAccountName = (Account.EditedKid == null) ?Account.OriginalName:(Account.EditedName ?? Account.OriginalName),
-                                        Units = IntUnits,
-                                    };
-                                    tmp2.Add(u);
-
-                                    //then delete the original assignment
-                                    matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category1 = matches1.FirstOrDefault();
-                                    matches1 = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category = matches1.FirstOrDefault();
-                                    u = new TransactionResultApiModel
-                                    {
-                                        Posted_Date = Selected1.Posted_Date,
-                                        Month = Selected1.Month,
-                                        Description = Selected1.Description,
-                                        TransAmount = Selected1.TransAmount,
-                                        ActualAmount = Selected1.ActualAmount,
-                                        ShortName = Selected1.ShortName,
-                                        KCategoryID = Selected1.KCategoryID,
-                                        KFinActualID = category1.KFinActualID,
-                                        KFinTranID = Selected1.KFinTranID,
-                                        ChangeType = "d",
-                                        DateEffective = DateTime.Now,
-                                        KHierarchyID = Selected1.KHierarchyID,
-                                        KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                                        KPartyID = Selected1.KPartyID,
-                                        KPartyName = Selected1.KPartyName,
-                                        IsTemplate = IsTemplate,
-                                        Notes = Selected1.Notes,
-                                        FCatSrchID = Selected1.FCatSrchID,
-                                        KAccountID = Selected1.KAccountID,
-                                        Units = IntUnits,
-                                    };
-                                    tmp2.Add(u);
-
-                                    tmp1.Remove(category1);
-                                    tmp.Remove(category);
-                                }
-                                else
-                                // first time use of the allocation category for the transaction
-                                {
-                                    //update transaction view model
-                                    matches = tmp.Where(x => x.KCategoryID  == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category = matches.FirstOrDefault();
-                                    matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category1 = matches1.FirstOrDefault();
-
-
-                                    {
-                                        category1.ActualAmount = IntAmnt;
-                                        category1.ShortName = Category.EditedName;
-                                        category1.KCategoryID = Category.EditedKid;
-                                        category1.KPartyID = Party.EditedKid;
-                                        category1.KPartyName = Party.EditedName;
-                                        category.ActualAmount = IntAmnt;
-                                        category.ShortName = Category.EditedName;
-                                        category.KCategoryID = Category.EditedKid;
-                                        category.KPartyID = Party.EditedKid;
-                                        category.KPartyName = Party.EditedName;
-                                        category.Units = IntUnits;
-                                        category1.Units = IntUnits;
-                                        Selected1.ActualAmount = IntAmnt;
-                                        Selected1.ShortName = Category.EditedName;
-                                        Selected1.KCategoryID = Category.EditedKid;
-                                        Selected1.KPartyName = Party.EditedName;
-                                        Selected1.KPartyID = Party.EditedKid;
-                                        //Selected1.KAccountID = Account.EditedID;
-                                    }
-
-                                    //var PartyID = Selected1.KPartyID;
-
-                                    var u = new TransactionResultApiModel
-                                    {
-                                        Posted_Date = DateTime.Parse(TransactionDate),
-                                        Month = Selected1.Month,
-                                        Description = TransactionDescription.EditedText ?? Selected.Description,
-                                        TransAmount = Selected1.TransAmount,
-                                        ActualAmount = Selected1.ActualAmount,
-                                        ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                        KCategoryID = Category.EditedKid ?? Category.OriginalKid,
-                                        KFinActualID = Selected1.KFinActualID,
-                                        KFinTranID = Selected1.KFinTranID,
-                                        ChangeType = "c",
-                                        DateEffective = DateTime.Now,
-                                        KHierarchyID = Selected1.KHierarchyID,
-                                        KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                                        KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                        KPartyName = Party.EditedName ?? Party.OriginalName,
-                                        IsTemplate = IsTemplate,
-                                        FCatSrchID = Selected1.FCatSrchID,
-                                        Notes = TransactionNotes.EditedText,
-                                        KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                        KAccountName = (Account.EditedKid == null) ?Account.OriginalName:(Account.EditedName ?? Account.OriginalName),
-                                        Units = IntUnits,
-                                    };
-                                    tmp2.Add(u);
-                                }
-                            }
-                            else
-                            //allocation less than the original amount remaining
-                            {
-                                if (Category.OriginalKid == "")
-                                {
-                                    //if transaction had a 'null' assignment to begin with,reduce the allocation amount by the new amount now assigned
-
-                                    matches = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category = matches.FirstOrDefault();
-                                    matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category1 = matches1.FirstOrDefault();
-                                    {
-
-
-                                        category1.ActualAmount = OrgActual - IntAmnt;
-                                        Selected1.ActualAmount = category1.ActualAmount;
-                                        category.Units = IntUnits;
-                                        category1.Units = IntUnits;
-                                        Selected1.Units = IntUnits;
-
-                                        //category1.KCategoryID = Category.OriginalKid;
-                                        //category1.ShortName = Category.OriginalName;
-                                        category.ActualAmount = category1.ActualAmount;
-                                        //category.KCategoryID = Category.OriginalKid;
-                                        //category.ShortName = Category.OriginalName;
-                                        //category.KPartyID = Party.OriginalKid;
-                                        //category.KPartyName = Party.EditedName;
-
-
-                                    }
-
-
-                                    var u = new TransactionResultApiModel
-                                    {
-                                        Posted_Date = DateTime.Parse(TransactionDate),
-                                        Month = Selected1.Month,
-                                        Description = TransactionDescription.EditedText ?? Selected.Description,
-                                        TransAmount = Selected1.TransAmount,
-                                        ActualAmount = Selected1.ActualAmount,
-                                        ShortName =  Category.OriginalName,
-                                        KCategoryID =  Category.OriginalKid,
-                                        KFinActualID = Selected1.KFinActualID,
-                                        KFinTranID = Selected1.KFinTranID,
-                                        ChangeType = "c",
-                                        DateEffective = DateTime.Now,
-                                        KHierarchyID = Selected1.KHierarchyID,
-                                        KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                                        KPartyID =  Party.OriginalKid,
-                                        IsTemplate = IsTemplate,
-                                        FCatSrchID = Selected1.FCatSrchID,
-                                        Notes = TransactionNotes.EditedText,
-                                        KAccountID = Account.OriginalKid,
-                                        KAccountName = ( Account.OriginalName),
-                                        Units = 0,
-                                    };
-                                    tmp2.Add(u);
-                                    // now create a new assignment for the new cost category
-
-
-
-                                    if (IntAmnt != 0)
-                                    {
-                                        matches = tmp.Where(x => x.KCategoryID== Category.EditedKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                        category = matches.FirstOrDefault();
-                                        matches1 = tmp1.Where(x => x.KCategoryID == Category.EditedKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        //no existing null allocation for transaction
+                                        matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
                                         category1 = matches1.FirstOrDefault();
-
-                                        if (category == null)
+                                        matches = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category = matches.FirstOrDefault();
                                         {
-                                            Selected1.ActualAmount = IntAmnt;
-                                            Selected1.ShortName = Category.EditedName;
-                                            Selected1.KCategoryID = Category.EditedKid;
-                                            Selected1.KFinActualID = Guid.NewGuid().ToString().ToUpper();
-                                            Selected1.Description = Selected1.Description;
-                                            Selected1.KFinTranID = Selected1.KFinTranID;
-                                            Selected1.KChangeID = Selected1.KChangeID;
-                                            Selected1.Posted_Date = Selected1.Posted_Date;
-                                            Selected1.Month = Selected1.Month;
-                                            Selected1.TransAmount = Selected1.TransAmount;
-                                            Selected1.FCatSrchID = Selected1.FCatSrchID;
-
-                                            //tmp.Add(Selected1);
-                                            //control update to observable collection
-                                            tmp.Add(Selected1);
-                                            tmp1.Add(Selected1);
-
-                                            u = new TransactionResultApiModel
-                                            {
-                                                Posted_Date = DateTime.Parse(TransactionDate),
-                                                Month = Selected1.Month,
-                                                Description = TransactionDescription.EditedText ?? Selected.Description,
-                                                TransAmount = Selected1.TransAmount,
-                                                ActualAmount = Selected1.ActualAmount,
-                                                ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                                KCategoryID = Category.EditedKid ?? Category.OriginalKid,
-                                                KFinActualID = Selected1.KFinActualID,
-                                                KFinTranID = Selected1.KFinTranID,
-                                                ChangeType = "a",
-                                                DateEffective = DateTime.Now,
-                                                KHierarchyID = Selected1.KHierarchyID,
-                                                KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                                                KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                                KPartyName = Party.EditedName ?? Party.OriginalName,
-                                                IsTemplate = IsTemplate,
-                                                FCatSrchID = Selected1.FCatSrchID,
-                                                Notes = TransactionNotes.EditedText,
-                                                KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                                KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                Units = IntUnits,
-                                            };
-                                            tmp2.Add(u);
+                                            category1.ShortName = "";
+                                            category1.KCategoryID = "";
+                                            category.ShortName = "";
+                                            //category1.ActualAmount = 12000;
+                                            category.KCategoryID = "";
+                                            Selected1.ShortName = "";
+                                            Selected1.KCategoryID = "";
                                         }
-                                        else
-                                        {
-
-                                            Selected1.ActualAmount = category.ActualAmount + IntAmnt;
-                                            Selected1.ShortName = category.ShortName;
-                                            Selected1.KCategoryID = category.KCategoryID;
-                                            Selected1.KFinActualID = category.KFinActualID;
-                                            Selected1.Description = category.Description;
-                                            Selected1.KFinTranID = category.KFinTranID;
-                                            Selected1.KChangeID = category.KChangeID;
-                                            Selected1.Posted_Date = category.Posted_Date;
-                                            Selected1.Month = category.Month;
-                                            Selected1.TransAmount = category.TransAmount;
-                                            Selected1.FCatSrchID = category.FCatSrchID;
-                                            Selected1.Units = category.Units + IntUnits;
-                                            category.ActualAmount = Selected1.ActualAmount;
-                                            category.Units = Selected1.Units;
-
-                                            u = new TransactionResultApiModel
-                                            {
-                                                Posted_Date = DateTime.Parse(TransactionDate),
-                                                Month = Selected1.Month,
-                                                Description = Selected1.Description,
-                                                TransAmount = Selected1.TransAmount,
-                                                ActualAmount = Selected1.ActualAmount,
-                                                ShortName = Selected1.ShortName,
-                                                KCategoryID = Selected1.KCategoryID,
-                                                KFinActualID = Selected1.KFinActualID,
-                                                KFinTranID = Selected1.KFinTranID,
-                                                ChangeType = "c",
-                                                DateEffective = DateTime.Now,
-                                                KHierarchyID = Selected1.KHierarchyID,
-                                                KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                                                KPartyID = Party.OriginalKid,
-                                                IsTemplate = IsTemplate,
-                                                FCatSrchID = Selected1.FCatSrchID,
-                                                Notes = Selected1.Notes,
-                                                KAccountID = Account.OriginalKid,
-                                                KAccountName = (Account.OriginalName),
-                                                Units = Selected1.Units,
-                                            };
-                                            tmp2.Add(u);
-
-
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    //original assignment was to a category other than null, so a partial assignment must result in the balance being assigned to null
-                                    //OR if a null assignment already exists, the unallocated amount must be added...
-
-                                    matches = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category = matches.FirstOrDefault();
-                                    matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category1 = matches1.FirstOrDefault();
-                                    if (IntAmnt == 0)
-                                    //just change the Selected category on the orginal assignment to null (full amount then available for reallocation)
-                                    {
-                                        Selected1.ActualAmount = OrgActual;
-                                        Selected1.ShortName = "";
-                                        Selected1.KCategoryID = "";
-                                        Selected1.KFinActualID = Selected.KFinActualID;
-                                        Selected1.Description = Selected.Description;
-                                        Selected1.KFinTranID = Selected.KFinTranID;
-                                        Selected1.KChangeID = Selected.KChangeID;
-                                        Selected1.Posted_Date = Selected.Posted_Date;
-                                        Selected1.Month = Selected.Month;
-                                        Selected1.TransAmount = Selected.TransAmount;
-                                        Selected1.Units = IntUnits;
-                                        category.ShortName = "";
-                                        category.KCategoryID = "";
-                                        category1.ShortName = "";
-                                        category1.KCategoryID = "";
-                                        category.Units = IntUnits;
-                                        category1.Units = IntUnits;
-                                        //tmp.Add(Selected1);
-                                        //tmp1.Add(Selected1);
                                         var u = new TransactionResultApiModel
                                         {
                                             Posted_Date = DateTime.Parse(TransactionDate),
@@ -1869,8 +1152,8 @@ namespace Fasetto.Word
                                             Description = TransactionDescription.EditedText ?? Selected.Description,
                                             TransAmount = Selected1.TransAmount,
                                             ActualAmount = Selected1.ActualAmount,
-                                            ShortName = "",
-                                            KCategoryID = "",//Category.EditedKid ?? Category.OriginalKid,
+                                            ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
+                                            KCategoryID = Category.EditedKid ?? Category.OriginalKid,
                                             KFinActualID = Selected1.KFinActualID,
                                             KFinTranID = Selected1.KFinTranID,
                                             ChangeType = "c",
@@ -1885,27 +1168,496 @@ namespace Fasetto.Word
                                             KAccountID = Account.EditedKid ?? Account.OriginalKid,
                                             KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
                                             Units = IntUnits,
-                                            //KClientID =((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
+
                                         };
                                         tmp2.Add(u);
 
                                     }
                                     else
+                                    //update existing null allocation and remove record that has been reduced to zero
                                     {
+                                        matches = tmp.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category = matches.FirstOrDefault();
+                                        matches1 = tmp1.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category1 = matches1.FirstOrDefault();
+                                        {
+
+                                            category1.ActualAmount = category1.ActualAmount + (OrgActual - IntAmnt);
+                                            Selected1.ActualAmount = category1.ActualAmount;
+                                            category.ActualAmount = category.ActualAmount + (OrgActual - IntAmnt);
+                                        }
+                                        var u = new TransactionResultApiModel
+                                        {
+                                            Posted_Date = DateTime.Parse(TransactionDate),
+                                            Month = Selected1.Month,
+                                            Description = TransactionDescription.EditedText ?? Selected.Description,
+                                            TransAmount = Selected1.TransAmount,
+                                            ActualAmount = Selected1.ActualAmount,
+                                            ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
+                                            KCategoryID = Category.EditedKid ?? Category.OriginalKid,
+                                            KFinActualID = Selected1.KFinActualID,
+                                            KFinTranID = Selected1.KFinTranID,
+                                            ChangeType = "c",
+                                            DateEffective = DateTime.Now,
+                                            KHierarchyID = Selected1.KHierarchyID,
+                                            KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                                            KPartyID = Party.EditedKid ?? Party.OriginalKid,
+                                            KPartyName = Party.EditedName ?? Party.OriginalName,
+                                            IsTemplate = IsTemplate,
+                                            FCatSrchID = Selected1.FCatSrchID,
+                                            Notes = TransactionNotes.EditedText,
+                                            KAccountID = Account.EditedKid ?? Account.OriginalKid,
+                                            KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                                            Units = IntUnits,
+
+                                        };
+                                        tmp2.Add(u);
+
+                                        matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category1 = matches1.FirstOrDefault();
+                                        matches = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category = matches.FirstOrDefault();
+                                        u = new TransactionResultApiModel
+                                        {
+                                            Posted_Date = Selected1.Posted_Date,
+                                            Month = Selected1.Month,
+                                            Description = Selected1.Description,
+                                            TransAmount = Selected1.TransAmount,
+                                            ActualAmount = Selected1.ActualAmount,
+                                            ShortName = Selected1.ShortName,
+                                            KCategoryID = Selected1.KCategoryID,
+                                            KFinActualID = Category.OriginalKid,
+                                            KFinTranID = Selected1.KFinTranID,
+                                            ChangeType = "d",
+                                            DateEffective = DateTime.Now,
+                                            KHierarchyID = Selected1.KHierarchyID,
+                                            KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                                            KPartyID = Selected1.KPartyID,
+                                            KPartyName = Selected1.KPartyName,
+                                            IsTemplate = IsTemplate,
+                                            Notes = Selected1.Notes,
+                                            FCatSrchID = Selected1.FCatSrchID,
+                                            KAccountID = Selected1.KAccountID,
+                                            KAccountName = Selected1.KAccountName,
+                                            Units = IntUnits,
+                                        };
+                                        tmp2.Add(u);
+
+                                        tmp1.Remove(category1);
+                                        tmp.Remove(category);
+
+
+
+                                    }
+
+                                }
+                                else
+                                {
+                                    //Add record for change on API model
+
+                                    if (!TstAmnt)
+                                    {
+                                        //update transaction view modelSelected.
+
+                                        matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category1 = matches1.FirstOrDefault();
+                                        matches = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category = matches.FirstOrDefault();
                                         {
                                             category1.ActualAmount = IntAmnt;
-                                            category1.ShortName = Category.EditedName;
-                                            category1.KCategoryID = Category.EditedKid;
+                                            category1.ShortName = Selected.ShortName;
+                                            category1.KCategoryID = Selected.KCategoryID;
+
+
                                             category.ActualAmount = IntAmnt;
-                                            category.ShortName = Category.EditedName;
-                                            category.KCategoryID = Category.EditedKid;
+                                            category.ShortName = Selected.ShortName;
+                                            category.KCategoryID = Selected.KCategoryID;
                                             Selected1.ActualAmount = IntAmnt;
-                                            Selected1.ShortName = Category.EditedName;
-                                            Selected1.KCategoryID = Category.EditedKid;
+                                            Selected1.ShortName = Selected.ShortName;
+                                            Selected1.KCategoryID = Selected.KCategoryID;
+
+                                        }
+
+                                        var u = new TransactionResultApiModel
+                                        {
+                                            Posted_Date = DateTime.Parse(TransactionDate),
+                                            Month = Selected1.Month,
+                                            Description = TransactionDescription.EditedText ?? Selected.Description,
+                                            TransAmount = Selected1.TransAmount,
+                                            ActualAmount = Selected1.ActualAmount,
+                                            ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
+                                            KCategoryID = Category.EditedKid ?? Category.OriginalKid,
+                                            KFinActualID = Selected1.KFinActualID,
+                                            KFinTranID = Selected1.KFinTranID,
+                                            ChangeType = "c",
+                                            DateEffective = DateTime.Now,
+                                            KHierarchyID = Selected1.KHierarchyID,
+                                            KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                                            KPartyID = Party.EditedKid ?? Party.OriginalKid,
+                                            KPartyName = Party.EditedName ?? Party.OriginalName,
+                                            IsTemplate = IsTemplate,
+                                            FCatSrchID = Selected1.FCatSrchID,
+                                            Notes = TransactionNotes.EditedText,
+                                            KAccountID = Account.EditedKid ?? Account.OriginalKid,
+                                            KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                                            Units = IntUnits,
+
+                                        };
+                                        tmp2.Add(u);
+                                        matches = tmp.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category = matches.FirstOrDefault();
+                                        if (category == null)
+                                        {
+                                            //no existing null allocation for transaction
+                                            matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                            category1 = matches1.FirstOrDefault();
+
+                                            // deal with unassigne amount
+                                            Selected1.ActualAmount = (OrgActual - IntAmnt);
+                                            Selected1.ShortName = "";
+                                            Selected1.KCategoryID = "";
+                                            Selected1.KFinActualID = Guid.NewGuid().ToString().ToUpper();
+                                            Selected1.Description = Selected1.Description;
+                                            Selected1.KFinTranID = Selected1.KFinTranID;
+                                            Selected1.KChangeID = Selected1.KChangeID;
+                                            Selected1.Posted_Date = Selected1.Posted_Date;
+                                            Selected1.Month = Selected1.Month;
+                                            Selected1.TransAmount = Selected1.TransAmount;
+
+                                            //tmp.Add(Selected1);
+                                            tmp.Add(Selected1);
+                                            tmp1.Add(Selected1);
+
+
+                                            u = new TransactionResultApiModel
+                                            {
+                                                Posted_Date = DateTime.Parse(TransactionDate),
+                                                Month = Selected1.Month,
+                                                Description = TransactionDescription.EditedText ?? Selected.Description,
+                                                TransAmount = Selected1.TransAmount,
+                                                ActualAmount = Selected1.ActualAmount,
+                                                ShortName = "",
+                                                KCategoryID = "",
+                                                KFinTranID = Selected1.KFinTranID,
+                                                KFinActualID = Selected1.KFinActualID,
+                                                ChangeType = "a",
+                                                DateEffective = DateTime.Now,
+                                                KHierarchyID = Selected1.KHierarchyID,
+                                                KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                                                KPartyID = Party.EditedKid ?? Party.OriginalKid,
+                                                KPartyName = Party.EditedName ?? Party.OriginalName,
+                                                IsTemplate = IsTemplate,
+                                                FCatSrchID = Selected1.FCatSrchID,
+                                                Notes = TransactionNotes.EditedText,
+                                                KAccountID = Account.EditedKid ?? Account.OriginalKid,
+                                                KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                                                Units = IntUnits,
+                                            };
+                                            tmp2.Add(u);
+
+                                        }
+                                        else
+                                        //update existing null allocation and remove record that has been reduced to zero
+                                        {
+                                            matches = tmp.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                            category = matches.FirstOrDefault();
+                                            matches1 = tmp1.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                            category1 = matches1.FirstOrDefault();
+                                            {
+
+                                                category1.ActualAmount = category1.ActualAmount + (OrgActual - IntAmnt);
+                                                Selected1.ActualAmount = category1.ActualAmount;
+                                                category.ActualAmount = category1.ActualAmount;
+                                            }
+                                            u = new TransactionResultApiModel
+                                            {
+                                                Posted_Date = category.Posted_Date,
+                                                Month = Selected1.Month,
+                                                Description = category.Description,
+                                                TransAmount = category.TransAmount,
+                                                ActualAmount = Selected1.ActualAmount,
+                                                ShortName = category.ShortName,
+                                                KCategoryID = category.KCategoryID,
+                                                KFinActualID = category.KFinActualID,
+                                                KFinTranID = category.KFinTranID,
+                                                ChangeType = "c",
+                                                DateEffective = DateTime.Now,
+                                                KHierarchyID = category.KHierarchyID,
+                                                KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                                                KPartyID = category.KPartyID,
+                                                IsTemplate = IsTemplate,
+                                                FCatSrchID = category.FCatSrchID,
+                                                Notes = category.Notes,
+                                                KAccountID = category.KAccountID,
+                                                KAccountName = category.KAccountName,
+                                                Units = IntUnits,
+                                            };
+                                            tmp2.Add(u);
 
 
 
                                         }
+                                    }
+                                    else
+                                    {
+                                        matches = tmp.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category = matches.FirstOrDefault();
+                                        matches1 = tmp1.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category1 = matches1.FirstOrDefault();
+                                        if (category != null)
+                                        {
+                                            if ((Math.Abs(IntAmnt) > Math.Abs(Selected.ActualAmount + category.ActualAmount)))
+                                            { IntAmnt = (Selected.ActualAmount + category.ActualAmount) - IntAmnt; }
+
+
+                                            //update the unassigned allocation first..
+
+                                            category.ActualAmount = category.ActualAmount + (OrgActual - IntAmnt);
+                                            Selected.ActualAmount = category.ActualAmount;
+                                            category1.ActualAmount = category.ActualAmount;
+
+                                            if (category1.ActualAmount == 0)
+                                            //if balance is zero, destroy the null allocation
+                                            {
+
+                                                var u = new TransactionResultApiModel
+                                                {
+                                                    Posted_Date = Selected1.Posted_Date,
+                                                    Month = Selected1.Month,
+                                                    Description = Selected1.Description,
+                                                    TransAmount = Selected1.TransAmount,
+                                                    ActualAmount = Selected1.ActualAmount,
+                                                    ShortName = Selected1.ShortName,
+                                                    KCategoryID = Selected1.KCategoryID,
+                                                    KFinActualID = category.KFinActualID,
+                                                    KFinTranID = category.KFinTranID,
+                                                    ChangeType = "d",
+                                                    DateEffective = DateTime.Now,
+                                                    KHierarchyID = Selected1.KHierarchyID,
+                                                    KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                                                    KPartyID = Selected1.KPartyID,
+                                                    KPartyName = Selected1.KPartyName,
+                                                    IsTemplate = IsTemplate,
+                                                    Notes = Selected1.Notes,
+                                                    FCatSrchID = Selected1.FCatSrchID,
+                                                    KAccountID = Selected1.KAccountID,
+                                                    KAccountName = Selected1.KAccountName,
+                                                    Units = IntUnits,
+                                                };
+                                                tmp2.Add(u);
+
+                                                tmp1.Remove(category1);
+                                                tmp.Remove(category);
+                                            }
+
+                                            else
+                                            {
+
+
+                                                var u = new TransactionResultApiModel
+                                                {
+                                                    Posted_Date = category.Posted_Date,
+                                                    Month = category.Month,
+                                                    Description = category.Description,
+                                                    TransAmount = category.TransAmount,
+                                                    //calculate the amount to come from the unassigned portion
+                                                    ActualAmount = category.ActualAmount,
+                                                    ShortName = category.ShortName,
+                                                    KCategoryID = category.KCategoryID,
+                                                    KFinActualID = category.KFinActualID,
+                                                    KFinTranID = category.KFinTranID,
+                                                    ChangeType = "c",
+                                                    DateEffective = DateTime.Now,
+                                                    KHierarchyID = category.KHierarchyID,
+                                                    KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                                                    KPartyID = category.KPartyID,
+                                                    IsTemplate = IsTemplate,
+                                                    FCatSrchID = category.FCatSrchID,
+                                                    Notes = category.Notes,
+                                                    KAccountID = category.KAccountID,
+                                                    KAccountName = category.KAccountName,
+                                                    Units = IntUnits,
+                                                };
+                                                tmp2.Add(u);
+                                                ////////////////////////////////
+                                            }
+                                            matches = tmp.Where(x => x.KCategoryID == Selected.KCategoryID && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                            category = matches.FirstOrDefault();
+                                            matches1 = tmp1.Where(x => x.KCategoryID == Selected.KCategoryID && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                            category1 = matches1.FirstOrDefault();
+                                            if (category != null)
+                                            {
+                                                var u = new TransactionResultApiModel
+                                                {
+                                                    Posted_Date = category.Posted_Date,
+                                                    Month = category.Month,
+                                                    Description = category.Description,
+                                                    TransAmount = category.TransAmount,
+                                                    ActualAmount = IntAmnt,
+                                                    ShortName = category.ShortName,
+                                                    KCategoryID = category.KCategoryID,
+                                                    KFinActualID = category.KFinActualID,
+                                                    KFinTranID = category.KFinTranID,
+                                                    ChangeType = "c",
+                                                    DateEffective = DateTime.Now,
+                                                    KHierarchyID = category.KHierarchyID,
+                                                    KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                                                    KPartyID = category.KPartyID,
+                                                    IsTemplate = IsTemplate,
+                                                    FCatSrchID = category.FCatSrchID,
+                                                    Notes = category.Notes,
+                                                    KAccountID = category.KAccountID,
+                                                    KAccountName = category.KAccountName,
+                                                    Units = IntUnits,
+                                                };
+                                                tmp2.Add(u);
+                                                category.ActualAmount = IntAmnt;
+                                                category1.ActualAmount = IntAmnt;
+                                                Selected.ActualAmount = IntAmnt;
+                                            }
+
+                                        }
+
+                                    }
+                                }
+
+                            }
+                            else
+                            //category has not changed - and this category may already be used for the transaction
+                            //if total amount has been allocated, no new record required, but could require a record deletion if allocation has previously been made to this category
+                            //if portion has been allocated, and the same category is not already linked to the transaction
+                            {
+                                if (IntAmnt == OrgActual)
+                                {
+                                    //Update the classification being modified
+                                    //Selected.ActualAmount = IntAmnt;
+                                    //Selected.ShortName = Category.EditedName;
+                                    //Selected.KCategoryID = Category.EditedKid;
+
+
+
+                                    //Add record for change on API model
+                                    matches = tmp.Where(x => x.KCategoryID == (Category.EditedKid ?? Category.OriginalKid) && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+
+                                    category = matches.FirstOrDefault();
+                                    if (category != null)
+                                    //check whether this allocation category is already in use for the transaction
+                                    {
+
+                                        //update transaction view model
+                                        matches = tmp.Where(x => x.KCategoryID == (Category.EditedKid ?? Category.OriginalKid) && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category = matches.FirstOrDefault();
+                                        matches1 = tmp1.Where(x => x.KCategoryID == (Category.EditedKid ?? Category.OriginalKid) && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category1 = matches1.FirstOrDefault();
+                                        //var matches3= tmp4.Where(x => x.KCategoryID == Category.EditedKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        //var category0 = matches1.FirstOrDefault();
+
+                                        {
+                                            category.ActualAmount += IntAmnt;
+                                            category1.ActualAmount += IntAmnt;
+                                            category.ActualAmount = category1.ActualAmount;
+                                            category1.Units += IntUnits;
+                                            category.Units += IntUnits;
+                                            Selected1.ActualAmount = category1.ActualAmount;
+                                            Selected.KPartyName = Party.EditedName ?? Party.OriginalName;
+                                            Selected1.KPartyName = Selected.KPartyName;
+                                            category.KPartyName = Selected.KPartyName;
+                                            category1.KPartyName = Selected.KPartyName;
+                                            //category.KPartyId = Category.EditedKid ?? Category.OriginalKid;
+                                            //category1.KPartyId= Category.EditedKid ?? Category.OriginalKid;
+                                        }
+
+                                        var u = new TransactionResultApiModel
+                                        {
+                                            Posted_Date = DateTime.Parse(TransactionDate),
+                                            Month = Selected1.Month,
+                                            Description = TransactionDescription.EditedText ?? Selected.Description,
+                                            TransAmount = Selected1.TransAmount,
+                                            ActualAmount = category1.ActualAmount,
+                                            ShortName = (Category.EditedKid == null) ? category1.ShortName : (Category.EditedName ?? Category.OriginalName),
+                                            KCategoryID = Category.EditedKid ?? Category.OriginalKid,
+                                            KFinActualID = Selected1.KFinActualID,
+                                            KFinTranID = Selected1.KFinTranID,
+                                            ChangeType = "c",
+                                            DateEffective = DateTime.Now,
+                                            KHierarchyID = Selected1.KHierarchyID,
+                                            KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                                            KPartyID = Party.EditedKid ?? Party.OriginalKid,
+                                            KPartyName = Party.EditedName ?? Party.OriginalName,
+                                            IsTemplate = IsTemplate,
+                                            FCatSrchID = Selected1.FCatSrchID,
+                                            Notes = TransactionNotes.EditedText,
+                                            KAccountID = Account.EditedKid ?? Account.OriginalKid,
+                                            KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                                            Units = IntUnits,
+                                        };
+                                        tmp2.Add(u);
+
+                                        //then delete the original assignment
+                                        matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category1 = matches1.FirstOrDefault();
+                                        matches1 = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category = matches1.FirstOrDefault();
+                                        u = new TransactionResultApiModel
+                                        {
+                                            Posted_Date = Selected1.Posted_Date,
+                                            Month = Selected1.Month,
+                                            Description = Selected1.Description,
+                                            TransAmount = Selected1.TransAmount,
+                                            ActualAmount = Selected1.ActualAmount,
+                                            ShortName = Selected1.ShortName,
+                                            KCategoryID = Selected1.KCategoryID,
+                                            KFinActualID = category1.KFinActualID,
+                                            KFinTranID = Selected1.KFinTranID,
+                                            ChangeType = "d",
+                                            DateEffective = DateTime.Now,
+                                            KHierarchyID = Selected1.KHierarchyID,
+                                            KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                                            KPartyID = Selected1.KPartyID,
+                                            KPartyName = Selected1.KPartyName,
+                                            IsTemplate = IsTemplate,
+                                            Notes = Selected1.Notes,
+                                            FCatSrchID = Selected1.FCatSrchID,
+                                            KAccountID = Selected1.KAccountID,
+                                            Units = IntUnits,
+                                        };
+                                        tmp2.Add(u);
+
+                                        tmp1.Remove(category1);
+                                        tmp.Remove(category);
+                                    }
+                                    else
+                                    // first time use of the allocation category for the transaction
+                                    {
+                                        //update transaction view model
+                                        matches = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category = matches.FirstOrDefault();
+                                        matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category1 = matches1.FirstOrDefault();
+
+
+                                        {
+                                            category1.ActualAmount = IntAmnt;
+                                            category1.ShortName = Category.EditedName;
+                                            category1.KCategoryID = Category.EditedKid;
+                                            category1.KPartyID = Party.EditedKid;
+                                            category1.KPartyName = Party.EditedName;
+                                            category.ActualAmount = IntAmnt;
+                                            category.ShortName = Category.EditedName;
+                                            category.KCategoryID = Category.EditedKid;
+                                            category.KPartyID = Party.EditedKid;
+                                            category.KPartyName = Party.EditedName;
+                                            category.Units = IntUnits;
+                                            category1.Units = IntUnits;
+                                            Selected1.ActualAmount = IntAmnt;
+                                            Selected1.ShortName = Category.EditedName;
+                                            Selected1.KCategoryID = Category.EditedKid;
+                                            Selected1.KPartyName = Party.EditedName;
+                                            Selected1.KPartyID = Party.EditedKid;
+                                            //Selected1.KAccountID = Account.EditedID;
+                                        }
+
+                                        //var PartyID = Selected1.KPartyID;
 
                                         var u = new TransactionResultApiModel
                                         {
@@ -1933,96 +1685,241 @@ namespace Fasetto.Word
                                         };
                                         tmp2.Add(u);
                                     }
-                                    //matches = tmp.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    //category = matches.FirstOrDefault();
-                                    matches1 = tmp1.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                    category1 = matches1.FirstOrDefault();
-
-                                    if (IntAmnt != 0)
+                                }
+                                else
+                                //allocation less than the original amount remaining
+                                {
+                                    if (Category.OriginalKid == "")
                                     {
-                                        if (category1 == null)
+                                        //if transaction had a 'null' assignment to begin with,reduce the allocation amount by the new amount now assigned
+
+                                        matches = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category = matches.FirstOrDefault();
+                                        matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category1 = matches1.FirstOrDefault();
                                         {
-                                            //add a null allocation record
-                                            Selected1.ActualAmount = OrgActual - IntAmnt;
-                                            Selected1.ShortName = "";
-                                            Selected1.KCategoryID = "";
-                                            Selected1.KFinActualID = Guid.NewGuid().ToString().ToUpper();
-                                            Selected1.Description = Selected.Description;
-                                            Selected1.KFinTranID = Selected.KFinTranID;
-                                            Selected1.KChangeID = Selected.KChangeID;
-                                            Selected1.Posted_Date = Selected.Posted_Date;
-                                            Selected1.Month = Selected.Month;
-                                            Selected1.TransAmount = Selected.TransAmount;
-                                            tmp.Add(Selected1);
-                                            tmp1.Add(Selected1);
-                                            var u = new TransactionResultApiModel
-                                            {
-                                                Posted_Date = DateTime.Parse(TransactionDate),
-                                                Month = Selected1.Month,
-                                                Description = Selected.Description,
-                                                TransAmount = Selected1.TransAmount,
-                                                ActualAmount = Selected1.ActualAmount,
-                                                ShortName = "",
-                                                KCategoryID = "",
-                                                KFinActualID = Selected1.KFinActualID,
-                                                KFinTranID = Selected1.KFinTranID,
-                                                ChangeType = "a",
-                                                DateEffective = DateTime.Now,
-                                                KHierarchyID = Selected1.KHierarchyID,
-                                                KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                                                KPartyID = Selected.KPartyID,
-                                                KPartyName = Selected1.KPartyName,
-                                                IsTemplate = IsTemplate,
-                                                FCatSrchID = Selected1.FCatSrchID,
-                                                Notes = "",
-                                                KAccountID = Selected.KAccountID,
-                                                KAccountName = Selected.KAccountName,
-                                                Units = IntUnits,
-                                            };
-                                            tmp2.Add(u);
-                                        }
-                                        else
-                                        //null allocation record already exists, adjust the current allocation value
-                                        {
-                                            category1.ActualAmount += OrgActual - IntAmnt;
-                                            category.ActualAmount = category1.ActualAmount;
+
+
+                                            category1.ActualAmount = OrgActual - IntAmnt;
                                             Selected1.ActualAmount = category1.ActualAmount;
+                                            category.Units = IntUnits;
+                                            category1.Units = IntUnits;
+                                            Selected1.Units = IntUnits;
 
-                                            if (category1.ActualAmount == 0)
-                                            //if balance is zero, destroy the null allocation
+                                            //category1.KCategoryID = Category.OriginalKid;
+                                            //category1.ShortName = Category.OriginalName;
+                                            category.ActualAmount = category1.ActualAmount;
+                                            //category.KCategoryID = Category.OriginalKid;
+                                            //category.ShortName = Category.OriginalName;
+                                            //category.KPartyID = Party.OriginalKid;
+                                            //category.KPartyName = Party.EditedName;
+
+
+                                        }
+
+
+                                        var u = new TransactionResultApiModel
+                                        {
+                                            Posted_Date = DateTime.Parse(TransactionDate),
+                                            Month = Selected1.Month,
+                                            Description = TransactionDescription.EditedText ?? Selected.Description,
+                                            TransAmount = Selected1.TransAmount,
+                                            ActualAmount = Selected1.ActualAmount,
+                                            ShortName = Category.OriginalName,
+                                            KCategoryID = Category.OriginalKid,
+                                            KFinActualID = Selected1.KFinActualID,
+                                            KFinTranID = Selected1.KFinTranID,
+                                            ChangeType = "c",
+                                            DateEffective = DateTime.Now,
+                                            KHierarchyID = Selected1.KHierarchyID,
+                                            KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                                            KPartyID = Party.OriginalKid,
+                                            IsTemplate = IsTemplate,
+                                            FCatSrchID = Selected1.FCatSrchID,
+                                            Notes = TransactionNotes.EditedText,
+                                            KAccountID = Account.OriginalKid,
+                                            KAccountName = (Account.OriginalName),
+                                            Units = 0,
+                                        };
+                                        tmp2.Add(u);
+                                        // now create a new assignment for the new cost category
+
+
+
+                                        if (IntAmnt != 0)
+                                        {
+                                            matches = tmp.Where(x => x.KCategoryID == Category.EditedKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                            category = matches.FirstOrDefault();
+                                            matches1 = tmp1.Where(x => x.KCategoryID == Category.EditedKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                            category1 = matches1.FirstOrDefault();
+
+                                            if (category == null)
+                                            {
+                                                Selected1.ActualAmount = IntAmnt;
+                                                Selected1.ShortName = Category.EditedName;
+                                                Selected1.KCategoryID = Category.EditedKid;
+                                                Selected1.KFinActualID = Guid.NewGuid().ToString().ToUpper();
+                                                Selected1.Description = Selected1.Description;
+                                                Selected1.KFinTranID = Selected1.KFinTranID;
+                                                Selected1.KChangeID = Selected1.KChangeID;
+                                                Selected1.Posted_Date = Selected1.Posted_Date;
+                                                Selected1.Month = Selected1.Month;
+                                                Selected1.TransAmount = Selected1.TransAmount;
+                                                Selected1.FCatSrchID = Selected1.FCatSrchID;
+
+                                                //tmp.Add(Selected1);
+                                                //control update to observable collection
+                                                tmp.Add(Selected1);
+                                                tmp1.Add(Selected1);
+
+                                                u = new TransactionResultApiModel
+                                                {
+                                                    Posted_Date = DateTime.Parse(TransactionDate),
+                                                    Month = Selected1.Month,
+                                                    Description = TransactionDescription.EditedText ?? Selected.Description,
+                                                    TransAmount = Selected1.TransAmount,
+                                                    ActualAmount = Selected1.ActualAmount,
+                                                    ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
+                                                    KCategoryID = Category.EditedKid ?? Category.OriginalKid,
+                                                    KFinActualID = Selected1.KFinActualID,
+                                                    KFinTranID = Selected1.KFinTranID,
+                                                    ChangeType = "a",
+                                                    DateEffective = DateTime.Now,
+                                                    KHierarchyID = Selected1.KHierarchyID,
+                                                    KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                                                    KPartyID = Party.EditedKid ?? Party.OriginalKid,
+                                                    KPartyName = Party.EditedName ?? Party.OriginalName,
+                                                    IsTemplate = IsTemplate,
+                                                    FCatSrchID = Selected1.FCatSrchID,
+                                                    Notes = TransactionNotes.EditedText,
+                                                    KAccountID = Account.EditedKid ?? Account.OriginalKid,
+                                                    KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                                                    Units = IntUnits,
+                                                };
+                                                tmp2.Add(u);
+                                            }
+                                            else
                                             {
 
-                                                var u = new TransactionResultApiModel
+                                                Selected1.ActualAmount = category.ActualAmount + IntAmnt;
+                                                Selected1.ShortName = category.ShortName;
+                                                Selected1.KCategoryID = category.KCategoryID;
+                                                Selected1.KFinActualID = category.KFinActualID;
+                                                Selected1.Description = category.Description;
+                                                Selected1.KFinTranID = category.KFinTranID;
+                                                Selected1.KChangeID = category.KChangeID;
+                                                Selected1.Posted_Date = category.Posted_Date;
+                                                Selected1.Month = category.Month;
+                                                Selected1.TransAmount = category.TransAmount;
+                                                Selected1.FCatSrchID = category.FCatSrchID;
+                                                Selected1.Units = category.Units + IntUnits;
+                                                category.ActualAmount = Selected1.ActualAmount;
+                                                category.Units = Selected1.Units;
+
+                                                u = new TransactionResultApiModel
                                                 {
-                                                    Posted_Date = Selected1.Posted_Date,
+                                                    Posted_Date = DateTime.Parse(TransactionDate),
                                                     Month = Selected1.Month,
                                                     Description = Selected1.Description,
                                                     TransAmount = Selected1.TransAmount,
                                                     ActualAmount = Selected1.ActualAmount,
                                                     ShortName = Selected1.ShortName,
                                                     KCategoryID = Selected1.KCategoryID,
-                                                    KFinActualID = Category.OriginalKid,
+                                                    KFinActualID = Selected1.KFinActualID,
                                                     KFinTranID = Selected1.KFinTranID,
-                                                    ChangeType = "d",
+                                                    ChangeType = "c",
                                                     DateEffective = DateTime.Now,
                                                     KHierarchyID = Selected1.KHierarchyID,
                                                     KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                                                    KPartyID = Selected1.KPartyID,
-                                                    KPartyName = Selected1.KPartyName,
+                                                    KPartyID = Party.OriginalKid,
                                                     IsTemplate = IsTemplate,
-                                                    Notes = Selected1.Notes,
                                                     FCatSrchID = Selected1.FCatSrchID,
-                                                    KAccountID = Selected1.KAccountID,
-                                                    KAccountName = Selected1.KAccountName,
-                                                    Units = IntUnits,
+                                                    Notes = Selected1.Notes,
+                                                    KAccountID = Account.OriginalKid,
+                                                    KAccountName = (Account.OriginalName),
+                                                    Units = Selected1.Units,
                                                 };
                                                 tmp2.Add(u);
 
-                                                tmp1.Remove(category1);
-                                                tmp.Remove(category);
-                                                                                            }
-                                            else
-                                            { 
+
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //original assignment was to a category other than null, so a partial assignment must result in the balance being assigned to null
+                                        //OR if a null assignment already exists, the unallocated amount must be added...
+
+                                        matches = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category = matches.FirstOrDefault();
+                                        matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category1 = matches1.FirstOrDefault();
+                                        if (IntAmnt == 0)
+                                        //just change the Selected category on the orginal assignment to null (full amount then available for reallocation)
+                                        {
+                                            Selected1.ActualAmount = OrgActual;
+                                            Selected1.ShortName = "";
+                                            Selected1.KCategoryID = "";
+                                            Selected1.KFinActualID = Selected.KFinActualID;
+                                            Selected1.Description = Selected.Description;
+                                            Selected1.KFinTranID = Selected.KFinTranID;
+                                            Selected1.KChangeID = Selected.KChangeID;
+                                            Selected1.Posted_Date = Selected.Posted_Date;
+                                            Selected1.Month = Selected.Month;
+                                            Selected1.TransAmount = Selected.TransAmount;
+                                            Selected1.Units = IntUnits;
+                                            category.ShortName = "";
+                                            category.KCategoryID = "";
+                                            category1.ShortName = "";
+                                            category1.KCategoryID = "";
+                                            category.Units = IntUnits;
+                                            category1.Units = IntUnits;
+                                            //tmp.Add(Selected1);
+                                            //tmp1.Add(Selected1);
+                                            var u = new TransactionResultApiModel
+                                            {
+                                                Posted_Date = DateTime.Parse(TransactionDate),
+                                                Month = Selected1.Month,
+                                                Description = TransactionDescription.EditedText ?? Selected.Description,
+                                                TransAmount = Selected1.TransAmount,
+                                                ActualAmount = Selected1.ActualAmount,
+                                                ShortName = "",
+                                                KCategoryID = "",//Category.EditedKid ?? Category.OriginalKid,
+                                                KFinActualID = Selected1.KFinActualID,
+                                                KFinTranID = Selected1.KFinTranID,
+                                                ChangeType = "c",
+                                                DateEffective = DateTime.Now,
+                                                KHierarchyID = Selected1.KHierarchyID,
+                                                KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                                                KPartyID = Party.EditedKid ?? Party.OriginalKid,
+                                                KPartyName = Party.EditedName ?? Party.OriginalName,
+                                                IsTemplate = IsTemplate,
+                                                FCatSrchID = Selected1.FCatSrchID,
+                                                Notes = TransactionNotes.EditedText,
+                                                KAccountID = Account.EditedKid ?? Account.OriginalKid,
+                                                KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                                                Units = IntUnits,
+                                                //KClientID =((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root).EditedKid,
+                                            };
+                                            tmp2.Add(u);
+
+                                        }
+                                        else
+                                        {
+                                            {
+                                                category1.ActualAmount = IntAmnt;
+                                                category1.ShortName = Category.EditedName;
+                                                category1.KCategoryID = Category.EditedKid;
+                                                category.ActualAmount = IntAmnt;
+                                                category.ShortName = Category.EditedName;
+                                                category.KCategoryID = Category.EditedKid;
+                                                Selected1.ActualAmount = IntAmnt;
+                                                Selected1.ShortName = Category.EditedName;
+                                                Selected1.KCategoryID = Category.EditedKid;
+
+
+
+                                            }
 
                                             var u = new TransactionResultApiModel
                                             {
@@ -2046,115 +1943,235 @@ namespace Fasetto.Word
                                                 Notes = TransactionNotes.EditedText,
                                                 KAccountID = Account.EditedKid ?? Account.OriginalKid,
                                                 KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                Units = 0,
+                                                Units = IntUnits,
                                             };
                                             tmp2.Add(u);
+                                        }
+                                        //matches = tmp.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        //category = matches.FirstOrDefault();
+                                        matches1 = tmp1.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                                        category1 = matches1.FirstOrDefault();
+
+                                        if (IntAmnt != 0)
+                                        {
+                                            if (category1 == null)
+                                            {
+                                                //add a null allocation record
+                                                Selected1.ActualAmount = OrgActual - IntAmnt;
+                                                Selected1.ShortName = "";
+                                                Selected1.KCategoryID = "";
+                                                Selected1.KFinActualID = Guid.NewGuid().ToString().ToUpper();
+                                                Selected1.Description = Selected.Description;
+                                                Selected1.KFinTranID = Selected.KFinTranID;
+                                                Selected1.KChangeID = Selected.KChangeID;
+                                                Selected1.Posted_Date = Selected.Posted_Date;
+                                                Selected1.Month = Selected.Month;
+                                                Selected1.TransAmount = Selected.TransAmount;
+                                                tmp.Add(Selected1);
+                                                tmp1.Add(Selected1);
+                                                var u = new TransactionResultApiModel
+                                                {
+                                                    Posted_Date = DateTime.Parse(TransactionDate),
+                                                    Month = Selected1.Month,
+                                                    Description = Selected.Description,
+                                                    TransAmount = Selected1.TransAmount,
+                                                    ActualAmount = Selected1.ActualAmount,
+                                                    ShortName = "",
+                                                    KCategoryID = "",
+                                                    KFinActualID = Selected1.KFinActualID,
+                                                    KFinTranID = Selected1.KFinTranID,
+                                                    ChangeType = "a",
+                                                    DateEffective = DateTime.Now,
+                                                    KHierarchyID = Selected1.KHierarchyID,
+                                                    KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                                                    KPartyID = Selected.KPartyID,
+                                                    KPartyName = Selected1.KPartyName,
+                                                    IsTemplate = IsTemplate,
+                                                    FCatSrchID = Selected1.FCatSrchID,
+                                                    Notes = "",
+                                                    KAccountID = Selected.KAccountID,
+                                                    KAccountName = Selected.KAccountName,
+                                                    Units = IntUnits,
+                                                };
+                                                tmp2.Add(u);
+                                            }
+                                            else
+                                            //null allocation record already exists, adjust the current allocation value
+                                            {
+                                                category1.ActualAmount += OrgActual - IntAmnt;
+                                                category.ActualAmount = category1.ActualAmount;
+                                                Selected1.ActualAmount = category1.ActualAmount;
+
+                                                if (category1.ActualAmount == 0)
+                                                //if balance is zero, destroy the null allocation
+                                                {
+
+                                                    var u = new TransactionResultApiModel
+                                                    {
+                                                        Posted_Date = Selected1.Posted_Date,
+                                                        Month = Selected1.Month,
+                                                        Description = Selected1.Description,
+                                                        TransAmount = Selected1.TransAmount,
+                                                        ActualAmount = Selected1.ActualAmount,
+                                                        ShortName = Selected1.ShortName,
+                                                        KCategoryID = Selected1.KCategoryID,
+                                                        KFinActualID = Category.OriginalKid,
+                                                        KFinTranID = Selected1.KFinTranID,
+                                                        ChangeType = "d",
+                                                        DateEffective = DateTime.Now,
+                                                        KHierarchyID = Selected1.KHierarchyID,
+                                                        KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                                                        KPartyID = Selected1.KPartyID,
+                                                        KPartyName = Selected1.KPartyName,
+                                                        IsTemplate = IsTemplate,
+                                                        Notes = Selected1.Notes,
+                                                        FCatSrchID = Selected1.FCatSrchID,
+                                                        KAccountID = Selected1.KAccountID,
+                                                        KAccountName = Selected1.KAccountName,
+                                                        Units = IntUnits,
+                                                    };
+                                                    tmp2.Add(u);
+
+                                                    tmp1.Remove(category1);
+                                                    tmp.Remove(category);
+                                                }
+                                                else
+                                                {
+
+                                                    var u = new TransactionResultApiModel
+                                                    {
+                                                        Posted_Date = DateTime.Parse(TransactionDate),
+                                                        Month = Selected1.Month,
+                                                        Description = TransactionDescription.EditedText ?? Selected.Description,
+                                                        TransAmount = Selected1.TransAmount,
+                                                        ActualAmount = Selected1.ActualAmount,
+                                                        ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
+                                                        KCategoryID = Category.EditedKid ?? Category.OriginalKid,
+                                                        KFinActualID = Selected1.KFinActualID,
+                                                        KFinTranID = Selected1.KFinTranID,
+                                                        ChangeType = "c",
+                                                        DateEffective = DateTime.Now,
+                                                        KHierarchyID = Selected1.KHierarchyID,
+                                                        KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                                                        KPartyID = Party.EditedKid ?? Party.OriginalKid,
+                                                        KPartyName = Party.EditedName ?? Party.OriginalName,
+                                                        IsTemplate = IsTemplate,
+                                                        FCatSrchID = Selected1.FCatSrchID,
+                                                        Notes = TransactionNotes.EditedText,
+                                                        KAccountID = Account.EditedKid ?? Account.OriginalKid,
+                                                        KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                                                        Units = 0,
+                                                    };
+                                                    tmp2.Add(u);
+                                                }
                                             }
                                         }
+
+
                                     }
 
-
                                 }
+                            }
+                            //var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+                            ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                            //matches = tmp1.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
+                            //Remove(matches, tmp1);
+                            //Clone(matches, tmp1);
+                            //matches = tmp.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
+                            //Remove(matches, tmp);
+                            //Clone(matches, tmp);
+                        }
+                        else
+                        //update all derived transactions with the latest changes
+                        {
+                            matches = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                            category = matches.FirstOrDefault();
+                            matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                            category1 = matches1.FirstOrDefault();
+
+
+                            {
+                                category1.ActualAmount = IntAmnt;
+                                category1.ShortName = (Category.EditedKid == null) ? category1.ShortName : (Category.EditedName ?? category1.ShortName);
+                                category1.KCategoryID = (Category.EditedKid ?? Category.OriginalKid);
+                                category1.KPartyID = (Party.EditedKid ?? Party.OriginalKid);
+                                category1.KPartyName = (Party.EditedKid == null) ? category1.KPartyName : (Party.EditedName ?? category1.KPartyName);
+                                category1.KAccountID = (Account.EditedKid ?? Account.OriginalKid);
+                                category1.KAccountName = (Account.EditedKid == null) ? category1.KAccountName : (Account.EditedName ?? category1.KAccountName);
+                                category1.Units = IntUnits;
+                                category.ActualAmount = IntAmnt;
+                                category.ShortName = category1.ShortName;
+                                category.KCategoryID = category1.KCategoryID;
+                                category.KPartyID = category1.KPartyID;
+                                category.KPartyName = category1.KPartyName;
+                                category.KAccountID = category1.KAccountID;
+                                category.KAccountName = category1.KAccountName;
+                                category.Units = IntUnits;
+
+                                Selected1.ActualAmount = IntAmnt;
+                                Selected1.ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName);
+                                Selected1.KCategoryID = (Category.EditedKid ?? Category.OriginalKid);
+                                Selected1.KPartyName = category1.KPartyName;
+                                Selected1.KPartyID = category1.KPartyID;
+                                Selected1.KAccountID = category1.KAccountID;
+                                Selected1.KAccountName = category1.KAccountName;
+                                category.Description = TransactionDescription.EditedText ?? category.Description;
+                                category1.Description = category.Description;
+                                Selected1.Description = category.Description;
+                                Selected1.Units = IntUnits;
 
                             }
+                            var u = new TransactionResultApiModel
+                            {
+                                Posted_Date = DateTime.Parse(TransactionDate),
+                                Month = Selected1.Month,
+                                Description = Selected1.Description,
+                                TransAmount = Selected1.TransAmount,
+                                ActualAmount = Selected1.ActualAmount,
+                                ShortName = Selected1.ShortName,
+                                KCategoryID = Selected1.KCategoryID,
+                                KFinActualID = Selected1.KFinActualID,
+                                KFinTranID = Selected1.KFinTranID,
+                                ChangeType = "c",
+                                DateEffective = DateTime.Now,
+                                KHierarchyID = Selected1.KHierarchyID,
+                                KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                                KPartyID = Selected1.KPartyID,
+                                KPartyName = Selected1.KPartyName,
+                                IsTemplate = IsTemplate,
+                                FCatSrchID = Selected1.FCatSrchID,
+                                Notes = Selected.Notes,
+                                KAccountID = Selected1.KAccountID,
+                                KAccountName = Selected1.KAccountName,
+                                Units = IntUnits,
+
+                            };
+                            tmp2.Add(u);
                         }
-                        //var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
-                        ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
-                        //matches = tmp1.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
-                        //Remove(matches, tmp1);
-                        //Clone(matches, tmp1);
-                        //matches = tmp.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
-                        //Remove(matches, tmp);
-                        //Clone(matches, tmp);
+
+
+
+
+
                     }
-                    else
-                    //update all derived transactions with the latest changes
-                    {
-                        matches = tmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                        category = matches.FirstOrDefault();
-                        matches1 = tmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                        category1 = matches1.FirstOrDefault();
-
-
-                        {
-                            category1.ActualAmount = IntAmnt;
-                            category1.ShortName = (Category.EditedKid == null) ? category1.ShortName : (Category.EditedName ?? category1.ShortName);
-                            category1.KCategoryID = (Category.EditedKid ?? Category.OriginalKid);
-                            category1.KPartyID = (Party.EditedKid??Party.OriginalKid);
-                            category1.KPartyName = (Party.EditedKid == null) ? category1.KPartyName : (Party.EditedName ?? category1.KPartyName);
-                            category1.KAccountID = (Account.EditedKid ?? Account.OriginalKid);
-                            category1.KAccountName = (Account.EditedKid == null) ? category1.KAccountName : (Account.EditedName ?? category1.KAccountName);
-                            category1.Units = IntUnits;
-                            category.ActualAmount = IntAmnt;
-                            category.ShortName = category1.ShortName;
-                            category.KCategoryID = category1.KCategoryID;
-                            category.KPartyID = category1.KPartyID;
-                            category.KPartyName = category1.KPartyName;
-                            category.KAccountID = category1.KAccountID;
-                            category.KAccountName = category1.KAccountName;
-                            category.Units = IntUnits;
-
-                            Selected1.ActualAmount = IntAmnt;
-                            Selected1.ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName);
-                            Selected1.KCategoryID = (Category.EditedKid ?? Category.OriginalKid);       
-                            Selected1.KPartyName = category1.KPartyName;
-                            Selected1.KPartyID = category1.KPartyID;
-                            Selected1.KAccountID = category1.KAccountID;
-                            Selected1.KAccountName = category1.KAccountName;
-                            category.Description = TransactionDescription.EditedText?? category.Description;
-                            category1.Description = category.Description;
-                            Selected1.Description = category.Description;
-                            Selected1.Units = IntUnits;
-
-                        }
-                        var u = new TransactionResultApiModel
-                        {
-                            Posted_Date = DateTime.Parse(TransactionDate),
-                            Month = Selected1.Month,
-                            Description = Selected1.Description,
-                            TransAmount = Selected1.TransAmount,
-                            ActualAmount = Selected1.ActualAmount,
-                            ShortName = Selected1.ShortName,
-                            KCategoryID = Selected1.KCategoryID,
-                            KFinActualID = Selected1.KFinActualID,
-                            KFinTranID = Selected1.KFinTranID,
-                            ChangeType = "c",
-                            DateEffective = DateTime.Now,
-                            KHierarchyID = Selected1.KHierarchyID,
-                            KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
-                            KPartyID = Selected1.KPartyID,
-                            KPartyName = Selected1.KPartyName,
-                            IsTemplate = IsTemplate,
-                            FCatSrchID = Selected1.FCatSrchID,
-                            Notes = Selected.Notes,
-                            KAccountID = Selected1.KAccountID,
-                            KAccountName = Selected1.KAccountName,
-                            Units = IntUnits,
-
-                        };
-                        tmp2.Add(u);
-                    }
-
-
 
 
 
                 }
 
- 
+            //Refresh UI for Transaction List
+            ((TransactionTreeViewModel)tmp0).RefreshTransactionList();
+                //Refresh UI for Transaction Detail List
+                ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).RefreshTransactionList(Selected.KFinTranID, tmp);
+                await ((TransactionTreeViewModel)tmp0).PersistTransClassAsync();
+
+
+                Close();
+                return true;
+            });
 
             }
 
-            //Refresh UI for Transaction List
-            ((TransactionTreeViewModel)tmp0).RefreshTransactionList();
-            //Refresh UI for Transaction Detail List
-            ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).RefreshTransactionList(Selected.KFinTranID,tmp);
-            await ((TransactionTreeViewModel)tmp0).PersistTransClassAsync();
-
-
-            Close();
-            //});
-        }
 
         //public void EditClassification()
         public void BrowseImage()

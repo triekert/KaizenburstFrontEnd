@@ -221,6 +221,14 @@ namespace Fasetto.Word
         /// </summary>
         public bool CostHierarchySrchIsSaving { get; set; }
 
+
+
+
+        /// <summary>
+        /// Indicates if the Reconcile process currently underway
+        /// </summary>
+        public bool ReconcileInProgress { get; set; }
+
         #endregion
 
         #region Public Commands
@@ -239,6 +247,12 @@ namespace Fasetto.Word
         /// The command for when the user clicks the send button
         /// </summary>
         public ICommand ReconcileCommand { get; set; }
+
+        /// <summary>
+        /// The command for when the user clicks the send button
+        /// </summary>
+        public ICommand ReconcileCommandNew { get; set; }
+
 
 
         /// <summary>
@@ -396,7 +410,7 @@ namespace Fasetto.Word
             // Create commands
             AttachmentButtonCommand = new RelayCommand(AttachmentButton);
             PopupClickawayCommand = new RelayCommand(PopupClickaway);
-            ReconcileCommand = new RelayCommand(Reconcile);
+            ReconcileCommandNew = new RelayCommand(Reconcile);
             PopulateCommand = new RelayCommand(Populate);
             SearchCommand = new RelayCommand(Search);
             OpenSearchCommand = new RelayCommand(OpenSearch);
@@ -404,6 +418,7 @@ namespace Fasetto.Word
             ClearSearchCommand = new RelayCommand(ClearSearch);
             InitialiseCostHCommand = new RelayCommand(async () => await InitialiseCostHAsync());
             InitialiseClientSrchCommand = new RelayCommand(async () => await ClientSrchAsync());
+            ReconcileCommand = new RelayCommand(async () => await ReconcileAsync());
             //ViewModelApplication.CurrentControlViewModel = null;
 
             // Make a default menu
@@ -495,7 +510,71 @@ namespace Fasetto.Word
 
         }
 
- 
+        /// <summary>
+        /// Initialises the Cost Hierarchy Search
+        /// </summary>
+        /// <returns>Returns true if successful, false otherwise</returns>
+        public async Task<bool> ReconcileAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+            return await RunCommandAsync(() => ReconcileInProgress, async () =>
+            {
+
+                ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+                ViewModelApplication.FClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid;
+                ViewModelApplication.ClientShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedName;
+                ViewModelApplication.FCostHierarchyID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid;
+                ViewModelApplication.CostHierarchyShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedName;
+                //ViewModelApplication.CurrentPopupContent = 0;
+                //To do: Lookup to be user rights and available options driven
+                //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
+                if (ViewModelApplication.CurrentControlViewModel != null)
+                {                 //if ((ViewModelApplication.CurrentControlViewModel).GetType().Name != "CostHierarchyListViewModel")
+                                  //{ return; }
+
+                    var Test3 = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid;
+                    if (Test3 == null)
+                    {
+                        System.Windows.MessageBox.Show(
+                            "No cost structure has been selected",
+                            "for Managing the Transactions",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+
+                        return false;
+                    }
+                    //if (((CostHierarchyListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedCostHierarchy.KCategoryID == null)
+
+                    ////To DO - message user
+                    //{
+                    //    System.Windows.MessageBox.Show($"First select a valid Transaction Client to proceed...");
+                    //    return;
+                    //};
+                    ShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedName;
+                    TimeEnd.OriginalDateTime = TimeEnd.EditedDateTime;
+                    TimeStart.OriginalDateTime = TimeStart.EditedDateTime;
+
+                    //Make start time and end time equal to overload sql call
+                    //var t1 = TimeEnd.EditedDateTime.ToString("yyyy/MM/dd");
+                    //var t2 = TimeStart.EditedDateTime.Hour.ToString("00");
+                    //var t3 = $"{TimeEnd.EditedDateTime.ToString("yyyy/MM/dd")}{" "}{TimeStart.EditedDateTime.Hour.ToString()}{":00:00"}";
+                    //TimeEnd.EditedDateTime = DateTime.Parse(t3);
+                    //TimeEnd.EditedDateTime = DateTime.Parse($"{TimeEnd.EditedDateTime.ToString("yyyy/MM/dd")}{" "}{TimeStart.EditedDateTime.Hour.ToString("00")}{":00:00"}");
+
+                    ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(Test3, TimeStart.EditedDateTime,
+                        TimeEnd.EditedDateTime);
+                    ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail: " + ShortName;
+                    //force a reload of the BulkRecon Control
+                    ViewModelApplication.CurrentPopupContent = 0;
+                    ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;
+
+                    ViewModelApplication.PopupVisible = true;
+
+                }
+
+                return true;
+            });
+        }
 
 
         /// <summary>
