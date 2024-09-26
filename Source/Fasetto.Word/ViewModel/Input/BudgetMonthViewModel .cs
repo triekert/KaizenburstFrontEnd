@@ -7,7 +7,7 @@ namespace Fasetto.Word
     /// <summary>
     /// The Hierarchy element as a view model
     /// </summary>
-    public class CostHierarchyViewModel : BaseViewModel
+    public class BudgetMonthViewModel : BaseViewModel
 
     {
         //#region Data
@@ -22,33 +22,28 @@ namespace Fasetto.Word
 
         #region Public Properties
 
-        /// <summary>
-        /// String representation of GUID for Cost Category Structure
-        /// </summary>
-        public string KCategoryID { get; set; }
+
+
 
 
         /// <summary>
-        /// String representation of GUID for Billing Period
+        /// Integer representing the start month for the budget
         /// </summary>
-        public string ShortName{ get; set; }
+        public int BudgetMonth { get; set; }
 
 
-        /// <summary>
-        /// String representation of GUID for Client owning Billing Period
-        /// </summary>
-        public string FClientID { get; set; }
 
 
- 
+
+
         /// <summary>
         /// Title of Control
         /// </summary>
-        public string Title { get; set; } = "Cost Hierarchy Selection";
+        public string Title { get; set; } = "Budget Month";
 
         /// <summary>
         /// The action to run when initiating the control.
-        /// Returns true if the prepaation was successful, or false otherwise.
+        /// Returns true if the preparation was successful, or false otherwise.
         /// </summary>
         public Func<Task<bool>> PrepareAction { get; set; }
 
@@ -90,7 +85,7 @@ namespace Fasetto.Word
         #endregion
         #region Constructors
 
-        public CostHierarchyViewModel ()
+        public BudgetMonthViewModel ()
 
         {
 

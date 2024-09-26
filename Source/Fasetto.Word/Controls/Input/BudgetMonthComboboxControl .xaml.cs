@@ -9,7 +9,7 @@ namespace Fasetto.Word
     /// <summary>
     /// Interaction logic for TextEntryControl.xaml
     /// </summary>
-    public partial class CostHierarchyComboboxControl : UserControl
+    public partial class BudgetMonthComboboxControl : UserControl
     {
         #region Dependency Properties
 
@@ -34,7 +34,7 @@ namespace Fasetto.Word
         /// <summary>
         /// Default constructor
         /// </summary>
-        public CostHierarchyComboboxControl()
+        public BudgetMonthComboboxControl()
         {
             //var mBPLVM = new CostHierarchyListViewModel("8A8425E2-5766-4014-8C2F-01BD84DBC370");
             //ViewModelApplication.CurrentControlViewModel = mBPLVM;
@@ -57,7 +57,7 @@ namespace Fasetto.Word
             try
             {
                 // Set the column definition width to the new value
-                (d as CostHierarchyComboboxControl).LabelColumnDefinition.Width = (GridLength)e.NewValue;
+                (d as BudgetMonthComboboxControl).LabelColumnDefinition.Width = (GridLength)e.NewValue;
             }
 
             // Making ex available for developer on break
@@ -68,7 +68,7 @@ namespace Fasetto.Word
                 // Make developer aware of potential issue
                 Debugger.Break();
 
-                (d as CostHierarchyComboboxControl).LabelColumnDefinition.Width = GridLength.Auto;
+                (d as BudgetMonthComboboxControl).LabelColumnDefinition.Width = GridLength.Auto;
             }
         }
 
@@ -76,27 +76,13 @@ namespace Fasetto.Word
 
         private void ComboBox1_Selected(object sender, RoutedEventArgs e)
         {
-//            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
-//            //var Test2 = ((CostHierarchyViewModel)((ComboBox)sender).SelectedItem).KCategoryID;
-//            //if (((CostHierarchyViewModel)((ComboBox)sender).SelectedItem).KCategoryID == "Test1")
-//            //{ return; }
-//            var Test3 = ((ComboBox)sender).SelectedItem;
-//            if (Test3 == null) {
-////                MessageBox.Show(
-                 
-////                    "to the selected Client",
-////                    "No cost structures currently linked",
+            if ((BudgetMonthViewModel)((ComboBox)sender).SelectedItem != null)
+            {
+                //((BillingPeriodListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedBillingPeriod = (BillingPeriodViewModel)((ComboBox)sender).SelectedItem;
+                ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth = (BudgetMonthViewModel)((ComboBox)sender).SelectedItem;
 
-////                    MessageBoxButton.OK,   MessageBoxImage.Information
-////);
-
-//                return; }
-//            //((CostHierarchyListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedCostHierarchy = (CostHierarchyViewModel)((ComboBox)sender).SelectedItem;
-//            ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy = (CostHierarchyViewModel)((ComboBox)sender).SelectedItem;
-
-//            ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).Edit();
-//            ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
-
+            }
         }
+
     }
 }

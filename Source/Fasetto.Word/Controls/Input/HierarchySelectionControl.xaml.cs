@@ -432,7 +432,7 @@ namespace Fasetto.Word
         }
 
         #endregion // Search Logic
-        #region Element manipulation
+        #region Main methods
         /// <summary>
         /// Use Popup View to add a Hierarchy Element
         /// </summary>

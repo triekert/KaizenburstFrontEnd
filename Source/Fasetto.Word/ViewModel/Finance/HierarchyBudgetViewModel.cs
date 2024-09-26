@@ -10,14 +10,14 @@ namespace Fasetto.Word
     /// <summary>
     /// The Hierarchy element as a view model
     /// </summary>
-    public class HierarchyViewModel : BaseViewModel
+    public class HierarchyBudgetViewModel : BaseViewModel
 
     {
         //#region Data
 
-        public readonly HierarchyViewModel mParent;
-        private readonly HierarchyDataModel mElement;
-        public ObservableCollection<HierarchyViewModel> mChildren;
+        public readonly HierarchyBudgetViewModel mParent;
+        private readonly BudgetDataModel mElement;
+        public ObservableCollection<HierarchyBudgetViewModel> mChildren;
         public bool mIsExpanded;
         public bool mIsSelected;
         public bool mIsAllowDrop;
@@ -35,102 +35,31 @@ namespace Fasetto.Word
         /// <summary>
         /// Description of hiearchy item
         /// </summary>
-        public string Description =>mElement.Description;
+        //public string Description =>mElement.Description;
         /// <summary>
         /// The Identifier of this hierarchy item
         /// </summary>
         public string KCategoryID => mElement.KCategoryID;
 
-        /// <summary>
-        /// The Identifier of the Hierarchy Type for this item
-        /// </summary>
-        public string FHierarchyID => mElement.FHierarchyID;
-        /// <summary>
-        /// The Identifier of the Client linked to this item
-        /// </summary>
-        public string FClientID => mElement.FClientID;
-
+  
         /// <summary>
         /// Parent ID  of hiearchy item
         /// </summary>
         public string ParentCategoryID =>mElement.ParentCategoryID;
 
-        /// <summary>
-        /// Parent ShortName of hierarchy item
-        /// </summary>
-        public string ParentShortName => mElement.ParentShortName;
+
+
 
         /// <summary>
-        /// Calendar date from which Element is seen as active
+        /// A list of all children containd inside this item
         /// </summary>
-        public DateTime DateEffective => mElement.DateEffective;
-
-        /// <summary>
-        /// Calendar date from which Element is deactivated
-        /// </summary>
-        public DateTime DateDiscontinued => mElement.DateDiscontinued;
-
-        /// <summary>
-        /// Attach the current activity to a Change object
-        /// </summary>
-        public string KChangeID   => mElement.KChangeID;
-
-        /// <summary>
-        /// Parent ID  of hierarchy item
-        /// </summary>
-        public string HierarchyTypeID => mElement.HierarchyTypeID;
-        /// <summary>
-        /// Parent ShortName of hierarchy item
-        /// </summary>
-        public string HierarchyType => mElement.HierarchyType;
-
-        /// <summary>
-        /// If a menu item, link tree item to menu Page
-        /// </summary>
-        public string Page => mElement.Page;
-
-        /// <summary>
-        /// If a menu item, link tree item to menu Page
-        /// </summary>
-        public string Root => mElement.Root;
-
-        /// <summary>
-        /// Property to indicate whether this element is a Menu Item or not..
-        /// </summary>
-        public bool IsMenuItem => mElement.IsMenuItem;
-
-        /// <summary>
-        /// Property to indicate whether element is being evaluated by a change request
-        /// and whether it should be excluded from current operations
-        /// </summary>
-        public bool IsUnderReview => mElement.IsUnderReview;
-
-        /// <summary>
-        /// Property to indicate whether this element has been newly added change request
-        /// and whether it should be excluded from current operations
-        /// </summary>
-        public bool IsNewElement => mElement.IsNewElement;
-
-        /// <summary>
-        /// Property to indicate whether this element is to be removed from the persistence layer
-        /// </summary>
-        public bool IsDeleteElement => mElement.IsDeleteElement;
-
-        // <summary>
-        /// Level limit for hierarchy's to be returned (1 = top level only...)
-        /// </summary>
-        public int Level => mElement.Level;
-
-        /// <summary>
-        /// A list of all children contained inside this item
-        /// </summary>
-        public ObservableCollection<HierarchyViewModel> Children => mChildren;
+        public ObservableCollection<HierarchyBudgetViewModel> Children => mChildren;
 
 
         /// <summary>
         /// Title of Control
         /// </summary>
-        public string Title { get; set; } = "Tree View of Finance";
+        public string Title { get; set; } = "Budget Breakdown";
 
 
         /// <summary>
@@ -164,29 +93,28 @@ namespace Fasetto.Word
         #endregion
         #region Constructors
 
-        public HierarchyViewModel()
+        public HierarchyBudgetViewModel()
 
         {
 
         }
-        public HierarchyViewModel(HierarchyDataModel element)
+        public HierarchyBudgetViewModel(BudgetDataModel element)
 
                  : this(element, null)
         {
         }
 
-        private HierarchyViewModel(HierarchyDataModel element, HierarchyViewModel parent)
+        private HierarchyBudgetViewModel(BudgetDataModel element, HierarchyBudgetViewModel parent)
         {
             mElement = element;
             mParent = parent;
-            mChildren = mChildren;
             var exception = default(Exception);
             try
             { 
         
-            mChildren = new ObservableCollection<HierarchyViewModel>(
+            mChildren = new ObservableCollection<HierarchyBudgetViewModel>(
                     (from child in mElement.Children orderby(mElement.ShortName)
-                     select new HierarchyViewModel(child, this))
+                     select new HierarchyBudgetViewModel(child, this))
                      .ToList());
             }
             catch (Exception ex)
@@ -223,7 +151,7 @@ namespace Fasetto.Word
                 // Expand all the way up to the root.
                 if (mIsExpanded && mParent != null)
                     mParent.IsExpanded = true;
-                var mDescription = mElement.Description;
+                //var mDescription = mElement.Description;
             }
         }
 

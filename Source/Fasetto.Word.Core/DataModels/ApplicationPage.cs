@@ -61,11 +61,16 @@
         /// </summary>
         SWBilling = 10,
 
-
         /// <summary>
         ///Management of captured transactions
         /// </summary>
         Transactions = 11,
+
+        /// <summary>
+        ///Management of budgets
+        /// </summary>
+        BudgetReview = 12,
+
     }
 
 }

@@ -104,7 +104,7 @@ namespace Fasetto.Word
        /// <summary>
         /// The selected CostHierarchy for the Transaction Classification processing
         /// </summary>
-        public CostHierarchyViewModel SelectedCostHierarchy { get; set; }
+        public BudgetPeriodViewModel SelectedCostHierarchy { get; set; }
 
         /// <summary>
         /// The GUID for the Bulk Meter for which reconciliation is to be processed

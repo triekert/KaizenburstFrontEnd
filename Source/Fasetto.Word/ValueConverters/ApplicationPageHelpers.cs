@@ -52,6 +52,9 @@ namespace Fasetto.Word
                 case ApplicationPage.Transactions:
                     return new TransactionSelectionPage(viewModel as TransactionSelectionPageViewModel);
 
+                case ApplicationPage.BudgetReview:
+                    return new BudgetSelectionPage(viewModel as BudgetSelectionPageViewModel);
+
                 default:
                     Debugger.Break();
                     return null;
@@ -96,6 +99,8 @@ namespace Fasetto.Word
             if (page is TransactionSelectionPage)
                  return ApplicationPage.Transactions;
 
+            if (page is BudgetSelectionPage)
+                return ApplicationPage.BudgetReview;
             // Alert developer of issue
             Debugger.Break();
             return default;

@@ -115,6 +115,21 @@
         /// The route to the Return Document Api method
         /// </summary>
         public const string ReturnDocument = "api/finance/ReturnDocument";
+
+
+        /// <summary>
+        /// The list of budgets for selected cost hierarchy
+        /// </summary>
+        public const string ReturnBudgetsList = "api/finance/ReturnBudget";
+
+
+
+        /// <summary>
+        /// Return all the detail for the selected budget and calendar month
+        /// </summary>
+        public const string ReturnBudgetDetail = "api/finance/ReturnBudgetDetail";
+
+
         #endregion
 
 

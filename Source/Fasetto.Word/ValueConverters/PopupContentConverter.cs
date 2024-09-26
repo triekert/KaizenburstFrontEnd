@@ -92,6 +92,12 @@ namespace Fasetto.Word
                     var mSWBillingDetailControl = new SWBillingDetailControl();
                     return mSWBillingDetailControl;
 
+
+
+                case PopupContent.BudgetReview:
+                    var mBudgetReviewControl = new BudgetReviewControl();
+                    return mBudgetReviewControl;
+
                 // Unknown
                 default:
                     return "No UI yet, sorry :)";

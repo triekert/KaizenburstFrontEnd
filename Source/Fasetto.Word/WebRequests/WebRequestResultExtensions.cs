@@ -22,7 +22,7 @@ namespace Fasetto.Word
         public static async Task<bool> HandleErrorIfFailedAsync(this WebRequestResult response, string title)
         {
             // If there was no response, bad data, or a response with a error message...
-            if (response == null || response.ServerResponse == null || (response.ServerResponse as ApiResponse)?.Successful == false)
+            if (response == null || response.ServerResponse == null || response.ServerResponse is ApiResponse { Successful: false })
             {
                 // Default error message
                 // TODO: Localize strings

@@ -23,7 +23,6 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-
             <!-- Label -->
             <TextBlock Text="{Binding Label}"
                        Name="Label"
@@ -32,44 +31,19 @@
                        VerticalAlignment="Center"
                        FontFamily="{StaticResource LatoRegular}"
                        />
-
-            <!-- Edit Content -->
-
-
-            <!-- Working spinner container -->
-            <!--<Grid Grid.Column="2" 
-                  HorizontalAlignment="Right"
-                  VerticalAlignment="Center"
-                  local:AnimateFadeInProperty.Value="{Binding Working}">
-
-                <Border Padding="0 0 5 0">
-                    <TextBlock Style="{StaticResource SpinningText}" />
-                </Border>
-
-
-            </Grid>-->
-
             <StackPanel Grid.Column="1"
                         Orientation="Vertical"
                         >
-
-
                 <TextBlock  Text ="Billing Period" FontFamily="{StaticResource LatoBold}" 
                                            Padding="10 10 42 10"/>
-
-
 
                 <ComboBox MinWidth="90"
                                       MaxDropDownHeight="400"
                                       ScrollViewer.VerticalScrollBarVisibility="Auto"
-                        
                                       ItemsSource="{Binding BillingPeriodList}"
 
                                 SelectionChanged="ComboBox_Selected"                  
-                   
-                          
                           >
-                                       <!--SelectedItem="{Binding MSelectedBillingPeriod}"-->                                          
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
@@ -80,23 +54,8 @@
                             </StackPanel>
                         </DataTemplate>                        
                     </ComboBox.ItemTemplate>
-
                 </ComboBox>
-
-                <!--<StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Start Date " FontFamily="{StaticResource LatoBold}" VerticalAlignment="Center"/>
-                    <TextBlock Text="{Binding Path=MSelectedBillingPeriod.TimeStart,StringFormat=dd/MM/yyyy HH:mm}"  FontFamily="{StaticResource LatoRegular}" VerticalAlignment="Center" Foreground="BlueViolet"/>
-                    <TextBlock Text=" -  End Date "    FontFamily="{StaticResource LatoBold}" VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding Path=MSelectedBillingPeriod.TimeEnd,StringFormat=dd/MM/yyyy HH:mm}"   FontFamily="{StaticResource LatoRegular}" VerticalAlignment="Center" Foreground="OrangeRed"/>
-                </StackPanel>-->
-
-
             </StackPanel>
-
-
-
-
         </Grid>
-
     </Border>
 </UserControl>

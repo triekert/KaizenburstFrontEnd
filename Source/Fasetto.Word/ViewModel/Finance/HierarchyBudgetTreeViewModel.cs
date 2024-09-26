@@ -23,7 +23,7 @@ namespace Fasetto.Word
     /// for the TreeView (the FirstGeneration property), a bindable
     /// SearchText property, and the SearchCommand to perform a search.
     /// </summary>
-    public class HierarchyBillingTreeViewModel : BaseViewModel
+    public class HierarchyBudgetTreeViewModel : BaseViewModel
 
     {
 
@@ -32,7 +32,7 @@ namespace Fasetto.Word
         /// <summary>
         /// A list of all registered hierarchy elements
         /// </summary>
-        public ObservableCollection<HierarchyBillingViewModel> FirstGeneration { get; set; }
+        public ObservableCollection<HierarchyBudgetViewModel> FirstGeneration { get; set; }
 
 
         //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
@@ -42,12 +42,12 @@ namespace Fasetto.Word
         #region Data
 
         //private readonly ReadOnlyCollection<HierarchyViewModel> mFirstGeneration;
-        protected HierarchyBillingViewModel mRootHierarchyElement;
-        protected HierarchyBillingViewModel mRootHierarchyElement1;
+        protected HierarchyBudgetViewModel mRootHierarchyElement;
+        protected HierarchyBudgetViewModel mRootHierarchyElement1;
         private readonly ICommand mSearchCommand;
-        public HierarchyBillingListDataModel mHDML;
-        public HierarchyBillingResultListApiModel mPersist, mPersistTmp,mOriginal;
-        public HierarchyBillingDataModel mHDM;
+        public BudgetListDataModel mHDML;
+        public BudgetResultListApiModel mPersist, mPersistTmp,mOriginal;
+        public BudgetDataModel mHDM;
         public string mBillingPeriod;
         public ParameterBillingApiModel mBudget;
         public HierarchyElementViewModel mElement;
@@ -79,18 +79,18 @@ namespace Fasetto.Word
         /// <param name="hierarchyTable"></param>
         /// The hierarchyTable passed through as a parameter identifies the specific hierarchy set to be retrieved
         /// from persistent s
-        public HierarchyBillingTreeViewModel(string hierarchyTable)
+        public HierarchyBudgetTreeViewModel(string hierarchyTable)
         {
-            #region Dummy Root HierarchyBillingListDataModel
+            #region Dummy Root BudgetDataListModel
             ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
-            mHDML = new HierarchyBillingListDataModel();
-            mHDM = new HierarchyBillingDataModel
+            mHDML = new BudgetListDataModel();
+            mHDM = new BudgetDataModel
             {
                 KCategoryID = new Guid().ToString(),
                 ParentCategoryID = "00000000-0000-0000-0000-000000000000",
-                Description = "...Loading hierarchy data...",
+                //Description = "...Loading hierarchy data...",
                 ShortName = "Loading...Please be patient",
-                Children = new HierarchyBillingListDataModel()
+                Children = new BudgetListDataModel()
             };
             mHDML.Add(mHDM);
 
@@ -121,13 +121,13 @@ namespace Fasetto.Word
         {
 
             var rootElement = mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
-            mRootHierarchyElement = new HierarchyBillingViewModel(rootElement)
+            mRootHierarchyElement = new HierarchyBudgetViewModel(rootElement)
             {
                 IsExpanded = true
             };
 
-            FirstGeneration = new ObservableCollection<HierarchyBillingViewModel>(
-                new HierarchyBillingViewModel[]
+            FirstGeneration = new ObservableCollection<HierarchyBudgetViewModel>(
+                new HierarchyBudgetViewModel[]
                 {
                     mRootHierarchyElement
                 });
@@ -162,7 +162,7 @@ namespace Fasetto.Word
         //        mTableName = value;
 
         //    } }
-        #endregion Public Properties
+        #endregion//Public Properties
 
 
 
@@ -175,9 +175,9 @@ namespace Fasetto.Word
 
         private class SearchCategoryTreeCommand : ICommand
         {
-            private readonly HierarchyBillingTreeViewModel mCategoryTree;
+            private readonly HierarchyBudgetTreeViewModel mCategoryTree;
 
-            public SearchCategoryTreeCommand(HierarchyBillingTreeViewModel CategoryTree)
+            public SearchCategoryTreeCommand(HierarchyBudgetTreeViewModel CategoryTree)
             {
                 mCategoryTree = CategoryTree;
             }
@@ -229,7 +229,7 @@ namespace Fasetto.Word
                 if (string.IsNullOrEmpty(token))
                     // Then do nothing more
                     return;
-                var result = await WebRequests.PostAsync<ApiResponse<HierarchyBillingResultListApiModel>>(
+                var result = await WebRequests.PostAsync<ApiResponse<BudgetResultListApiModel>>(
                 // Set URL
                     RouteHelpers.GetAbsoluteRoute(ApiRoutes.ReturnSWBilling),
                     mBudget,
@@ -243,62 +243,60 @@ namespace Fasetto.Word
                 // OK successfully registered (and logged in)... now get appropriate tree view data
                 //for now; keep a snapshot of persisted data
                 mOriginal = result.ServerResponse.Response;
-                mPersistTmp = new HierarchyBillingResultListApiModel();
+                mPersistTmp = new BudgetResultListApiModel();
+                //var Tsttmp = mOriginal.Where(x => x.Sequence == x.Sequence).OrderBy(x => x.Sequence).ToList();//
+            //var elements1 = new HierarchyBudgetSummaryListDataModel();
+                //foreach (var item in Tsttmp)
+                //{
+                //    //var ud = new HierarchyBudgetSummaryDataModel
+                //    {
 
-                //Order the meters/customers in accordance with the sequence of inspection (route taken when reading physical meters)
-                var Tsttmp = mOriginal.Where(x => x.Sequence == x.Sequence).OrderBy(x => x.Sequence).ToList();//
-            var elements1 = new HierarchyBillingSummaryListDataModel();
-                foreach (var item in Tsttmp)
-                {
-                    var ud = new HierarchyBillingSummaryDataModel
-                    {
-
-                        ShortName = item.ShortName,
-                        TotalConsumption = item.TotalConsumption,
-                        WaterCost = item.WaterCost,
-                        SewerCost = item.SewerCost,
-                        TotalCost = item.TotalCost,
-                        TimeStart = item.TimeStart,
-                        Startreading = item.Startreading,
-                        Endreading = item.Endreading,
-                        TimeEnd = item.TimeEnd,
-                        DatePeriodStart = item.DatePeriodStart,
-                        DatePeriodEnd = item.DatePeriodEnd,
-                        Volume = item.Volume,
-                        VolumePredicted = item.VolumePredicted,
-                        ThresholdW = item.ThresholdW,
-                        Basew = item.Basew,
-                        Tariffw = item.Tariffw,
-                        CostWater = item.CostWater,
-                        ThresholdS = item.ThresholdS,
-                        Bases = item.Bases,
-                        Tariffs = item.Tariffs,
-                        CostSewer = item.CostSewer,
-                        DatePeriodStartN = item.DatePeriodStartN,
-                        DatePeriodEndN = item.DatePeriodEndN,
-                        VolumeN = item.VolumeN,
-                        VolumePredictedN = item.VolumePredictedN,
-                        ThresholdWN = item.ThresholdWN,
-                        BasewN = item.BasewN,
-                        TariffwN = item.TariffwN,
-                        CostWaterN = item.CostWaterN,
-                        ThresholdSN = item.ThresholdSN,
-                        BasesN = item.BasesN,
-                        TariffsN = item.TariffsN,
-                        CostSewerN = item.CostSewerN,
-                        Adjustment = item.Adjustment,
-                        AdjustmentN = item.AdjustmentN,
-                        CostWaterAdjust = item.CostWaterAdjust,
-                        CostSewerAdjust = item.CostSewerAdjust,
-                        CostTotalAdjust = item.CostTotalAdjust,
-                        Sequence = item.Sequence,
+                //        ShortName = item.ShortName,
+                //        TotalConsumption = item.TotalConsumption,
+                //        WaterCost = item.WaterCost,
+                //        SewerCost = item.SewerCost,
+                //        TotalCost = item.TotalCost,
+                //        TimeStart = item.TimeStart,
+                //        Startreading = item.Startreading,
+                //        Endreading = item.Endreading,
+                //        TimeEnd = item.TimeEnd,
+                //        DatePeriodStart = item.DatePeriodStart,
+                //        DatePeriodEnd = item.DatePeriodEnd,
+                //        Volume = item.Volume,
+                //        VolumePredicted = item.VolumePredicted,
+                //        ThresholdW = item.ThresholdW,
+                //        Basew = item.Basew,
+                //        Tariffw = item.Tariffw,
+                //        CostWater = item.CostWater,
+                //        ThresholdS = item.ThresholdS,
+                //        Bases = item.Bases,
+                //        Tariffs = item.Tariffs,
+                //        CostSewer = item.CostSewer,
+                //        DatePeriodStartN = item.DatePeriodStartN,
+                //        DatePeriodEndN = item.DatePeriodEndN,
+                //        VolumeN = item.VolumeN,
+                //        VolumePredictedN = item.VolumePredictedN,
+                //        ThresholdWN = item.ThresholdWN,
+                //        BasewN = item.BasewN,
+                //        TariffwN = item.TariffwN,
+                //        CostWaterN = item.CostWaterN,
+                //        ThresholdSN = item.ThresholdSN,
+                //        BasesN = item.BasesN,
+                //        TariffsN = item.TariffsN,
+                //        CostSewerN = item.CostSewerN,
+                //        Adjustment = item.Adjustment,
+                //        AdjustmentN = item.AdjustmentN,
+                //        CostWaterAdjust = item.CostWaterAdjust,
+                //        CostSewerAdjust = item.CostSewerAdjust,
+                //        CostTotalAdjust = item.CostTotalAdjust,
+                //        Sequence = item.Sequence,
 
 
-                    };
+                //    };
 
 
-                    elements1.Add(ud);
-                }
+                //    elements1.Add(ud);
+                //}
 
                     var fileName = @"C:\Temp\SW Billing " +
                 ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeStart.ToString("d_MM_yyyy")
@@ -309,7 +307,7 @@ namespace Fasetto.Word
                     {
                         using (var csvOut = new CsvWriter(writer, CultureInfo.InvariantCulture))
                         {
-                            csvOut.WriteRecords(elements1);
+                            //csvOut.WriteRecords(elements1);
                         }
                     }
                 }
@@ -325,7 +323,7 @@ namespace Fasetto.Word
                 {
                     //var hierarchyResultApiModels = mOriginal.ToList();
                     //make a clone of the persisted data for manipulation on front end
-                    mPersist = new HierarchyBillingResultListApiModel();
+                    mPersist = new BudgetResultListApiModel();
                     mPersist.Clone(mOriginal, mPersist);
                 }
                 catch (Exception e)
@@ -371,9 +369,9 @@ namespace Fasetto.Word
             //build a tree view, always starting with the root element, which is also the classification for the hierarchy
             mHDML.AddRange(ExpandHierarchyData(mPersist, "00000000-0000-0000-0000-000000000000", "Root"));
             //Refresh the tree view title with the current name of the root element
-            ControlTitle = ((HierarchyBillingTreeViewModel)ViewModelApplication.CurrentControlViewModel).ControlTitle = "Water & Sewerage Billing : FROM " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeStart.ToString("d/MM/yyyy")
-            + " TO " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeEnd.ToString("d/MM/yyyy") + " FOR " +
-            (mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ShortName;
+            //ControlTitle = ((HierarchyBudgetTreeViewModel)ViewModelApplication.CurrentControlViewModel).ControlTitle = "Water & Sewerage Billing : FROM " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeStart.ToString("d/MM/yyyy")
+            //+ " TO " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeEnd.ToString("d/MM/yyyy") + " FOR " +
+            //(mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ShortName;
 
             //var matches = mPersist.OrderBy(x => x.DateEffective).ToList();
             //foreach (var category in matches)
@@ -391,7 +389,7 @@ namespace Fasetto.Word
 
 
         /// <summary>
-        /// This function builds a hierarchy of elements based on a
+        /// This funtion builds a hierarchy of elements based on a
         /// a Hierarchy result returned when querying a database structure
         /// on which the hierarchy structures are persisted
         /// </summary>
@@ -400,7 +398,7 @@ namespace Fasetto.Word
         /// <param name="KCategoryID"></param>
         /// the ID of the parent for finding descendants is passsed through as a string
         /// <returns></returns>
-        private HierarchyBillingListDataModel ExpandHierarchyData(HierarchyBillingResultListApiModel results, string KCategoryID, string mParentShortName)
+        private BudgetListDataModel ExpandHierarchyData(BudgetResultListApiModel results, string KCategoryID, string mParentShortName)
         {
             mPersist = results;
             // Find all children
@@ -408,62 +406,23 @@ namespace Fasetto.Word
             //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued == new DateTime(9999,12,31,0,0,0) && !x.IsDeleteElement ).OrderBy(x=>x.ShortName).ToList();//
             //To do:  accept a date parameter to retroactively modify hierarchy data
             //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued >  DateTime.Today && !x.IsDeleteElement).OrderBy(x => x.ShortName).ToList();//
-            var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued > DateTime.Today ).OrderBy(x => (x.ShortName.ParseInt())).ThenBy(x => x.ShortName).ToList();//
+            var children = results.Where(x => x.ParentCategoryID == KCategoryID  ).OrderBy(x => (x.ShortName.ParseInt())).ThenBy(x => x.ShortName).ToList();//
             // Hierarchy cannot be expanded
             if (children.Count() == 0)
-                return new HierarchyBillingListDataModel();
+                return new BudgetListDataModel();
             //...otherwise, return all descendants recursively
-            var elements = new HierarchyBillingListDataModel();
+            var elements = new BudgetListDataModel();
 
             foreach (var item in children)
             {
-                var ud1 = new HierarchyBillingDataModel
+                var ud1 = new BudgetDataModel
                 {
 
                     ShortName = item.ShortName,
-                    Description = item.Description,
+                    //Description = item.Description,
                     KCategoryID = item.KCategoryID,
                     ParentCategoryID = item.ParentCategoryID,
-                    DateEffective = item.DateEffective,
-                    DateDiscontinued = item.DateDiscontinued,
-                    TotalConsumption = item.TotalConsumption,
-                    WaterCost = item.WaterCost,
-                    SewerCost = item.SewerCost,
-                    TotalCost = item.TotalCost,
-                    TimeStart = item.TimeStart,
-                    Startreading = item.Startreading,
-                    Endreading =item.Endreading,
-                    TimeEnd = item.TimeEnd,
-                    DatePeriodStart = item.DatePeriodStart,
-                    DatePeriodEnd = item.DatePeriodEnd,
-                    Volume = item.Volume,
-                    VolumePredicted = item.VolumePredicted,
-                    ThresholdW = item.ThresholdW,
-                    Basew = item.Basew,
-                    Tariffw = item.Tariffw,
-                    CostWater = item.CostWater,
-                    ThresholdS = item.ThresholdS,
-                    Bases = item.Bases,
-                    Tariffs = item.Tariffs,
-                    CostSewer = item.CostSewer,
-                    DatePeriodStartN = item.DatePeriodStartN,
-                    DatePeriodEndN = item.DatePeriodEndN,
-                    VolumeN = item.VolumeN,
-                    VolumePredictedN = item.VolumePredictedN,
-                    ThresholdWN = item.ThresholdWN,
-                    BasewN = item.BasewN,
-                    TariffwN = item.TariffwN,
-                    CostWaterN = item.CostWaterN,
-                    ThresholdSN = item.ThresholdSN,
-                    BasesN = item.BasesN,
-                    TariffsN = item.TariffsN,
-                    CostSewerN = item.CostSewerN,
-                    Adjustment = item.Adjustment,
-                    AdjustmentN = item.AdjustmentN,
-                    CostWaterAdjust = item.CostWaterAdjust,
-                    CostSewerAdjust = item.CostSewerAdjust,
-                    CostTotalAdjust = item.CostTotalAdjust,
-                    Sequence = item.Sequence,
+
 
 
                     //TotalConsumption = item.TotalConsumption,
@@ -476,7 +435,7 @@ namespace Fasetto.Word
 
                     //To Do: make provision to add Icons to make the UI more intuitive and attractive
                     //FIconID = item.FIconID,
-                    Children = new HierarchyBillingListDataModel()
+                    Children = new BudgetListDataModel()
                 };
                 ud1.Children = ExpandHierarchyData(results, ud1.KCategoryID, ud1.ShortName);
 
@@ -512,7 +471,7 @@ namespace Fasetto.Word
             }
         }
 
-        public IEnumerator<HierarchyBillingViewModel> MatchingCategoryEnumerator { get; private set; }
+        public IEnumerator<HierarchyBudgetViewModel> MatchingCategoryEnumerator { get; private set; }
 
         #endregion // SearchText
 
@@ -554,7 +513,7 @@ namespace Fasetto.Word
             }
         }
 
-        private IEnumerable<HierarchyBillingViewModel> FindMatches(string searchText, HierarchyBillingViewModel Category)
+        private IEnumerable<HierarchyBudgetViewModel> FindMatches(string searchText, HierarchyBudgetViewModel Category)
         {
             if (Category.NameContainsText(searchText))
                 yield return Category;
@@ -567,7 +526,7 @@ namespace Fasetto.Word
         #endregion // Search Logic
 
         #region Search Logic //KCategoryID
-        public IEnumerator<HierarchyBillingViewModel> MatchingKCategoryEnumerator { get; private set; }
+        public IEnumerator<HierarchyBudgetViewModel> MatchingKCategoryEnumerator { get; private set; }
 
         #endregion // SearchKCategoryID
         #region Search Logic //KCategoryID
@@ -596,7 +555,7 @@ namespace Fasetto.Word
 
         }
 
-        private IEnumerable<HierarchyBillingViewModel> FindKMatches(string searchText, HierarchyBillingViewModel Category)
+        private IEnumerable<HierarchyBudgetViewModel> FindKMatches(string searchText, HierarchyBudgetViewModel Category)
         {
             //var mSearchText = searchText;
             if (Category.KCategoryIdContainsText(searchText))

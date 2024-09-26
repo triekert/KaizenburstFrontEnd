@@ -9,7 +9,7 @@ namespace Fasetto.Word
     /// <summary>
     /// Interaction logic for TextEntryControl.xaml
     /// </summary>
-    public partial class BillingPeriodComboboxControl : UserControl
+    public partial class BudgetPeriodComboboxControl : UserControl
     {
         #region Dependency Properties
 
@@ -22,10 +22,10 @@ namespace Fasetto.Word
             set => SetValue(LabelWidthProperty, value);
         }
 
-        //public BillingPeriodListViewModel mBPVM;
+        //public CostHierarchyListViewModel mBPVM;
         // Using a DependencyProperty as the backing store for LabelWidth.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty LabelWidthProperty =
-            DependencyProperty.Register("LabelWidth4", typeof(GridLength), typeof(TextEntryControl), new PropertyMetadata(GridLength.Auto, LabelWidthChangedCallback));
+            DependencyProperty.Register("LabelWidth6", typeof(GridLength), typeof(TextEntryControl), new PropertyMetadata(GridLength.Auto, LabelWidthChangedCallback));
 
         #endregion
 
@@ -34,12 +34,13 @@ namespace Fasetto.Word
         /// <summary>
         /// Default constructor
         /// </summary>
-        public BillingPeriodComboboxControl()
+        public BudgetPeriodComboboxControl()
         {
-            //var mBPLVM = new BillingPeriodListViewModel("8A8425E2-5766-4014-8C2F-01BD84DBC370");
+            //var mBPLVM = new CostHierarchyListViewModel("8A8425E2-5766-4014-8C2F-01BD84DBC370");
             //ViewModelApplication.CurrentControlViewModel = mBPLVM;
             //DataContext = mBPLVM;
             InitializeComponent();
+
         }
 
         #endregion
@@ -56,7 +57,7 @@ namespace Fasetto.Word
             try
             {
                 // Set the column definition width to the new value
-                (d as BillingPeriodComboboxControl).LabelColumnDefinition.Width = (GridLength)e.NewValue;
+                (d as BudgetPeriodComboboxControl).LabelColumnDefinition.Width = (GridLength)e.NewValue;
             }
 
             // Making ex available for developer on break
@@ -67,20 +68,23 @@ namespace Fasetto.Word
                 // Make developer aware of potential issue
                 Debugger.Break();
 
-                (d as BillingPeriodComboboxControl).LabelColumnDefinition.Width = GridLength.Auto;
+                (d as BudgetPeriodComboboxControl).LabelColumnDefinition.Width = GridLength.Auto;
             }
         }
 
         #endregion
 
-        private void ComboBox_Selected(object sender, RoutedEventArgs e)
+        private void ComboBox1_Selected(object sender, RoutedEventArgs e)
         {
-            if ((BillingPeriodViewModel)((ComboBox)sender).SelectedItem != null)
+            if ((BudgetPeriodViewModel)((ComboBox)sender).SelectedItem != null)
             {
-            //((BillingPeriodListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedBillingPeriod = (BillingPeriodViewModel)((ComboBox)sender).SelectedItem;
-            ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod = (BillingPeriodViewModel)((ComboBox)sender).SelectedItem; 
+                //((BillingPeriodListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedBillingPeriod = (BillingPeriodViewModel)((ComboBox)sender).SelectedItem;
+                ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget = (BudgetPeriodViewModel)((ComboBox)sender).SelectedItem;
+                ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).AddMonthRange();
+                ((BudgetMonthListViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).BudgetMonthList).BuildMonthList();
+
             }
-            ((BillingPeriodListViewModel)((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod).MSelectedBillingPeriod = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod;
+            ((BudgetPeriodListViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Budget).MSelectedBudgetPeriod = ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget;
 
 
         }

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -721,9 +722,170 @@ namespace Fasetto.Word.Web.Server
 
         }
         #endregion ReturnTransactions
-            #region BillingPeriods
 
-            [Route(ApiRoutes.ReturnBillingPeriods)]
+        #region Budget
+        #region ReturnBudgetsList
+
+        [Route(ApiRoutes.ReturnBudgetsList)]
+        public async Task<ApiResponse> ReturnBudgetsAsync([FromBody] BudgetPeriodResultApiModel model)
+
+        {
+            #region Get User
+
+            // Get the current user
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            // If we have no user...
+            if (user == null)
+                return new ApiResponse
+                {
+                    // TODO: Localization
+                    ErrorMessage = "User not found"
+                };
+
+            #endregion
+
+            #region sql query
+
+
+
+            var SqlString = "SELECT * FROM [Finance].[FinBudget] (nolock)  WHERE  fHierarchyID =  '" + model.CostHierarchy + "' ORDER BY MonthStart DESC";
+            ;
+            try
+            {
+                // Try and run the task
+                var dataset = await GetDataSetAsync(SqlString);
+                var dt = dataset.Tables[0];
+                var results = new BudgetPeriodResultListApiModel();
+                //var results = billingPeriodResultListApiModel;
+
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    var u = new BudgetPeriodResultApiModel
+                    {
+
+                         KBudgetID =row[6].ToString().ToUpper(),
+                         Name = row[5].ToString(),
+                         MonthStart = (int)row[0],
+                         MonthEnd = (int)row[1],
+                         CostHierarchy =row[8].ToString().ToUpper(),
+
+                    };
+                    results.Add(u);
+
+                }
+
+                return new ApiResponse<BudgetPeriodResultListApiModel>
+                {
+
+                    Response = results
+                };
+                #endregion sql query
+
+
+            }
+            catch (Exception ex)
+            {
+                // Log error
+                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                // Throw it as normal
+                throw;
+            }
+
+        }
+        #endregion ReturnBudgetsList
+
+        #region ReturnBudgetDetail
+
+        [Route(ApiRoutes.ReturnBudgetDetail)]
+        public async Task<ApiResponse> ReturnBudgetDetailAsync([FromBody] ParameterBudgetApiModel model)
+
+        {
+            #region Get User
+
+            // Get the current user
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            // If we have no user...
+            if (user == null)
+                return new ApiResponse
+                {
+                    // TODO: Localization
+                    ErrorMessage = "User not found"
+                };
+
+            #endregion
+
+            #region sql query
+
+            var para = new SqlParameter[2];
+
+            para[0] = new SqlParameter("@kCategoryID", SqlDbType.UniqueIdentifier);
+            para[1] = new SqlParameter("@Month", SqlDbType.Int);
+
+
+            para[0].Value = !string.IsNullOrEmpty(model.BudgetID) ? new Guid(model.BudgetID) : (object)DBNull.Value;
+            para[1].Value = model.BMonth;
+
+            var SqlString = "EXEC [Finance].[spReturnBudgetDetail] @fBudgetID = '" + model.BudgetID + "' ,@month = '" + model.BMonth + "'"; ;
+            try
+            {
+                // Try and run the task
+
+
+
+                var dataset = await GetDataSetAsync(SqlString);
+                var dt = dataset.Tables[0];
+                var results = new BudgetResultListApiModel();
+                //var results = billingPeriodResultListApiModel;
+
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    var u = new BudgetResultApiModel
+                    {
+                        KCategoryID = row[3].ToString().ToUpper(),
+                        ShortName = row[12].ToString(),
+                        ParentCategoryID = row[11].ToString().ToUpper(),
+                        ParentShortName = row[13].ToString(),
+                        Month = (int)row[0],
+                        BudgetAmountTotal = (decimal)row[10],
+                        BudgetAmountDescendants = (decimal)row[9],
+                        BudgetAmount = (decimal)row[1],
+
+                    };
+                    results.Add(u);
+
+                }
+
+                return new ApiResponse<BudgetResultListApiModel>
+                {
+
+                    Response = results
+                };
+                #endregion sql query
+
+
+            }
+            catch (Exception ex)
+            {
+                // Log error
+                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                // Throw it as normal
+                throw;
+            }
+
+        }
+        #endregion ReturnBudgetDetail
+
+        #endregion Budget
+
+        #region BillingPeriods
+
+        [Route(ApiRoutes.ReturnBillingPeriods)]
             public async Task<ApiResponse> ReturnBillingPeriodsAsync([FromBody] string model)
 
         {
@@ -799,76 +961,76 @@ namespace Fasetto.Word.Web.Server
         #region RootPerClientAndType
         
         [Route(ApiRoutes.ReturnRootPerClientAndType)]
-        public async Task<ApiResponse> ReturnRootPerClientAndTypeAsync([FromBody] ParameterGenericRootApiModel model)
+        //public async Task<ApiResponse> ReturnRootPerClientAndTypeAsync([FromBody] ParameterGenericRootApiModel model)
 
-        {
-            #region Get User
+        //{
+        //    #region Get User
 
-            // Get the current user
-            var user = await mUserManager.GetUserAsync(HttpContext.User);
+        //    // Get the current user
+        //    var user = await mUserManager.GetUserAsync(HttpContext.User);
 
-            // If we have no user...
-            if (user == null)
-                return new ApiResponse
-                {
-                    // TODO: Localization
-                    ErrorMessage = "User not found"
-                };
+        //    // If we have no user...
+        //    if (user == null)
+        //        return new ApiResponse
+        //        {
+        //            // TODO: Localization
+        //            ErrorMessage = "User not found"
+        //        };
 
-            #endregion
+        //    #endregion
 
-            #region sql query
-
-
-
-            var SqlString = "EXEC [Admin].[spGetHierarchyRootsPerClientAndType] 	 @fClientID =  '" + model.ClientID + "',@fHierarchyTypeID = '" + model.HierarchyTypeID + "'"; ;
-            ;
-            try
-            {
-                // Try and run the task
-                var dataset = await GetDataSetAsync(SqlString);
-                var dt = dataset.Tables[0];
-                var costHierarchyResultListApiModel = new CostHierarchyResultListApiModel();
-                var results = costHierarchyResultListApiModel;
-
-
-                foreach (DataRow row in dt.Rows)
-                {
-                    var u = new CostHierarchyResultApiModel
-                    {
-                        KCategoryID = row[2].ToString(),
-                        ShortName = row[0].ToString(),
-                        //FClientID = row[2].ToString(),
+        //    #region sql query
 
 
 
-                    };
-                    results.Add(u);
-
-                }
-
-                return new ApiResponse<CostHierarchyResultListApiModel>
-                {
-
-                    Response = results
-                };
-                #endregion sql query
+        //    var SqlString = "EXEC [Admin].[spGetHierarchyRootsPerClientAndType] 	 @fClientID =  '" + model.ClientID + "',@fHierarchyTypeID = '" + model.HierarchyTypeID + "'"; ;
+        //    ;
+        //    try
+        //    {
+        //        // Try and run the task
+        //        var dataset = await GetDataSetAsync(SqlString);
+        //        var dt = dataset.Tables[0];
+        //        //var costHierarchyResultListApiModel = new CostHierarchyResultListApiModel();
+        //        //var results = costHierarchyResultListApiModel;
 
 
-            }
-            catch (Exception ex)
-            {
-                // Log error
-                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
-
-                // Throw it as normal
-                throw;
-            }
+        //        //foreach (DataRow row in dt.Rows)
+        //        //{
+        //        //    var u = new CostHierarchyResultApiModel
+        //        //    {
+        //        //        KCategoryID = row[2].ToString(),
+        //        //        ShortName = row[0].ToString(),
+        //        //        //FClientID = row[2].ToString(),
 
 
 
+        //        //    };
+        //        //    results.Add(u);
 
-        }
+        //        //}
+
+        //        //return new ApiResponse<CostHierarchyResultListApiModel>
+        //        {
+
+        //            //Response = results
+        //        };
+        //        #endregion sql query
+
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log error
+        //        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+        //        // Throw it as normal
+        //        throw;
+        //    }
+
+
+
+
+        //}
 
         #endregion RootPerClientAndType
 

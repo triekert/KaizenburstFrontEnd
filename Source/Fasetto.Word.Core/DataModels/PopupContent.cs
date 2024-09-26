@@ -101,7 +101,21 @@
         /// <summary>
         /// Manage classification of a transaction
         /// </summary>
-        SWBillingDetail = 16
+        SWBillingDetail = 16,
+
+
+
+        /// <summary>
+        /// Manage budgets
+        /// </summary>
+        BudgetReview = 17,
+
+
+
+        /// <summary>
+        /// Manage budgets
+        /// </summary>
+        BudgetDetailList = 18
 
 
     }
