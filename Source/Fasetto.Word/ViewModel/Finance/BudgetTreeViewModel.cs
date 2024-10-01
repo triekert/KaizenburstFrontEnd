@@ -40,7 +40,7 @@ namespace Fasetto.Word
         #region Data
 
         protected BudgetViewModel mRootHierarchyElement;
-        protected BudgetViewModel mRootHierarchyElement1;
+        public BudgetViewModel mRootHierarchyElement1;
         private readonly ICommand mSearchCommand;
         public BudgetListDataModel mBDDML;
         public BudgetResultListApiModel mPersist, mPersistTmp, mOriginal;
@@ -86,7 +86,7 @@ namespace Fasetto.Word
         {
 
             //retrieve hierarchy from persistent storage on server
-            //To Do: Add mTableName as parameter when calling HiearchyAsync to populate hierarchy
+            //To Do: Add mTableName as parameter when calling HierarchyAsync to populate hierarchy
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             //ViewModelApplication.PopupVisible = false;
             mBDDML = new BudgetListDataModel();

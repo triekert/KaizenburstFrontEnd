@@ -115,9 +115,14 @@
         /// <summary>
         /// Manage budgets
         /// </summary>
-        BudgetDetailList = 18
+        BudgetDetailList = 18,
 
 
+
+        /// <summary>
+        /// Manage budgets
+        /// </summary>
+        BudgetAdjust = 19
     }
 
 

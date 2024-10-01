@@ -380,8 +380,8 @@ namespace Fasetto.Word
 
             //TO DO:
 
-            //Check that move will not cause infinite loop(ascendant-descendant - ascendant)
-            //Check that the item being moved is not an ascendant of the item being moved to
+            //Check that move will not cause infinite loop(Ancestor-descendant - Ancestor)
+            //Check that the item being moved is not an Ancestor of the item being moved to
             //the KCategoryID attribute of the item being moved may not be an ancestor of the
             //item being moved too.
             //If this constraint is met, the boolean is set to TRUE

@@ -42,9 +42,9 @@ namespace Fasetto.Word
         private bool mIsSourceObtained = false, mIsEqual = false;
         private Point mLastMouseDown;
         private TreeViewItem mTargetT, mSource;
-        private HierarchyBillingViewModel mDraggedItemTest,mDraggedItem,mTarget;
+        private BudgetViewModel mDraggedItemTest,mDraggedItem,mTarget;
         //private readonly object mFamilyTree;
-        private readonly HierarchyBillingViewModel mTargetTest;
+        public BudgetViewModel mTargetTest;
         //public string mControlTitle = "testing";
 
         //[Obsolete]
@@ -55,9 +55,14 @@ namespace Fasetto.Word
             //var root = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
             //root = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.KBillingPeriodID;
             //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
-            mHierarchyTree = new BudgetTreeViewModel();//root);
-
-            ViewModelApplication.CurrentPopupViewModel = mHierarchyTree;
+            if (ViewModelApplication.CurrentPopupViewModel == null)
+            { mHierarchyTree = new BudgetTreeViewModel(); }//root);
+            else
+            if (ViewModelApplication.CurrentPopupViewModel.GetType().Name != "BudgetTreeViewModel")
+            { mHierarchyTree = new BudgetTreeViewModel(); }//root);
+            else
+            { mHierarchyTree = (BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel; }
+            ViewModelApplication.CurrentPopupViewModel = mHierarchyTree; 
             ViewModelApplication.CurrentControlViewModel = mHierarchyTree;
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = false;
@@ -84,18 +89,18 @@ namespace Fasetto.Word
             // mHierarchyTree.SearchCommand.Execute(null) ;
                    }
 
-        private static List<HierarchyTreeDataModel> FillRecursive(List<HierarchyDataModel> flatObjects, string parentId)
-        {
-            return flatObjects.Where(x => x.ParentCategoryID.Equals(parentId)).Select(item => new HierarchyTreeDataModel
-            {
-                ShortName = item.ShortName,
-                Description = item.Description,
+        //private static List<BudgetListDataModel> FillRecursive(List<BudgetDataModel> flatObjects, string parentId)
+        //{
+        //    return flatObjects.Where(x => x.ParentCategoryID.Equals(parentId)).Select(item => new BudgetDataModel
+        //    {
+        //        ShortName = item.ShortName,
+        //        //Description = item.Description,
 
-                KCategoryID = item.KCategoryID,
-                Children = FillRecursive(flatObjects,
-                                         item.KCategoryID)
-            }).ToList();
-        }
+        //        KCategoryID = item.KCategoryID,
+        //        Children = FillRecursive(flatObjects,
+        //                                 item.KCategoryID)
+        //    }).ToList();
+        //}
         /// <summary>
         /// The TreeView_MouseDown event does not cater for the left mouse button on Tree View Items
         /// A soulution is to use the PreViewMouseDown event and to allow it to bubble down to the selected treeview item
@@ -128,7 +133,7 @@ namespace Fasetto.Word
             if (e.ChangedButton == MouseButton.Left)
             {
                 ViewModelApplication.CurrentSideMenuViewModel =  ViewModelApplication.CurrentSideMenuViewModel;
-                if (((TreeViewItem)sender).IsSelected  && (((TreeViewItem)sender).IsExpanded ||(((HierarchyBillingViewModel)((TreeViewItem)sender).DataContext).Children.Count() == 0)))
+                if (((TreeViewItem)sender).IsSelected  && (((TreeViewItem)sender).IsExpanded ||(((BudgetViewModel)((TreeViewItem)sender).DataContext).Children.Count() == 0)))
                 {
 
                     e.Handled = true;
@@ -153,6 +158,7 @@ namespace Fasetto.Word
         /// <param name="e"></param>
         private void TreeView_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            ((BudgetTreeViewModel)ViewModelApplication.CurrentControlViewModel).mRootHierarchyElement1 = (BudgetViewModel)tvParameters.SelectedItem;
             if (e.ChangedButton == MouseButton.Right)
             {
                 if (((TreeViewItem)sender).IsSelected)
@@ -165,13 +171,15 @@ namespace Fasetto.Word
             {
                 if (((TreeViewItem)sender).IsSelected)
                 {
-                    EditHierarchyElement();
+                    //EditHierarchyElement();
                 }
             }
             e.Handled = true;
         }
         private void TreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        { if (e.ChangedButton == MouseButton.Right)
+        {
+            mTargetTest = (BudgetViewModel)tvParameters.SelectedItem;
+            if (e.ChangedButton == MouseButton.Right)
             {
                 //AddHierarchyElement();
                  e.Handled = true;
@@ -179,12 +187,13 @@ namespace Fasetto.Word
             else
                 if (e.ChangedButton == MouseButton.Left)
                     {
-                    EditHierarchyElement(); 
+                    //EditHierarchyElement(); 
                     }
             var clkcnt = e.ClickCount;
             e.Handled = true;
 
         }
+
         /// <summary>
         /// Monitor keyboard for use of Insert key
         /// </summary>
@@ -195,16 +204,18 @@ namespace Fasetto.Word
             //check to determine whether user would like to add an item to the hierarchy
             //if (ViewModelApplication.PopupVisible == false)
             //{ 
+            //Pass  keyboard event args through 
+            mTargetTest = (BudgetViewModel)tvParameters.SelectedItem;
 
-                if (Keyboard.IsKeyDown(Key.Insert))
+            if (Keyboard.IsKeyDown(Key.Insert))
                 {
-                    AddAdjustment();                    
-                    e.Handled= true;
+                AddAdjustment();
+                e.Handled= true;
                 }
                 else
                     if (Keyboard.IsKeyDown(Key.Enter))
                 {
-                    ViewDetailBilling();
+                    //ViewDetailBilling();
                     e.Handled = true;
 
                 }
@@ -230,7 +241,7 @@ namespace Fasetto.Word
             try
             {
                 var item = GetNearestContainer(e.OriginalSource as UIElement);
-                mDraggedItemTest = (HierarchyBillingViewModel)item.Header;
+                mDraggedItemTest = (BudgetViewModel)item.Header;
                 if (e.LeftButton == MouseButtonState.Pressed)
                 {
                     var isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
@@ -241,7 +252,7 @@ namespace Fasetto.Word
                         (Math.Abs(currentPosition.Y - mLastMouseDown.Y) > 10.0))
                     {
 
-                        mDraggedItem = (HierarchyBillingViewModel)tvParameters.SelectedItem;
+                        mDraggedItem = (BudgetViewModel)tvParameters.SelectedItem;
                         mSourceCategoryName = mDraggedItem.ShortName;
                         //draggedItem = (TreeViewItem)tvParameters.SelectedItem;
                         //mSource = (TreeViewItem)tvParameters.SelectedItem;
@@ -259,7 +270,7 @@ namespace Fasetto.Word
                                     // A Move drop was accepted
                                     //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
                                     //{
-                                    MoveHierarchyElement();// MoveItem();
+                                    //MoveHierarchyElement();// MoveItem();
                                         mTargetT = null;
                                         mSource= null;
                                     //}
@@ -275,7 +286,7 @@ namespace Fasetto.Word
                                     // A Copy drop was accepted
                                     //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
                                     //{
-                                    CopyHierarchyElement();// CopyItem();
+                                    //CopyHierarchyElement();// CopyItem();
                                     mTargetT = null;
                                     mSource = null;
                                     //}
@@ -319,7 +330,7 @@ namespace Fasetto.Word
                     else
                     {
                         mTargetT = item;
-                        mTarget = (HierarchyBillingViewModel)item.GetType().GetProperties().Single(c => c.Name == "DataContext").GetValue(item);
+                        mTarget = (BudgetViewModel)item.GetType().GetProperties().Single(c => c.Name == "DataContext").GetValue(item);
                         if (e.Effects == DragDropEffects.Move)
                         { e.Effects = CheckDropTarget(mTarget, mDraggedItem) ? DragDropEffects.Move : DragDropEffects.None;}
                         else
@@ -373,15 +384,15 @@ namespace Fasetto.Word
         /// <param name="mDraggedN"></param>
         /// <returns></returns>
 
-        private bool CheckDropTarget(HierarchyBillingViewModel mTargetN, HierarchyBillingViewModel mDraggedN)
+        private bool CheckDropTarget(BudgetViewModel mTargetN, BudgetViewModel mDraggedN)
         {
             //Check whether the target item is meeting your condition
 
 
             //TO DO:
 
-            //Check that move will not cause infinite loop(ascendant-descendant - ascendant)
-            //Check that the item being moved is not an ascendant of the item being moved to
+            //Check that move will not cause infinite loop(Ancestor-descendant - Ancestor)
+            //Check that the item being moved is not an Ancestor of the item being moved to
             //the KCategoryID attribute of the item being moved may not be an ancestor of the
             //item being moved too.
             //If this constraint is met, the boolean is set to TRUE
@@ -407,21 +418,6 @@ namespace Fasetto.Word
 
 
 
-        //public void AddChild(TreeViewItem _sourceItem, TreeViewItem _targetItem)
-        //{
-        //    // add item in target TreeViewItem 
-        //    var item1 = new TreeViewItem
-        //    {
-        //        Header = _sourceItem.DataContext
-
-        //    };
-        //    _targetItem.Items.Add(item1);
-        //    foreach (TreeViewItem item in _sourceItem.Items)
-        //    {
-        //        AddChild(item, item1);
-        //    }
-
-        //}
 
         private static TObject FindVisualParent<TObject>(UIElement child) where TObject : UIElement
         {
@@ -481,7 +477,7 @@ namespace Fasetto.Word
 
         }
         #region Search Logic //KCategoryID
-        public IEnumerator<HierarchyBillingViewModel> MatchingKCategoryEnumerator { get; private set; }
+        public IEnumerator<BudgetViewModel> MatchingKCategoryEnumerator { get; private set; }
 
         #endregion // SearchKCategoryID
 
@@ -510,7 +506,7 @@ namespace Fasetto.Word
 
         }
 
-        public IEnumerable<HierarchyBillingViewModel> FindKMatches(string searchText, HierarchyBillingViewModel Category)
+        public IEnumerable<BudgetViewModel> FindKMatches(string searchText, BudgetViewModel Category)
         {
             //var mSearchText = searchText;
             if (Category.KCategoryIdContainsText(searchText))
@@ -530,20 +526,20 @@ namespace Fasetto.Word
         private void AddAdjustment()
         {
             //Prepopulate
-            mDraggedItem = (HierarchyBillingViewModel)tvParameters.SelectedItem;
+            mDraggedItem = (BudgetViewModel)tvParameters.SelectedItem;
             if (mDraggedItem == null)
                 return;
             var mCurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
 
             //var mSWAdjustViewModel = new SWAdjustViewModel();
 
-            ViewModelApplication.CurrentPopupContent = PopupContent.SWAdjust;
-            var MAdjustmentVM = (SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel;
+            ViewModelApplication.CurrentPopupContent = PopupContent.BudgetAdjust;
+            var MAdjustmentVM = (BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel;
             MAdjustmentVM.PriorPopupViewModel = mCurrentPopupViewModel;
             MAdjustmentVM.KCategoryID = mDraggedItem.KCategoryID;
-            MAdjustmentVM.DateAdjustment = mDraggedItem.DatePeriodStart;
-            MAdjustmentVM.DateStart = mDraggedItem.DatePeriodStart;
-            MAdjustmentVM.DateEnd = mDraggedItem.DatePeriodEndN;
+            //MAdjustmentVM.DateAdjustment = mDraggedItem.DatePeriodStart;
+            //MAdjustmentVM.DateStart = mDraggedItem.DatePeriodStart;
+            //MAdjustmentVM.DateEnd = mDraggedItem.DatePeriodEndN;
             MAdjustmentVM.HeadingText = MAdjustmentVM.HeadingText + mDraggedItem.ShortName;
             
 
@@ -559,14 +555,14 @@ namespace Fasetto.Word
         {
             //Prepopulate
 
-            mDraggedItem = (HierarchyBillingViewModel)tvParameters.SelectedItem;
+            mDraggedItem = (BudgetViewModel)tvParameters.SelectedItem;
             if (mDraggedItem == null)
                 return;
 
 
 
 
-            ViewModelApplication.CurrentPopupViewModel = new SWBillingDetailTreeViewModel(((HierarchyBillingTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBillingPeriod,mDraggedItem.KCategoryID );
+            ViewModelApplication.CurrentPopupViewModel = new SWBillingDetailTreeViewModel(((BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBillingPeriod,mDraggedItem.KCategoryID );
 
 
 
@@ -584,7 +580,7 @@ namespace Fasetto.Word
             //var mPage = "";
             ////if (results.Count > 0)
             //// mPage = results.FirstOrDefault().Page;
-            //var mAddElementViewModel = (HierarchyBillingViewModel)ViewModelApplication.CurrentPopupViewModel;
+            //var mAddElementViewModel = (BudgetViewModel)ViewModelApplication.CurrentPopupViewModel;
             //mAddElementViewModel.ShortName.OriginalText = "New Element Name";
             //mAddElementViewModel.Description.OriginalText = "Description of New Element";
             //mAddElementViewModel.ShortName.EditedText = "New Element Name";
@@ -621,7 +617,7 @@ namespace Fasetto.Word
         {
 
             //Prepopulate
-            mDraggedItem = (HierarchyBillingViewModel)tvParameters.SelectedItem;
+            mDraggedItem = (BudgetViewModel)tvParameters.SelectedItem;
             if (mDraggedItem == null)
                 return;
             //var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
@@ -652,14 +648,14 @@ namespace Fasetto.Word
         private void DeleteHierarchyElement()
         {
             //Prepopulate
-            mDraggedItem = (HierarchyBillingViewModel)tvParameters.SelectedItem;
+            mDraggedItem = (BudgetViewModel)tvParameters.SelectedItem;
             if (mDraggedItem == null)
                 return;
             var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
             mAddElementViewModel.ShortName.EditedText = mDraggedItem.ShortName;
-            mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
-            mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
+            //mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
+            //mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
             //mAddElementViewModel.ParentShortName = mDraggedItem.ParentShortName;
             mAddElementViewModel.ParentCategoryID = mDraggedItem.ParentCategoryID;
             //mAddElementViewModel.Page = mDraggedItem.Page;
@@ -667,8 +663,8 @@ namespace Fasetto.Word
             //mAddElementViewModel.Root.EditedText = mDraggedItem.Root;
             //mAddElementViewModel.IsMenuItem = mDraggedItem.IsMenuItem;
             mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
-            mAddElementViewModel.DateEffective = mDraggedItem.DateEffective;
-            mAddElementViewModel.DateDiscontinued = mDraggedItem.DateDiscontinued;
+            //mAddElementViewModel.DateEffective = mDraggedItem.DateEffective;
+            //mAddElementViewModel.DateDiscontinued = mDraggedItem.DateDiscontinued;
             mAddElementViewModel.AddNodeButtonText = null;
             mAddElementViewModel.EditNodeButtonText = null;
             mAddElementViewModel.CopyNodeButtonText = null;
@@ -686,13 +682,13 @@ namespace Fasetto.Word
         private void MoveHierarchyElement()
         {
             //Prepopulate
-            mDraggedItem = (HierarchyBillingViewModel)tvParameters.SelectedItem;
+            mDraggedItem = (BudgetViewModel)tvParameters.SelectedItem;
 
             var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
-            mAddElementViewModel.Description.OriginalText = mDraggedItem.Description; 
+            //mAddElementViewModel.Description.OriginalText = mDraggedItem.Description; 
             mAddElementViewModel.ShortName.EditedText = mDraggedItem.ShortName;
-            mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
+            //mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
             //mAddElementViewModel.Page = mDraggedItem.Page;
             //mAddElementViewModel.Root.OriginalText = mDraggedItem.Root;
             //mAddElementViewModel.Root.EditedText = mDraggedItem.Root;
@@ -700,7 +696,7 @@ namespace Fasetto.Word
             mAddElementViewModel.ParentShortName = mTarget.ShortName;
             mAddElementViewModel.ParentCategoryID = mTarget.KCategoryID;
             mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
-            mAddElementViewModel.DateEffective = mDraggedItem.DateEffective;
+            //mAddElementViewModel.DateEffective = mDraggedItem.DateEffective;
             mAddElementViewModel.DateDiscontinued = new DateTime(9999, 12, 31);
             mAddElementViewModel.AddNodeButtonText = null;
             mAddElementViewModel.MoveNodeButtonText = "Move Selected Element";
@@ -720,12 +716,12 @@ namespace Fasetto.Word
         private void CopyHierarchyElement()
         {
             //Prepopulate
-            mDraggedItem = (HierarchyBillingViewModel)tvParameters.SelectedItem;
+            mDraggedItem = (BudgetViewModel)tvParameters.SelectedItem;
             var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
-            mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
+            //mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
             mAddElementViewModel.ShortName.EditedText = mDraggedItem.ShortName;
-            mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
+            //mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
             //mAddElementViewModel.Page = mDraggedItem.Page;
             //mAddElementViewModel.Root.OriginalText = mDraggedItem.Root;
             //mAddElementViewModel.Root.EditedText = mDraggedItem.Root;

@@ -66,12 +66,9 @@ namespace Fasetto.Word
                     return mSWAdjustControl;
 
 
-
                 case PopupContent.Transaction:
                     var mTransactionControl = new TransactionControl();
                     return mTransactionControl;
-
-
 
 
                 case PopupContent.TransactionDetail:
@@ -79,13 +76,9 @@ namespace Fasetto.Word
                     return mTransactionDetailControl;
 
 
-
-
                 case PopupContent.Classify:
                     var mManageClassificationControl = new ManageClassificationControl();
                     return mManageClassificationControl;
-
-
 
 
                 case PopupContent.SWBillingDetail:
@@ -93,10 +86,15 @@ namespace Fasetto.Word
                     return mSWBillingDetailControl;
 
 
-
                 case PopupContent.BudgetReview:
                     var mBudgetReviewControl = new BudgetReviewControl();
                     return mBudgetReviewControl;
+
+
+                case PopupContent.BudgetAdjust:
+                    var mBudgetAdjustControl = new BudgetAdjustControl();
+                    return mBudgetAdjustControl;
+
 
                 // Unknown
                 default:

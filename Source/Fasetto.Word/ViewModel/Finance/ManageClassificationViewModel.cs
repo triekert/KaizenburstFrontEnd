@@ -696,6 +696,7 @@ namespace Fasetto.Word
                 { ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlPopupCostCategory; }
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Category.OriginalKid;
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
                 return true;
             });
 
