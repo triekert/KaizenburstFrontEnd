@@ -126,7 +126,7 @@ namespace Fasetto.Word
             //    };
             //    TransactionDetail.Add(mTDVM);
             //}
-            RefreshTransactionList(mKFinTranID, ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mPersist);
+            RefreshTransactionList(mKFinTranID, ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MPersist);
   
             PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
             //TaskManager.RunAndForget(TransactionDetailAsync);

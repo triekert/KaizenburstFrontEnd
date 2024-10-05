@@ -93,7 +93,7 @@ namespace Fasetto.Word
 
         private void ItemsPropertyIsChanged(object sender, EventArgs e)
         {
-            if (((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_action.Count!= ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mPersist.Count)
+            if (((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_action.Count!= ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MPersist.Count)
             {
                 return;
             }
@@ -488,7 +488,7 @@ namespace Fasetto.Word
                 Month =  ((TransactionViewModel)Transaction.SelectedItem).Month,
             };
             ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).AddItem(NewTransaction);
-            ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mPersist.Add(NewTransaction);
+            ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MPersist.Add(NewTransaction);
 
             Transaction.SelectedItem = NewTransaction;
 

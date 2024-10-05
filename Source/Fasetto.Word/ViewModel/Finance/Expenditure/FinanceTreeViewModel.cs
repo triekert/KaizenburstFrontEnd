@@ -226,7 +226,7 @@ namespace Fasetto.Word
                     // We are done
                     return;
 
-                // OK successfully registered (and logged in)... now get aprpropriate tree view data
+                // OK successfully registered (and logged in)... now get appropriate tree view data
                 //for now; keep a snapshot of persisted data
                 mOriginal = result.ServerResponse.Response;
                 ;

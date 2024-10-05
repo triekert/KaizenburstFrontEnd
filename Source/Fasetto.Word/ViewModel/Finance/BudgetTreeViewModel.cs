@@ -62,7 +62,7 @@ namespace Fasetto.Word
         //    MatchingCategoryEnumerator = matchingCategoryEnumerator;
         //}
 
-        private string mSearchText = "", mSearchKCategoryID = string.Empty, mParentCategoryID = string.Empty;
+        public string mSearchText = "", mSearchKCategoryID = string.Empty, mParentCategoryID = string.Empty;
 
         #endregion // Data
         #region Public Commands
@@ -273,7 +273,7 @@ namespace Fasetto.Word
 
 
                 RefreshHierarchy();
-                //PerformKIdSearch();
+                PerformKIdSearch();
                 //UpdateTreeViewElements();
 
                 ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
@@ -344,6 +344,7 @@ namespace Fasetto.Word
             //Update the viewModel with the returned values
 
             UpdateTreeViewElements();
+            PerformKIdSearch();
 
 
             //}
@@ -384,7 +385,7 @@ namespace Fasetto.Word
                     KCategoryID = item.KCategoryID,
                     ParentCategoryID = item.ParentCategoryID,
                     ParentShortName = item.ParentShortName,
-                    BudgetAmountDescendants = item.BudgetAmountDescendants,
+                    BudgetAmountDescendants = item.BudgetAmountTotal - item.BudgetAmount,
                     BudgetAmount = item.BudgetAmount,
                     BudgetAmountTotal = item.BudgetAmountTotal,
 
@@ -525,30 +526,28 @@ namespace Fasetto.Word
         public void Close()
         {
             //Give control back to parent 'Popup view model'
-            var mType = "";
-            if (((BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel!= null)
-            { mType = ((BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel.GetType().Name; }
-               ViewModelApplication.CurrentPopupViewModel = ((BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
-            var mBudgetTreeViewModel = ViewModelApplication.CurrentPopupViewModel;
+            //var mType = "";
+            //if (((BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel!= null)
+            //{ mType = ((BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel.GetType().Name; }
+            ////   ViewModelApplication.CurrentPopupViewModel = ((BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+            //var mBudgetTreeViewModel = ViewModelApplication.CurrentPopupViewModel;
+            //ViewModelApplication.PopupVisible = false;
+            ////_ = mBillingParameter.PropertyID;
+
+            //if (mType == "BudgetTreeViewModel")
+            //{
+            //    ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            //    ViewModelApplication.CurrentPopupViewModel = mBudgetTreeViewModel;
+            //    ViewModelApplication.CurrentPopupContent = PopupContent.BudgetReview;
+            //}
+            //else
+            //{
+            //ViewModelApplication.CurrentPopupViewModel = ((BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+            ViewModelApplication.CurrentPopupContent = 0;
+            ViewModelApplication.CurrentPopupViewModel = null;
+
+
             ViewModelApplication.PopupVisible = false;
-            //_ = mBillingParameter.PropertyID;
-
-            if (mType == "BudgetTreeViewModel")
-            {
-                ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-                ViewModelApplication.CurrentPopupViewModel = mBudgetTreeViewModel;
-                ViewModelApplication.CurrentPopupContent = PopupContent.SWBillingDetail;
-            }
-            else
-            {
-                //ViewModelApplication.CurrentPopupViewModel = ((BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
-                ViewModelApplication.CurrentPopupContent = PopupContent.BudgetReview;
-                //((BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel).SearchText  = mBudgetParameter.Cat;
-                //((BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
-
-            }
-
-            ViewModelApplication.PopupVisible = true;
 
 
         }

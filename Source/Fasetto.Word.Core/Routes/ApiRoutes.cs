@@ -130,6 +130,13 @@
         public const string ReturnBudgetDetail = "api/finance/ReturnBudgetDetail";
 
 
+
+        /// <summary>
+        /// Adjust selected Category element budget
+        /// </summary>
+        public const string BudgetElementAdjustment = "api/finance/BudgetElementAdjustment";
+
+
         #endregion
 
 

@@ -652,7 +652,7 @@ namespace Fasetto.Word
             ViewModelApplication.CurrentPopupViewModel = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             var mKFinTranID = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransactionDetail[0].KFinTranID;
 
-            var matches = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).mPersist.Where(x => x.KFinTranID == mKFinTranID).ToList();
+            var matches = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).MPersist.Where(x => x.KFinTranID == mKFinTranID).ToList();
             var Cnt = matches.Count;
             ViewModelApplication.ControlParameter1 = null;
 
@@ -665,7 +665,7 @@ namespace Fasetto.Word
             }
             else
             {
-                ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).RefreshTransactionList(mKFinTranID, ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).mPersist);
+                ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).RefreshTransactionList(mKFinTranID, ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).MPersist);
 
 
                     ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
@@ -882,7 +882,7 @@ namespace Fasetto.Word
                 //var rec = tmp1[tmp2];
                 var tmp0 = ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel;
                 //var tmp = ((TransactionTreeViewModel)tmp0).Trans_action;
-                var tmp = ((TransactionTreeViewModel)tmp0).mPersist;
+                var tmp = ((TransactionTreeViewModel)tmp0).MPersist;
                 var tmp1 = ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).TransactionDetail;
                 var tmp2 = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel).mChange;
                 var tmp3 = ((TransactionTreeViewModel)tmp0).Trans_actionRec;

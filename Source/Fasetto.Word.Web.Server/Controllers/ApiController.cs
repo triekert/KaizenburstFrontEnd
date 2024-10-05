@@ -881,6 +881,84 @@ namespace Fasetto.Word.Web.Server
         }
         #endregion ReturnBudgetDetail
 
+        # region BudgetElementAdjustment
+
+        [Route(ApiRoutes.BudgetElementAdjustment)]
+        public async Task<ApiResponse> BudgetElementAdjustmentAsync([FromBody] ParameterBudgetAdjustApiModel model)
+
+        {
+            #region Get User
+
+            // Get the current user
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            // If we have no user...
+            if (user == null)
+                return new ApiResponse
+                {
+                    // TODO: Localization
+                    ErrorMessage = "User not found"
+                };
+
+            #endregion
+
+            #region sql query
+
+
+            var SqlString = "EXEC [Finance].[spBudgetAdjustment] @KBudgetID = '" + model.KBudgetID + "' ,@month = '" + model.Month  + "' ,@KCategoryID = '"+ model.KCategoryID + "' ,@IsMonth = '" + model.IsMonth + "' " +
+                ",@BudgetAmount = '" + model.BudgetAmount + "' ,@BudgetAmountTotal = '" + model.BudgetAmountTotal + "' ,@BudgetAmountAdj = '" + model.BudgetAmountAdj + "' ,@BudgetAmountTotalAdj = '" + model.BudgetAmountTotalAdj + "'";
+
+
+            try
+            {
+                // Try and run the task
+
+
+
+                var dataset = await GetDataSetAsync(SqlString);
+                var dt = dataset.Tables[0];
+                var results = new BudgetResultListApiModel();
+                foreach (DataRow row in dt.Rows)
+                {
+                    var u = new BudgetResultApiModel
+                    {
+                        KCategoryID = row[3].ToString().ToUpper(),
+                        ShortName = row[12].ToString(),
+                        ParentCategoryID = row[11].ToString().ToUpper(),
+                        ParentShortName = row[13].ToString(),
+                        Month = (int)row[0],
+                        BudgetAmountTotal = (decimal)row[10],
+                        BudgetAmountDescendants = (decimal)row[9],
+                        BudgetAmount = (decimal)row[1],
+
+                    };
+                    results.Add(u);
+
+                }
+
+                return new ApiResponse<BudgetResultListApiModel>
+                {
+
+                    Response = results
+                };
+
+
+                #endregion sql query
+
+
+            }
+            catch (Exception ex)
+            {
+                // Log error
+                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                // Throw it as normal
+                throw;
+            }
+
+        }
+        #endregion BudgetElementAdjustment
+
         #endregion Budget
 
         #region BillingPeriods

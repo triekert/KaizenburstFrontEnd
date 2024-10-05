@@ -30,7 +30,7 @@ namespace Fasetto.Word
         /// </summary>
         public ObservableCollection<TransactionViewModel>Trans_action{ get; set; }
         public ObservableCollection<TransactionViewModel> OrgTransaction { get; set; }
-        public ObservableCollection<TransactionViewModel> mPersist { get; set; }
+        public ObservableCollection<TransactionViewModel> MPersist { get; set; }
 
         public int Trans_actionRec { get; set; }
         //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
@@ -275,7 +275,7 @@ namespace Fasetto.Word
 
 
 
-                    mPersist = new ObservableCollection<TransactionViewModel>();
+                    MPersist = new ObservableCollection<TransactionViewModel>();
                     var matches = result.ServerResponse.Response.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
                     foreach (var item in matches)
                     {
@@ -307,7 +307,7 @@ namespace Fasetto.Word
 
                         //Lock collection to prevent contention with UI
 
-                            mPersist.Add(mTVM);
+                            MPersist.Add(mTVM);
                     }
 
 
@@ -655,7 +655,7 @@ namespace Fasetto.Word
             {
                 Trans_action.Clear();
             }
-            var mTest = mPersist.GroupBy(x => x.KFinTranID)
+            var mTest = MPersist.GroupBy(x => x.KFinTranID)
             .Select(g => g.First()).ToList();
             var matches = mTest.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
             //mPersist = result.ServerResponse.Response;

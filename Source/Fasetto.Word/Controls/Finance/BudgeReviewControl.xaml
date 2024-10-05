@@ -110,10 +110,44 @@
                      FontFamily="{DynamicResource LatoBold}" Background="{DynamicResource BackgroundVeryLightBrush}" />
                     </TextBlock>
 
-
-                    
                 </Grid>
             </Grid>
+        </Border>
+        <Border          DockPanel.Dock="Top" 
+         BorderBrush="#FF734444" 
+         BorderThickness="1,0,1,1">
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+
+                <!--<StackPanel Grid.IsSharedSizeScope="True" Orientation="Vertical">-->
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+
+                        <!--<ColumnDefinition Width="150" />-->
+                        <ColumnDefinition Width="220" />
+                        <ColumnDefinition Width="220" />
+                        <ColumnDefinition Width="220" />
+                        <ColumnDefinition Width="220" />
+
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock  Grid.Column ="1"  Width="220"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Cost Category" FontFamily="Lato Medium" FontWeight="ExtraBold"  Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                    <TextBlock  Grid.Column ="2"  Width="220"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Budget Amount(This level)" FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                    <TextBlock  Grid.Column ="3"  Width="220"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Budget Amount(Descendant only)" FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                    <TextBlock  Grid.Column ="4"  Width="220"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Budget Amount Total(All levels) " FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+
+                </Grid>
+                
+                </Grid>
+
+
+
         </Border>
         <ScrollViewer x:Name="scrollViewer"  Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="4" BorderThickness="2">
             <Grid>
@@ -123,30 +157,7 @@
             </Grid.RowDefinitions>
 
 
-            <!--<StackPanel Grid.IsSharedSizeScope="True" Orientation="Vertical">-->
-                <Grid Grid.Row="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50"/>
 
-                        <!--<ColumnDefinition Width="150" />-->
-                        <ColumnDefinition Width="200" />
-                        <ColumnDefinition Width="200" />
-                        <ColumnDefinition Width="200" />
-                        <ColumnDefinition Width="200" />
-                        <ColumnDefinition Width="200" />
-                    </Grid.ColumnDefinitions>      
-
-
-
-
-
-
-                    <TextBlock  Grid.Column ="1"  Width="200"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Cost Category" FontFamily="Lato Medium" FontWeight="ExtraBold"  Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                    <TextBlock  Grid.Column ="2"  Width="200"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Budget Amount(This level)" FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                    <TextBlock  Grid.Column ="3"  Width="200"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Budget Amount(Descendant only)" FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                    <TextBlock  Grid.Column ="4"  Width="200"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Budget Amount Total(All levels) " FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-
-                </Grid>
 
 
                     <TreeView Grid.Row="1"

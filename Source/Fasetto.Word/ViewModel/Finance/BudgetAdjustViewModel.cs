@@ -6,6 +6,8 @@ using System.Windows.Input;
 using static Fasetto.Word.DI;
 using static Fasetto.Word.Core.CoreDI;
 using System.Globalization;
+using Fasetto.Word.Core.ApiModels.Controls;
+using System.Linq;
 namespace Fasetto.Word
 {
     public class BudgetAdjustViewModel : BaseViewModel
@@ -54,7 +56,25 @@ namespace Fasetto.Word
         /// </summary>
         public string BudgetAmountTotalStr { get; set; }
 
+        /// <summary>
+        ///Amount budgeted directly for the selected element (excluding descendant aggregates)
+        /// </summary>
+        public decimal BudgetAmountDec { get; set; }
 
+        /// <summary>
+        /// Aggregate Total for element and all descendants
+        /// </summary>
+        public decimal BudgetAmountTotalDec { get; set; }
+
+        /// <summary>
+        ///Amount budgeted directly for the selected element (excluding descendant aggregates)
+        /// </summary>
+        public decimal BudgetAmountAdjDec { get; set; }
+
+        /// <summary>
+        /// Aggregate Total for element and all descendants
+        /// </summary>
+        public decimal BudgetAmountTotalAdjDec { get; set; }
         /// <summary>
         /// Integer representing the budget month
         /// </summary>
@@ -162,6 +182,16 @@ namespace Fasetto.Word
             /// </summary>
             public bool IsRunning { get; set; }
 
+
+        /// <summary>
+        /// True to show the Updating of the asjustment at the top level is being cascaded
+        /// </summary>
+        public bool UpdateTotalCompleted { get; set; }
+
+        /// <summary>
+        /// True to show the Updating of the adjustment changes have been completed
+        /// </summary>
+        public bool BudgetAdjustCompleted { get; set; }
         /// <summary>
         /// Store View Model of current popup to allow reverse navigation
         /// </summary>
@@ -200,7 +230,7 @@ namespace Fasetto.Word
             {
                 Label = "Direct Budget Amount for selected node: ",
                 OriginalText = bvm.BudgetAmount.ToString("C", CultureInfo.CurrentCulture),
-                //CommitAction = SaveFirstNameAsync
+                CommitAction = UpdateBudgetAmountTotalAsync,
             };
 
             BudgetAncestorHierarchy = new TextEntryViewModel
@@ -217,7 +247,10 @@ namespace Fasetto.Word
             BudgetAmountStr = bvm.BudgetAmount.ToString("C", CultureInfo.CurrentCulture);
 
             BudgetAmountTotalStr = bvm.BudgetAmountTotal.ToString("C", CultureInfo.CurrentCulture);
-
+            BudgetAmountDec = bvm.BudgetAmount;
+            BudgetAmountTotalDec = bvm.BudgetAmountTotal;
+            BudgetAmountAdjDec = bvm.BudgetAmount;
+            BudgetAmountTotalAdjDec = bvm.BudgetAmountTotal;
             // Display parent node name
             ParentShortName = "Parent Node";
 
@@ -228,8 +261,8 @@ namespace Fasetto.Word
 
             // Create commands
             CloseCommand = new RelayCommand(Close);
-            BudgetAdjustmentCommand = new RelayCommand(BudgetAdjustment);
-
+            //BudgetAdjustmentCommand1 = new RelayCommand(BudgetAdjustment);
+            BudgetAdjustmentCommand = new RelayCommand(async () => await BudgetAdjustmentAsync());
 
             // TODO: Get from localization
             AdjustmentButtonText = "Apply Changes to Budget";
@@ -260,7 +293,7 @@ namespace Fasetto.Word
         {
 
             ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;
-            ViewModelApplication.CurrentPopupContent = PopupContent.BudgetDetailList;
+            ViewModelApplication.CurrentPopupContent = PopupContent.BudgetReview;
             ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;// ((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             ViewModelApplication.PopupVisible = true;
 
@@ -268,39 +301,85 @@ namespace Fasetto.Word
         }
 
         /// <summary>
+        /// Update the total budget for the selected category hierarchy
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> UpdateBudgetAmountTotalAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() =>UpdateTotalCompleted, async () =>
+            {
+                // Update the Category Classification value on the server...
+                var decBudgAdj = BudgetAmountDec;
+                if (!(BudgetAncestor.EditedText == null || BudgetAncestor.EditedText == ""))
+                { decimal.TryParse(BudgetAncestor.EditedText, NumberStyles.Currency, CultureInfo.CurrentCulture, out decBudgAdj); }
+                var decBudgTotAdj = BudgetAmountTotalDec;
+                BudgetAncestorHierarchy.OriginalText =(BudgetAmountTotalDec - BudgetAmountDec + decBudgAdj).ToString("C", CultureInfo.CurrentCulture);
+
+                return true;
+            });
+
+        }
+
+        /// <summary>
         /// Used tp insert a new node with the currently selected node as parent
         /// </summary>
-        public void BudgetAdjustment()
+        public async Task BudgetAdjustmentAsync()
         {
             // Update billing record on database
             //TO DO: Integrate with change management, requiring approval of adjustment before committing...
+            // Lock this command to ignore any other requests while processing
 
-            //var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
-            ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
-            //var MDateAdj = ((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateAdjustment;
-            IsMonthOnly = IsMonthOnly;
-            MAPI = new ParameterBudgetAdjustApiModel
+             await RunCommandAsync(() => BudgetAdjustCompleted, async () =>
             {
-                KCategoryID = KCategoryID,
-                IsMonth = IsMonthOnly,
-                Month = Month,
-                //FPropertyID = ((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).KCategoryID,
-                //Adjustment = Convert.ToDecimal(((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).BudgetAncestor.EditedText)/1000,
-                ////DateStart = ((MDateAdj.Month ==
-                ////            ((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateStart.Month) ?
-                ////            ((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateStart :
-                ////            new DateTime(MDateAdj.Year, MDateAdj.Month, 1)),
-                //DateEffective = DateTime.Now,
-                //FChangeID = new Guid().ToString(),
-            };
+                //var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+                ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                //var MDateAdj = ((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateAdjustment;
+                var decBudg = BudgetAmountDec;
+                var decBudgAdj = BudgetAmountDec;
+                if (!(BudgetAncestor.EditedText == null || BudgetAncestor.EditedText == ""))
+                { decimal.TryParse(BudgetAncestor.EditedText, NumberStyles.Currency, CultureInfo.CurrentCulture, out decBudgAdj); }
+                var decBudgTot = BudgetAmountTotalDec;
+                var decBudgTotAdj = BudgetAmountTotalDec;
+                if (BudgetAncestorHierarchy.EditedText == null)
+                { BudgetAncestorHierarchy.EditedText = BudgetAncestorHierarchy.OriginalText; }
+                if (!(BudgetAncestorHierarchy.EditedText == null || BudgetAncestorHierarchy.EditedText == ""))
+                { decimal.TryParse(BudgetAncestorHierarchy.EditedText, NumberStyles.Currency, CultureInfo.CurrentCulture, out decBudgTotAdj); }
+                if (Math.Round(decBudgTot, 2) == Math.Round(decBudgTotAdj, 2) & Math.Round(decBudg, 2) == Math.Round(decBudgAdj, 2))
+                {
+                    return;
+                }
 
-        //    mElementViewModel.Description.OriginalText = null;
-        //    mElementViewModel.Description.OriginalText = null;
-        //}
-        //mViewModel.AddElement(mElementViewModel);
-        //ViewModelApplication.PopupVisible = false;
-        TaskManager.RunAndForget(BudgetPeriodAdjustAsync);
-            Close();
+                MAPI = new ParameterBudgetAdjustApiModel
+                {
+                    KCategoryID = KCategoryID,
+                    IsMonth = IsMonthOnly,
+                    Month = ((BudgetMonthViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth).BudgetMonth,
+                    KBudgetID = ((BudgetPeriodViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID,
+                    BudgetAmount = decBudg,
+                    BudgetAmountTotal = decBudgTot,
+                    BudgetAmountAdj = decBudgAdj,
+                    BudgetAmountTotalAdj = decBudgTotAdj,
+                };
+
+                //    mElementViewModel.Description.OriginalText = null;
+                //    mElementViewModel.Description.OriginalText = null;
+                //}
+                //mViewModel.AddElement(mElementViewModel);
+                //ViewModelApplication.PopupVisible = false;
+                //TaskManager.RunAndForget(BudgetPeriodAdjustAsync);
+                //TaskManager.RunAndForget(BudgetPeriodAdjustAsync);
+                ((BudgetTreeViewModel)((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).mSearchText = KCategoryID;
+                //((BudgetTreeViewModel)((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).mSearchKCategoryID = KCategoryID;
+                await BudgetPeriodAdjustAsync();
+
+
+
+                Close();
+                return;
+            }
+            );
         }
         public async Task BudgetPeriodAdjustAsync()
         {
@@ -319,9 +398,9 @@ namespace Fasetto.Word
                     // Then do nothing more
                     return;
 
-                var result = await WebRequests.PostAsync<ApiResponse>(
+                var result = await WebRequests.PostAsync<ApiResponse<BudgetResultListApiModel>>(
                 // Set URL
-                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.BillingPeriodAdjustment),
+                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.BudgetElementAdjustment),
                     MAPI ,
                     bearerToken: token);
 
@@ -332,129 +411,25 @@ namespace Fasetto.Word
                 if (await result.HandleErrorIfFailedAsync("Capture of Adjustment failed"))
                     // We are done
                     return;
+                var matches1 = result.ServerResponse.Response;
+                var tmpList = ((BudgetTreeViewModel)((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).mPersist;
+                var matches = tmpList.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
+                foreach (var budgItem in matches1)
+                {
+                    matches = tmpList.Where(x => x.KCategoryID ==budgItem.KCategoryID);
+                    foreach (var item in matches)
+                    {
+                        item.BudgetAmount = budgItem.BudgetAmount;
+                        item.BudgetAmountTotal = budgItem.BudgetAmountTotal;
+                        item.BudgetAmountDescendants = budgItem.BudgetAmountTotal - budgItem.BudgetAmount;
+                    }
+                }
 
-
-
-
-
-                ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
-
+                ((BudgetTreeViewModel)((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).RefreshHierarchy();
 
             });
         }
-        ///// <summary>
-        ///// Used tp insert a new node with the currently selected node as parent
-        ///// </summary>
-        //public void AddNode()
-        //{
-        //    // Close settings menu
 
-        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
-        //    var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-        //    if (mElementViewModel.Description.OriginalText == "Description of New Element" || mElementViewModel.Description.EditedText == "Description of New Element") 
-        //        { mElementViewModel.Description.OriginalText = null;
-        //        mElementViewModel.Description.OriginalText = null;
-        //    }
-        //    mViewModel.AddElement(mElementViewModel);
-        //    ViewModelApplication.PopupVisible = false;
-        //}
-
-        ///// <summary>
-        ///// Used tp edit the currently selected node 
-        ///// </summary>
-        //public void EditNode()
-        //{
-        //    // Close settings menu
-        //    //var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel;
-        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
-        //    var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-        //    mViewModel.EditElement(mElementViewModel);
-        //    ViewModelApplication.PopupVisible = false;
-        //}
-
-
-        ///// <summary>
-        ///// Used tp edit the currently selected node 
-        ///// </summary>
-        //public void DeleteNode()
-        //{
-        //    // Close settings menu
-        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
-        //    var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-        //    //Set discontinuation time to time of deletion
-        //    mElementViewModel.DateDiscontinued = DateTime.Today; 
-        //    mViewModel.DeleteElement(mElementViewModel);
-
-        //    ViewModelApplication.PopupVisible = false;
-        //}
-
-        ///// <summary>
-        ///// Used tp edit the currently selected node 
-        ///// </summary>
-        //public void MoveNode()
-        //{
-        //    // Close settings menu
-        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
-        //    var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-        //    mViewModel.MoveElement(mElementViewModel);
-        //    if (mElementViewModel.Description.OriginalText == "Description of New Element" && mElementViewModel.Description.EditedText == "Description of New Element")
-        //    {
-        //        mElementViewModel.Description.OriginalText = null;
-        //        mElementViewModel.Description.OriginalText = null;
-        //    }
-        //    ViewModelApplication.PopupVisible = false;
-        //}
-
-
-        ///// <summary>
-        ///// Used tp edit the currently selected node 
-        ///// </summary>
-        //public void CopyNode()
-        //{
-        //    // Close settings menu
-        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
-        //    var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-        //    mViewModel.CopyElement(mElementViewModel);
-        //    ViewModelApplication.PopupVisible = false;
-        //}
-
-
-        /// <summary>
-        /// Clears any data specific to the current user
-        /// </summary>
-        //public void ClearUserData()
-        //{
-        //    // Clear all view models containing the users info
-        //    FirstName.OriginalText = mLoadingText;
-        //    LastName.OriginalText = mLoadingText;
-        //    Username.OriginalText = mLoadingText;
-        //    Email.OriginalText = mLoadingText;
-        //}
-
-
-
-        /// <summary>
-        /// Saves the new First Name to the server
-        /// </summary>
-        /// <returns>Returns true if successful, false otherwise</returns>
-        //public async Task<bool> SaveFirstNameAsync()
-        //{
-        //    // Lock this command to ignore any other requests while processing
-        //    return await RunCommandAsync(() => FirstNameIsSaving, async () =>
-        //    {
-        //        // Update the First Name value on the server...
-        //        return await UpdateUserCredentialsValueAsync(
-        //            // Display name
-        //            "First Name",
-        //            // Update the first name
-        //            (credentials) => credentials.FirstName,
-        //            // To new value
-        //            FirstName.OriginalText,
-        //            // Set Api model value
-        //            (apiModel, value) => apiModel.FirstName = value
-        //            );
-        //    });
-        //}
 
 
         #endregion

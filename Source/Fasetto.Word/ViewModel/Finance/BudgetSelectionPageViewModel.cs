@@ -460,19 +460,19 @@ namespace Fasetto.Word
             //{ ViewModelApplication.CurrentPopupContent = PopupContent.AddElement; };
             //
             //ShortName = Meter.EditedName;
-            if (ViewModelApplication.CurrentPopupViewModel!= null)
-                        {
-                if (ViewModelApplication.CurrentPopupViewModel.GetType().Name == "HierarchyBudgetTreeViewModel")
-                {
-                    //if (SelectedBudget.KBudgetID == (((HierarchyBudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBudget).c
-                    //{
-                    //}
-                    //else
-                    //{
-                    //    ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-                    //};
-                }
-            }
+            //if (ViewModelApplication.CurrentPopupViewModel!= null)
+            //            {
+            //    if (ViewModelApplication.CurrentPopupViewModel.GetType().Name == "HierarchyBudgetTreeViewModel")
+            //    {
+            //        //if (SelectedBudget.KBudgetID == (((HierarchyBudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mBudget).c
+            //        //{
+            //        //}
+            //        //else
+            //        //{
+            //        //    ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            //        //};
+            //    }
+            //}
             ////((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget = SelectedBudget.KBudgetID;
             //var MType = ViewModelApplication.CurrentPopupViewModel.GetType().Name;
             //ViewModelApplication.CurrentPopupViewModel = new HierarchyBillingTreeViewModel(SelectedBudget.KBudgetID);
