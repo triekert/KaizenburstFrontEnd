@@ -87,7 +87,7 @@ namespace Fasetto.Word
         /// <param name="hierarchyTable"></param>
         /// The hierarchyTable passed through as a parameter identifies the specific hierarchy set to be retrieved
         /// from persistent s
-        public TransactionTreeViewModel(string client, DateTime timeStart, DateTime timeEnd)
+        public TransactionTreeViewModel(string client, DateTime timeStart, DateTime timeEnd, string category)
         {
             #region Build HierarchyViewCollection
 
@@ -113,7 +113,8 @@ namespace Fasetto.Word
             { 
                 Client = client,
                 MonthStart = int.Parse(timeStart.ToString("yyyyMM")),
-                MonthEnd = int.Parse(timeEnd.ToString("yyyyMM"))
+                MonthEnd = int.Parse(timeEnd.ToString("yyyyMM")),
+                Category = category
             };
 
             var MMmonth = timeStart.ToString("MM");
@@ -299,7 +300,7 @@ namespace Fasetto.Word
                             KHierarchyID = item.KHierarchyID,
                             IsDocLinked = item.IsDocLinked,
                             Notes = item.Notes,
-                            //KClientID = item.KClientID,
+                            KClientID = item.KClientID,
                             KAccountID = item.KAccountID,
                             KAccountName = item.KAccountName,
                             Units = item.Units,
@@ -459,84 +460,35 @@ namespace Fasetto.Word
             var OPersist = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).OrgTransaction;
             //create record set of CRUD members of mPersist based on changes appearing in Trans_act -> Delete, Add and change flags
 
-            ViewModelApplication.PopupVisible = false;
-
-            //var changes = from updt in UpPersist
-            //              join on orgn in OPersist
-            //              where updt.KFinActualID == orgn.KFinActualID
-            // select updt
-            //var results =
-            //from t1 in UpPersist
-            //from t2 in OPersist.Where(x => t1.KFinActualID == x.KFinActualID && x.KCategoryID == t1.KCategoryID && x.KPartyID == t1.KPartyID)
-            ////from t2 in OPersist.Where(x => t1.KFinActualID == x.KFinActualID && x.KCategoryID == t1.KCategoryID )
-
-            //    //.DefaultIfEmpty()
-            //select new { t1.KFinActualID, t1.ShortName };
-
-           
-
-            //ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
-            //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
-            ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
-
-            if (UpPersist == null || OPersist == null) { return; }
-            var except = UpPersist.Except(OPersist);
-            //TO DO: Map PopupViewModel to PopupContent with converter
-            //ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
-            var tmpTbl = (TransactionResultListApiModel)((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mChange;
-            var res = from c in tmpTbl
-                      group c by new { c.KFinActualID, c.ChangeType } into transApi
-                      select transApi.OrderByDescending(x => x.DateEffective)
-                                      .FirstOrDefault();
 
 
-            //foreach (var item in res)
-            //{
+            if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel")
+            {
+                ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;
+                ViewModelApplication.CurrentPopupContent = PopupContent.BudgetReview;
+                ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;// ((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+                ViewModelApplication.PopupVisible = true;
+            }
+            else
+            {
+                ViewModelApplication.PopupVisible = false;
+                ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
 
-            //    var mTR = new TransactionTreeViewModel
+                if (UpPersist == null || OPersist == null) { return; }
+                var except = UpPersist.Except(OPersist);
+                //TO DO: Map PopupViewModel to PopupContent with converter
+                //ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
+                var tmpTbl = (TransactionResultListApiModel)((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mChange;
+                var res = from c in tmpTbl
+                          group c by new { c.KFinActualID, c.ChangeType } into transApi
+                          select transApi.OrderByDescending(x => x.DateEffective)
+                                          .FirstOrDefault();
 
-            //    {
-            //        Posted_Date = item.Posted_Date,
-            //        Month = item.Month,
-            //        Description = item.Description,
-            //        TransAmount = item.TransAmount,
-            //        ActualAmount = item.ActualAmount,
-            //        ShortName = item.ShortName,
-            //        KCategoryID = item.KCategoryID,
-            //        KFinActualID = item.KFinActualID,
-            //        KFinTranID = item.KFinTranID,
-            //        KClientID = item.KClientID,
-            //        KHierarchyID = item.KHierarchyID,
-            //        ChangeType = item.ChangeType,
-            //        DateEffective = item.DateEffective,
-            //        KPartyID = item.KPartyID,
-            //        KPartyName = item.KPartyName,
-            //        FCatSrchID = item.FCatSrchID,
-            //        IsTemplate = item.IsTemplate,
-            //        Notes = item.Notes,
-            //        Units = item.Units,
-
-
-            //    };
-            //    mPersist.Add(mTR);
-            //}
 
 
                 ViewModelApplication.CurrentPopupViewModel = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
 
-            //res = from c in tmpTbl
-            //       group c by new { c.KFinActualID, c.ChangeType } into transApi
-            //       select transApi.OrderByDescending(x => x.DateEffective)
-            //                       .FirstOrDefault();
-
-            //ViewModelApplication.PopupVisible = true;
-            //mPersist
-            if (mChange.Count > 0)
-                //if changes have been made, persist these on the database...
-            {
-            TaskManager.RunAndForget(PersistTransClassAsync);
             }
-
 
 
         }
@@ -643,6 +595,7 @@ namespace Fasetto.Word
                     FCatSrchID = item.FCatSrchID,
                     IsTemplate = item.IsTemplate,
                     Notes = item.Notes,
+                    KClientID = item.KClientID,
                 };
                 target.Add(mTR);
             }
@@ -685,7 +638,8 @@ namespace Fasetto.Word
                     Notes = item.Notes,
                     KAccountID = item.KAccountID,
                     KAccountName = item.KAccountName,
-                    Units = item.Units
+                    Units = item.Units,
+                    KClientID = item.KClientID,
                 };
 
                 //Lock collection to prevent contention with UI

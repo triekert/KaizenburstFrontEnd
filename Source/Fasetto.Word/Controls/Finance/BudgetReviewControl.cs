@@ -1,10 +1,6 @@
-﻿using CsvHelper;
-using Fasetto.Word.Core;
+﻿using Fasetto.Word.Core;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -43,12 +39,8 @@ namespace Fasetto.Word
         private Point mLastMouseDown;
         private TreeViewItem mTargetT, mSource;
         private BudgetViewModel mDraggedItemTest,mDraggedItem,mTarget;
-        //private readonly object mFamilyTree;
         public BudgetViewModel mTargetTest;
-        //public string mControlTitle = "testing";
 
-        //[Obsolete]
-        //public HierarchyManagementControl(HierarchyManagementTreeDataModel hierarchyManagementTreeDataModel)
         public BudgetReviewControl()
         {
 
@@ -64,13 +56,9 @@ namespace Fasetto.Word
             { mHierarchyTree = (BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel; }
             ViewModelApplication.CurrentPopupViewModel = mHierarchyTree; 
             ViewModelApplication.CurrentControlViewModel = mHierarchyTree;
-            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = false;
             DataContext = mHierarchyTree;
             InitializeComponent();
-            //ViewModelApplication.CurrentControlViewModel = mHierarchyTree;
-            //CloseCommand = new RelayCommand(Close);
-
 
         }
 
@@ -178,6 +166,8 @@ namespace Fasetto.Word
         }
         private void TreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            ((BudgetTreeViewModel)ViewModelApplication.CurrentControlViewModel).mRootHierarchyElement1 = (BudgetViewModel)tvParameters.SelectedItem;
+
             mTargetTest = (BudgetViewModel)tvParameters.SelectedItem;
             if (e.ChangedButton == MouseButton.Right)
             {
@@ -205,18 +195,21 @@ namespace Fasetto.Word
             //if (ViewModelApplication.PopupVisible == false)
             //{ 
             //Pass  keyboard event args through 
+            ((BudgetTreeViewModel)ViewModelApplication.CurrentControlViewModel).mRootHierarchyElement1 = (BudgetViewModel)tvParameters.SelectedItem;
+
             mTargetTest = (BudgetViewModel)tvParameters.SelectedItem;
+            mDraggedItem = (BudgetViewModel)tvParameters.SelectedItem;
 
             if (Keyboard.IsKeyDown(Key.Insert))
                 {
-                AddAdjustment();
+                ReviewTransactions();
                 e.Handled= true;
                 }
                 else
                     if (Keyboard.IsKeyDown(Key.Enter))
                 {
-                    //ViewDetailBilling();
-                    e.Handled = true;
+                AddAdjustment();
+                e.Handled = true;
 
                 }
                 else
@@ -537,21 +530,37 @@ namespace Fasetto.Word
             var MAdjustmentVM = (BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel;
             MAdjustmentVM.PriorPopupViewModel = mCurrentPopupViewModel;
             MAdjustmentVM.KCategoryID = mDraggedItem.KCategoryID;
-            //MAdjustmentVM.DateAdjustment = mDraggedItem.DatePeriodStart;
-            //MAdjustmentVM.DateStart = mDraggedItem.DatePeriodStart;
-            //MAdjustmentVM.DateEnd = mDraggedItem.DatePeriodEndN;
             MAdjustmentVM.HeadingText = MAdjustmentVM.HeadingText + mDraggedItem.ShortName;
-            
-
-            //ViewModelApplication.CurrentPopupViewModel = mSWAdjustViewModel;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
         }
 
+        public void ReviewTransactions()
+        {
+            var duration = new TimeSpan(-365, 0, 0, 0);
+            var TimeStart = DateTime.Now.Add(duration);
+            var TimeEnd = DateTime.Now;
+
+
+            ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(
+                ((HierarchyItemSelectionViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid,
+                TimeStart,//SelectedBudgetMonth
+                TimeEnd,//SelectedBudgetMonth -12 mo
+                mDraggedItem.KCategoryID);
+                    ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail for selected budgeted Category" ;
+                    //force a reload of the BulkRecon Control
+                    ViewModelApplication.CurrentPopupContent = 0;
+                    ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;
+                    ViewModelApplication.PopupVisible = true;
+        }
+
+
+
+
         /// <summary>
         /// Use Popup View to add a Hierarchy Element
         /// </summary>
-        private void ViewDetailBilling()
+        private void ViewTransactions()
         {
             //Prepopulate
 

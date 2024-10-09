@@ -47,6 +47,7 @@ namespace Fasetto.Word.Web.Server
 
 
         #endregion
+
         #region Properties
         #region Public Properties
 
@@ -637,6 +638,7 @@ namespace Fasetto.Word.Web.Server
 
 
         #endregion
+
         #region Financials
         #region ReturnTransactions
 
@@ -661,10 +663,12 @@ namespace Fasetto.Word.Web.Server
 
             #region sql query
 
+            var SqlString = "";
+            if (model.Category == "")
+            { SqlString = "EXEC [Finance].spDisplayActualDetails 	 @fClientID =  '" + model.Client + "' ,  @MonthBeg ='" + model.MonthStart.ToString() + "',  @MonthEnd = '" + model.MonthEnd.ToString() + "'"; }
+            else
+            { SqlString = "EXEC [Finance].spDisplayActualCategoryDetails 	 @fClientID =  '" + model.Client + "' ,  @MonthBeg ='" + model.MonthStart.ToString() + "',  @MonthEnd = '" + model.MonthEnd.ToString() +  "',  @fCategoryID = '" + model.Category +"'"; }
 
-
-            var SqlString = "EXEC [Finance].spDisplayActualDetails 	 @fClientID =  '" + model.Client + "' ,  @MonthBeg ='" + model.MonthStart.ToString() + "',  @MonthEnd = '" + model.MonthEnd.ToString() + "'";
-            ;
             try
             {
                 // Try and run the task
@@ -697,6 +701,7 @@ namespace Fasetto.Word.Web.Server
                         KAccountName = row[16].ToString(),
                         KAccountID = row[15].ToString().ToUpper(),
                         Units = (int)row[17],
+                        KClientID = row[19].ToString().ToUpper(),
                     };
                     results.Add(u);
 
@@ -1036,6 +1041,7 @@ namespace Fasetto.Word.Web.Server
         }
 
         #endregion BillingPeriods
+
         #region RootPerClientAndType
         
         [Route(ApiRoutes.ReturnRootPerClientAndType)]
@@ -1546,8 +1552,6 @@ namespace Fasetto.Word.Web.Server
 
 
         #endregion Financials
-
-
 
         #region Services
         #region LoadReadings
@@ -2271,8 +2275,6 @@ namespace Fasetto.Word.Web.Server
             #endregion Billing
         #endregion Services
 
-
-
         #region Hierarchy
 
         /// <summary>
@@ -2769,10 +2771,6 @@ namespace Fasetto.Word.Web.Server
       
             #endregion
 
-
-
-
-
         #region Private Helpers
 
         /// <summary>
@@ -2889,7 +2887,8 @@ namespace Fasetto.Word.Web.Server
     }
 
     #endregion
-    #region ExtensionMethod
+
+        #region ExtensionMethod
     public static class ExtensionMethods
     {
         public static T? GetValue<T>(this DataRow row, int columnIndex) where T : struct

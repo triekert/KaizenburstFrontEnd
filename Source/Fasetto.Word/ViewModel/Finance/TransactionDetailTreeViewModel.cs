@@ -183,6 +183,7 @@ namespace Fasetto.Word
                     KAccountID = item.KAccountID,
                     KAccountName = item.KAccountName,
                     Units = item.Units,
+                    KClientID = item.KClientID,
 
                 };
 

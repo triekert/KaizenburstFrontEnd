@@ -15,7 +15,6 @@ namespace Fasetto.Word.Core
         /// </summary>
         public string Client { get; set; }
 
-
         /// <summary>
         ///Start Month for managing transactions
         /// </summary>
@@ -25,6 +24,11 @@ namespace Fasetto.Word.Core
         ///End Month for managing transactions
         /// </summary>
         public int MonthEnd { get; set; }
+
+        // <summary>
+        /// GUID of Category selected for transaction management- (Optional, will only return transactions for desired category if populated )
+        /// </summary>
+        public string Category { get; set; }
 
         /// <summary>
         ///Start time for retrieving TOD data

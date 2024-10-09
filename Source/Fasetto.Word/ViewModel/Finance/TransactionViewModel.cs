@@ -151,6 +151,12 @@ namespace Fasetto.Word
         /// </summary>
         public bool IsDocLinked { get; set; }
 
+        /// <summary>
+        /// String representation of GUID for Client
+        /// </summary>
+
+        public string KClientID { get; set; }
+
 
 
         /// <summary>
@@ -170,6 +176,7 @@ namespace Fasetto.Word
         /// </summary>
 
         public string KHierarchyID { get; set; }
+
 
 
 

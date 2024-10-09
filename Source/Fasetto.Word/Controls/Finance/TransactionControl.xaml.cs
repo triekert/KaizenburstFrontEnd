@@ -385,7 +385,7 @@ namespace Fasetto.Word
                             Notes = ((TransactionViewModel)item).Notes,
                             Units = ((TransactionViewModel)item).Units,
                             ChangeType = "m",
-                            KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                            KClientID = ((TransactionViewModel)item).KClientID,
                         };
 
                         ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mChange.Add(u);
@@ -454,6 +454,7 @@ namespace Fasetto.Word
                             KAccountName = item.KAccountName,
                             Notes = item.Notes,
                             Units = item.Units,
+                            KClientID = item.KClientID,
                         };
                         TransactionDetail.Add(mTDVM);
                     }
