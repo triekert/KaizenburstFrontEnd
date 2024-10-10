@@ -71,6 +71,11 @@
         /// </summary>
         BudgetReview = 12,
 
+        /// <summary>
+        ///Management of expenditure against budgets
+        /// </summary>
+        ExpenditureVSBudget = 13,
+
     }
 
 }

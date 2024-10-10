@@ -403,7 +403,7 @@ namespace Fasetto.Word
                 var Pgtype = ViewModelApplication.CurrentPageViewModel.GetType().Name;
                 if (ViewModelApplication.CurrentPopupViewModel == null || (ViewModelApplication.CurrentPopupViewModel.GetType().Name != "ManageClassificationViewModel"))
                 {
-                    if ((string)Pgtype == "TransactionSelectionPageViewModel")
+                    if ((string)Pgtype == "TransactionSelectionPageViewModel"||(string)Pgtype == "BudgetSelectionPageViewModel")
                     {
                         if (ViewModelApplication.ControlParameter1 != null)
                         {

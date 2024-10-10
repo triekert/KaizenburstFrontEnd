@@ -1008,7 +1008,7 @@ namespace Fasetto.Word
 
             //If user escapes from window whilst processing hierarchy control calls on the manage classification window, return to transaction detail
             var Pgtype = ViewModelApplication.CurrentPageViewModel.GetType().Name;
-            if ((string)Pgtype == "TransactionSelectionPageViewModel" && ViewModelApplication.ControlParameter1 != null)
+            if (((string)Pgtype == "TransactionSelectionPageViewModel" ||(string)Pgtype == "BudgetSelectionPageViewModel")&& ViewModelApplication.ControlParameter1 != null)
 
             {
                 //ViewModelApplication.CurrentPopupViewModel = (ManageClassificationViewModel)ViewModelApplication.ControlParameter1;

@@ -487,6 +487,7 @@ namespace Fasetto.Word
                 Posted_Date = ((TransactionViewModel)Transaction.SelectedItem).Posted_Date,
                 KHierarchyID =((TransactionViewModel)Transaction.SelectedItem).KHierarchyID,
                 Month =  ((TransactionViewModel)Transaction.SelectedItem).Month,
+                KClientID = ((TransactionViewModel)Transaction.SelectedItem).KClientID,
             };
             ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).AddItem(NewTransaction);
             ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MPersist.Add(NewTransaction);

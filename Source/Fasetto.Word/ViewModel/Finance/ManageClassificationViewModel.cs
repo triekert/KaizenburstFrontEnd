@@ -1018,9 +1018,8 @@ namespace Fasetto.Word
                             };
                             mRequest.Add(mRqst);
                         }
-                        var docsl = mRequest.Where(x => x.IsNew && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
-
-                        if (docsl.Count > 0)
+                         var docsl = mRequest.Where(x => (x.IsNew || x.IsRemove) && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
+            if (docsl.Count > 0)
                         {
 
                             Selected.IsDocLinked = true;
@@ -1054,7 +1053,7 @@ namespace Fasetto.Word
                             };
                             mRequest.Add(mRqst);
                         }
-                        var docsl = mRequest.Where(x => x.IsNew && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
+                        var docsl = mRequest.Where(x => (x.IsNew||x.IsRemove) && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
 
                         if (docsl.Count > 0)
                         {

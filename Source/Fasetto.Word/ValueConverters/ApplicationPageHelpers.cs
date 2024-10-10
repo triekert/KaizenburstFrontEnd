@@ -55,6 +55,12 @@ namespace Fasetto.Word
                 case ApplicationPage.BudgetReview:
                     return new BudgetSelectionPage(viewModel as BudgetSelectionPageViewModel);
 
+
+
+                case ApplicationPage.ExpenditureVSBudget:
+                    return new ExpenditureVSBudgetPage(viewModel as ExpenditureVSBudgetPageViewModel);
+
+
                 default:
                     Debugger.Break();
                     return null;
@@ -101,6 +107,11 @@ namespace Fasetto.Word
 
             if (page is BudgetSelectionPage)
                 return ApplicationPage.BudgetReview;
+
+
+            if (page is ExpenditureVSBudgetPage)
+                return ApplicationPage.ExpenditureVSBudget;
+
             // Alert developer of issue
             Debugger.Break();
             return default;

@@ -70,31 +70,25 @@ namespace Fasetto.Word
                     var mTransactionControl = new TransactionControl();
                     return mTransactionControl;
 
-
                 case PopupContent.TransactionDetail:
                     var mTransactionDetailControl = new TransactionDetailControl();
                     return mTransactionDetailControl;
-
 
                 case PopupContent.Classify:
                     var mManageClassificationControl = new ManageClassificationControl();
                     return mManageClassificationControl;
 
-
                 case PopupContent.SWBillingDetail:
                     var mSWBillingDetailControl = new SWBillingDetailControl();
                     return mSWBillingDetailControl;
-
 
                 case PopupContent.BudgetReview:
                     var mBudgetReviewControl = new BudgetReviewControl();
                     return mBudgetReviewControl;
 
-
                 case PopupContent.BudgetAdjust:
                     var mBudgetAdjustControl = new BudgetAdjustControl();
                     return mBudgetAdjustControl;
-
 
                 // Unknown
                 default:

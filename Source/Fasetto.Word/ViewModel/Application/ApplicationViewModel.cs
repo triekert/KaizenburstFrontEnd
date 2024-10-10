@@ -395,7 +395,7 @@ namespace Fasetto.Word
                 OnPropertyChanged(nameof(CurrentPage));
 
             // Show side menu or not?
-            SideMenuVisible = page == ApplicationPage.Chat || page == ApplicationPage.Finance|| page == ApplicationPage.Hierarchy;
+            SideMenuVisible = page == ApplicationPage.Chat || page == ApplicationPage.Finance || page == ApplicationPage.Hierarchy;
 
         }
 

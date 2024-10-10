@@ -52,6 +52,8 @@ namespace Fasetto.Word
 
             //var root = "1C225789-3938-4480-86CB-071863DC5D33";
             var root = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
+
+            //root is hardcoded to the GUID configured as the root of all menu options for the Kaizenburst framework
             root = ViewModelApplication.ControlParameter;
             mHierarchyTree = new HierarchyTreeViewModel(root);//root);
             ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
