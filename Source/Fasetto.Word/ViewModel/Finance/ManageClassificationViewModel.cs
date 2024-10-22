@@ -1733,13 +1733,14 @@ namespace Fasetto.Word
                                             DateEffective = DateTime.Now,
                                             KHierarchyID = Selected1.KHierarchyID,
                                             KClientID = Selected.KClientID,
-                                            KPartyID = Party.OriginalKid,
+                                            KPartyID = Party.EditedKid ?? Party.OriginalKid,
+                                            KPartyName = Party.EditedName ?? Party.OriginalName,
                                             IsTemplate = IsTemplate,
                                             FCatSrchID = Selected1.FCatSrchID,
                                             Notes = TransactionNotes.EditedText,
                                             KAccountID = Account.OriginalKid,
                                             KAccountName = (Account.OriginalName),
-                                            Units = 0,
+                                            Units = IntUnits,
                                         };
                                         tmp2.Add(u);
                                         // now create a new assignment for the new cost category

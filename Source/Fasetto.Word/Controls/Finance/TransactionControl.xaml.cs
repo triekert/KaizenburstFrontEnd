@@ -1,9 +1,12 @@
-﻿using Fasetto.Word.Core;
+﻿using CsvHelper;
+using Fasetto.Word.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -140,7 +143,10 @@ namespace Fasetto.Word
             }
             else
                 if (e.Key == Key.F2)
-                { }
+                               {
+                    Generate();
+                }
+            
                 else
                 if (Keyboard.IsKeyDown(Key.PageDown) && (Keyboard.IsKeyDown(Key.RightCtrl) || Keyboard.IsKeyDown(Key.LeftCtrl)))
                 {
@@ -176,9 +182,14 @@ namespace Fasetto.Word
                                             {
                                                 Insert();                                                       
                                             }
+                                        else
+                                            if (Keyboard.IsKeyDown(Key.F2))
+                                            {
+                                                Generate();
+                                            }
 
-            e.Handled = true;
-        }
+                    e.Handled = true;
+                }
         private void DataGridRow_MouseRightClick(object sender, MouseButtonEventArgs e)
         {
             var tempT = new ObservableCollection<TransactionViewModel>();
@@ -535,6 +546,31 @@ namespace Fasetto.Word
             //    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
             //    ViewModelApplication.PopupVisible = true;
             NavigateOnAsync();
+        }
+
+
+        private void Generate()
+        {
+
+            var fileName = @"C:\Temp\Transaction Records " 
+//+
+    //    ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeStart.ToString("d_MM_yyyy")
+    //+ " TO " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeEnd.ToString("d_MM_yyyy")
+    + ".csv";
+            try
+            {
+                using (var writer = new StreamWriter(fileName))
+                {
+                    using (var csvOut = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                    {
+                        csvOut.WriteRecords(((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MPersist);
+                    }
+                }
+            }
+            catch (Exception exp)
+            {
+                Console.Write(exp.Message);
+            }
         }
 
         private void Datagrid_TargetUpdated(object sender, DataTransferEventArgs e)

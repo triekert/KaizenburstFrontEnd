@@ -178,15 +178,28 @@ namespace Fasetto.Word
             //foreach (var item in ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).BudgetMonth)
 
             BudgetMonthList = new ObservableCollection<BudgetMonthViewModel>();
+            if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel")
+            {
                 for (var i = 0; i < ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).BudgetMonth.Count; i++)
                 {
-                var mTVM = new BudgetMonthViewModel
-                {
-                    BudgetMonth = ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).BudgetMonth[i],
-                };
-                BudgetMonthList.Add(mTVM);
+                    var mTVM = new BudgetMonthViewModel
+                    {
+                        BudgetMonth = ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).BudgetMonth[i],
+                    };
+                    BudgetMonthList.Add(mTVM);
                 }
-
+            }
+            else
+            {
+                for (var i = 0; i < ((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).BudgetMonth.Count; i++)
+                {
+                    var mTVM = new BudgetMonthViewModel
+                    {
+                        BudgetMonth = ((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).BudgetMonth[i],
+                    };
+                    BudgetMonthList.Add(mTVM);
+                }
+            }
         }
 
 

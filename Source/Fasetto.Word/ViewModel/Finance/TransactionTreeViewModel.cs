@@ -7,7 +7,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
@@ -87,7 +86,7 @@ namespace Fasetto.Word
         /// <param name="hierarchyTable"></param>
         /// The hierarchyTable passed through as a parameter identifies the specific hierarchy set to be retrieved
         /// from persistent s
-        public TransactionTreeViewModel(string client, DateTime timeStart, DateTime timeEnd, string category)
+        public TransactionTreeViewModel(string client, DateTime timeStart, DateTime timeEnd, string category,string budget)
         {
             #region Build HierarchyViewCollection
 
@@ -114,7 +113,8 @@ namespace Fasetto.Word
                 Client = client,
                 MonthStart = int.Parse(timeStart.ToString("yyyyMM")),
                 MonthEnd = int.Parse(timeEnd.ToString("yyyyMM")),
-                Category = category
+                Category = category,
+                Budget = budget,
             };
 
             var MMmonth = timeStart.ToString("MM");
@@ -358,96 +358,13 @@ namespace Fasetto.Word
 
         //#endregion // Properties
 
-        #region Search Logic -Short Name
-
-        //public void PerformSearch()
-        //{
-        //    if (MatchingCategoryEnumerator == null || !MatchingCategoryEnumerator.MoveNext())
-        //        VerifyMatchingCategoryEnumerator();
-
-        //    var Category = MatchingCategoryEnumerator.Current;
-
-        //    if (Category == null)
-        //        return;
-
-        //    // Ensure that this Category is in view.
-        //    if (Category.mParent != null)
-        //        Category.mParent.IsExpanded = true;
-
-        //    Category.IsSelected = true;
-        //    //Category.IsExpanded = false;
-        //}
-
-        //private void VerifyMatchingCategoryEnumerator()
-        //{
-        //    var matches = FindMatches(mSearchText, mRootHierarchyElement);
-        //    MatchingCategoryEnumerator = matches.GetEnumerator();
-
-        //    if (!MatchingCategoryEnumerator.MoveNext())
-        //    {
-        //        MessageBox.Show(
-        //            "No matching names were found - please check your spelling.",
-        //            "Search for Tree Item failed",
-        //            MessageBoxButton.OK,
-        //            MessageBoxImage.Information
-        //            );
-        //    }
-        //}
-
-        //private IEnumerable<TransactionViewModel> FindMatches(string searchText, TransactionViewModel Category)
-        //{
-        //    if (Category.NameContainsText(searchText))
-        //        yield return Category;
-
-        //    foreach (var child in Category.Children)
-        //        foreach (var match in FindMatches(searchText, child))
-        //            yield return match;
-        //}
-
-        #endregion // Search Logic
+        
 
         #region Search Logic //KCategoryID
         public IEnumerator<TransactionViewModel> MatchingKCategoryEnumerator { get; private set; }
 
         #endregion // SearchKCategoryID
-        #region Search Logic //KCategoryID
-        //private void PerformKIdSearch()
-        //{
 
-        //    if (MatchingKCategoryEnumerator == null || !MatchingKCategoryEnumerator.MoveNext())
-        //        VerifyMatchingKCategoryEnumerator();
-        //    var KCategory = MatchingKCategoryEnumerator.Current;
-        //    if (KCategory == null)
-        //        return;
-
-        //    // Ensure that this Category is in view.
-        //    if (KCategory.mParent != null)
-        //        KCategory.mParent.IsExpanded = true;
-
-        //    KCategory.IsSelected = true;
-        //}
-
-        //private void VerifyMatchingKCategoryEnumerator()
-        //{
-        //    //var matchK = FindKMatches(mParentID, mTarget);
-        //    var matchK = FindKMatches(mSearchText, mRootHierarchyElement);
-        //    MatchingKCategoryEnumerator = matchK.GetEnumerator();
-        //    _ = !MatchingKCategoryEnumerator.MoveNext();
-
-        //}
-
-        //private IEnumerable<TransactionViewModel> FindKMatches(string searchText, TransactionViewModel Category)
-        //{
-        //    //var mSearchText = searchText;
-        //    if (Category.KCategoryIdContainsText(searchText))
-        //        yield return Category;
-
-        //    foreach (var child in Category.Children)
-        //        foreach (var matchK in FindKMatches(searchText, child))
-        //            yield return matchK;
-        //}
-
-        #endregion //Search Logic //KCategoryID
  
 
         public void Close()
@@ -462,12 +379,22 @@ namespace Fasetto.Word
 
 
 
-            if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel")
+            if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel" ||ViewModelApplication.CurrentPageViewModel.GetType().Name == "ExpenditureVSBudgetPageViewModel")
             {
+                if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel")
+                { 
                 ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;
                 ViewModelApplication.CurrentPopupContent = PopupContent.BudgetReview;
                 ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;// ((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
                 ViewModelApplication.PopupVisible = true;
+                }
+                else
+                { 
+                ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;
+                ViewModelApplication.CurrentPopupContent = PopupContent.ExpenditureReview;
+                ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;// ((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+                ViewModelApplication.PopupVisible = true;
+                }
             }
             else
             {
@@ -526,6 +453,9 @@ namespace Fasetto.Word
 
             });
         }
+
+
+
 
 
         /// <summary>

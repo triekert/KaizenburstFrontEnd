@@ -29,7 +29,7 @@ namespace Fasetto.Word
 
 
         /// <summary>
-        /// String representation of GUID for Billing Period
+        /// String representation of Name of Budget Period
         /// </summary>
         public string Name{ get; set; }
 

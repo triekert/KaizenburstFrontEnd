@@ -78,14 +78,20 @@ namespace Fasetto.Word
         {
             if ((BudgetPeriodViewModel)((ComboBox)sender).SelectedItem != null)
             {
-                //((BillingPeriodListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedBillingPeriod = (BillingPeriodViewModel)((ComboBox)sender).SelectedItem;
-                ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget = (BudgetPeriodViewModel)((ComboBox)sender).SelectedItem;
-                ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).AddMonthRange();
-                ((BudgetMonthListViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).BudgetMonthList).BuildMonthList();
-
+                if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel")
+                {
+                    ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget = (BudgetPeriodViewModel)((ComboBox)sender).SelectedItem;
+                    ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).AddMonthRange();
+                    ((BudgetMonthListViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).BudgetMonthList).BuildMonthList();
+                }
+                else
+                { ((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget = (BudgetPeriodViewModel)((ComboBox)sender).SelectedItem; 
+                    ((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).AddMonthRange();
+                    ((BudgetMonthListViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).BudgetMonthList).BuildMonthList();                
+                }
             }
-            ((BudgetPeriodListViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Budget).MSelectedBudgetPeriod = ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget;
-
+            //else
+            //{ ((BudgetPeriodListViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Budget).MSelectedBudgetPeriod = ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget; }
 
         }
     }

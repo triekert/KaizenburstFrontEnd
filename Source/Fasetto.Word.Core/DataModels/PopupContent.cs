@@ -122,7 +122,19 @@
         /// <summary>
         /// Manage budgets
         /// </summary>
-        BudgetAdjust = 19
+        BudgetAdjust = 19,
+
+
+        /// <summary>
+        /// Manage budgets
+        /// </summary>
+        ExpenditureReview = 20,
+
+
+        /// <summary>
+        /// Manage expenses against budget
+        /// </summary>
+        ExpenditureAdjust = 21,
     }
 
 

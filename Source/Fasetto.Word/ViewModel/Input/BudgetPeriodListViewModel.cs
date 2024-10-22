@@ -24,7 +24,78 @@ namespace Fasetto.Word
 
     {
 
+
+
         #region Public Properties
+
+        /// <summary>
+        /// The label to identify what this value is for
+        /// </summary>
+        public string Label { get; set; }
+
+
+
+        /// <summary>
+        /// Indicates if the current text is in edit mode
+        /// </summary>
+        public bool Editing { get; set; }
+
+        /// <summary>
+        /// Indicates if the current control is pending an update (in progress)
+        /// </summary>
+        public bool Working { get; set; }
+
+        /// <summary>
+        /// Store View Model of current popup to allow reverse navigation
+        /// </summary>
+        public object PriorPopupViewModel { get; set; }
+
+
+        // <summary>
+        /// Level limit for hierarchy's to be returned (1 = top level only...)
+        /// </summary>
+        public int Level { get; set; }
+
+        /// <summary>
+        /// The action to run when saving the text.
+        /// Returns true if the commit was successful, or false otherwise.
+        /// </summary>
+        public Func<Task<bool>> CommitAction { get; set; }
+
+
+        /// <summary>
+        /// The action to run when initiating the control.
+        /// Returns true if the preparation was successful, or false otherwise.
+        /// </summary>
+        public Func<Task<bool>> PrepareAction { get; set; }
+
+        #endregion
+
+        #region Public Commands
+
+        /// <summary>
+        /// Puts the control into edit mode
+        /// </summary>
+        public ICommand EditCommand { get; set; }
+
+        /// <summary>
+        /// Cancels out of edit mode
+        /// </summary>
+        public ICommand CancelCommand { get; set; }
+
+        /// <summary>
+        /// Commits the edits and saves the value
+        /// as well as goes back to non-edit mode
+        /// </summary>
+        public ICommand SaveCommand { get; set; }
+        /// <summary>
+        /// The command to close the settings menu
+        /// </summary>
+        public ICommand CloseCommand { get; set; }
+
+
+
+
 
         /// <summary>
         /// A set of Bulk Meter Recon records for the selected period
@@ -75,26 +146,13 @@ namespace Fasetto.Word
         public BudgetPeriodViewModel mCHVM;
         public BudgetPeriodResultApiModel mRequest;
 
-        /// <summary>
-        /// Indicates if the current text is in edit mode
-        /// </summary>
-        public bool Editing { get; set; }
+
 
 
         private string mSearchText = "", mSearchKCategoryID = string.Empty, mParentCategoryID = string.Empty;
 
         #endregion // Data
-        #region Public Commands
-        /// <summary>
-        /// The command to close the settings menu
-        /// </summary>
-        public ICommand CloseCommand { get; set; }
 
-        /// <summary>
-        /// Puts the control into edit mode
-        /// </summary>
-        public ICommand EditCommand { get; set; }
-        #endregion//Public Commands
         #region Constructor
         /// <summary>
         /// The HierarchyTreeViewModel is a visual interface for interacting with hierarchical
@@ -159,28 +217,37 @@ namespace Fasetto.Word
             //mSearchCommand = new SearchCategoryTreeCommand(this);
         }
 
-
-        /// <summary>
-        /// Puts the control into edit mode
-        /// </summary>
         public void Edit()
         {
-            // Set the edited text to the current value
 
-            //Go into edit mode
-            ViewModelApplication.CurrentControlViewModel = ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
-            //((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Populate();
-            //MSelectedCostHierarchy = MSelectedCostHierarchy;
-            //((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.MSelectedCostHierarchy = MSelectedCostHierarchy;
-            //((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedCostHierarchy = MSelectedCostHierarchy;
-            Editing = true;
-            //ViewModelApplication.CurrentControlViewModel
+            var result = default(bool);
+
+            RunCommandAsync(() => Working, async () =>
+            {
+
+                // Try and do the work
+                result = PrepareAction == null ? true : await PrepareAction();
+
+            }).ContinueWith(t =>
+            {
+
+            });
+
+            ViewModelApplication.PopupVisible = true;
+            ViewModelApplication.CurrentPopupContent = 0;
+
+            ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
+
+
         }
+
+
+
 
 
         #endregion // Constructor
 
-
+        #region Command Methods
         /// <summary>
         /// Return Hierarchy of interest from Object persistence infrastructure
         /// User credentials are used to determine access authorisation
@@ -273,7 +340,7 @@ namespace Fasetto.Word
         }
 
 
-
+        #endregion
 
 
     }

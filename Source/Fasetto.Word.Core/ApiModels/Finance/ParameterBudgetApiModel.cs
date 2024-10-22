@@ -18,6 +18,18 @@
         public int BMonth { get; set; }
 
 
+        /// <summary>
+        /// Name of Selected Budget
+        /// </summary>
+        public string BudgetName { get; set; }
+
+
+
+
+        /// <summary>
+        ///Flag to return Expenditure if true
+        /// </summary>
+        public bool IsExpenditureReturn { get; set; }
 
     }
 

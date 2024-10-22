@@ -200,7 +200,7 @@ namespace Fasetto.Word
             mTargetTest = (BudgetViewModel)tvParameters.SelectedItem;
             mDraggedItem = (BudgetViewModel)tvParameters.SelectedItem;
 
-            if (Keyboard.IsKeyDown(Key.Insert))
+            if (Keyboard.IsKeyDown(Key.F2))
                 {
                 ReviewTransactions();
                 e.Handled= true;
@@ -519,6 +519,8 @@ namespace Fasetto.Word
         private void AddAdjustment()
         {
             //Prepopulate
+            if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel") 
+            { 
             mDraggedItem = (BudgetViewModel)tvParameters.SelectedItem;
             if (mDraggedItem == null)
                 return;
@@ -531,7 +533,7 @@ namespace Fasetto.Word
             MAdjustmentVM.PriorPopupViewModel = mCurrentPopupViewModel;
             MAdjustmentVM.KCategoryID = mDraggedItem.KCategoryID;
             MAdjustmentVM.HeadingText = MAdjustmentVM.HeadingText + mDraggedItem.ShortName;
-            ViewModelApplication.PopupVisible = true;
+            ViewModelApplication.PopupVisible = true;}
             //ViewModelApplication.SettingsMenuVisible = true;
         }
 
@@ -546,8 +548,10 @@ namespace Fasetto.Word
                 ((HierarchyItemSelectionViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid,
                 TimeStart,//SelectedBudgetMonth
                 TimeEnd,//SelectedBudgetMonth -12 mo
-                mDraggedItem.KCategoryID);
-                    ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail for selected budgeted Category" ;
+                mDraggedItem.KCategoryID,
+                ((BudgetPeriodViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID
+                );
+                    ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail for Selected Budget Category : " + mDraggedItem.ShortName;
                     //force a reload of the BulkRecon Control
                     ViewModelApplication.CurrentPopupContent = 0;
                     ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;

@@ -61,6 +61,45 @@ namespace Fasetto.Word
         /// </summary>
         public decimal BudgetAmount   => mElement.BudgetAmount;
 
+
+        /// <summary>
+        /// Aggregate Total expenditure for element and all descendants
+        /// </summary>
+        public decimal ActualAmountTotal => mElement.ActualAmountTotal;
+
+        /// <summary>
+        ///Aggregate Total Expenditure for all descendant elements
+        /// </summary>
+        public decimal ActualAmountDescendants => mElement.ActualAmountDescendants;
+
+        /// <summary>
+        ///Actual expenditure for the selected element (excluding descendant aggregates)
+        /// </summary>
+        public decimal ActualAmount => mElement.ActualAmount;
+
+
+        /// <summary>
+        ///Current deviation from budget for the selected element (excluding descendant aggregates)
+        /// </summary>
+        public decimal Deviation => mElement.Deviation;
+
+
+        /// <summary>
+        ///Cumulative deviation from budget for the  for the selected element (excluding descendant aggregates)
+        /// </summary>
+        public decimal DeviationCum => mElement.DeviationCum;
+
+
+        /// <summary>
+        ///Cumulative budget amount so far
+        /// </summary>
+        public decimal BudgetTotCum => mElement.BudgetTotCum;
+
+
+        /// <summary>
+        ///Cumulative actual amount so far
+        /// </summary>
+        public decimal ActualTotCum => mElement.ActualTotCum;
         /// <summary>
         /// Reading at start
         /// </summary>

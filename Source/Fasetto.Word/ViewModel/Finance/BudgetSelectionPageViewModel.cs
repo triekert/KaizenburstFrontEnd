@@ -309,6 +309,8 @@ namespace Fasetto.Word
             ViewModelApplication.CurrentControlViewModel = Client;
             //ViewModelApplication.CurrentControlViewModel = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
             Budget = new BudgetPeriodListViewModel(CostHierarchy.OriginalKid);
+
+
             SelectedBudget = new BudgetPeriodViewModel();
             BudgetMonthList = new BudgetMonthListViewModel();
             SelectedBudgetMonth = new BudgetMonthViewModel();

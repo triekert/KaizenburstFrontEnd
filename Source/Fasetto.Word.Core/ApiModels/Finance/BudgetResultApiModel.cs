@@ -51,6 +51,44 @@ namespace Fasetto.Word.Core
         public decimal BudgetAmount { get; set; }
 
         /// <summary>
+        /// Aggregate Total expenditure for element and all descendants
+        /// </summary>
+        public decimal ActualAmountTotal { get; set; }
+
+        /// <summary>
+        ///Aggregate Total expenditure for all descendant elements
+        /// </summary>
+        public decimal ActualAmountDescendants { get; set; }
+
+        /// <summary>
+        ///Expenditure for the selected element (excluding descendant aggregates)
+        /// </summary>
+        public decimal ActualAmount { get; set; }
+
+
+        /// <summary>
+        ///Current deviation from budget for the selected element (excluding descendant aggregates)
+        /// </summary>
+        public decimal Deviation { get; set; }
+
+
+        /// <summary>
+        ///Cumulative deviation from budget for the  for the selected element (excluding descendant aggregates)
+        /// </summary>
+        public decimal DeviationCum { get; set; }
+
+        /// <summary>
+        ///Cumulative budget amount so far
+        /// </summary>
+        public decimal BudgetTotCum { get; set; }
+
+
+        /// <summary>
+        ///Cumulative actual amount so far
+        /// </summary>
+        public decimal ActualTotCum { get; set; }
+
+        /// <summary>
         /// Reading at start
         /// </summary>
         public int Month { get; set; }

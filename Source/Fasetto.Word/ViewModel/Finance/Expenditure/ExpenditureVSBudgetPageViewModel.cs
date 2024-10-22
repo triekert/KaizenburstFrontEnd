@@ -1,13 +1,10 @@
-﻿using EnvDTE;
-using Fasetto.Word.Core;
+﻿using Fasetto.Word.Core;
 using Fasetto.Word.Core.ApiModels.Controls;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Xml.Linq;
 using static Fasetto.Word.DI;
 
 
@@ -40,11 +37,6 @@ namespace Fasetto.Word
 
 
         /// <summary>
-        /// The chat thread items for the list
-        /// </summary>
-        //protected ObservableCollection<ChatMessageListItemViewModel> mItems;
-
-        /// <summary>
         /// A flag indicating if the search dialog is open
         /// </summary>
         protected bool mSearchIsOpen;
@@ -54,32 +46,6 @@ namespace Fasetto.Word
 
         #region Public Properties
 
-        /// <summary>
-        /// The chat thread items for the list
-        /// NOTE: Do not call Items.Add to add messages to this list
-        ///       as it will make the FilteredItems out of sync
-        /// </summary>
-        //public ObservableCollection<ChatMessageListItemViewModel> Items
-        //{
-        //    get => mItems;
-        //    set
-        //    {
-        //        // Make sure list has changed
-        //        if (mItems == value)
-        //            return;
-
-        //        // Update value
-        //        mItems = value;
-
-        //        // Update filtered list to match
-        //        FilteredItems = new ObservableCollection<ChatMessageListItemViewModel>(mItems);
-        //    }
-        //}
-
-        /// <summary>
-        /// The chat thread items for the list that include any search filtering
-        /// </summary>
-        //public ObservableCollection<ChatMessageListItemViewModel> FilteredItems { get; set; }
 
         /// <summary>
         /// The title of this chat list
@@ -145,10 +111,6 @@ namespace Fasetto.Word
         /// </summary>
         public bool AnyPopupVisible => AttachmentMenuVisible;
 
-        /// <summary>
-        /// The view model for the attachment menu
-        /// </summary>
-        //public ChatAttachmentPopupMenuViewModel AttachmentMenu { get; set; }
 
         /// <summary>
         /// The text for the current message being written
@@ -190,6 +152,13 @@ namespace Fasetto.Word
         /// The month selected for processing
         /// </summary>
         public BudgetMonthViewModel SelectedBudgetMonth { get; set; }
+
+
+        /// <summary>
+        /// Create an array of months for the budget period
+        /// </summary>
+        public List<int> BudgetMonth { get; set; }
+
 
 
 
@@ -325,12 +294,8 @@ namespace Fasetto.Word
         public ExpenditureVSBudgetPageViewModel()
 
         {
-            //Manually turn side menu on
-            //ViewModelApplication.SideMenuVisible = true;
-            //Populate screen title
-            //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
-            //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
-            DisplayTitle = "Financial Management Against Budget";
+
+            DisplayTitle = "Compare Actuals against Budget";
             BulkMeter = "5249FFEB-6907-46AA-9204-D4527E11F9CE";
             ViewModelApplication.CurrentControlViewModel=ViewModelApplication.CurrentControlViewModel;
 
@@ -373,17 +338,6 @@ namespace Fasetto.Word
             ViewModelApplication.CurrentControlViewModel = Client;
 
 
-            //Meter = new HierarchyItemSelectionViewModel
-            //{
-            //    Label = "Meter Name",
-            //    //EditedName = mLoadingText,
-            //    EditedName = "TD Water Metering",
-            //    OriginalName = "Original Meter Selection",
-            //    EditedKid = "5249FFEB-6907-46AA-9204-D4527E11F9CE",
-            //    HierarchyTypeID = "8A50E984-9E9F-44F6-9392-875E56A0B7CA",
-            //    //CommitAction = SaveFirstNameAsync
-            //};
-
             TimeStart = new DateTimeViewModel
             {
                 Label = "Month Start",
@@ -397,14 +351,15 @@ namespace Fasetto.Word
             TimeStart.OriginalTime.Content = "00:00";
             TimeStart.EditedTime.Content = "00:00";
 
-            Budget = new BudgetPeriodListViewModel(CostHierarchy.OriginalKid);
+            Budget = new BudgetPeriodListViewModel(CostHierarchy.OriginalKid)
+            {
+                Label = ""
+            };
             SelectedBudget = new BudgetPeriodViewModel();
-            //BudgetMonthList = new BudgetMonthListViewModel();
-            //SelectedBudgetMonth = new BudgetMonthViewModel();
-
+            BudgetMonthList = new BudgetMonthListViewModel();
+            SelectedBudgetMonth = new BudgetMonthViewModel();
             Budget.MSelectedBudgetPeriod = SelectedBudget;
-            //BudgetMonth = new List<int>();
-
+            BudgetMonth = new List<int>();
 
             TimeEnd = new DateTimeViewModel
             {
@@ -419,23 +374,6 @@ namespace Fasetto.Word
             TimeEnd.OriginalTime.Content = "00:00";
             TimeEnd.EditedTime.Content = "00:00";
 
-            //DateReference = new DateTimeViewModel
-            //{
-            //    Label = "Calculation reference date",
-            //    OriginalDateTime = DateTime.Now,
-            //    EditedDateTime = DateTime.Now,
-            //    OriginalTime = new System.Windows.Controls.ComboBoxItem(),
-            //    EditedTime = new System.Windows.Controls.ComboBoxItem(),
-            //    //(DateTime.Now.AddHours(-1)).ToShortTimeString(),
-            //    //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
-            //};
-            //TimeEnd.OriginalTime.Content = "00:00";
-            //TimeEnd.EditedTime.Content = "00:00";
-
-            //CostHierarchy = new CostHierarchyListViewModel(Root.OriginalKid);
-            //SelectedCostHierarchy = new CostHierarchyViewModel();
-            //CostHierarchy.MSelectedCostHierarchy = SelectedCostHierarchy;
-
 
             // Create commands
             AttachmentButtonCommand = new RelayCommand(AttachmentButton);
@@ -448,7 +386,7 @@ namespace Fasetto.Word
             ClearSearchCommand = new RelayCommand(ClearSearch);
             InitialiseCostHCommand = new RelayCommand(async () => await InitialiseCostHAsync());
             InitialiseClientSrchCommand = new RelayCommand(async () => await ClientSrchAsync());
-            ReconcileCommand = new RelayCommand(async () => await ReconcileAsync());
+            ReconcileCommand =  new RelayCommand(BudgetDetail);
             //ViewModelApplication.CurrentControlViewModel = null;
 
             // Make a default menu
@@ -476,7 +414,6 @@ namespace Fasetto.Word
             // Hide attachment menu
             AttachmentMenuVisible = false;
         }
-
 
 
 
@@ -511,31 +448,41 @@ namespace Fasetto.Word
 
                 return;
             }
-            //if (((CostHierarchyListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedCostHierarchy.KCategoryID == null)
 
-            ////To DO - message user
-            //{
-            //    System.Windows.MessageBox.Show($"First select a valid Transaction Client to proceed...");
-            //    return;
-            //};
             ShortName = ((HierarchyItemSelectionViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedName;
             TimeEnd.OriginalDateTime = TimeEnd.EditedDateTime;
             TimeStart.OriginalDateTime = TimeStart.EditedDateTime;
 
-            //Make start time and end time equal to overload sql call
-            //var t1 = TimeEnd.EditedDateTime.ToString("yyyy/MM/dd");
-            //var t2 = TimeStart.EditedDateTime.Hour.ToString("00");
-            //var t3 = $"{TimeEnd.EditedDateTime.ToString("yyyy/MM/dd")}{" "}{TimeStart.EditedDateTime.Hour.ToString()}{":00:00"}";
-            //TimeEnd.EditedDateTime = DateTime.Parse(t3);
-            //TimeEnd.EditedDateTime = DateTime.Parse($"{TimeEnd.EditedDateTime.ToString("yyyy/MM/dd")}{" "}{TimeStart.EditedDateTime.Hour.ToString("00")}{":00:00"}");
-
             ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(Test3, TimeStart.EditedDateTime, 
-                TimeEnd.EditedDateTime,"");
+                TimeEnd.EditedDateTime,"","");
             ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail: " + ShortName;
             //force a reload of the BulkRecon Control
             ViewModelApplication.CurrentPopupContent = 0;
             ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;
 
+            ViewModelApplication.PopupVisible = true;
+
+        }
+
+
+        public void BudgetDetail()
+        {
+
+
+            if (SelectedBudget == null)
+            { var Nm = (ViewModelApplication.CurrentPopupViewModel).GetType().Name; };
+            if (SelectedBudget == null || SelectedBudget.KBudgetID == null)
+
+            //To DO - message user
+            {
+                MessageBox.Show($"First select a valid Budget and Month to proceed...");
+                return;
+            };
+
+            //AddMonthRange();
+            _ = SelectedBudget.KBudgetID;
+
+            ViewModelApplication.CurrentPopupContent = PopupContent.ExpenditureReview;
             ViewModelApplication.PopupVisible = true;
 
         }
@@ -584,15 +531,8 @@ namespace Fasetto.Word
                     TimeEnd.OriginalDateTime = TimeEnd.EditedDateTime;
                     TimeStart.OriginalDateTime = TimeStart.EditedDateTime;
 
-                    //Make start time and end time equal to overload sql call
-                    //var t1 = TimeEnd.EditedDateTime.ToString("yyyy/MM/dd");
-                    //var t2 = TimeStart.EditedDateTime.Hour.ToString("00");
-                    //var t3 = $"{TimeEnd.EditedDateTime.ToString("yyyy/MM/dd")}{" "}{TimeStart.EditedDateTime.Hour.ToString()}{":00:00"}";
-                    //TimeEnd.EditedDateTime = DateTime.Parse(t3);
-                    //TimeEnd.EditedDateTime = DateTime.Parse($"{TimeEnd.EditedDateTime.ToString("yyyy/MM/dd")}{" "}{TimeStart.EditedDateTime.Hour.ToString("00")}{":00:00"}");
-
                     ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(Test3, TimeStart.EditedDateTime,
-                        TimeEnd.EditedDateTime, "");
+                        TimeEnd.EditedDateTime, "","");
                     ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail: " + ShortName;
                     //force a reload of the BulkRecon Control
                     ViewModelApplication.CurrentPopupContent = 0;
@@ -828,5 +768,27 @@ namespace Fasetto.Word
             ViewModelApplication.GoToPage(ApplicationPage.Chat);}
 
         //#endregion
+
+        #region Helpers
+        public void AddMonthRange()
+        {
+            // Close settings menu
+            //var  BudgetMonth1 = new List<int>();
+            //BudgetMonth1.Clear();
+            var x = SelectedBudget.MonthStart;
+            while (x <= SelectedBudget.MonthEnd)
+            {
+                BudgetMonth.Add(x);
+                if ((x % 100) != 12)
+                { x++; }
+                else
+                { x = (((x / 100) + 1) * 100) + 1; }
+            }
+
+
+        }
+
+
+        #endregion
     }
 }

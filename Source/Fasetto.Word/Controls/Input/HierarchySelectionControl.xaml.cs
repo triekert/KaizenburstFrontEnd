@@ -182,7 +182,7 @@ namespace Fasetto.Word
 
                 //ViewModelApplication.ControlParameter5 = ViewModelApplication.CurrentControlViewModel;
                 ViewModelApplication.CurrentPopupViewModel = mHierarchyTree;
-                PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                //PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
 
             }
 

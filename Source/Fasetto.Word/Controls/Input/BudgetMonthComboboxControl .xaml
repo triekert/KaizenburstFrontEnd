@@ -52,7 +52,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Label -->
-            <TextBlock Text="{Binding Label}"
+            <TextBlock Text="{Binding Label1}"
                        Name="Label"
                        Margin="15 12"
                        HorizontalAlignment="Left"

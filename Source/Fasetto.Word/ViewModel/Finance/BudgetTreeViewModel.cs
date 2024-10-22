@@ -100,15 +100,33 @@ namespace Fasetto.Word
             };
             mBDDML.Add(mBDDM);
 
-
+            // for now, allow the same hierarchy model to be used by the ExpenditureVSBudget page
+            if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel")
+            { 
 
             mBudgetParameter = new ParameterBudgetApiModel
             {
                 BudgetID = ((BudgetPeriodViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID,
 
                 BMonth =  ((BudgetMonthViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth).BudgetMonth,
-            }; ;
+
+                BudgetName = ((BudgetPeriodViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).Name,
+            }; }
                 
+            else
+            {
+
+            mBudgetParameter = new ParameterBudgetApiModel
+            {
+                BudgetID = ((BudgetPeriodViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID,
+
+                BMonth = ((BudgetMonthViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth).BudgetMonth,
+
+                BudgetName = ((BudgetPeriodViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).Name,
+
+                IsExpenditureReturn = true,
+            };
+            }
 
             //mBillingParameter.BillingPeriodID = mFBillingPeriodID;
             TaskManager.RunAndForget(BudgetDetailAsync);
@@ -254,7 +272,17 @@ namespace Fasetto.Word
                         BudgetAmountDescendants = item.BudgetAmountDescendants,
                         BudgetAmount = item.BudgetAmount,
                         BudgetAmountTotal = item.BudgetAmountTotal,
-                    };
+                        ActualAmountDescendants = item.ActualAmountDescendants,
+                        ActualAmount =item.ActualAmount,
+                        ActualAmountTotal = item.ActualAmountTotal,
+                        Deviation = item.Deviation,
+                        DeviationCum = item.DeviationCum,
+                        BudgetTotCum = item.BudgetTotCum,
+                        ActualTotCum = item.ActualTotCum,
+
+
+
+                     };
                     mBDDML.Add(mBDDM);
                 }
 
@@ -336,7 +364,7 @@ namespace Fasetto.Word
             //build a tree view, always starting with the root element, which is also the classification for the hierarchy
             mBDDML.AddRange(ExpandHierarchyData(mPersist, "00000000-0000-0000-0000-000000000000", "Root"));
             //Refresh the tree view title with the current name of the root element
-            ControlTitle = (mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").ToList().FirstOrDefault()).ShortName;
+            ControlTitle = (mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").ToList().FirstOrDefault()).ShortName + " / Budget: " + mBudgetParameter.BudgetName;
 
             var matches = mPersist.ToList();
             foreach (var category in matches)
@@ -388,8 +416,13 @@ namespace Fasetto.Word
                     BudgetAmountDescendants = item.BudgetAmountTotal - item.BudgetAmount,
                     BudgetAmount = item.BudgetAmount,
                     BudgetAmountTotal = item.BudgetAmountTotal,
-
-
+                    ActualAmountDescendants = item.ActualAmountDescendants,
+                    ActualAmount = item.ActualAmount,
+                    ActualAmountTotal = item.ActualAmountTotal,
+                    Deviation = item.Deviation,
+                    DeviationCum = item.DeviationCum,
+                    BudgetTotCum = item.BudgetTotCum,
+                    ActualTotCum = item.ActualTotCum,
 
                     //To Do: make provision to add Icons to make the UI more intuitive and attractive
                     //FIconID = item.FIconID,

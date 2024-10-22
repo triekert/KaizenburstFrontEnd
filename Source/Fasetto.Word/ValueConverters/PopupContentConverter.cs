@@ -90,6 +90,14 @@ namespace Fasetto.Word
                     var mBudgetAdjustControl = new BudgetAdjustControl();
                     return mBudgetAdjustControl;
 
+                case PopupContent.ExpenditureReview:
+                    var mExpenditureReviewControl = new ExpenditureReviewControl();
+                    return mExpenditureReviewControl;
+
+                case PopupContent.ExpenditureAdjust:
+                    var mExpenditureAdjustControl = new ExpenditureAdjustControl();
+                    return mExpenditureAdjustControl;
+
                 // Unknown
                 default:
                     return "No UI yet, sorry :)";

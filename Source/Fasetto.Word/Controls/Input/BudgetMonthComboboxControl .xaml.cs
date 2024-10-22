@@ -78,8 +78,12 @@ namespace Fasetto.Word
         {
             if ((BudgetMonthViewModel)((ComboBox)sender).SelectedItem != null)
             {
-                //((BillingPeriodListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedBillingPeriod = (BillingPeriodViewModel)((ComboBox)sender).SelectedItem;
-                ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth = (BudgetMonthViewModel)((ComboBox)sender).SelectedItem;
+                if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel")
+                { ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth = (BudgetMonthViewModel)((ComboBox)sender).SelectedItem; }
+                else
+                {((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth = (BudgetMonthViewModel)((ComboBox)sender).SelectedItem;
+
+                }
 
             }
         }

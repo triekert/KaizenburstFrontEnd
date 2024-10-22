@@ -30,6 +30,13 @@ namespace Fasetto.Word.Core
         /// </summary>
         public string Category { get; set; }
 
+
+        // <summary>
+        /// GUID of Budget selected for transaction management- (Optional, only required when category is selected )
+        /// </summary>
+        public string Budget { get; set; }
+
+
         /// <summary>
         ///Start time for retrieving TOD data
         /// </summary>

@@ -667,7 +667,7 @@ namespace Fasetto.Word.Web.Server
             if (model.Category == "")
             { SqlString = "EXEC [Finance].spDisplayActualDetails 	 @fClientID =  '" + model.Client + "' ,  @MonthBeg ='" + model.MonthStart.ToString() + "',  @MonthEnd = '" + model.MonthEnd.ToString() + "'"; }
             else
-            { SqlString = "EXEC [Finance].spDisplayActualCategoryDetails 	 @fClientID =  '" + model.Client + "' ,  @MonthBeg ='" + model.MonthStart.ToString() + "',  @MonthEnd = '" + model.MonthEnd.ToString() +  "',  @fCategoryID = '" + model.Category +"'"; }
+            { SqlString = "EXEC [Finance].spDisplayActualCategoryDetails 	 @fClientID =  '" + model.Client + "' ,  @MonthBeg ='" + model.MonthStart.ToString() + "',   @MonthEnd = '" + model.MonthEnd.ToString() +  "',  @KBudgetID = '" + model.Budget +  "',@fCategoryID = '" + model.Category +"'"; }
 
             try
             {
@@ -834,7 +834,8 @@ namespace Fasetto.Word.Web.Server
             para[0].Value = !string.IsNullOrEmpty(model.BudgetID) ? new Guid(model.BudgetID) : (object)DBNull.Value;
             para[1].Value = model.BMonth;
 
-            var SqlString = "EXEC [Finance].[spReturnBudgetDetail] @fBudgetID = '" + model.BudgetID + "' ,@month = '" + model.BMonth + "'"; ;
+            var SqlString = "EXEC [Finance].[spReturnBudgetDetail] @fBudgetID = '" + model.BudgetID + "' ,@month = '" + model.BMonth +"' ,@IsExpenditureReturn = '" + model.IsExpenditureReturn + "'"; 
+            ;
             try
             {
                 // Try and run the task
@@ -852,14 +853,20 @@ namespace Fasetto.Word.Web.Server
                     var u = new BudgetResultApiModel
                     {
                         KCategoryID = row[3].ToString().ToUpper(),
-                        ShortName = row[12].ToString(),
-                        ParentCategoryID = row[11].ToString().ToUpper(),
-                        ParentShortName = row[13].ToString(),
+                        ShortName = row[14].ToString(),
+                        ParentCategoryID = row[13].ToString().ToUpper(),
+                        ParentShortName = row[15].ToString(),
                         Month = (int)row[0],
-                        BudgetAmountTotal = (decimal)row[10],
-                        BudgetAmountDescendants = (decimal)row[9],
+                        BudgetAmountTotal = (decimal)row[9],
+                        BudgetAmountDescendants = (decimal)row[10],
                         BudgetAmount = (decimal)row[1],
-
+                        ActualAmountTotal =(decimal)row[12],
+                        ActualAmountDescendants = (decimal)row[11],
+                        ActualAmount= (decimal)row[2],
+                        Deviation = (decimal)row[12] - (decimal)row[10],
+                        DeviationCum = (decimal)row[18],
+                        BudgetTotCum = (decimal)row[16],
+                        ActualTotCum = (decimal)row[17],
                     };
                     results.Add(u);
 

@@ -72,7 +72,7 @@
                         <!--<StackPanel MouseEnter="SetHierarchySelection">
 
                         </StackPanel>-->
-                            <local:HierarchyItemSelectionControl DataContext="{Binding Client}" FontWeight="ExtraBlack"  />
+                        <local:HierarchyItemSelectionControl DataContext="{Binding Client}" FontWeight="ExtraBlack"  />
 
                         <!--<StackPanel MouseEnter="SetClient">
 
@@ -80,27 +80,17 @@
                         <local:HierarchyItemSelectionControl DataContext="{Binding CostHierarchy}" FontWeight="ExtraBlack"  />
                             <!--<local:CostHierarchyComboboxControl DataContext="{Binding CostHierarchy}" FontWeight="ExtraBlack"  />-->
                         <local:BudgetPeriodComboboxControl  DataContext="{Binding Budget}" FontWeight="ExtraBlack"  />
+                        <local:BudgetMonthComboboxControl  DataContext="{Binding BudgetMonthList}" FontWeight="ExtraBlack"  />                       
                         <Button 
                         Style="{StaticResource IconGrowButton}"
                         Height="{Binding MinHeight, RelativeSource={RelativeSource AncestorType=Grid}}"
                         Content="{StaticResource FontAwesomeEmojiIcon}"
                         Foreground="{StaticResource WordOrangeBrush}"
                     />
-                        <!--<Button 
-                        Style="{StaticResource TextButton}" 
-                        Content="Use Client information in search ..." 
-                        HorizontalAlignment="Center" 
-                        Command="{Binding PopulateCommand}"
-                        FontSize="{StaticResource FontSizeRegular}"                         
-                    />-->
-                        <!--<StackPanel MouseEnter="SetHierarchySelectionMeter">
-
-                            <local:HierarchyItemSelectionControl DataContext="{Binding Meter}" FontWeight="ExtraBlack" />
-                        </StackPanel>-->
 
 
-                        <local:DateTimeControl  DataContext="{Binding TimeStart}" FontWeight="ExtraBlack"  />
-                        <local:DateTimeControl  DataContext="{Binding TimeEnd}" FontWeight="ExtraBlack"  />
+
+
                     </StackPanel>
 
                 </Border>
@@ -169,7 +159,7 @@
                         />
 
                 <!--Select reconciliation data/ full day-->
-                <Button Content="Manage Transactions"
+                <Button Content="View Actuals vs Budget"
                             Padding="8"
                             IsDefault="True"
                             Focusable="False"
@@ -178,14 +168,14 @@
                             FontSize="{StaticResource FontSizeRegular}"
                             />
                 <!--Select reconciliation data/ day portion-->
-                <!--<Button Content="Persist Changes"
+                <Button Content="Persist Changes"
                             Padding="8"
                             IsDefault="True"
                             Focusable="False"
                             Command="{Binding ReconcileTODCommand}"
                             Background="{StaticResource WordGreenBrush}"
                             FontSize="{StaticResource FontSizeRegular}"
-                            />-->
+                            />
 
                 <Button 
                             Style="{StaticResource TextButton}" 
