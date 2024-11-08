@@ -146,6 +146,11 @@ namespace Fasetto.Word
                                {
                     Generate();
                 }
+            else
+                if (e.Key == Key.F3)
+                               {
+                    LookupMain();
+                }
             
                 else
                 if (Keyboard.IsKeyDown(Key.PageDown) && (Keyboard.IsKeyDown(Key.RightCtrl) || Keyboard.IsKeyDown(Key.LeftCtrl)))
@@ -572,6 +577,34 @@ namespace Fasetto.Word
                 Console.Write(exp.Message);
             }
         }
+
+
+
+        private void LookupMain()
+        {
+
+            var fileName = @"C:\Temp\Transaction Records "
+    //+
+    //    ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeStart.ToString("d_MM_yyyy")
+    //+ " TO " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeEnd.ToString("d_MM_yyyy")
+    + ".csv";
+            try
+            {
+                using (var writer = new StreamWriter(fileName))
+                {
+                    using (var csvOut = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                    {
+                        csvOut.WriteRecords(((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MPersist);
+                    }
+                }
+            }
+            catch (Exception exp)
+            {
+                Console.Write(exp.Message);
+            }
+        }
+
+
 
         private void Datagrid_TargetUpdated(object sender, DataTransferEventArgs e)
         {

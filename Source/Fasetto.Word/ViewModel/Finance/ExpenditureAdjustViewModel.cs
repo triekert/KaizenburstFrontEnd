@@ -8,6 +8,8 @@ using static Fasetto.Word.Core.CoreDI;
 using System.Globalization;
 using Fasetto.Word.Core.ApiModels.Controls;
 using System.Linq;
+using System.Threading.Channels;
+using System.Security.Cryptography;
 namespace Fasetto.Word
 {
     public class ExpenditureAdjustViewModel : BaseViewModel
@@ -37,12 +39,12 @@ namespace Fasetto.Word
         public string KCategoryID { get; set; }
 
         /// <summary>
-        /// Parent ID  of hiearchy item
+        /// Parent ID  of hierarchy item
         /// </summary>
         public string ParentCategoryID { get; set; }
 
         /// <summary>
-        /// Parent ShortName of hiearchy item
+        /// Parent ShortName of hierarchy item
         /// </summary>
         public string ParentShortName { get; set; }
 
@@ -55,6 +57,28 @@ namespace Fasetto.Word
         /// Aggregate Total for element and all descendants
         /// </summary>
         public string BudgetAmountTotalStr { get; set; }
+        /// <summary>
+        /// Aggregate Total for element and all descendants
+        /// </summary>
+        public string ActualAmountTotalStr { get; set; }
+
+        /// <summary>
+        /// Aggregate Total for element and all descendants
+        /// </summary>
+        public string BudgetAmountCumTotalStr { get; set; }
+        /// <summary>
+        /// Aggregate Total for element and all descendants
+        /// </summary>
+        public string ActualAmountCumTotalStr { get; set; }
+
+        /// <summary>
+        /// Aggregate Total for element and all descendants
+        /// </summary>
+        public string DeviationStr { get; set; }
+        /// <summary>
+        /// Aggregate Total for element and all descendants
+        /// </summary>
+        public string DeviationCumStr { get; set; }
 
         /// <summary>
         ///Amount budgeted directly for the selected element (excluding descendant aggregates)
@@ -75,11 +99,16 @@ namespace Fasetto.Word
         /// Aggregate Total for element and all descendants
         /// </summary>
         public decimal BudgetAmountTotalAdjDec { get; set; }
+
         /// <summary>
         /// Integer representing the budget month
         /// </summary>
         public int Month { get; set; }
 
+        /// <summary>
+        ///Flag to indicate stock tracking on classification
+        /// </summary>
+        public bool IsStockTracked { get; set; }
 
         /// <summary>
         /// Calendar date from which Element is deactivated
@@ -101,6 +130,11 @@ namespace Fasetto.Word
         /// The text for the add Node button
         /// </summary>
         public string AdjustmentButtonText { get; set; }
+
+        /// <summary>
+        /// The text for the add Node button
+        /// </summary>
+        public string StockHoldingButtonText { get; set; }
         /// <summary>
         /// The text for the Edit Node button
         /// </summary>
@@ -125,7 +159,8 @@ namespace Fasetto.Word
         /// A flag indicating whether adjustment appliess just to the selected month or for the remaining period of the budget
         /// </summary>
         /// 
-        public bool IsMonthOnly { get; set; } 
+        public bool IsMonthOnly { get; set; }
+
 
         /// <summary>
         /// API parameter model
@@ -192,6 +227,11 @@ namespace Fasetto.Word
         /// True to show the Updating of the adjustment changes have been completed
         /// </summary>
         public bool ExpenditureAdjustCompleted { get; set; }
+
+        /// <summary>
+        /// True to show the Updating of the adjustment changes have been completed
+        /// </summary>
+        public bool StockHoldingAdjustCompleted { get; set; }
         /// <summary>
         /// Store View Model of current popup to allow reverse navigation
         /// </summary>
@@ -211,11 +251,14 @@ namespace Fasetto.Word
         public ICommand CloseCommand { get; set; }
 
         /// <summary>
+        /// The command View Transactions for the selected Category and Date range
+        /// </summary>
+        public ICommand ExpenditureReviewCommand { get; set; }
+
+        /// <summary>
         /// The command to add a new node and return to hierarchy navigation
         /// </summary>
-        public ICommand ExpenditureAdjustmentCommand { get; set; }
-
-
+        public ICommand StockHoldingCommand { get; set; }
         #endregion
 
         #region Constructor
@@ -241,12 +284,19 @@ namespace Fasetto.Word
             };
 
             // Display unique identifier for new node
-            KCategoryID = "132AB-AF1245-941QW";
+            KCategoryID =bvm.KCategoryID;
+
 
 
             BudgetAmountStr = bvm.BudgetAmount.ToString("C", CultureInfo.CurrentCulture);
 
             BudgetAmountTotalStr = bvm.BudgetAmountTotal.ToString("C", CultureInfo.CurrentCulture);
+            ActualAmountTotalStr = bvm.ActualAmountTotal.ToString("C", CultureInfo.CurrentCulture);
+            BudgetAmountCumTotalStr = bvm.BudgetTotCum.ToString("C", CultureInfo.CurrentCulture);
+            ActualAmountCumTotalStr = bvm.ActualTotCum.ToString("C", CultureInfo.CurrentCulture);
+            DeviationStr = bvm.Deviation.ToString("C", CultureInfo.CurrentCulture);
+            DeviationCumStr = bvm.DeviationCum.ToString("C", CultureInfo.CurrentCulture);
+
             BudgetAmountDec = bvm.BudgetAmount;
             BudgetAmountTotalDec = bvm.BudgetAmountTotal;
             BudgetAmountAdjDec = bvm.BudgetAmount;
@@ -255,21 +305,26 @@ namespace Fasetto.Word
             ParentShortName = "Parent Node";
 
             // Heading to be displayed on control
-            HeadingText = "Edit Budget figures for Selected Node:  ";
+            HeadingText = "View Transaction Detail for Selected Node:  ";
 
 
 
             // Create commands
             CloseCommand = new RelayCommand(Close);
-            //ExpenditureAdjustmentCommand1 = new RelayCommand(ExpenditureAdjustment);
-            ExpenditureAdjustmentCommand = new RelayCommand(async () => await ExpenditureAdjustmentAsync());
+            IsStockTracked = bvm.IsStockTracked;
+            ExpenditureReviewCommand = new RelayCommand(async () => await ExpenditureAdjustmentAsync());
 
+            StockHoldingCommand = new RelayCommand(async () => await StockHoldingAsync());
             // TODO: Get from localization
-            AdjustmentButtonText = "Apply Changes to Budget";
+            AdjustmentButtonText = "View Transaction Detail";
+            StockHoldingButtonText = "View Stock Holding of Category";
+
 
             IsMonthOnly = true;
 
             Month = bvm.Month;
+            DateEnd = DateTime.Now;
+            DateStart = DateTime.Now.AddDays(-365);
         }
 
 
@@ -293,7 +348,7 @@ namespace Fasetto.Word
         {
 
             ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;
-            ViewModelApplication.CurrentPopupContent = PopupContent.BudgetReview;
+            ViewModelApplication.CurrentPopupContent = PopupContent.ExpenditureReview;
             ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;// ((ExpenditureAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             ViewModelApplication.PopupVisible = true;
 
@@ -332,55 +387,53 @@ namespace Fasetto.Word
             // Lock this command to ignore any other requests while processing
 
              await RunCommandAsync(() => ExpenditureAdjustCompleted, async () =>
-            {
-                //var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
-                ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
-                //var MDateAdj = ((ExpenditureAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateAdjustment;
-                var decBudg = BudgetAmountDec;
-                var decBudgAdj = BudgetAmountDec;
-                if (!(BudgetAncestor.EditedText == null || BudgetAncestor.EditedText == ""))
-                { decimal.TryParse(BudgetAncestor.EditedText, NumberStyles.Currency, CultureInfo.CurrentCulture, out decBudgAdj); }
-                var decBudgTot = BudgetAmountTotalDec;
-                var decBudgTotAdj = BudgetAmountTotalDec;
-                if (BudgetAncestorHierarchy.EditedText == null)
-                { BudgetAncestorHierarchy.EditedText = BudgetAncestorHierarchy.OriginalText; }
-                if (!(BudgetAncestorHierarchy.EditedText == null || BudgetAncestorHierarchy.EditedText == ""))
-                { decimal.TryParse(BudgetAncestorHierarchy.EditedText, NumberStyles.Currency, CultureInfo.CurrentCulture, out decBudgTotAdj); }
-                if (Math.Round(decBudgTot, 2) == Math.Round(decBudgTotAdj, 2) & Math.Round(decBudg, 2) == Math.Round(decBudgAdj, 2))
                 {
+
+
+                    ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(
+                    ((HierarchyItemSelectionViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid,
+                        DateStart,//SelectedBudgetMonth
+                        DateEnd,//SelectedBudgetMonth -12 mo
+                        KCategoryID,
+                        ((BudgetPeriodViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID
+                        );
+                    ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = 
+                    ((ExpenditureAdjustViewModel)((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).HeadingText ;
+                    //force a reload of the BulkRecon Control
+                    ViewModelApplication.CurrentPopupContent = 0;
+                    ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;
+                    ViewModelApplication.PopupVisible = true;
                     return;
                 }
-
-                MAPI = new ParameterBudgetAdjustApiModel
-                {
-                    KCategoryID = KCategoryID,
-                    IsMonth = IsMonthOnly,
-                    Month = ((BudgetMonthViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth).BudgetMonth,
-                    KBudgetID = ((BudgetPeriodViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID,
-                    BudgetAmount = decBudg,
-                    BudgetAmountTotal = decBudgTot,
-                    BudgetAmountAdj = decBudgAdj,
-                    BudgetAmountTotalAdj = decBudgTotAdj,
-                };
-
-                //    mElementViewModel.Description.OriginalText = null;
-                //    mElementViewModel.Description.OriginalText = null;
-                //}
-                //mViewModel.AddElement(mElementViewModel);
-                //ViewModelApplication.PopupVisible = false;
-                //TaskManager.RunAndForget(BudgetPeriodAdjustAsync);
-                //TaskManager.RunAndForget(BudgetPeriodAdjustAsync);
-                ((BudgetTreeViewModel)((ExpenditureAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).mSearchText = KCategoryID;
-                //((BudgetTreeViewModel)((ExpenditureAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).mSearchKCategoryID = KCategoryID;
-                await BudgetPeriodAdjustAsync();
-
-
-
-                Close();
-                return;
-            }
-            );
+             );
         }
+
+        /// <summary>
+        /// Used tp insert a new node with the currently selected node as parent
+        /// </summary>
+        public async Task StockHoldingAsync()
+        {
+            // Update billing record on database
+            //TO DO: Integrate with change management, requiring approval of adjustment before committing...
+            // Lock this command to ignore any other requests while processing
+
+            await RunCommandAsync(() => StockHoldingAdjustCompleted, async () =>
+            {
+                var mCurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+
+                //var mSWAdjustViewModel = new SWAdjustViewModel();
+
+                ViewModelApplication.CurrentPopupContent = PopupContent.StockHoldingAdjust;
+                var MAdjustmentVM = (ExpenditureAdjustViewModel)ViewModelApplication.CurrentPopupViewModel;
+                MAdjustmentVM.PriorPopupViewModel = mCurrentPopupViewModel;
+                //MAdjustmentVM.KCategoryID = mDraggedItem.KCategoryID;
+                //MAdjustmentVM.HeadingText = MAdjustmentVM.HeadingText + mDraggedItem.ShortName;
+                ViewModelApplication.PopupVisible = true;
+                //ViewModelApplication.SettingsMenuVisible = true;
+            }
+           );
+        }
+
         public async Task BudgetPeriodAdjustAsync()
         {
             await RunCommandAsync(() => IsRunning, async () =>

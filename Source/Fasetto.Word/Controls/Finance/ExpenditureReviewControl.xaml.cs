@@ -1,6 +1,7 @@
 ﻿using Fasetto.Word.Core;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -537,9 +538,17 @@ namespace Fasetto.Word
 
         public void ReviewTransactions()
         {
-            var duration = new TimeSpan(-60, 0, 0, 0);
-            var TimeStart = DateTime.Now.Add(duration);
-            var TimeEnd = DateTime.Now;
+            var duration = new TimeSpan(0, 6, 0, 0);
+            var DateStringYear = ((BudgetMonthViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth).BudgetMonth / 100;
+            var DateStringMonth = ((BudgetMonthViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth).BudgetMonth % 100;
+            var dateString = "01/" + DateStringMonth + "/" + DateStringYear + " 08:00";
+            var format = "g";
+            //var provider = CultureInfo.InvariantCulture;
+            var provider = new CultureInfo("fr-FR");
+            var TimeStart = DateTime.ParseExact(dateString, format, provider);
+            var TimeEnd = TimeStart.AddMonths(1).AddDays(-1).AddHours(15.99);
+
+
 
 
             ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(
@@ -549,7 +558,7 @@ namespace Fasetto.Word
                 mDraggedItem.KCategoryID,
                 ((BudgetPeriodViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID
                 );
-                    ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail for selected budgeted Category" ;
+                    ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail for selected budgeted Category"  + mDraggedItem.ShortName;
                     //force a reload of the BulkRecon Control
                     ViewModelApplication.CurrentPopupContent = 0;
                     ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;

@@ -121,7 +121,7 @@
                         >
 
 
-                <TextBlock  Text ="{Binding Label}" FontFamily="{StaticResource LatoRegular}" 
+                <TextBlock  Text ="Budget" FontFamily="{StaticResource LatoRegular}" 
                                            Padding="10 10 42 10" FontWeight="Bold"/>
                 <ComboBox MinWidth="90"
                                       MaxDropDownHeight="400"

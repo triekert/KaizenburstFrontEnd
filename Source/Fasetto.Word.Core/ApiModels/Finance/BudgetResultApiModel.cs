@@ -88,6 +88,13 @@ namespace Fasetto.Word.Core
         /// </summary>
         public decimal ActualTotCum { get; set; }
 
+
+        /// <summary>
+        ///Flag to indicate stock tracking on classification
+        /// </summary>
+        public bool IsStockTracked { get; set; }
+
+
         /// <summary>
         /// Reading at start
         /// </summary>

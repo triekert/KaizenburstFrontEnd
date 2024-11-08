@@ -135,6 +135,14 @@
         /// Manage expenses against budget
         /// </summary>
         ExpenditureAdjust = 21,
+
+
+
+        /// <summary>
+        /// Manage Stockholding of specific items
+        /// </summary>
+        StockHoldingAdjust = 22,
+
     }
 
 

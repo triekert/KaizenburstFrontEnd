@@ -279,6 +279,7 @@ namespace Fasetto.Word
                         DeviationCum = item.DeviationCum,
                         BudgetTotCum = item.BudgetTotCum,
                         ActualTotCum = item.ActualTotCum,
+                        IsStockTracked = item.IsStockTracked,
 
 
 
@@ -423,6 +424,7 @@ namespace Fasetto.Word
                     DeviationCum = item.DeviationCum,
                     BudgetTotCum = item.BudgetTotCum,
                     ActualTotCum = item.ActualTotCum,
+                    IsStockTracked = item.IsStockTracked,
 
                     //To Do: make provision to add Icons to make the UI more intuitive and attractive
                     //FIconID = item.FIconID,

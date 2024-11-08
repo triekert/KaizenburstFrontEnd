@@ -1069,7 +1069,7 @@ namespace Fasetto.Word
                     //if (Math.Abs(IntAmnt) == Math.Abs(Selected.ActualAmount)) { TstEqual = true; }
 
                     var TstAmnt = false;
-                    if ((TransactionNotes.EditedText != null) && (Selected.Notes == "" || TransactionNotes.EditedText != Selected.Notes))
+                    if ((TransactionNotes.EditedText != null) && (Selected.Notes != "" || TransactionNotes.EditedText != Selected.Notes))
                     {
                         TstNotes = true;
                         Selected.Notes = TransactionNotes.EditedText;
@@ -1091,7 +1091,7 @@ namespace Fasetto.Word
 
 
 
-                    if ((Category.EditedKid ?? Category.OriginalKid) != Category.OriginalKid || IntAmnt != OrgActual || (Party.EditedKid ?? Party.OriginalKid) != Party.OriginalKid || Account.EditedKid != Account.OriginalKid || TstNotes || Selected.Description != TransactionDescription.EditedText || Selected.Posted_Date.Date != DateTime.Parse(TransactionDate).Date || IntUnits != Selected.Units)
+                    if ((Category.EditedKid ?? Category.OriginalKid) != Category.OriginalKid || IntAmnt != OrgActual || (Party.EditedKid ?? Party.OriginalKid) != Party.OriginalKid || (Account.EditedKid ?? Account.OriginalKid)  != Account.OriginalKid|| TstNotes || Selected.Description != (TransactionDescription.EditedText??TransactionDescription.OriginalText) || Selected.Posted_Date.Date != DateTime.Parse(TransactionDate).Date || IntUnits != Selected.Units)
                     //Don't do anything if cost category hasn't changed, the allocated amount has not changed,  the linked party has not changed,Notes have not changed, linked account has not changed , or Date of transaction has changed
                     {
 
@@ -1540,7 +1540,7 @@ namespace Fasetto.Word
                                     matches = tmp.Where(x => x.KCategoryID == (Category.EditedKid ?? Category.OriginalKid) && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
 
                                     category = matches.FirstOrDefault();
-                                    if (category != null)
+                                    if (category != null && (Category.EditedKid ?? Category.OriginalKid)!= "")
                                     //check whether this allocation category is already in use for the transaction
                                     {
 
@@ -2157,7 +2157,38 @@ namespace Fasetto.Word
                     }
 
 
+                   else
+                    {
 
+
+                    
+                        var u = new TransactionResultApiModel
+                        {
+                            Posted_Date = DateTime.Parse(TransactionDate),
+                            Month = Selected1.Month,
+                            Description = Selected1.Description,
+                            TransAmount = Selected1.TransAmount,
+                            ActualAmount = Selected1.ActualAmount,
+                            ShortName = Selected1.ShortName,
+                            KCategoryID = Selected1.KCategoryID,
+                            KFinActualID = Selected1.KFinActualID,
+                            KFinTranID = Selected1.KFinTranID,
+                            ChangeType = "c",
+                            DateEffective = DateTime.Now,
+                            KHierarchyID = Selected1.KHierarchyID,
+                            KClientID = Selected.KClientID,
+                            KPartyID = Selected1.KPartyID,
+                            KPartyName = Selected1.KPartyName,
+                            IsTemplate = IsTemplate,
+                            FCatSrchID = Selected1.FCatSrchID,
+                            Notes = Selected.Notes,
+                            KAccountID = Selected1.KAccountID,
+                            KAccountName = Selected1.KAccountName,
+                            Units = IntUnits,
+
+                        };
+                        tmp2.Add(u);
+                    }
                 }
 
             //Refresh UI for Transaction List

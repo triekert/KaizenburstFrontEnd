@@ -87,6 +87,10 @@ namespace Fasetto.Word.Core
         public int Month { get; set; }
 
 
+        /// <summary>
+        ///Flag to indicate stock tracking on classification
+        /// </summary>
+        public bool IsStockTracked { get; set; }
 
         public List<BudgetDataModel> Children { get; set; }
 

@@ -8,24 +8,22 @@ namespace Fasetto.Word
     /// <summary>
     /// Interaction logic for SettingsControl.xaml
     /// </summary>
-    public partial class ExpenditureAdjustControl : UserControl
+    public partial class StockHoldingAdjustControl : UserControl
     {/// <summary>
      /// This User Control is always linked to the popup component of the ApplicationViewModel
      /// </summary>
-        public ExpenditureAdjustControl()
+        public StockHoldingAdjustControl()
         {
             InitializeComponent();
-
 
             // Set data context to settings view model
             if (ViewModelApplication.CurrentPopupViewModel.GetType().Name != "ExpenditureAdjustViewModel")
 
-            { ViewModelApplication.CurrentPopupViewModel = new ExpenditureAdjustViewModel(((BudgetTreeViewModel)ViewModelApplication.CurrentControlViewModel).mRootHierarchyElement1); }
+            { ViewModelApplication.CurrentPopupViewModel = new ExpenditureAdjustViewModel(((BudgetTreeViewModel)ViewModelApplication.CurrentControlViewModel).mRootHierarchyElement1);}
             //if (ViewModelApplication.AddElementViewModel == null)
             //    DataContext = new HierarchyElementViewModel();
             //else
             DataContext = (ExpenditureAdjustViewModel)ViewModelApplication.CurrentPopupViewModel;
-          
 
         }
         

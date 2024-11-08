@@ -161,7 +161,8 @@ namespace Fasetto.Word.Web.Server
                         LastName = userIdentity.LastName,
                         Email = userIdentity.Email,
                         Username = userIdentity.UserName,
-                        Token = userIdentity.GenerateJwtToken()
+                        Token = userIdentity.GenerateJwtToken(),
+                        Id = userIdentity.Id
                     }
                 };
             }
@@ -315,7 +316,8 @@ namespace Fasetto.Word.Web.Server
                     ClientID = user.ClientID,
                     CostHierarchyID = user.CostHierarchyID,
                     ClientShortName = user.ClientShortName,
-                    CostHierarchyShortName = user.CostHierarchyShortName
+                    CostHierarchyShortName = user.CostHierarchyShortName,
+                    Id = user.Id
                 }
             };
         }
@@ -592,7 +594,8 @@ namespace Fasetto.Word.Web.Server
                             {
                                 Username = foundUser.UserName,
                                 FirstName = foundUser.FirstName,
-                                LastName = foundUser.LastName
+                                LastName = foundUser.LastName,
+
                             }
                         }
                 };
@@ -622,7 +625,8 @@ namespace Fasetto.Word.Web.Server
                     {
                         Username = u.UserName,
                         FirstName = u.FirstName,
-                        LastName = u.LastName
+                        LastName = u.LastName,
+
                     }));
                 }
             }
@@ -857,8 +861,8 @@ namespace Fasetto.Word.Web.Server
                         ParentCategoryID = row[13].ToString().ToUpper(),
                         ParentShortName = row[15].ToString(),
                         Month = (int)row[0],
-                        BudgetAmountTotal = (decimal)row[9],
-                        BudgetAmountDescendants = (decimal)row[10],
+                        BudgetAmountTotal = (decimal)row[10],
+                        BudgetAmountDescendants = (decimal)row[9],
                         BudgetAmount = (decimal)row[1],
                         ActualAmountTotal =(decimal)row[12],
                         ActualAmountDescendants = (decimal)row[11],
@@ -867,6 +871,7 @@ namespace Fasetto.Word.Web.Server
                         DeviationCum = (decimal)row[18],
                         BudgetTotCum = (decimal)row[16],
                         ActualTotCum = (decimal)row[17],
+                        IsStockTracked = (row[18] != DBNull.Value) ? (bool)row[19] : false,
                     };
                     results.Add(u);
 
@@ -1125,7 +1130,7 @@ namespace Fasetto.Word.Web.Server
 
         #endregion RootPerClientAndType
 
-        #region PersistClassification
+        #region ptClassification
         [Route(ApiRoutes.PersistClassification)]
         /// <summary>
         /// Persist hierarchy changes made on front end
@@ -1616,7 +1621,7 @@ namespace Fasetto.Word.Web.Server
                             var param = (string)(row1[0]);
                             param = "https://api.netqedge.com/v1" + param;
                         //For testing a specific subset of data via api   2022-11-27 20:54:47.000
-                        //param = "https://api.netqedge.com/v1?From=2023-07-01%2000%3A00%3A00&To=2023-07-02%2012%3A30%3A00";
+                        param = "https://api.netqedge.com/v1?From=2023-07-01%2000%3A00%3A00&To=2023-07-02%2012%3A30%3A00";
                         var serverResponse = default(HttpWebResponse);
                             serverResponse = await Get2Async(param);
 
@@ -2620,10 +2625,10 @@ namespace Fasetto.Word.Web.Server
 
                 SqlString = "UPDATE [Admin].[HierarchyGeneric] SET ShortName = @ShortName,Description = @Description,kCategoryID = @kCategoryID," +
                     "ParentCategoryID = @ParentCategoryID,fIconID = @fIconID,DateEffective = @DateEffective,DateDiscontinued = @DateDiscontinued,fChangeID = @fChangeID," +
-                    "isUnderReview = @isUnderReview,isNewElement = @isNewElement,Page = @Page,Root = @Root,isMenuItem =@isMenuItem, fHierarchyTypeID = @HierarchyTypeID WHERE kCategoryID = @kCategoryID AND DateEffective = @DateEffective"; 
+                    "isUnderReview = @isUnderReview,isNewElement = @isNewElement,Page = @Page,Root = @Root,isMenuItem =@isMenuItem, fHierarchyTypeID = @HierarchyTypeID WHERE kCategoryID = @kCategoryID "; 
 
                 //If elements are to be updated, insert into backend
-                results = mPersist.Where(x => x.IsNewElement != true && x.IsUnderReview == true).OrderBy(x => x.ShortName).ToList();//
+                results = mPersist.Where(x => x.IsNewElement != true ||x.IsUnderReview == true).OrderBy(x => x.ShortName).ToList();//
                 if (results.Count > 0)
 
                 {
@@ -2864,6 +2869,8 @@ namespace Fasetto.Word.Web.Server
             var request1 = WebRequest.CreateHttp(uri);//?From=2022-10-19T18%3A13%3A31.001&To=2022-10-20T20%3A13%3A31.000; /// v1//RouteHelpers.GetAbsoluteRoute(ApiRoutes.LoadReadings));
             request1.Method = HttpMethod.Get.ToString();
             request1.Headers.Add("x-api-key: UbCZyYRin01xwXdFwda4Z901Qax0OywBzzHTDSA5");
+
+            //cDN1TVJOcENZWUdYV1JMdnptaXZTemNVU3Y2UG1HZU46RjZDQzFCQ0RFMjAwNTY5Mzg0RkQxQzUyNUZCQUU2RURFM0JGNEQ0M0RGMEIxMTJDMEUxQTJEODA3NTM1RTI4Qg ==
 
             //" ? From = 2022 - 10 - 19T18 % 3A13 % 3A31.001 & To = 2022 - 10 - 19T20 % 3A13 % 3A31.000l"); ;
             //var result = await request1.GetResponseAsync();

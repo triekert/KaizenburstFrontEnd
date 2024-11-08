@@ -887,6 +887,8 @@ namespace Fasetto.Word
                     category.Root = element.Root.EditedText ?? element.Root.OriginalText;
                     category.HierarchyTypeID = element.HierarchyTypeID;
                     category.HierarchyType = element.HierarchyType;
+                    category.DateEffective = element.DateEffective;
+                    category.DateDiscontinued = element.DateDiscontinued;
                     mSearchText = category.KCategoryID;
                 }
                 else

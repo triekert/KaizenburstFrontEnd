@@ -817,11 +817,13 @@ namespace Fasetto.Word
             Client.OriginalKid = storedCredentials?.ClientID;
 
 
+
             //Set CostHierarchy
             ViewModelApplication.CostHierarchyShortName = storedCredentials?.CostHierarchyShortName;
             ViewModelApplication.FCostHierarchyID = storedCredentials?.CostHierarchyID;
             CostHierarchy.OriginalName = storedCredentials? .CostHierarchyShortName;
             CostHierarchy.OriginalKid = storedCredentials?.CostHierarchyID;
+            
 
         }
 

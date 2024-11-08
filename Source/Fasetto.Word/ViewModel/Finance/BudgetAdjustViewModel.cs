@@ -315,7 +315,11 @@ namespace Fasetto.Word
                 if (!(BudgetAncestor.EditedText == null || BudgetAncestor.EditedText == ""))
                 { decimal.TryParse(BudgetAncestor.EditedText, NumberStyles.Currency, CultureInfo.CurrentCulture, out decBudgAdj); }
                 var decBudgTotAdj = BudgetAmountTotalDec;
-                BudgetAncestorHierarchy.OriginalText =(BudgetAmountTotalDec - BudgetAmountDec + decBudgAdj).ToString("C", CultureInfo.CurrentCulture);
+                if (!(BudgetAncestorHierarchy.EditedText == null || BudgetAncestorHierarchy.EditedText == ""))
+                { decimal.TryParse(BudgetAncestorHierarchy.EditedText, NumberStyles.Currency, CultureInfo.CurrentCulture, out decBudgAdj); }
+
+
+                //BudgetAncestorHierarchy.OriginalText =(BudgetAmountTotalDec - BudgetAmountDec + decBudgAdj).ToString("C", CultureInfo.CurrentCulture);
 
                 return true;
             });

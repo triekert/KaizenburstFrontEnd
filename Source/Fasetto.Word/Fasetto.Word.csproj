@@ -225,4 +225,9 @@
     <Page Remove="Fonts\Controls\SettingsControl.xaml" />
     <Page Remove="Fonts\Controls\SideMenuControl.xaml" />
   </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\Finance\StockHoldingAdjustControl .xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
 </Project>

@@ -107,6 +107,12 @@ namespace Fasetto.Word
 
 
 
+        /// <summary>
+        ///Flag to indicate stock tracking on classification
+        /// </summary>
+        public bool IsStockTracked => mElement.IsStockTracked;
+
+
         //public List<BudgetViewModel> Children { get; set; }
 
         /// <summary>

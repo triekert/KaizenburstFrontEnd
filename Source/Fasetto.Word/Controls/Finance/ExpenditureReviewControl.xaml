@@ -56,7 +56,7 @@
                     </Button.ToolTip>-->
                 </Button>
                 <TextBox
-                    Text="F2 to view transactions, Enter to access Cost Element ">
+                    Text="'F2' to view transactions for month, 'Enter' to access Cost Element for more options...">
                 </TextBox>                
             </StackPanel>
         </Border>

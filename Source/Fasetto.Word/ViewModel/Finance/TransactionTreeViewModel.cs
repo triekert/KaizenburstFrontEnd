@@ -391,9 +391,19 @@ namespace Fasetto.Word
                 else
                 { 
                 ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;
-                ViewModelApplication.CurrentPopupContent = PopupContent.ExpenditureReview;
-                ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;// ((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
-                ViewModelApplication.PopupVisible = true;
+                    if (ViewModelApplication.CurrentPopupViewModel.GetType().Name == "ExpenditureAdjustViewModel")
+
+                    {
+
+                        ViewModelApplication.CurrentPopupContent = PopupContent.ExpenditureAdjust;
+                        ViewModelApplication.PopupVisible = true;
+                    }
+                    else { 
+
+                            ViewModelApplication.CurrentPopupContent = PopupContent.ExpenditureReview;
+                            ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;// ((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+                            ViewModelApplication.PopupVisible = true;
+                          }
                 }
             }
             else
