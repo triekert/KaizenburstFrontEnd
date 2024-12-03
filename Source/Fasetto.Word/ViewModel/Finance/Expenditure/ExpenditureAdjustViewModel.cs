@@ -424,7 +424,7 @@ namespace Fasetto.Word
                 //var mSWAdjustViewModel = new SWAdjustViewModel();
 
                 ViewModelApplication.CurrentPopupContent = PopupContent.StockHoldingAdjust;
-                var MAdjustmentVM = (ExpenditureAdjustViewModel)ViewModelApplication.CurrentPopupViewModel;
+                var MAdjustmentVM = (StockHoldingAdjustViewModel)ViewModelApplication.CurrentPopupViewModel;
                 MAdjustmentVM.PriorPopupViewModel = mCurrentPopupViewModel;
                 //MAdjustmentVM.KCategoryID = mDraggedItem.KCategoryID;
                 //MAdjustmentVM.HeadingText = MAdjustmentVM.HeadingText + mDraggedItem.ShortName;
@@ -434,54 +434,54 @@ namespace Fasetto.Word
            );
         }
 
-        public async Task BudgetPeriodAdjustAsync()
-        {
-            await RunCommandAsync(() => IsRunning, async () =>
-            {
+        //public async Task BudgetPeriodAdjustAsync()
+        //{
+        //    await RunCommandAsync(() => IsRunning, async () =>
+        //    {
 
-                // Store single transcient instance of client data store
-                var scopedClientDataStore = ClientDataStore;
+        //        // Store single transcient instance of client data store
+        //        var scopedClientDataStore = ClientDataStore;
 
-                // Update values from local cache
-                // Get the user token
-                var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
-                // Call the server and attempt to register with the provided credentials
-                // If we don't have a token (then not logged in...)
-                if (string.IsNullOrEmpty(token))
-                    // Then do nothing more
-                    return;
+        //        // Update values from local cache
+        //        // Get the user token
+        //        var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+        //        // Call the server and attempt to register with the provided credentials
+        //        // If we don't have a token (then not logged in...)
+        //        if (string.IsNullOrEmpty(token))
+        //            // Then do nothing more
+        //            return;
 
-                var result = await WebRequests.PostAsync<ApiResponse<BudgetResultListApiModel>>(
-                // Set URL
-                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.BudgetElementAdjustment),
-                    MAPI ,
-                    bearerToken: token);
-
-
+        //        var result = await WebRequests.PostAsync<ApiResponse<BudgetResultListApiModel>>(
+        //        // Set URL
+        //            RouteHelpers.GetAbsoluteRoute(ApiRoutes.BudgetElementAdjustment),
+        //            MAPI ,
+        //            bearerToken: token);
 
 
-                // If the response has an error...
-                if (await result.HandleErrorIfFailedAsync("Capture of Adjustment failed"))
-                    // We are done
-                    return;
-                var matches1 = result.ServerResponse.Response;
-                var tmpList = ((BudgetTreeViewModel)((ExpenditureAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).mPersist;
-                var matches = tmpList.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
-                foreach (var budgItem in matches1)
-                {
-                    matches = tmpList.Where(x => x.KCategoryID ==budgItem.KCategoryID);
-                    foreach (var item in matches)
-                    {
-                        item.BudgetAmount = budgItem.BudgetAmount;
-                        item.BudgetAmountTotal = budgItem.BudgetAmountTotal;
-                        item.BudgetAmountDescendants = budgItem.BudgetAmountTotal - budgItem.BudgetAmount;
-                    }
-                }
 
-                ((BudgetTreeViewModel)((ExpenditureAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).RefreshHierarchy();
 
-            });
-        }
+        //        // If the response has an error...
+        //        if (await result.HandleErrorIfFailedAsync("Capture of Adjustment failed"))
+        //            // We are done
+        //            return;
+        //        var matches1 = result.ServerResponse.Response;
+        //        var tmpList = ((BudgetTreeViewModel)((ExpenditureAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).mPersist;
+        //        var matches = tmpList.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
+        //        foreach (var budgItem in matches1)
+        //        {
+        //            matches = tmpList.Where(x => x.KCategoryID ==budgItem.KCategoryID);
+        //            foreach (var item in matches)
+        //            {
+        //                item.BudgetAmount = budgItem.BudgetAmount;
+        //                item.BudgetAmountTotal = budgItem.BudgetAmountTotal;
+        //                item.BudgetAmountDescendants = budgItem.BudgetAmountTotal - budgItem.BudgetAmount;
+        //            }
+        //        }
+
+        //        ((BudgetTreeViewModel)((ExpenditureAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).RefreshHierarchy();
+
+        //    });
+        //}
 
 
 

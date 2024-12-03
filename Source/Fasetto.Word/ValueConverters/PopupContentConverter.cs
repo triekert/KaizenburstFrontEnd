@@ -97,7 +97,7 @@ namespace Fasetto.Word
                 case PopupContent.ExpenditureAdjust:
                     var mExpenditureAdjustControl = new ExpenditureAdjustControl();
                     return mExpenditureAdjustControl;
-Actual 
+
 
                 case PopupContent.StockHoldingAdjust:
                     var mStockHoldingAdjustControl = new StockHoldingAdjustControl();

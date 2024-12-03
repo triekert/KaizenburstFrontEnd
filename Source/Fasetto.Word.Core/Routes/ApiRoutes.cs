@@ -130,12 +130,22 @@
         public const string ReturnBudgetDetail = "api/finance/ReturnBudgetDetail";
 
 
-
         /// <summary>
         /// Adjust selected Category element budget
         /// </summary>
         public const string BudgetElementAdjustment = "api/finance/BudgetElementAdjustment";
 
+
+
+        /// <summary>
+        /// Return latest theoretical SOH for selected category
+        /// </summary>
+        public const string ReturnSOH = "api/finance/ReturnSOH";
+
+        /// <summary>
+        /// Return latest theoretical SOH for selected category
+        /// </summary>
+        public const string UpdateSOH = "api/finance/UpdateSOH";
 
         #endregion
 

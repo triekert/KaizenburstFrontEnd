@@ -9,15 +9,11 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using System.Windows.Input;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 
 namespace Fasetto.Word
@@ -75,12 +71,12 @@ namespace Fasetto.Word
         public string KCategoryID { get; set; }
 
         /// <summary>
-        /// Parent ID  of hiearchy item
+        /// Parent ID  of hierarchy item
         /// </summary>
         public string ParentCategoryID { get; set; }
 
         /// <summary>
-        /// Parent ShortName of hiearchy item
+        /// Parent ShortName of hierarchy item
         /// </summary>
         public string ParentShortName { get; set; }
 
@@ -1272,9 +1268,11 @@ namespace Fasetto.Word
                                             category.ActualAmount = IntAmnt;
                                             category.ShortName = Selected.ShortName;
                                             category.KCategoryID = Selected.KCategoryID;
+                                            category.Units = IntUnits;
                                             Selected1.ActualAmount = IntAmnt;
                                             Selected1.ShortName = Selected.ShortName;
                                             Selected1.KCategoryID = Selected.KCategoryID;
+                                            Selected.Units = IntUnits;
 
                                         }
 
@@ -1323,6 +1321,7 @@ namespace Fasetto.Word
                                             Selected1.Posted_Date = Selected1.Posted_Date;
                                             Selected1.Month = Selected1.Month;
                                             Selected1.TransAmount = Selected1.TransAmount;
+                                            Selected1.Units = 0;
 
                                             //tmp.Add(Selected1);
                                             tmp.Add(Selected1);
@@ -1351,7 +1350,7 @@ namespace Fasetto.Word
                                                 Notes = TransactionNotes.EditedText,
                                                 KAccountID = Account.EditedKid ?? Account.OriginalKid,
                                                 KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                Units = IntUnits,
+                                                Units = 0,
                                             };
                                             tmp2.Add(u);
 
@@ -1415,7 +1414,9 @@ namespace Fasetto.Word
                                             category.ActualAmount = category.ActualAmount + (OrgActual - IntAmnt);
                                             Selected.ActualAmount = category.ActualAmount;
                                             category1.ActualAmount = category.ActualAmount;
-
+                                            category.Units = IntUnits;
+                                            category1.Units = IntUnits;
+                                            Selected1.Units = IntUnits;
                                             if (category1.ActualAmount == 0)
                                             //if balance is zero, destroy the null allocation
                                             {
@@ -1702,9 +1703,9 @@ namespace Fasetto.Word
 
                                             category1.ActualAmount = OrgActual - IntAmnt;
                                             Selected1.ActualAmount = category1.ActualAmount;
-                                            category.Units = IntUnits;
-                                            category1.Units = IntUnits;
-                                            Selected1.Units = IntUnits;
+                                            //category.Units = IntUnits;
+                                            category1.Units = 0;
+                                            Selected1.Units = 0;
 
                                             //category1.KCategoryID = Category.OriginalKid;
                                             //category1.ShortName = Category.OriginalName;
@@ -1720,7 +1721,7 @@ namespace Fasetto.Word
 
                                         var u = new TransactionResultApiModel
                                         {
-                                            Posted_Date = DateTime.Parse(TransactionDate),
+                                            Posted_Date = Selected.Posted_Date,
                                             Month = Selected1.Month,
                                             Description = TransactionDescription.EditedText ?? Selected.Description,
                                             TransAmount = Selected1.TransAmount,
@@ -1740,7 +1741,9 @@ namespace Fasetto.Word
                                             Notes = TransactionNotes.EditedText,
                                             KAccountID = Account.OriginalKid,
                                             KAccountName = (Account.OriginalName),
-                                            Units = IntUnits,
+
+
+
                                         };
                                         tmp2.Add(u);
                                         // now create a new assignment for the new cost category
@@ -1755,6 +1758,7 @@ namespace Fasetto.Word
                                             category1 = matches1.FirstOrDefault();
 
                                             if (category == null)
+                                            //Check whether this Category has already being used for this transaction, if not do a straight allocation
                                             {
                                                 Selected1.ActualAmount = IntAmnt;
                                                 Selected1.ShortName = Category.EditedName;
@@ -1767,6 +1771,7 @@ namespace Fasetto.Word
                                                 Selected1.Month = Selected1.Month;
                                                 Selected1.TransAmount = Selected1.TransAmount;
                                                 Selected1.FCatSrchID = Selected1.FCatSrchID;
+                                                Selected1.Units = IntUnits;
 
                                                 //tmp.Add(Selected1);
                                                 //control update to observable collection
@@ -1775,7 +1780,7 @@ namespace Fasetto.Word
 
                                                 u = new TransactionResultApiModel
                                                 {
-                                                    Posted_Date = DateTime.Parse(TransactionDate),
+                                                    Posted_Date = Selected1.Posted_Date,
                                                     Month = Selected1.Month,
                                                     Description = TransactionDescription.EditedText ?? Selected.Description,
                                                     TransAmount = Selected1.TransAmount,
@@ -1873,8 +1878,8 @@ namespace Fasetto.Word
                                             category.KCategoryID = "";
                                             category1.ShortName = "";
                                             category1.KCategoryID = "";
-                                            category.Units = IntUnits;
-                                            category1.Units = IntUnits;
+                                            category.Units = 0;
+                                            category1.Units = 0;
                                             //tmp.Add(Selected1);
                                             //tmp1.Add(Selected1);
                                             var u = new TransactionResultApiModel
@@ -1909,12 +1914,15 @@ namespace Fasetto.Word
                                         {
                                             {
                                                 category1.ActualAmount = IntAmnt;
+                                                category1.Units = IntUnits;
                                                 category1.ShortName = Category.EditedName;
                                                 category1.KCategoryID = Category.EditedKid;
                                                 category.ActualAmount = IntAmnt;
+                                                category.Units = IntUnits;
                                                 category.ShortName = Category.EditedName;
                                                 category.KCategoryID = Category.EditedKid;
                                                 Selected1.ActualAmount = IntAmnt;
+                                                Selected1.Units = IntUnits;
                                                 Selected1.ShortName = Category.EditedName;
                                                 Selected1.KCategoryID = Category.EditedKid;
 
@@ -1924,7 +1932,7 @@ namespace Fasetto.Word
 
                                             var u = new TransactionResultApiModel
                                             {
-                                                Posted_Date = DateTime.Parse(TransactionDate),
+                                                Posted_Date = Selected.Posted_Date,
                                                 Month = Selected1.Month,
                                                 Description = TransactionDescription.EditedText ?? Selected.Description,
                                                 TransAmount = Selected1.TransAmount,
@@ -1936,7 +1944,7 @@ namespace Fasetto.Word
                                                 ChangeType = "c",
                                                 DateEffective = DateTime.Now,
                                                 KHierarchyID = Selected1.KHierarchyID,
-                                                KClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid,
+                                                KClientID =Selected.KClientID,
                                                 KPartyID = Party.EditedKid ?? Party.OriginalKid,
                                                 KPartyName = Party.EditedName ?? Party.OriginalName,
                                                 IsTemplate = IsTemplate,
@@ -1968,6 +1976,7 @@ namespace Fasetto.Word
                                                 Selected1.Posted_Date = Selected.Posted_Date;
                                                 Selected1.Month = Selected.Month;
                                                 Selected1.TransAmount = Selected.TransAmount;
+                                                Selected1.Units = 0;
                                                 tmp.Add(Selected1);
                                                 tmp1.Add(Selected1);
                                                 var u = new TransactionResultApiModel
@@ -1992,7 +2001,7 @@ namespace Fasetto.Word
                                                     Notes = "",
                                                     KAccountID = Selected.KAccountID,
                                                     KAccountName = Selected.KAccountName,
-                                                    Units = IntUnits,
+                                                    Units = 0,
                                                 };
                                                 tmp2.Add(u);
                                             }

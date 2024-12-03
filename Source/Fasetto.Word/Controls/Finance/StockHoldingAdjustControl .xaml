@@ -94,67 +94,17 @@
                 <!-- Profile details -->
                 <StackPanel Grid.Column="1"
                             local:TextEntryWidthMatcherProperty.Value="True">
+                    
                     <StackPanel Grid.Column="1" Orientation="Horizontal"
                             local:TextEntryWidthMatcherProperty.Value="True">
-                        <TextBlock  Text ="Total Budget for Selected Month : " FontFamily="{StaticResource LatoBold}" 
-                                               Padding="10 10 10 10" FontWeight="Bold" Foreground="{StaticResource ForegroundVeryDarkBrush}"/>
-                        <TextBlock  Text ="{Binding BudgetAmountStr}" FontFamily="{StaticResource LatoRegular}" 
-                                        Padding="10 10 10 10" FontWeight="Bold"/>
-                    </StackPanel>
-                    <StackPanel Grid.Column="1" Orientation="Horizontal"
-                            local:TextEntryWidthMatcherProperty.Value="True">
-                        <TextBlock  Text ="Actual Total for Selected Month : " FontFamily="{StaticResource LatoBold}" 
-                                               Padding="10 10 10 10" FontWeight="Bold" Foreground="{StaticResource ForegroundVeryDarkBrush}"/>
-                        <TextBlock  Text ="{Binding BudgetAmountCumTotalStr}" FontFamily="{StaticResource LatoRegular}" 
-                                        Padding="10 10 10 10" FontWeight="Bold"/>
 
                     </StackPanel>
-                    <StackPanel Grid.Column="1" Orientation="Horizontal"
-                            local:TextEntryWidthMatcherProperty.Value="True">
-                        <TextBlock  Text ="Total Cumulative Budget (To Date) : " FontFamily="{StaticResource LatoBold}" 
-                                               Padding="10 10 10 10" FontWeight="Bold" Foreground="{StaticResource ForegroundVeryDarkBrush}"/>
-                        <TextBlock  Text ="{Binding BudgetAmountTotalStr}" FontFamily="{StaticResource LatoRegular}" 
-                                        Padding="10 10 10 10" FontWeight="Bold"/>
-                    </StackPanel>
-                    <StackPanel Grid.Column="1" Orientation="Horizontal"
-                            local:TextEntryWidthMatcherProperty.Value="True">
-                        <TextBlock  Text ="Actual Cumulative Total (To Date): " FontFamily="{StaticResource LatoBold}" 
-                                               Padding="10 10 10 10" FontWeight="Bold" Foreground="{StaticResource ForegroundVeryDarkBrush}"/>
-                        <TextBlock  Text ="{Binding ActualAmountTotalStr }" FontFamily="{StaticResource LatoRegular}" 
-                                        Padding="10 10 10 10" FontWeight="Bold"/>
-                    </StackPanel>
-                    <StackPanel Grid.Column="1" Orientation="Horizontal"
-                            local:TextEntryWidthMatcherProperty.Value="True">
-                        <TextBlock  Text ="Variance from Budget(Month) : " FontFamily="{StaticResource LatoBold}" 
-                                               Padding="10 10 10 10" FontWeight="Bold" Foreground="{StaticResource ForegroundVeryDarkBrush}"/>
-                        <TextBlock  Text ="{Binding DeviationStr}" FontFamily="{StaticResource LatoRegular}" 
-                                        Padding="10 10 10 10" FontWeight="Bold"/>
-                    </StackPanel>
-                    <StackPanel Grid.Column="1" Orientation="Horizontal"
-                            local:TextEntryWidthMatcherProperty.Value="True">
-                        <TextBlock  Text ="Variance from Budget(To Date) : " FontFamily="{StaticResource LatoBold}" 
-                                               Padding="10 10 10 10" FontWeight="Bold" Foreground="{StaticResource ForegroundVeryDarkBrush}"/>
-                        <TextBlock  Text ="{Binding DeviationCumStr}" FontFamily="{StaticResource LatoRegular}" 
-                                        Padding="10 10 10 10" FontWeight="Bold"/>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Grid.Column="1" 
-                                local:TextEntryWidthMatcherProperty.Value="True">
-                        <TextBlock  Text ="Start Date " FontFamily="{StaticResource LatoRegular}" 
-                                       Padding="10 10 10 10" FontWeight="Bold"/>
-                        <DatePicker x:Name="dateStart"  SelectedDate="{Binding DateStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="20 10 20 10"
-                                        SelectedDateFormat="Short"/>
-
-                    </StackPanel>
+                    <local:TextEntryControl DataContext="{Binding StockUnits}" FontWeight="ExtraBlack"  />
 
                     <StackPanel Orientation="Horizontal" Grid.Column="1"
                                     local:TextEntryWidthMatcherProperty.Value="True" RenderTransformOrigin="0.525,0.565">
-                        <TextBlock  Text ="End Date  " FontFamily="{StaticResource LatoRegular}" 
-                                           Padding="10 10 13 10" FontWeight="Bold"/>
-                        <DatePicker x:Name="dateEnd"  SelectedDate="{Binding DateEnd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="20 10 20 10"
-                                            SelectedDateFormat="Short"  />
-
                     </StackPanel>
+
 
 
 
@@ -162,19 +112,6 @@
 
                     <StackPanel    Grid.Column="0"
                         Orientation="Horizontal">
-                        
-                        
-
-                        <Button Content="{Binding AdjustmentButtonText}"
-                            Command="{Binding ExpenditureReviewCommand}"
-                            FontSize="{StaticResource FontSizeRegular}"
-                            />
-
-
-                    </StackPanel>
-                    <StackPanel    Grid.Column="0"
-                        Orientation="Horizontal">
-
 
 
                         <Button Content="{Binding StockHoldingButtonText}"

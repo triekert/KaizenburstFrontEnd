@@ -8,8 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -1215,8 +1213,8 @@ namespace Fasetto.Word.Web.Server
                     para[18].Value = row.Units;
 
 
-                    SqlString2 = "EXEC [Finance].[spManageCategorySearch] @kClientID = '" + para[9].Value + "' , @HierarchyID = '" + para[10].Value + "', @fPartyID = '" + para[13].Value + "' ,@fCatSrchID = '" + para[14].Value + "' ,@Description = '" + para[1].Value + "' ,@month = '" + para[11].Value + "'";
-                    SqlString = "EXEC [Finance].[spAddTransactionAllocation] @ActualAmount ,@TransAmount ,@kFinActualID ,@kFinTranID,@kCategoryID,@kClientID,@kHierarchyID ,@Month ,@kPartyID ,@fCatSrchID,@Notes ,@kAccountId ,@Description ,@Posted_Date";
+                    SqlString2 = "EXEC [Finance].[spManageCategorySearch] @kClientID = '" + para[9].Value + "' , @HierarchyID = '" + para[10].Value + "', @fPartyID = '" + para[13].Value + "' ,@fCatSrchID = '" + para[14].Value + "' ,@Description = '" + para[1].Value +  "' ,@month = '" + para[11].Value + "'";
+                    SqlString = "EXEC [Finance].[spAddTransactionAllocation] @ActualAmount ,@TransAmount ,@kFinActualID ,@kFinTranID,@kCategoryID,@kClientID,@kHierarchyID ,@Month ,@kPartyID ,@fCatSrchID,@Notes ,@kAccountId ,@Description ,@Posted_Date,@Units";
                     //SqlString = "EXEC [Finance].[spAddTransactionAllocation] @ActualAmount = '" + para[7].Value + "',@kFinActualID = '" + para[3].Value + "',@kFinTranID = '" + para[4].Value +
                     //    "',@kCategoryID = '" + para[2].Value + "',@kClientID = '" + para[9].Value + "',@kHierarchyID = '" + para[10].Value + "',@Month = '" + para[11].Value + "',@kPartyID = '" + para[13].Value +
                     //    "' ,@fCatSrchID = '" + para[14].Value + "',@Notes = '" + para[15].Value + "',@kAccountId = '" + para[16].Value + "' ,@Description = '" + para[1].Value + "' ,@PostedDate = '" + para[8].Value + "'";
@@ -1561,6 +1559,126 @@ namespace Fasetto.Word.Web.Server
 
 
         #endregion ReturnDocument
+
+        #region StockHolding
+        #region ReturnSOH
+
+        [Route(ApiRoutes.ReturnSOH)]
+        public async Task<ApiResponse> ReturnSOHAsync([FromBody] StockHoldingApiModel model)
+
+        {
+            #region Get User
+
+            // Get the current user
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            // If we have no user...
+            if (user == null)
+                return new ApiResponse
+                {
+                    // TODO: Localization
+                    ErrorMessage = "User not found"
+                };
+
+            #endregion
+
+            #region sql query
+
+
+
+            var SqlString = "EXEC [Finance].[spReturnStockHolding] @fCategoryID  =  '" + model.FCategoryID + "'";
+            ;
+            try
+            {
+                // Try and run the task
+                var dataset = await GetDataSetAsync(SqlString);
+                var dt = dataset.Tables[0];
+
+                var u = new StockHoldingApiModel();
+
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    u = new StockHoldingApiModel
+                    {
+                        FCategoryID = row[0].ToString().ToUpper(),
+                        SOH = (int)row[1],
+                        DateOfTransaction = (DateTime)row[2],
+                    };
+
+
+                }
+
+                return new ApiResponse<StockHoldingApiModel>
+                {
+
+                    Response = u
+                };
+                #endregion sql query
+
+
+            }
+            catch (Exception ex)
+            {
+                // Log error
+                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                // Throw it as normal
+                throw;
+            }
+
+        }
+        #endregion ReturnSOH
+
+         #region UpdateSOH
+
+        [Route(ApiRoutes.UpdateSOH)]
+        public async Task<ApiResponse> UpdateSOHAsync([FromBody] StockHoldingApiModel model)
+
+        {
+            #region Get User
+
+            // Get the current user
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            // If we have no user...
+            if (user == null)
+                return new ApiResponse
+                {
+                    // TODO: Localization
+                    ErrorMessage = "User not found"
+                };
+
+            #endregion
+
+            #region sql query
+
+
+
+            var SqlString = "EXEC [Finance].[spUpdateStockHolding] @fCategoryID  =  '" + model.FCategoryID + "',@SOH =" + model.SOH ;
+            ;
+            try
+            {
+                _ = await ExecuteAsync(SqlString);
+
+                return new ApiResponse();
+             #endregion sql query
+
+
+            }
+            catch (Exception ex)
+            {
+                // Log error
+                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                // Throw it as normal
+                throw;
+            }
+
+        }
+        #endregion UpdateSOH
+
+        #endregion StockHolding
 
 
         #endregion Financials

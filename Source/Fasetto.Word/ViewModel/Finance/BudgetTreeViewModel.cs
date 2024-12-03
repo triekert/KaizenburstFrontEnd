@@ -281,8 +281,6 @@ namespace Fasetto.Word
                         ActualTotCum = item.ActualTotCum,
                         IsStockTracked = item.IsStockTracked,
 
-
-
                      };
                     mBDDML.Add(mBDDM);
                 }
