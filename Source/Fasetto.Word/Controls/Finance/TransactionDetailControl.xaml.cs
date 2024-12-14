@@ -1,8 +1,11 @@
-﻿using Fasetto.Word.Core;
+﻿using CsvHelper;
+using Fasetto.Word.Core;
 using System;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Dynamic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -111,6 +114,20 @@ namespace Fasetto.Word
                 ////var Trans = ((TransactionTreeViewModel)PriorPopup).Trans_action;
 
             }
+            else
+            if (e.Key == Key.Insert)
+            {
+               AddCredit();
+
+                ////var Trans = ((TransactionTreeViewModel)PriorPopup).Trans_action;
+
+            }
+            else
+            if (Keyboard.IsKeyDown(Key.F2))
+            {
+                Generate();
+            }
+
         }
         private void BulkRecon_OnSelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
         {
@@ -226,7 +243,59 @@ namespace Fasetto.Word
 
         }
 
+        private void AddCredit()
+        {
 
+            ViewModelApplication.PopupVisible = false;
+            var MSelected = (TransactionViewModel)TransactionDetail.SelectedItem;
+            var RawTable = TransactionDetail.Items.SourceCollection;
+
+            var tempTDList = new ObservableCollection<TransactionViewModel>();
+            foreach (var tBR in RawTable)
+                tempTDList.Add((TransactionViewModel)tBR);
+
+            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+
+            ViewModelApplication.CurrentPopupViewModel = new ManageClassificationViewModel(tempTDList, MSelected);
+
+            //ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+            ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+            ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+            //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+            //var mCurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            ////New popup is only activated if name differs from current popup (irrespective of view model content)
+            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            //ViewModelApplication.CurrentPopupViewModel =  mCurrentPopupViewModel;
+            //ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+            ViewModelApplication.PopupVisible = true;
+
+        }
+
+
+
+        private void Generate()
+        {
+
+            var fileName = @"C:\Temp\Transaction Records "
+            //+
+            //    ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeStart.ToString("d_MM_yyyy")
+            //+ " TO " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeEnd.ToString("d_MM_yyyy")
+            + ".csv";
+            try
+            {
+                using (var writer = new StreamWriter(fileName))
+                {
+                    using (var csvOut = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                    {
+                        csvOut.WriteRecords(((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransactionDetail);
+                    }
+                }
+            }
+            catch (Exception exp)
+            {
+                Console.Write(exp.Message);
+            }
+        }
 
 
 

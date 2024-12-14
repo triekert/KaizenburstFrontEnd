@@ -10,10 +10,13 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
+
+//using System.Windows.Forms;
 
 
 namespace Fasetto.Word
@@ -1073,7 +1076,7 @@ namespace Fasetto.Word
 
                     if (Math.Sign(IntAmnt) != Math.Sign(Selected.TransAmount) && IntAmnt != 0)
                     {
-                        MessageBox.Show($"The allocation amount {Selected.ActualAmount} must be of the same sign ", $"as the transaction total {Selected.TransAmount}");
+                        System.Windows.MessageBox.Show($"The allocation amount {Selected.ActualAmount} must be of the same sign ", $"as the transaction total {Selected.TransAmount}");
                         return true;
                     }
 
@@ -1404,6 +1407,7 @@ namespace Fasetto.Word
                                         matches1 = tmp1.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
                                         category1 = matches1.FirstOrDefault();
                                         if (category != null)
+                                        //Unallocated funds still available on transaction level
                                         {
                                             if ((Math.Abs(IntAmnt) > Math.Abs(Selected.ActualAmount + category.ActualAmount)))
                                             { IntAmnt = (Selected.ActualAmount + category.ActualAmount) - IntAmnt; }
@@ -1518,6 +1522,15 @@ namespace Fasetto.Word
                                             }
 
                                         }
+                                        else
+                                        //Ask user if a credit is available to increase the amount available on the transaction for allocation
+                                        {
+                                            if (System.Windows.MessageBox.Show("Create Credit entry (Y), limit to Transaction balance(N)", "Confirm",
+                                                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                                            {
+                                            }
+
+                                           }
 
                                     }
                                 }
