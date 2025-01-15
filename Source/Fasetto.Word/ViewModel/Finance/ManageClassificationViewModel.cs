@@ -1074,7 +1074,7 @@ namespace Fasetto.Word
                         Selected.Notes = TransactionNotes.EditedText;
                     }
 
-                    if (Math.Sign(IntAmnt) != Math.Sign(Selected.TransAmount) && IntAmnt != 0)
+                    if (Math.Sign(IntAmnt) != Math.Sign(Selected.TransAmount) && IntAmnt != 0 && Math.Sign(IntAmnt) != Math.Sign(Selected.ActualAmount))
                     {
                         System.Windows.MessageBox.Show($"The allocation amount {Selected.ActualAmount} must be of the same sign ", $"as the transaction total {Selected.TransAmount}");
                         return true;

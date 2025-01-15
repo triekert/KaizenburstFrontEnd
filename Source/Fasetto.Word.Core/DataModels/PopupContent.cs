@@ -80,68 +80,55 @@
         /// </summary>
         Transaction = 13,
 
-
-
         /// <summary>
         /// Drill down into specific transaction
         /// </summary>
         TransactionDetail = 14,
-
-
-
 
         /// <summary>
         /// Manage classification of a transaction
         /// </summary>
         Classify = 15,
 
-
-
-
         /// <summary>
         /// Manage classification of a transaction
         /// </summary>
         SWBillingDetail = 16,
-
-
 
         /// <summary>
         /// Manage budgets
         /// </summary>
         BudgetReview = 17,
 
-
-
         /// <summary>
         /// Manage budgets
         /// </summary>
         BudgetDetailList = 18,
-
-
 
         /// <summary>
         /// Manage budgets
         /// </summary>
         BudgetAdjust = 19,
 
-
         /// <summary>
         /// Manage budgets
         /// </summary>
         ExpenditureReview = 20,
-
 
         /// <summary>
         /// Manage expenses against budget
         /// </summary>
         ExpenditureAdjust = 21,
 
-
-
         /// <summary>
         /// Manage Stockholding of specific items
         /// </summary>
         StockHoldingAdjust = 22,
+
+        /// <summary>
+        /// Manage investment value of selected investments
+        /// </summary>
+        InvestmentReview = 23,
 
     }
 

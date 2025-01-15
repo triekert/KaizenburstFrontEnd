@@ -42,7 +42,6 @@ namespace Fasetto.Word
                     var mBulkReconDetailControl = new BulkReconDetailControl();
                     return mBulkReconDetailControl;
 
-
                 case PopupContent.BulkRecon:
                     var mBulkReconControl = new BulkReconControl();
                     return mBulkReconControl;
@@ -55,16 +54,13 @@ namespace Fasetto.Word
                     var mHierarchyItemSelection = new HierarchySelectionControl();
                     return mHierarchyItemSelection;
 
-
                 case PopupContent.SWBilling:
                     var mSWBillingControl = new SWBillingControl();
                     return mSWBillingControl;
 
-
                 case PopupContent.SWAdjust:
                     var mSWAdjustControl = new SWAdjustControl();
                     return mSWAdjustControl;
-
 
                 case PopupContent.Transaction:
                     var mTransactionControl = new TransactionControl();
@@ -98,11 +94,13 @@ namespace Fasetto.Word
                     var mExpenditureAdjustControl = new ExpenditureAdjustControl();
                     return mExpenditureAdjustControl;
 
-
                 case PopupContent.StockHoldingAdjust:
                     var mStockHoldingAdjustControl = new StockHoldingAdjustControl();
                     return mStockHoldingAdjustControl;
 
+                case PopupContent.InvestmentReview:
+                    var mInvestmentReviewControl = new StockHoldingAdjustControl();
+                    return mInvestmentReviewControl;
                 // Unknown
                 default:
                     return "No UI yet, sorry :)";

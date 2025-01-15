@@ -111,8 +111,8 @@ namespace Fasetto.Word
             mRequest = new ParameterTransactionApiModel
             { 
                 Client = client,
-                MonthStart = int.Parse(timeStart.ToString("yyyyMM")),
-                MonthEnd = int.Parse(timeEnd.ToString("yyyyMM")),
+                MonthStart = int.Parse(timeStart.ToString("yyyyMMdd")),
+                MonthEnd = int.Parse(timeEnd.ToString("yyyyMMdd")),
                 Category = category,
                 Budget = budget,
             };

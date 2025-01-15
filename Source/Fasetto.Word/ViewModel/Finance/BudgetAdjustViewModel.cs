@@ -245,7 +245,6 @@ namespace Fasetto.Word
 
 
             BudgetAmountStr = bvm.BudgetAmount.ToString("C", CultureInfo.CurrentCulture);
-
             BudgetAmountTotalStr = bvm.BudgetAmountTotal.ToString("C", CultureInfo.CurrentCulture);
             BudgetAmountDec = bvm.BudgetAmount;
             BudgetAmountTotalDec = bvm.BudgetAmountTotal;
@@ -313,7 +312,15 @@ namespace Fasetto.Word
                 // Update the Category Classification value on the server...
                 var decBudgAdj = BudgetAmountDec;
                 if (!(BudgetAncestor.EditedText == null || BudgetAncestor.EditedText == ""))
-                { decimal.TryParse(BudgetAncestor.EditedText, NumberStyles.Currency, CultureInfo.CurrentCulture, out decBudgAdj); }
+                { decimal.TryParse(BudgetAncestor.EditedText, NumberStyles.Currency, CultureInfo.CurrentCulture, out decBudgAdj);
+                   BudgetAncestor.OriginalText = BudgetAncestor.EditedText;
+                   BudgetAmountTotalDec += decBudgAdj - BudgetAmountDec ;
+                   BudgetAmountStr = decBudgAdj.ToString("C", CultureInfo.CurrentCulture);
+                   BudgetAncestor.EditedText = BudgetAmountStr;
+                   BudgetAmountTotalStr = BudgetAmountTotalDec.ToString("C", CultureInfo.CurrentCulture);
+                   BudgetAncestorHierarchy.EditedText = BudgetAmountTotalStr;
+                   BudgetAncestorHierarchy.OriginalText = BudgetAmountTotalStr;
+                }
                 var decBudgTotAdj = BudgetAmountTotalDec;
                 if (!(BudgetAncestorHierarchy.EditedText == null || BudgetAncestorHierarchy.EditedText == ""))
                 { decimal.TryParse(BudgetAncestorHierarchy.EditedText, NumberStyles.Currency, CultureInfo.CurrentCulture, out decBudgAdj); }

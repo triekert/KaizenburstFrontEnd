@@ -1282,7 +1282,10 @@ namespace Fasetto.Word.Web.Server
                     {
                         // Try and run the task
                         _ = await ExecuteAsync(SqlString, para);
+                        if (Convert.ToDecimal(row.ActualAmount)<0)
+                        {
                         _ = await ExecuteAsync(SqlString1, para);
+                        }
                         if (row.IsTemplate)
                         {
                             _ = await GetDataSetAsync(SqlString2);
@@ -1679,6 +1682,194 @@ namespace Fasetto.Word.Web.Server
         #endregion UpdateSOH
 
         #endregion StockHolding
+
+        #region Investments
+        #region ReturnInvestmentValue
+
+        [Route(ApiRoutes.ReturnInvestmentValue)]
+        public async Task<ApiResponse> ReturnInvestmentValueAsync([FromBody] ParameterBudgetApiModel model)
+
+        {
+            #region Get User
+
+            // Get the current user
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            // If we have no user...
+            if (user == null)
+                return new ApiResponse
+                {
+                    // TODO: Localization
+                    ErrorMessage = "User not found"
+                };
+
+            #endregion
+
+            #region sql query
+
+            var para = new SqlParameter[2];
+
+            para[0] = new SqlParameter("@kCategoryID", SqlDbType.UniqueIdentifier);
+            para[1] = new SqlParameter("@Month", SqlDbType.Int);
+
+
+            para[0].Value = !string.IsNullOrEmpty(model.BudgetID) ? new Guid(model.BudgetID) : (object)DBNull.Value;
+            para[1].Value = model.BMonth;
+
+            var SqlString = "EXEC [Finance].[spReturnBudgetDetail] @fBudgetID = '" + model.BudgetID + "' ,@month = '" + model.BMonth + "' ,@IsExpenditureReturn = '" + model.IsExpenditureReturn + "'";
+            ;
+            try
+            {
+                // Try and run the task
+
+
+
+                var dataset = await GetDataSetAsync(SqlString);
+                var dt = dataset.Tables[0];
+                var results = new BudgetResultListApiModel();
+                //var results = billingPeriodResultListApiModel;
+
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    var u = new BudgetResultApiModel
+                    {
+                        KCategoryID = row[3].ToString().ToUpper(),
+                        ShortName = row[14].ToString(),
+                        ParentCategoryID = row[13].ToString().ToUpper(),
+                        ParentShortName = row[15].ToString(),
+                        Month = (int)row[0],
+                        BudgetAmountTotal = (decimal)row[10],
+                        BudgetAmountDescendants = (decimal)row[9],
+                        BudgetAmount = (decimal)row[1],
+                        ActualAmountTotal = (decimal)row[12],
+                        ActualAmountDescendants = (decimal)row[11],
+                        ActualAmount = (decimal)row[2],
+                        Deviation = (decimal)row[12] - (decimal)row[10],
+                        DeviationCum = (decimal)row[18],
+                        BudgetTotCum = (decimal)row[16],
+                        ActualTotCum = (decimal)row[17],
+                        IsStockTracked = (row[18] != DBNull.Value) ? (bool)row[19] : false,
+                    };
+                    results.Add(u);
+
+                }
+
+                return new ApiResponse<BudgetResultListApiModel>
+                {
+
+                    Response = results
+                };
+                #endregion sql query
+
+
+            }
+            catch (Exception ex)
+            {
+                // Log error
+                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                // Throw it as normal
+                throw;
+            }
+
+        }
+        #endregion ReturnInvestmentValue
+
+        #region ReturnInvestmentTransactions 
+
+        [Route(ApiRoutes.ReturnInvestmentTransactions)]
+        public async Task<ApiResponse> ReturnInvestmentTransactionsValueAsync([FromBody] ParameterBudgetApiModel model)
+
+        {
+            #region Get User
+
+            // Get the current user
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            // If we have no user...
+            if (user == null)
+                return new ApiResponse
+                {
+                    // TODO: Localization
+                    ErrorMessage = "User not found"
+                };
+
+            #endregion
+
+            #region sql query
+
+            var para = new SqlParameter[2];
+
+            para[0] = new SqlParameter("@kCategoryID", SqlDbType.UniqueIdentifier);
+            para[1] = new SqlParameter("@Month", SqlDbType.Int);
+
+
+            para[0].Value = !string.IsNullOrEmpty(model.BudgetID) ? new Guid(model.BudgetID) : (object)DBNull.Value;
+            para[1].Value = model.BMonth;
+
+            var SqlString = "EXEC [Finance].[spReturnBudgetDetail] @fBudgetID = '" + model.BudgetID + "' ,@month = '" + model.BMonth + "' ,@IsExpenditureReturn = '" + model.IsExpenditureReturn + "'";
+            ;
+            try
+            {
+                // Try and run the task
+
+
+
+                var dataset = await GetDataSetAsync(SqlString);
+                var dt = dataset.Tables[0];
+                var results = new BudgetResultListApiModel();
+                //var results = billingPeriodResultListApiModel;
+
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    var u = new BudgetResultApiModel
+                    {
+                        KCategoryID = row[3].ToString().ToUpper(),
+                        ShortName = row[14].ToString(),
+                        ParentCategoryID = row[13].ToString().ToUpper(),
+                        ParentShortName = row[15].ToString(),
+                        Month = (int)row[0],
+                        BudgetAmountTotal = (decimal)row[10],
+                        BudgetAmountDescendants = (decimal)row[9],
+                        BudgetAmount = (decimal)row[1],
+                        ActualAmountTotal = (decimal)row[12],
+                        ActualAmountDescendants = (decimal)row[11],
+                        ActualAmount = (decimal)row[2],
+                        Deviation = (decimal)row[12] - (decimal)row[10],
+                        DeviationCum = (decimal)row[18],
+                        BudgetTotCum = (decimal)row[16],
+                        ActualTotCum = (decimal)row[17],
+                        IsStockTracked = (row[18] != DBNull.Value) ? (bool)row[19] : false,
+                    };
+                    results.Add(u);
+
+                }
+
+                return new ApiResponse<BudgetResultListApiModel>
+                {
+
+                    Response = results
+                };
+                #endregion sql query
+
+
+            }
+            catch (Exception ex)
+            {
+                // Log error
+                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+                // Throw it as normal
+                throw;
+            }
+
+        }
+        #endregion ReturnInvestmentTransactions 
+
+        #endregion Investments
+
 
 
         #endregion Financials

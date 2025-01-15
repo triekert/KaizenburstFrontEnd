@@ -1,10 +1,15 @@
 ﻿using Fasetto.Word.Core;
 using Fasetto.Word.Core.ApiModels.Controls;
-using System.Collections.Generic;
+using System;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Security.Principal;
 
 
 namespace Fasetto.Word
@@ -12,7 +17,7 @@ namespace Fasetto.Word
     /// <summary>
     /// A view model for managing hierarchies 
     /// </summary>
-    public class BudgetSelectionPageViewModel : BaseViewModel
+    public class InvestmentSelectionPageViewModel : BaseViewModel
     {
         #region Private Members
 
@@ -81,6 +86,13 @@ namespace Fasetto.Word
         /// </summary>
         public HierarchyItemSelectionViewModel CostHierarchy { get; set; }
 
+
+
+        /// <summary>
+        /// The CostHierarchy for Transaction processing for the selected client
+        /// </summary>
+        public HierarchyItemSelectionViewModel InvestmentAccounts { get; set; }
+
         /// <summary>
         /// The Budget List for financial management
         /// </summary>
@@ -105,11 +117,18 @@ namespace Fasetto.Word
         /// Indicates if the email is current being saved
         /// </summary>
         public bool ClientIsSaving { get; set; }
+        /// <summary>
+        /// The start time for analysis of readings
+        /// </summary>
+        public DateTimeViewModel TimeStart { get; set; }
 
         /// <summary>
-        /// Saves the current email to the server
+        /// The start time for analysis of readings
         /// </summary>
-        public ICommand SaveClientCommand { get; set; }
+        public DateTimeViewModel TimeEnd { get; set; }
+
+
+
 
 
 
@@ -146,6 +165,13 @@ namespace Fasetto.Word
         /// </summary>
         public bool SetHierarchyCompleted { get; set; }
 
+
+
+
+        /// <summary>
+        /// A flag indicating if the account selection is complete
+        /// </summary>
+        public bool SelectAccountCompleted { get; set; }
 
         /// <summary>
         /// The text to search for when we do a search
@@ -257,6 +283,12 @@ namespace Fasetto.Word
         /// </summary>
         public ICommand ClearSearchCommand { get; set; }
 
+
+        /// <summary>
+        /// Saves the current email to the server
+        /// </summary>
+        public ICommand SaveClientCommand { get; set; }
+
         #endregion
 
         #region Constructor
@@ -264,23 +296,25 @@ namespace Fasetto.Word
         /// <summary>
         /// Default constructor
         /// </summary>
-        public BudgetSelectionPageViewModel()
+        public InvestmentSelectionPageViewModel()
         {
             //Populate screen title
             //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
             //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
-            DisplayTitle = "Select Budget for Review";
+            DisplayTitle = "Select Investment Account for Review";
             //BulkMeter = "5249FFEB-6907-46AA-9204-D4527E11F9CE";
 
             Client = new HierarchyItemSelectionViewModel
             {
                 Label = "Select Client",
                 //EditedName = mLoadingText,
-                EditedName = "Selected Client",
-                OriginalName = "Root Client Organisation",
-                OriginalKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
-                EditedKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                EditedName = (string)ViewModelApplication.ClientShortName ?? "Client",
+                OriginalName = (string)ViewModelApplication.ClientShortName ?? "Client Lookup",
+                OriginalKid = (string)ViewModelApplication.FClientID ?? "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                EditedKid = (string)ViewModelApplication.FClientID,
                 HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
+                PrepareAction = SetClientHierarchySelectionAsync,
+                PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
                 CommitAction = UpdateClientSelectionAsync,
                 //CommitAction = SaveFirstNameAsync
             };
@@ -300,6 +334,52 @@ namespace Fasetto.Word
                 PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
                 CommitAction = UpdateCostHierarchySelectionAsync,
             };
+
+
+
+            InvestmentAccounts = new HierarchyItemSelectionViewModel
+            {
+
+                Label = "Select Investment Account",
+                EditedName =  "Selected Investment Account",
+                OriginalName = "Select Investment Account",
+                OriginalKid = null,
+                EditedKid = null,
+                ClientID = Client.EditedKid,
+                HierarchyTypeID = "ADEEBB16-F553-48F8-955F-663227A4886C",
+                PrepareAction = SetAccountHierarchySelectionAsync,
+                //HierarchyTypeID = ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).f,
+                //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
+                CommitAction = SelectAccountAsync,
+            };
+
+            TimeStart = new DateTimeViewModel
+            {
+                Label = "Month Start",
+                OriginalDateTime = DateTime.Now.AddDays(-1),
+                EditedDateTime = DateTime.Now.AddDays(-1),
+                OriginalTime = new System.Windows.Controls.ComboBoxItem(),
+                EditedTime = new System.Windows.Controls.ComboBoxItem(),
+                //(DateTime.Now.AddHours(-1)).ToShortTimeString(),
+                //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
+            };
+            TimeStart.OriginalTime.Content = "00:00";
+            TimeStart.EditedTime.Content = "00:00";
+
+
+            TimeEnd = new DateTimeViewModel
+            {
+                Label = "Month End",
+                OriginalDateTime = DateTime.Now,
+                EditedDateTime = DateTime.Now,
+                OriginalTime = new System.Windows.Controls.ComboBoxItem(),
+                EditedTime = new System.Windows.Controls.ComboBoxItem(),
+                //(DateTime.Now.AddHours(-1)).ToShortTimeString(),
+                //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
+            };
+            TimeEnd.OriginalTime.Content = "00:00";
+            TimeEnd.EditedTime.Content = "00:00";
 
             //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
             ViewModelApplication.CurrentControlViewModel = Client;
@@ -344,7 +424,7 @@ namespace Fasetto.Word
 
                 //((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.ClientID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedKid;
                 //((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.RootID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.RootID;
-                ViewModelApplication.CurrentControlViewModel = ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                ViewModelApplication.CurrentControlViewModel = ((InvestmentSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
                 HierarchyParam = new ParameterHierarchyItemSelectApiModel
                 {
 
@@ -359,6 +439,30 @@ namespace Fasetto.Word
         }
 
 
+        public async Task<bool> SetClientHierarchySelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the First Name value on the server...
+
+                ViewModelApplication.CurrentControlViewModel = ((InvestmentSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
+                HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                {
+                    //ClientID = Client.ClientID,
+                    //FHierarchyID = Client.OriginalKid,
+                    //RootID = Client.OriginalKid,
+                    //Level = 1
+
+                    RootID = ViewModelApplication.FClientID ?? "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                    Level = 1
+                };
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
+                return true;
+            });
+
+        }
 
         ///<summary>
         /// Update Client selection for current session
@@ -385,6 +489,55 @@ namespace Fasetto.Word
 
         }
 
+        public async Task<bool> SetAccountHierarchySelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the Party value on the server...
+
+                ViewModelApplication.CurrentControlViewModel = ((InvestmentSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).InvestmentAccounts;
+                HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                {
+
+                    Level = 0,
+                    RootID = "FEF29B52-81CE-48A9-8E02-A7DAC07A9297"
+                };
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
+                //((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Account.OriginalKid;
+
+                //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
+                return true;
+            });
+
+        }
+
+
+        public async Task<bool> SelectAccountAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SelectAccountCompleted, async () =>
+            {
+                //if (Category.EditedName != "Selected Account")
+                //    //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                //    Account.OriginalName = Account.EditedName;
+                if (ViewModelApplication.ControlParameter1 != null)
+                {
+                    ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
+                    ViewModelApplication.ControlParameter1 = null;
+                    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    ViewModelApplication.PopupVisible = true;
+                }
+                //((ManageClassificationViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
+                //{
+                //    MSelectedCostHierarchy = new CostHierarchyViewModel()
+                //};
+                //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                return true;
+            });
+        }
 
 
         /// <summary>
@@ -494,10 +647,10 @@ namespace Fasetto.Word
         /// </summary>
         public async Task PopulateAsync()
         {
-            ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Budget.mRequest
+            ((InvestmentSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Budget.mRequest
                 = new BudgetPeriodResultApiModel
                 {
-                    CostHierarchy = ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.OriginalKid,
+                    CostHierarchy = ((InvestmentSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.OriginalKid,
 
                 };
 
@@ -505,7 +658,7 @@ namespace Fasetto.Word
             //await Budget.CostHierarchyAsync();
             Budget = new BudgetPeriodListViewModel(Client.EditedKid);
             //{
-            //    MSelectedBudgetPeriod = ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget
+            //    MSelectedBudgetPeriod = ((InvestmentSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget
             //};
         }
 

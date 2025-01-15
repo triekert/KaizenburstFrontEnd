@@ -76,6 +76,11 @@
         /// </summary>
         ExpenditureVSBudget = 13,
 
+        /// <summary>
+        ///Management of expenditure against budgets
+        /// </summary>
+        InvestmentManagement = 14,
+
     }
 
 }

@@ -75,26 +75,20 @@
         /// </summary>
         public const string ReturnExpenditure = "api/finance/expenditure";
 
-
         /// <summary>
         /// The route to the PersitHierarchy Api method
         /// </summary>
         public const string GenericHierarchyLookup = "api/finance/GenericHierarchyLookup";
- 
-
 
         /// <summary>
         /// The route to the PersistHierarchy Api method
         /// </summary>
         public const string ReturnBillingPeriods = "api/finance/BillingPeriodsLookup";
 
-
         /// <summary>
         /// The route to the PersistHierarchy Api method
         /// </summary>
         public const string ReturnRootPerClientAndType = "api/admin/ReturnRootPerClientAndType";
-
-
 
         /// <summary>
         /// The route to the Transaction Api method
@@ -116,26 +110,20 @@
         /// </summary>
         public const string ReturnDocument = "api/finance/ReturnDocument";
 
-
         /// <summary>
         /// The list of budgets for selected cost hierarchy
         /// </summary>
         public const string ReturnBudgetsList = "api/finance/ReturnBudget";
-
-
 
         /// <summary>
         /// Return all the detail for the selected budget and calendar month
         /// </summary>
         public const string ReturnBudgetDetail = "api/finance/ReturnBudgetDetail";
 
-
         /// <summary>
         /// Adjust selected Category element budget
         /// </summary>
         public const string BudgetElementAdjustment = "api/finance/BudgetElementAdjustment";
-
-
 
         /// <summary>
         /// Return latest theoretical SOH for selected category
@@ -146,6 +134,17 @@
         /// Return latest theoretical SOH for selected category
         /// </summary>
         public const string UpdateSOH = "api/finance/UpdateSOH";
+
+        /// <summary>
+        /// Return Investment Asset values for provided dates
+        /// </summary>
+        public const string ReturnInvestmentValue = "api/finance/InvestmentValue";
+
+        /// <summary>
+        /// Return Investment Transaction details for provided date range
+        /// </summary>
+        public const string ReturnInvestmentTransactions = "api/finance/InvestmentTransactions";
+
 
         #endregion
 

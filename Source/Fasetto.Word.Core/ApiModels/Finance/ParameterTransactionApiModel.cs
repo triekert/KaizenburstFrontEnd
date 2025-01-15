@@ -30,12 +30,20 @@ namespace Fasetto.Word.Core
         /// </summary>
         public string Category { get; set; }
 
+        // <summary>
+        /// GUID of Party selected for transaction management- (Optional, will only return transactions for desired Party if populated )
+        /// </summary>
+        public string Party { get; set; }
+
+        // <summary>
+        /// GUID of Account selected for transaction management- (Optional, will only return transactions for desired Account if populated )
+        /// </summary>
+        public string Account { get; set; }
 
         // <summary>
         /// GUID of Budget selected for transaction management- (Optional, only required when category is selected )
         /// </summary>
         public string Budget { get; set; }
-
 
         /// <summary>
         ///Start time for retrieving TOD data
