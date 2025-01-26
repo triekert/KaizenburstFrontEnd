@@ -92,7 +92,7 @@ namespace Fasetto.Word
             // Set the edited text to the current value
             EditedText = OriginalText;
             //OriginalText = "testing|";
-            ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
 
             // Go into edit mode
             Editing = true;

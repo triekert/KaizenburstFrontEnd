@@ -103,14 +103,6 @@ namespace Fasetto.Word
             SelectRowByIndex(Transaction, ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec);
         }
 
-        //public HierarchyControl(string root)
-        //{
-        //    mHierarchyTree = new HierarchyTreeViewModel(root);//root);
-
-        //    DataContext = mHierarchyTree;
-        //    InitializeComponent();
-        //    ViewModelApplication.CurrentControlViewModel = mHierarchyTree;   
-        //}
 
 
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)

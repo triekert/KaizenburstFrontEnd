@@ -73,22 +73,35 @@
 
             <!-- Content -->
 
-            <StackPanel Grid.Column="1"
-                        Orientation="Vertical">
+
+
+                <TextBlock Text="{Binding EditedName}" Foreground="Green"
+                     Grid.Column="1"
+                     Opacity="0"
+                     local:AnimateFadeInProperty.Value="{Binding Editing}"
+                     local:FocusAndSelectProperty.Value="{Binding Editing}"
+                     FontSize="{StaticResource FontSizeRegular}"
+                     Padding="2"
+                     TextWrapping="WrapWithOverflow"
+                     Margin="10 10 15 8" FontFamily="Lato Heavy"
+                       />
+                <!-- Content -->
                 <TextBlock Text="{Binding OriginalName}" 
+                       Grid.Column="1"
+                       local:AnimateFadeInProperty.Value="{Binding Editing, Converter={local:BooleanInvertConverter}}"
+                       Margin="15 8"
+                       VerticalAlignment="Center"
+                       ToolTip="{Binding OriginalName}"
+                       />
+                <!--<TextBlock Text="{Binding OriginalName}" 
 
 
                            Margin="15 8"
                            VerticalAlignment="Center"
                            ToolTip="{Binding OriginalName}"
-                       />
-                <TextBlock Text="{Binding EditedName}" Foreground="Green"
+                 />-->
 
-                       Margin="15 8"
-                       VerticalAlignment="Center"
-                       ToolTip="{Binding EditedName}"
-                       />
-            </StackPanel>
+
                        <!--local:AnimateFadeInProperty.Value="{Binding Editing, Converter={local:BooleanInvertConverter}}"-->
             <!-- Edit button container -->
             <Grid Grid.Column="2" 
@@ -130,7 +143,7 @@
                         >-->
 
                 <!-- Save Button -->
-                <!--<Button Content="{StaticResource FontAwesomeTickIcon}"
+                <Button Content="{StaticResource FontAwesomeTickIcon}"
                         FontFamily="{StaticResource FontAwesome}"
                         local:AnimateFadeInProperty.Value="{Binding Editing}"
                         IsDefault="True"
@@ -141,10 +154,10 @@
                         Margin="0 0 5 0"
                         VerticalAlignment="Center"
                         FontSize="{StaticResource FontSizeSmall}"
-                        />-->
+                        />
 
                 <!-- Cancel Button -->
-                <!--<Button Content="{StaticResource FontAwesomeCloseIcon}"
+                <Button Content="{StaticResource FontAwesomeCloseIcon}"
                         FontFamily="{StaticResource FontAwesome}"
                         local:AnimateFadeInProperty.Value="{Binding Editing}"
                         IsCancel="True"
@@ -155,7 +168,7 @@
                         Margin="0"
                         VerticalAlignment="Center"
                         FontSize="{StaticResource FontSizeSmall}"
-                        />-->
+                        />
                 
                 <!-- Cancel Button -->
                 <!--<Button Content="{StaticResource  FontAwesomeProjectIcon}"

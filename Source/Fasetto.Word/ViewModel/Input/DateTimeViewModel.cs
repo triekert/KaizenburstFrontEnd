@@ -122,9 +122,9 @@ namespace Fasetto.Word
         {
             // Store the result of a commit call
             var result = default(bool);
-
-            // Save currently saved value
-            var currentSavedValue = OriginalDateTime;
+            //Fasetto.Word.DI.ViewModelApplication.CurrentPopupContent = Fasetto.Word.DI.ViewModelApplication.CurrentPopupContent;
+           // Save currently saved value
+           var currentSavedValue = OriginalDateTime;
             var currentSavedValue1 = OriginalTime;
 
             RunCommandAsync(() => Working, async () =>

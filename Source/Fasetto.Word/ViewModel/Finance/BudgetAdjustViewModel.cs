@@ -316,6 +316,7 @@ namespace Fasetto.Word
                    BudgetAncestor.OriginalText = BudgetAncestor.EditedText;
                    BudgetAmountTotalDec += decBudgAdj - BudgetAmountDec ;
                    BudgetAmountStr = decBudgAdj.ToString("C", CultureInfo.CurrentCulture);
+                   BudgetAncestor.OriginalText = BudgetAmountStr;
                    BudgetAncestor.EditedText = BudgetAmountStr;
                    BudgetAmountTotalStr = BudgetAmountTotalDec.ToString("C", CultureInfo.CurrentCulture);
                    BudgetAncestorHierarchy.EditedText = BudgetAmountTotalStr;

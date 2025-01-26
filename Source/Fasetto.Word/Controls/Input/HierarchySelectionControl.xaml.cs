@@ -295,12 +295,19 @@ namespace Fasetto.Word
         }
         private void TreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var timeDiff = (DateTime.Now -mTimer);
-            var mMilliSec = timeDiff.TotalMilliseconds;
-            mTimer= DateTime.Now;
-            if  (mMilliSec>1000)
-                { 
-                if (e.ChangedButton == MouseButton.Right)
+            //var timeDiff = (DateTime.Now -mTimer);
+            //var mMilliSec = timeDiff.TotalMilliseconds;
+            //mTimer= DateTime.Now;
+            //if  (mMilliSec>1000)
+            //    { 
+            e.Handled = true;
+
+            //var test = sender as TreeViewItem;
+            //var test0 = test.Header;
+            var test1 = tvParameters.SelectedItem;
+            //if (((HierarchyViewModel)((TreeViewItem)sender).Header).KCategoryID == ((HierarchyViewModel)tvParameters.SelectedItem).KCategoryID)
+            //{ 
+            if (e.ChangedButton == MouseButton.Right)
                     {
                      RunSelectedItem();
                     e.Handled = true;
@@ -314,12 +321,13 @@ namespace Fasetto.Word
                     e.Handled = true;
                     //}
                 }
-                }
-            else
-            {
-            e.Handled = e.Handled;
-            }
-            e.Handled = true;
+            //}
+                //}
+            //else
+            //{
+            //e.Handled = e.Handled;
+            //}
+            //e.Handled = true;
 
         }
         /// <summary>
@@ -331,7 +339,7 @@ namespace Fasetto.Word
         {
             //check to determine whether user would like to add an item to the hierarchy
 
-
+                        e.Handled = true;
  
             if (Keyboard.IsKeyDown(Key.Enter))
                 {
@@ -339,7 +347,7 @@ namespace Fasetto.Word
                     ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
 
                     RunSelectedItem();
-                        e.Handled = true;
+
 
                 }
 
@@ -444,22 +452,10 @@ namespace Fasetto.Word
             //    return;
       
             mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
-            //RootID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).RootID;
             ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid      = mDraggedItem.KCategoryID;
             ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName     = mDraggedItem.ShortName;
-            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalName   = mDraggedItem.ShortName;
             ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID       = mDraggedItem.FClientID;
-            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalName     = mDraggedItem.ShortName;
-            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid = mDraggedItem.KCategoryID;
-            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Editing= true;
-            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Working = false;
-            //ViewModelApplication.PopupVisible = false;
-            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
 
-
-            //var Poptype = ViewModelApplication.CurrentControlViewModel.PriorPopupViewModel.GetType().Name;
-
-            //If the calling page is from the SWBilling function
 
             
             if ((ViewModelApplication.CurrentPageViewModel.GetType().Name == "SWBillingPageViewModel"))
@@ -590,6 +586,10 @@ namespace Fasetto.Word
             mAddElementViewModel.Level = mDraggedItem.Level + 1;
 
 
+            //mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
+            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid = mDraggedItem.KCategoryID;
+            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName = mDraggedItem.ShortName;
+            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID = mDraggedItem.FClientID;
 
 
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;

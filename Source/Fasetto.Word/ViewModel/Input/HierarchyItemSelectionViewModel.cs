@@ -131,8 +131,8 @@ namespace Fasetto.Word
         {
             // Create commands
             EditCommand = new RelayCommand(Edit);
-            //CancelCommand = new RelayCommand(Cancel);
-            //SaveCommand = new RelayCommand(Save);
+            CancelCommand = new RelayCommand(Cancel);
+            SaveCommand = new RelayCommand(Save);
             //HierarchyitemSelectCommand = new RelayCommand(HierarchyitemSelect);
             //ViewModelApplication.CurrentControlViewModel = this;
             //HISVM MviewModel = new HISVM(this);    
@@ -148,6 +148,11 @@ namespace Fasetto.Word
         /// </summary>
         public void Edit()
         {
+            // Set the edited text to the current value
+            EditedName = OriginalName;
+
+            // Go into edit mode
+            //Editing = true;
 
             var result = default(bool);
 
@@ -165,7 +170,7 @@ namespace Fasetto.Word
             ViewModelApplication.PopupVisible = true;
             ViewModelApplication.CurrentPopupContent = 0;
 
-            ViewModelApplication.CurrentPopupContent = PopupContent.HierarchyItemSelection;
+            ViewModelApplication.CurrentPopupContent = PopupContent.HierarchySelection;
 
 
         }

@@ -122,7 +122,7 @@
               ItemsSource="{Binding FirstGeneration}" 
               TreeViewItem.Selected="TreeView_Selected"            
               Name="tvParameters"
-               
+              MouseDoubleClick="TreeView_MouseDoubleClick"             
                >
                 <TreeView.Template>
                     <ControlTemplate>
@@ -148,7 +148,7 @@
                         <!--<EventSetter Event="PreviewMouseLeftButtonDown" Handler="TreeView_PreviewMouseLeftButtonDown" />-->
                         <EventSetter Event="KeyDown" Handler="TreeView_KeyBoard"/>
                         <!--<EventSetter Event="MouseMove" Handler="TreeView_MouseMove"/>-->
-                        <EventSetter Event="MouseDoubleClick" Handler="TreeView_MouseDoubleClick"/>
+
                         <!--<EventSetter Event="MouseEnter" Handler="TreeView_MouseEnter"/>
                         <EventSetter Event="MouseLeave" Handler="TreeView_MouseLeave"/>-->
                         <Style.Triggers>

@@ -57,7 +57,7 @@
         /// <summary>
         /// Hierarchy Selection Control
         /// </summary>
-        HierarchyItemSelection = 10,
+        HierarchySelection = 10,
 
 
 

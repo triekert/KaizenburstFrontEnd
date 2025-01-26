@@ -199,6 +199,10 @@ namespace Fasetto.Word
         public bool SetHierarchyCompleted { get; set; }
 
         /// <summary>
+        /// True to show the hierarchy retrieval command is running
+        /// </summary>
+        public bool UpdateAllocationCompleted { get; set; }
+        /// <summary>
         /// Indicates if the current control is pending an update (in progress)
         /// </summary>
         public bool Working { get; set; }
@@ -402,7 +406,7 @@ namespace Fasetto.Word
             {
                 Label = "Allocation",
                 OriginalText = selected.ActualAmount.ToString("C", CultureInfo.CurrentCulture),
-                //CommitAction = SaveFirstNameAsync
+            CommitAction = UpdateAllocationAsync,
             };
 
 
@@ -507,6 +511,10 @@ namespace Fasetto.Word
         //}
 
         #endregion
+
+
+
+
 
         public async Task DocumentRetrievalAsync()
         {
@@ -672,6 +680,27 @@ namespace Fasetto.Word
             ViewModelApplication.PopupVisible = true;
 
         }
+
+
+        /// <summary>
+        /// Update the total budget for the selected category hierarchy
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> UpdateAllocationAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => UpdateAllocationCompleted, async () =>
+            {
+                // Update the Category Classification value on the server...
+                var decAllocation = Selected.ActualAmount;
+                decimal.TryParse(Allocation.EditedText, NumberStyles.Currency, CultureInfo.CurrentCulture, out decAllocation);
+                Allocation.OriginalText = decAllocation.ToString("C", CultureInfo.CurrentCulture);
+                return true;
+            });
+
+        }
+
 
         public async Task<bool> SetCostCategorySelectionAsync()
         {
