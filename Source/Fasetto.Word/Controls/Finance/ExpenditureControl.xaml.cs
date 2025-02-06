@@ -449,24 +449,24 @@ namespace Fasetto.Word
                 }
                 return container;
             }
-            /// <summary>
-            /// This method will programmatically move the scrollbar to ensure that 
-            /// a selected item is always in view in the scroll area
-            /// It requires the use of the scrollViewer control prior to defining the 
-            /// TreeView structure in XAML
-            /// </summary>
-            /// <param name="sender">the selected treeview item</param>
-            /// <param name="e"></param>
-            private void TreeView_Selected(object sender, RoutedEventArgs e)
-            {
-                var element = e.OriginalSource as FrameworkElement;
-                // Figure out a relative position of the selected node to the scrollviewer
-                var relativePosition = element.TranslatePoint(new Point(0, 0), scrollViewer);
-                element.BringIntoView();
-                scrollViewer.ScrollToVerticalOffset(relativePosition.Y);
-            }
+        /// <summary>
+        /// This method will programmatically move the scrollbar to ensure that 
+        /// a selected item is always in view in the scroll area
+        /// It requires the use of the scrollViewer control prior to defining the 
+        /// TreeView structure in XAML
+        /// </summary>
+        /// <param name="sender">the selected treeview item</param>
+        /// <param name="e"></param>
+        private void TreeView_Selected(object sender, RoutedEventArgs e)
+        {
+            var element = e.OriginalSource as FrameworkElement;
+            // Figure out a relative position of the selected node to the scrollviewer
+            var relativePosition = element.TranslatePoint(new Point(0, 0), scrollViewer);
+            scrollViewer.ScrollToVerticalOffset(relativePosition.Y);
+            element.BringIntoView();
+        }
 
-            public void Close()
+        public void Close()
             {
                 // Close settings menu
                 ViewModelApplication.PopupVisible = false;

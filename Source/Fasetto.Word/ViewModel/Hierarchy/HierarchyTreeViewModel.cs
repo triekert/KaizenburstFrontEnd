@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Input;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
+using System.Windows.Controls;
 
 namespace Fasetto.Word
 {
@@ -30,7 +31,10 @@ namespace Fasetto.Word
         public ObservableCollection<HierarchyViewModel> FirstGeneration { get; set; }
 
 
-        //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
+        /// <summary>
+        /// The HierarchyViewModel of the selected treeViewITem
+        /// </summary>
+        public HierarchyViewModel mSelectedTreeItem { get; set; }
 
         #endregion
 
@@ -61,11 +65,21 @@ namespace Fasetto.Word
         /// The command to close the settings menu
         /// </summary>
         public ICommand CloseCommand { get; set; }
+
+        /// <summary>
+        /// The command to process keyboard stroke in Menu Control
+        /// </summary>
+        public ICommand ChangeIdCommand { get; set; }
+
+        //public ActionCommand<DragEventArgs> DropCommand { get; private set; }
+
         #endregion//Public Commands
+
+
 
         #region Constructor
         /// <summary>
-        /// The HierarchyTreeViewModel is a visual inteface for interacting with hiearchical
+        /// The HierarchyTreeViewModel is a visual interface for interacting with hierarchical
         /// Structures persisted on the database linked to the application
         /// Generic hierarchy structures with parent-child relationships may be used to represent
         /// appropriate data sets
@@ -102,6 +116,8 @@ namespace Fasetto.Word
 
             UpdateTreeViewElements();
             CloseCommand = new RelayCommand(Close);
+            ChangeIdCommand = new DelegateCommand<ContextualEventArgs>(ChangeId);
+            //ChangeIdCommand= new RelayParameterizedCommand<ContextualEventArgs>(ExecuteItemModeSelectionChanged);
             mSearchCommand = new SearchCategoryTreeCommand(this);
         }
 
@@ -142,6 +158,8 @@ namespace Fasetto.Word
         /// Title to be published on Control
         /// </summary>
         public string ControlTitle { get; set; }
+
+        //public HierarchyViewModel 
         //{get => mTableName;
         //    set
         //    {
@@ -956,6 +974,70 @@ namespace Fasetto.Word
             ViewModelApplication.GoToPage(ApplicationPage.Chat);
 
         }
+
+
+
+        //Interpret Keyboard Gestures
+        public void ChangeId(object parameter)
+        {
+            //(object sender, RoutedEventArgs e)
+            //var element = ((RoutedPropertyChangedEventArgs<object>)(ContextualEventArgs)parameter).OriginalEventArgs).OriginalSource as FrameworkElement;
+            // Figure out a relative position of the selected node to the scrollviewer
+            //var relativePosition = element.TranslatePoint(new Point(0, 0), scrollViewer);
+            //element.BringIntoView();
+            //scrollViewer.ScrollToVerticalOffset(relativePosition.Y);
+
+            // Close settings menu
+            mSelectedTreeItem = (HierarchyViewModel)(((ContextualEventArgs)parameter).Context);
+            ViewModelApplication.SideMenuVisible = true;
+            var tmp = ((ContextualEventArgs)parameter).OriginalEventArgs;
+
+            var eventTmp = tmp.GetType().Name;
+            if (eventTmp == "MouseButtonEventArgs")
+            { 
+                if ((((MouseButtonEventArgs)tmp).RightButton == MouseButtonState.Pressed)||(((MouseButtonEventArgs)tmp).LeftButton == MouseButtonState.Pressed))
+                    {
+                      ((MouseButtonEventArgs)tmp).Handled = true;
+                        RunSelectedMenu();
+                    }
+            }
+            else
+            if (eventTmp == "KeyEventArgs")
+            {
+                    if ((((KeyEventArgs)tmp).Key == Key.Enter) || (((KeyEventArgs)tmp).Key == Key.Insert) || (((KeyEventArgs)tmp).Key == Key.Delete))
+                    {
+                        ((KeyEventArgs)tmp).Handled = true;
+                        RunSelectedMenu();
+                    }
+                ((KeyEventArgs)tmp).Handled = true;
+            }
+        }
+
+
+        /// Use Popup View to add a Hierarchy Element
+        /// </summary>
+        private void RunSelectedMenu()
+        {
+            //Prepopulate
+            //Only allow one execution of  the function per event
+            if (!ViewModelApplication.SideMenuVisible)
+                return;
+;
+            if (mSelectedTreeItem == null || mSelectedTreeItem.Children.Count > 0 || ((string)mSelectedTreeItem.Page).Length == 0)
+                return;
+            ViewModelApplication.OpenMenu(mSelectedTreeItem.Root, mSelectedTreeItem.Page);
+
+
+        //// Close settings menu
+        //ViewModelApplication.SideMenuVisible = true;
+        ////TaskManager.RunAndForget(((HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel).HierarchyAsync);
+        ////ViewModelApplication.CurrentSideMenuViewModel = null;
+        ////TaskManager.RunAndForget(HierarchyAsync);
+
+        //ViewModelApplication.GoToPage(ApplicationPage.Chat);
+
+        }
+
 
         /// <summary>
         /// Persist all items changed or added on hierarchy to back end database. Depending on stage

@@ -89,7 +89,7 @@ namespace Fasetto.Word
             await RunCommandAsync(() => LoadReadingsIsRunning, async () =>
             {
 
-                // Store single transcient instance of client data store
+                // Store single transient instance of client data store
                 var scopedClientDataStore = ClientDataStore;
 
                 //// Update values from local cache

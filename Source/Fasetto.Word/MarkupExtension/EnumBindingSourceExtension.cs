@@ -18,4 +18,8 @@ namespace Fasetto.Word
             return Enum.GetValues(EnumType);
         }
     }
+
+
+
+
 }
