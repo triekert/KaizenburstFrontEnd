@@ -223,7 +223,7 @@
                 </Grid>
 
 
-                    <TreeView Grid.Row="1"
+                  <TreeView Grid.Row="1"
                   ItemsSource="{Binding FirstGeneration}" 
                   TreeViewItem.Selected="TreeView_Selected"            
                   Name="tvParameters">
@@ -368,11 +368,11 @@
           
                          </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>
-                    </TreeView>
+                   </TreeView>
             
             <!--</StackPanel>-->
-        </Grid>
-                </ScrollViewer>   
+            </Grid>
+        </ScrollViewer>   
     </DockPanel>
 </UserControl>
 
