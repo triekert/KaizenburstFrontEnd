@@ -27,7 +27,7 @@
         </Grid.RowDefinitions>
 
         <!-- Popup Overlay -->
-        <Border Background="{DynamicResource ForegroundLightBrush}" 
+        <!--<Border Background="{DynamicResource ForegroundLightBrush}" 
                 Grid.RowSpan="2"
                 Panel.ZIndex="1"
                 Visibility="{Binding AnyPopupVisible, Converter={local:BooleanToVisiblityConverter}, ConverterParameter=True}"
@@ -35,10 +35,10 @@
             <Border.InputBindings>
                 <MouseBinding MouseAction="LeftClick" Command="{Binding PopupClickawayCommand}" />
             </Border.InputBindings>
-        </Border>
+        </Border>-->
 
         <!-- Title bar -->
-        <Grid Height="50">
+        <Grid Height="0">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -48,13 +48,13 @@
 
 
             <!-- Title text -->
-            <TextBlock Text="{Binding DisplayTitle}"
+            <!--<TextBlock Text="{Binding DisplayTitle}"
                        Foreground="{StaticResource ForegroundLightBrush}"
                        FontSize="{StaticResource FontSizeXLarge}"
                        FontFamily="{StaticResource LatoRegular}"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center" Margin="315,0,0,0"
-                       />
+                       />-->
 
             <!-- Main buttons -->
             <!--<StackPanel Orientation="Horizontal" Grid.Column="1">
@@ -69,28 +69,28 @@
             </StackPanel>-->
 
             <!-- Search Overlay -->
-            <Grid Grid.ColumnSpan="2"
+            <!--<Grid Grid.ColumnSpan="3"
                   local:AnimateSlideInFromRightMarginProperty.Value="{Binding SearchIsOpen}"
 
-                  >
-
-                <Grid.ColumnDefinitions>
+                  >-->
+                  <!--local:AnimateSlideInFromRightMarginProperty.Value="{Binding SearchIsOpen}"-->
+                <!--<Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Border Background="{DynamicResource ForegroundLightBrush}"
                             Grid.Row="1">
-                </Border>
+                </Border>-->
 
                 <!-- Close search button -->
-                <Button Style="{StaticResource IconGrowButton}" 
+                <!--<Button Style="{StaticResource IconGrowButton}" 
                         Content="{StaticResource FontAwesomeCloseIcon}"
                         Command="{Binding  CloseSearchCommand}"
                         Foreground="{DynamicResource WordOrangeBrush}"
-                        />
+                        />-->
 
                 <!-- Search box -->
-                <TextBox 
+                <!--<TextBox 
                     Grid.Column="1" 
                     Tag="Search text..."
                     local:FocusProperty.Value="{Binding SearchIsOpen}"
@@ -99,15 +99,15 @@
                     FontSize="{StaticResource FontSizeRegular}"
                     >
                     <TextBox.InputBindings>
-                        <!-- Clear text on Esc -->
+                        --><!-- Clear text on Esc --><!--
                         <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc" />
-                        <!-- Search on enter -->
+                        --><!-- Search on enter --><!--
                         <KeyBinding Command="{Binding SearchCommand}" Key="Return" />
                     </TextBox.InputBindings>
-                </TextBox>
+                </TextBox>-->
 
 
-            </Grid>
+            <!--</Grid>-->
 
         </Grid>
 
@@ -127,7 +127,7 @@
             />-->
 
         <!-- Attachment Menu Popup -->
-        <Border  Background="{DynamicResource ForegroundLightBrush}"
+        <!--<Border  Background="{DynamicResource ForegroundLightBrush}"
                Grid.Row="1"
                 Panel.ZIndex="2"
                 VerticalAlignment="Bottom"
@@ -136,7 +136,7 @@
 
             <local:BubbleContent DataContext="{Binding AttachmentMenu}" />
 
-        </Border>
+        </Border>-->
 
         <!-- Message Send Text box -->
         <Grid Grid.Row="2" 
@@ -146,16 +146,16 @@
               Background="{StaticResource ForegroundLightBrush}"
               >
 
-            <Grid.ColumnDefinitions>
-                <!-- Attach button -->
+            <!--<Grid.ColumnDefinitions>
+                --><!-- Attach button --><!--
                 <ColumnDefinition Width="Auto" />
 
-                <!-- Text entry box -->
+                --><!-- Text entry box --><!--
                 <ColumnDefinition Width="*" />
 
-                <!-- Additional buttons -->
+                --><!-- Additional buttons --><!--
                 <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+            </Grid.ColumnDefinitions>-->
 
 
 

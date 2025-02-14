@@ -3,9 +3,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"    
+             xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+             xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"             
              mc:Ignorable="d" 
              xmlns:local="clr-namespace:Fasetto.Word"             
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <local:ContextualEventArgsConverter x:Key="ContextualEventArgsConverter" />
+    </UserControl.Resources>    
+    
     <DockPanel>
         <!-- SEARCH AREA -->
         <Border 
@@ -25,6 +32,14 @@
                 Margin="0,0,10,0" 
                 Orientation="Horizontal"
                 >
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewKeyDown" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=searchTextBox,Path=Text}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>                
                 <TextBox 
                       x:Name="searchTextBox"
                       KeyDown="SearchTextBox_KeyDown"
@@ -117,6 +132,40 @@
         </Border>
 
         <ScrollViewer x:Name="scrollViewer"  Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="PreviewKeyDown" >
+                    <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="PreviewMouseDoubleClick" >
+                    <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="PreviewMouseRightButtonClick" >
+                    <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                </i:EventTrigger>
+
+                <!--<i:EventTrigger EventName="PreviewMouseMove" >
+                    <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                </i:EventTrigger>-->
+
+            </i:Interaction.Triggers>
             <TreeView 
 
              ItemsSource="{Binding FirstGeneration}" 

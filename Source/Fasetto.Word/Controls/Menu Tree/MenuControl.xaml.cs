@@ -76,11 +76,11 @@ namespace Fasetto.Word
             ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
         }
 
-        private void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-             mHierarchyTree.SearchCommand.Execute(null) ;
-                   }
+        //private void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    if (e.Key == Key.Enter)
+        //     mHierarchyTree.SearchCommand.Execute(null) ;
+        //           }
 
         private static List<HierarchyTreeDataModel> FillRecursive(List<HierarchyDataModel> flatObjects, string parentId)
         {
@@ -465,6 +465,8 @@ namespace Fasetto.Word
         private void TreeView_Selected(object sender, RoutedEventArgs e)
         {
             var element = e.OriginalSource as FrameworkElement;
+            var tmp1 = element.GetType().Name;
+            //var element = sender as FrameworkElement;
             // Figure out a relative position of the selected node to the scrollviewer
             var relativePosition = element.TranslatePoint(new Point(0, 0), scrollViewer);
             scrollViewer.ScrollToVerticalOffset(relativePosition.Y);

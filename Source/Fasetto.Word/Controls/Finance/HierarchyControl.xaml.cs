@@ -259,15 +259,16 @@ namespace Fasetto.Word
                 if (e.LeftButton == MouseButtonState.Pressed)
                 {
                     var isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
-                    var currentPosition = e.GetPosition(tvParameters);
+                    var currentPosition = e.GetPosition(item);
 
                     //Check for dragging of treeview item
                     if ((Math.Abs(currentPosition.X - mLastMouseDown.X) > 10.0) ||
                         (Math.Abs(currentPosition.Y - mLastMouseDown.Y) > 10.0))
                     {
 
-                        mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
+                        mDraggedItem = (HierarchyViewModel)((TreeViewItem)item).Header;
                         mSourceCategoryName = mDraggedItem.ShortName;
+                        mLastMouseDown = currentPosition;
                         //draggedItem = (TreeViewItem)tvParameters.SelectedItem;
                         //mSource = (TreeViewItem)tvParameters.SelectedItem;
                         if (mDraggedItem != null)
@@ -276,7 +277,7 @@ namespace Fasetto.Word
                             if (!isCtrl)
                             {
 
-                                var finalDropEffect = DragDrop.DoDragDrop(tvParameters, tvParameters.SelectedValue,
+                                var finalDropEffect = DragDrop.DoDragDrop(item, mDraggedItem,
                                   DragDropEffects.Move);
                                 //Checking target is not null and item is dragging(moving)
                                 if ((finalDropEffect == DragDropEffects.Move) && (mTarget != null))
@@ -284,7 +285,7 @@ namespace Fasetto.Word
                                     // A Move drop was accepted
                                     //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
                                     //{
-                                    MoveHierarchyElement();// MoveItem();
+                                    ((HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel).MoveHierarchyElement(mDraggedItem,mTarget);// MoveItem();
                                         mTargetT = null;
                                         mSource= null;
                                     //}
@@ -300,7 +301,7 @@ namespace Fasetto.Word
                                     // A Copy drop was accepted
                                     //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
                                     //{
-                                    CopyHierarchyElement();// CopyItem();
+                                    ((HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel).CopyHierarchyElement(mDraggedItem, mTarget);// CopyItem();
                                     mTargetT = null;
                                     mSource = null;
                                     //}
@@ -348,7 +349,8 @@ namespace Fasetto.Word
                         if (e.Effects == DragDropEffects.Move)
                         { e.Effects = CheckDropTarget(mTarget, mDraggedItem) ? DragDropEffects.Move : DragDropEffects.None;}
                         else
-                        { e.Effects = CheckDropTarget(mTarget, mDraggedItem) ? DragDropEffects.Copy : DragDropEffects.None;}
+                        { e.Effects =  DragDropEffects.Copy;}
+                        //{ e.Effects = CheckDropTarget(mTarget, mDraggedItem) ? DragDropEffects.Copy : DragDropEffects.None; }
                     }
                 }
                 e.Handled = true;
@@ -363,16 +365,16 @@ namespace Fasetto.Word
             //try
             //{
 
-                Mouse.SetCursor(Cursors.Wait);
-                    e.Handled = true;
-                    return;
+            Mouse.SetCursor(Cursors.Wait);
+            e.Handled = true;
+            return;
 
         }
         //private void TreeView_MouseEnter(object sender, MouseEventArgs e)
         //{
         //    //try
         //    //{
-   
+
         //    ((HierarchyViewModel)((TreeViewItem)sender).DataContext).IsSelected = true;
 
         //    e.Handled = true;
@@ -421,8 +423,9 @@ namespace Fasetto.Word
                 //var mDestinationID = (string)res.GetType().GetProperties().Single(c => c.Name == "KId").GetValue(res);
 
                 MatchingKCategoryEnumerator = null;
- 
-                return PerformKIdSearch();
+
+            //return PerformKIdSearch();
+            return true;
 
 
 

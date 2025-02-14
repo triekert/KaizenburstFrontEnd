@@ -323,7 +323,7 @@ namespace Fasetto.Word
         /// </summary>
         /// <param name="hwnd"></param>
         /// <param name="lParam"></param>
-        private void WmGetMinMaxInfo(System.IntPtr hwnd, System.IntPtr lParam)
+        private void WmGetMinMaxInfo(nint hwnd, nint lParam)
         {
             // Get the point position to determine what screen we are on
             GetCursorPos(out var lMousePosition);

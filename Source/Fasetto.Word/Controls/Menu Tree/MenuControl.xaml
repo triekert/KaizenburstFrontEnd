@@ -32,9 +32,16 @@
                 Margin="0,0,10,0" 
                 Orientation="Horizontal"
                 >
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewKeyDown" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=searchTextBox,Path=Text}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
                 <TextBox 
                       x:Name="searchTextBox"
-                      KeyDown="SearchTextBox_KeyDown"
                       Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                       Width="200" FontSize="18" TextWrapping="Wrap" RenderTransformOrigin="0.1,0.616" AutomationProperties.HelpText="Begin entering name...."
                     >
@@ -127,7 +134,7 @@
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="PreviewKeyDown" >
                     <i:InvokeCommandAction 
-                        Command="{Binding ChangeIdCommand}"
+                        Command="{Binding GestureHandlerCommand}"
                         EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
                         EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
                     
@@ -135,7 +142,7 @@
 
                 <i:EventTrigger EventName="PreviewMouseDoubleClick" >
                     <i:InvokeCommandAction 
-                        Command="{Binding ChangeIdCommand}"
+                        Command="{Binding GestureHandlerCommand}"
                         EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
                         EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
 
@@ -143,7 +150,7 @@
 
                 <i:EventTrigger EventName="PreviewMouseRightButtonClick" >
                     <i:InvokeCommandAction 
-                        Command="{Binding ChangeIdCommand}"
+                        Command="{Binding GestureHandlerCommand}"
                         EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
                         EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
 
@@ -156,17 +163,6 @@
               Name="tvParameters"
               TreeViewItem.Selected="TreeView_Selected"  
              >
-
-                <!--<i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectedItemChanged" >
-                        <i:InvokeCommandAction 
-                            Command="{Binding ChangeIdCommand}"
-                            EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
-                            EventArgsConverterParameter="{Binding ElementName=tvParameters}" />
-
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>-->
-
                 <TreeView.Template>
                     <ControlTemplate>
                         <Border BorderBrush="{TemplateBinding BorderBrush}"  BorderThickness="{TemplateBinding BorderThickness}"  SnapsToDevicePixels="true">
