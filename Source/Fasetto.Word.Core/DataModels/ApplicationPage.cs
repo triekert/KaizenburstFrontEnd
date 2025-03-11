@@ -20,10 +20,15 @@
         /// </summary>
         Register = 2,
 
+        ///// <summary>
+        ///// The Finance Menu page
+        ///// </summary>
+        //Finance = 3,
+
         /// <summary>
         /// The Finance Menu page
         /// </summary>
-        Finance = 3,
+        Structure = 3,
 
         /// <summary>
         /// The Hierarchy page

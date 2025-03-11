@@ -506,7 +506,7 @@ namespace Fasetto.Word
                         //((HierarchyItemSelectionViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).Type).ClientID = mDraggedItem.FClientID;
                         ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).HierarchyTypeID = mDraggedItem.KCategoryID;
                         //var TempViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-                        ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+                        ViewModelApplication.CurrentPopupContent = 0;
                         ViewModelApplication.CurrentControlViewModel = ViewModelApplication.ControlParameter5;
 
                         ViewModelApplication.PopupVisible = true;

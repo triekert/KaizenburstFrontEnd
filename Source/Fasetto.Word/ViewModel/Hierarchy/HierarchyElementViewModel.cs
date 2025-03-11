@@ -134,6 +134,20 @@ namespace Fasetto.Word
         /// 
         public string HeadingText { get; set; }
 
+        /// <summary>
+        /// The action to run when exiting this method
+        /// Returns true if the commit was successful, or false otherwise.
+        /// </summary>
+        public Func<Task<bool>> CloseAction { get; set; }
+
+        /// <summary>
+        /// The action to run when a new hierarchy items is ready for storage
+        /// Returns true if the commit was successful, or false otherwise.
+        /// </summary>
+        public Func<Task<bool>> AddAction { get; set; }
+
+
+
         #region Transactional Properties
 
         /// <summary>
@@ -142,14 +156,14 @@ namespace Fasetto.Word
         public bool NodeSaving { get; set; }
 
             /// <summary>
-            /// Indicates if the first name is being saved
+            /// Indicates if the method is being exited
             /// </summary>
-            public bool FirstNameIsSaving { get; set; }
+            public bool ExitingSaving { get; set; }
 
             /// <summary>a
-            /// Indicates if the last name is current being saved
+            /// Indicates if the new hierararcht element is being added
             /// </summary>
-            public bool LastNameIsSaving { get; set; }
+            public bool AddSaving { get; set; }
 
             /// <summary>
             /// Indicates if the username is current being saved
@@ -229,10 +243,10 @@ namespace Fasetto.Word
         /// </summary>
         public HierarchyElementViewModel()
         {
-            //Enable the reverse navigation by storing the prior popup viewmodel
+            //Enable the reverse navigation by storing the prior popup view model
 
 
-            if (ViewModelApplication.CurrentPopupViewModel != null)
+            if (ViewModelApplication.CurrentPopupViewModel != null && ViewModelApplication.CurrentPopupViewModel.GetType().Name != "HierarchyElementViewModel")
             { 
                 PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
             }
@@ -344,7 +358,37 @@ namespace Fasetto.Word
         public void Close()
         {
             // Close settings menu
-            ViewModelApplication.PopupVisible = false;
+
+            var CVM = ViewModelApplication.CurrentPopupViewModel.GetType().Name;
+            if (((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel != null && ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel.GetType().Name == "HierarchyTreeViewModel")
+            {
+                ViewModelApplication.CurrentPopupViewModel = (HierarchyTreeViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+                ViewModelApplication.CurrentPopupContent = PopupContent.Hierarchy;
+            }
+            else
+            
+            if (((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel != null && ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel.GetType().Name == "HierarchyTreeViewModel1")
+            {
+
+                ViewModelApplication.CurrentPopupViewModel = (HierarchyTreeViewModel1)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+                ViewModelApplication.CurrentPopupContent = PopupContent.HierarchySelection;
+                //Process the selected cost category
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Save();
+            }
+            var result = default(bool);
+            RunCommandAsync(() => ExitingSaving, async () =>
+            {
+
+                // Try and do the work
+                result = CloseAction == null ? true : await CloseAction();
+
+            }).ContinueWith(t =>
+            {
+
+            });
+
+
+
 
         }
 
@@ -354,11 +398,11 @@ namespace Fasetto.Word
         public void AddNode()
         {
             // Close settings menu
+
             var CVM = ViewModelApplication.CurrentControlViewModel.GetType().Name;
 
             if (CVM == "HierarchyItemSelectionViewModel")
             {
-
                 var mViewModel = (HierarchyTreeViewModel1)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
                 var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
                 if (mElementViewModel.Description.OriginalText == null && mElementViewModel.Description.EditedText == "Description of New Element")
@@ -408,10 +452,10 @@ namespace Fasetto.Word
                         if (ViewModelApplication.ControlParameter1 != null)
                         {
                             //((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Category.EditedName = mElementViewModel.ShortName.EditedText;
-                            ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
-                            ViewModelApplication.ControlParameter1 = null;
-                            ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
-                            ViewModelApplication.PopupVisible = true;
+                            //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
+                            //ViewModelApplication.ControlParameter1 = null;
+                            //ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                            //ViewModelApplication.PopupVisible = true;
                         }
 
                     }
@@ -421,7 +465,7 @@ namespace Fasetto.Word
             else
             {
 
-                var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+                var mViewModel =  (HierarchyTreeViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
                 var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
                 if (mElementViewModel.Description.OriginalText == "Description of New Element" || mElementViewModel.Description.EditedText == "Description of New Element")
                 {
@@ -429,11 +473,11 @@ namespace Fasetto.Word
                     mElementViewModel.Description.OriginalText = null;
                 }
                 mViewModel.AddElement(mElementViewModel);
-                ViewModelApplication.PopupVisible = false;
+                //ViewModelApplication.PopupVisible = false;
 
             }
 
-
+            Close();
             
         }
 
@@ -444,10 +488,10 @@ namespace Fasetto.Word
         {
             // Close settings menu
             //var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel;
-            var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            var mViewModel = (HierarchyTreeViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mViewModel.EditElement(mElementViewModel);
-            ViewModelApplication.PopupVisible = false;
+            Close();
         }
 
 
@@ -457,13 +501,13 @@ namespace Fasetto.Word
         public void DeleteNode()
         {
             // Close settings menu
-            var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            var mViewModel = (HierarchyTreeViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             //Set discontinuation time to time of deletion
             mElementViewModel.DateDiscontinued = DateTime.Today; 
             mViewModel.DeleteElement(mElementViewModel);
 
-            ViewModelApplication.PopupVisible = false;
+            Close();
         }
 
         /// <summary>
@@ -472,7 +516,7 @@ namespace Fasetto.Word
         public void MoveNode()
         {
             // Close settings menu
-            var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            var mViewModel = (HierarchyTreeViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mViewModel.MoveElement(mElementViewModel);
             if (mElementViewModel.Description.OriginalText == "Description of New Element" && mElementViewModel.Description.EditedText == "Description of New Element")
@@ -480,7 +524,7 @@ namespace Fasetto.Word
                 mElementViewModel.Description.OriginalText = null;
                 mElementViewModel.Description.OriginalText = null;
             }
-            ViewModelApplication.PopupVisible = false;
+            Close();
         }
 
 
@@ -490,10 +534,10 @@ namespace Fasetto.Word
         public void CopyNode()
         {
             // Close settings menu
-            var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            var mViewModel = (HierarchyTreeViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mViewModel.CopyElement(mElementViewModel);
-            ViewModelApplication.PopupVisible = false;
+            Close();
         }
 
 

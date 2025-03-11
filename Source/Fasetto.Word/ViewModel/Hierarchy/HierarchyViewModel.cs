@@ -16,7 +16,7 @@ namespace Fasetto.Word
         //#region Data
 
         public readonly HierarchyViewModel mParent;
-        private readonly HierarchyDataModel mElement;
+        public HierarchyDataModel mElement;
         public ObservableCollection<HierarchyViewModel> mChildren;
         public bool mIsExpanded;
         public bool mIsSelected;
@@ -33,7 +33,7 @@ namespace Fasetto.Word
         public string ShortName => mElement.ShortName;
 
         /// <summary>
-        /// Description of hiearchy item
+        /// Description of hierarchy item
         /// </summary>
         public string Description =>mElement.Description;
         /// <summary>
@@ -51,7 +51,7 @@ namespace Fasetto.Word
         public string FClientID => mElement.FClientID;
 
         /// <summary>
-        /// Parent ID  of hiearchy item
+        /// Parent ID  of hierarchy item
         /// </summary>
         public string ParentCategoryID =>mElement.ParentCategoryID;
 

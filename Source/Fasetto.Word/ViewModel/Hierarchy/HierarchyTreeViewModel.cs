@@ -1,20 +1,18 @@
 ﻿
 using Dna;
 using Fasetto.Word.Core;
+using Fasetto.Word.Core.ApiModels.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
-using System.Windows.Controls;
-using System.Security.Cryptography;
-using System.Diagnostics;
-using Microsoft.ServiceHub.Resources;
-using System.Windows.Media;
 
 namespace Fasetto.Word
 {
@@ -39,6 +37,13 @@ namespace Fasetto.Word
         /// The HierarchyViewModel of the selected treeViewITem
         /// </summary>
         public HierarchyViewModel mSelectedTreeItem { get; set; }
+
+        /// <summary>
+        /// 
+        /// Store View Model of current ControlViewModel to allow reverse navigation
+        /// </summary>
+        public object PriorPopupViewModel { get; set; }
+
 
         #endregion
 
@@ -113,6 +118,10 @@ namespace Fasetto.Word
             //To Do: Add mTableName as parameter when calling HierarchyAsync to populate hierarchy
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             //ViewModelApplication.PopupVisible = false;
+            if (ViewModelApplication.CurrentPopupViewModel != null && (ViewModelApplication.CurrentPopupViewModel).GetType().Name == "HierarchyTreeViewModel")
+            {
+                PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            }
             TaskManager.RunAndForget(HierarchyAsync);
 
 
@@ -252,11 +261,12 @@ namespace Fasetto.Word
                     // We are done
                     return;
 
-                // OK successfully registered (and logged in)... now get aprpropriate tree view data
+                // OK successfully registered (and logged in)... now get appropriate tree view data
                 //for now; keep a snapshot of persisted data
                 mOriginal = result.ServerResponse.Response;
                 ;
                
+                //if ()
                 try
                 {
                     //var hierarchyResultApiModels = mOriginal.ToList();
@@ -410,9 +420,6 @@ namespace Fasetto.Word
 
             Category.IsSelected = true;
 
-          
-            
-           
             //Category.IsExpanded = false;
         }
 
@@ -582,13 +589,6 @@ namespace Fasetto.Word
             return;
 
         }
-
-
-
-
-
-
-
 
 
         /// <summary>
@@ -956,6 +956,7 @@ namespace Fasetto.Word
 
         public void Close()
         {
+            PersistHierarchyChangesAsync();
             // Close settings menu
             if (mTableName == "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0")
             {
@@ -970,7 +971,20 @@ namespace Fasetto.Word
                 ViewModelApplication.GoToPage(ApplicationPage.Chat);
             }
             else
-            { ViewModelApplication.PopupVisible = false; }
+            { 
+                if (ViewModelApplication.CurrentPopupViewModel != null && ViewModelApplication.CurrentPopupViewModel.GetType().Name =="HierarchyTreeViewModel" && ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel != null)
+                {
+                    ViewModelApplication.CurrentPopupViewModel = ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel; 
+                    ViewModelApplication.CurrentPopupContent = 0;
+                    ViewModelApplication.CurrentPopupContent = PopupContent.Hierarchy;
+
+                }
+                else 
+                {
+                    ViewModelApplication.CurrentPopupViewModel = null;
+                    ViewModelApplication.PopupVisible = false; 
+                }
+            }
 
 
             //// Close settings menu
@@ -1070,8 +1084,9 @@ namespace Fasetto.Word
                 var tmp1 = ((ContextualEventArgs)parameter).Context.GetType().Name;
 
 
+                if (ViewModelApplication.SideMenuVisible && ViewModelApplication.CurrentPopupViewModel == null)
+                //if (mTableName == "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0")
 
-                if (mTableName == "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0")
                 {
                     //if Gesture handler is triggered from Text Search Box...               
                     if (tmp1 == "String")
@@ -1109,6 +1124,7 @@ namespace Fasetto.Word
                     }
                 }
                 else
+                //enable editing of hierarchy menu structure
                 //if Gesture handler is triggered from Text Search Box...
                 //
 
@@ -1155,6 +1171,12 @@ namespace Fasetto.Word
                                 ((KeyEventArgs)tmp).Handled = true;
                                 DeleteHierarchyElement(mSelectedTreeItem);
                             }
+                            else
+                                    if (((KeyEventArgs)tmp).Key == Key.F2)
+                            {
+                                ((KeyEventArgs)tmp).Handled = true;
+                                NavigateElement(mSelectedTreeItem);
+                            }
                         }
                         //((KeyEventArgs)tmp).Handled = true;
                     }
@@ -1181,12 +1203,23 @@ namespace Fasetto.Word
         {
             //Prepopulate
             //Only allow one execution of  the function per event
-            if (!ViewModelApplication.SideMenuVisible)
+            //if (!ViewModelApplication.SideMenuVisible)
+            //    return;
+            if (mSelectedTreeItem == null || ((string)mSelectedTreeItem.Page).Length == 0) //|| mSelectedTreeItem.Children.Count > 0
                 return;
-;
-            if (mSelectedTreeItem == null || mSelectedTreeItem.Children.Count > 0 || ((string)mSelectedTreeItem.Page).Length == 0)
-                return;
-            ViewModelApplication.OpenMenu(mSelectedTreeItem.Root, mSelectedTreeItem.Page);
+            if (mSelectedTreeItem.Page == "Hierarchy")
+            {
+                var HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                {
+                    FHierarchyID = mSelectedTreeItem.Root,
+                };
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel((string)mSelectedTreeItem.Root);//root);
+                ViewModelApplication.CurrentPopupContent = 0;
+                ViewModelApplication.CurrentPopupContent = PopupContent.Hierarchy;
+                ViewModelApplication.PopupVisible = true;
+            }
+            else
+            { ViewModelApplication.OpenMenu(mSelectedTreeItem.Root, mSelectedTreeItem.Page); }
 
 
         //// Close settings menu
@@ -1199,49 +1232,77 @@ namespace Fasetto.Word
 
         }
 
-        /// <summary>
-        /// Use Popup view to edit existing Hiearchy Element
-        /// </summary>
-        private void EditHierarchyElement(HierarchyViewModel mDraggedItem)
-        {
 
-            //Prepopulate
-            if (mDraggedItem == null)
-                return;
-            var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-            mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
-            mAddElementViewModel.ShortName.EditedText = mDraggedItem.ShortName;
-            mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
-            mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
-            mAddElementViewModel.Page = mDraggedItem.Page;
-            mAddElementViewModel.Root.OriginalText = mDraggedItem.Root;
-            mAddElementViewModel.Root.EditedText = mDraggedItem.Root;
-            mAddElementViewModel.IsMenuItem = mDraggedItem.IsMenuItem;
-            mAddElementViewModel.ParentShortName = mDraggedItem.ParentShortName;
-            mAddElementViewModel.ParentCategoryID = mDraggedItem.ParentCategoryID;
-            mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
-            mAddElementViewModel.DateEffective = mDraggedItem.DateEffective;
-            mAddElementViewModel.DateDiscontinued = mDraggedItem.DateDiscontinued;
-            mAddElementViewModel.AddNodeButtonText = null;
-            mAddElementViewModel.EditNodeButtonText = "Update Selected Element";
-            mAddElementViewModel.DeleteNodeButtonText = null;
-            mAddElementViewModel.CopyNodeButtonText = null;
-            mAddElementViewModel.MoveNodeButtonText = null;
-            mAddElementViewModel.HeadingText = "Update Selected Element";
-            mAddElementViewModel.HierarchyType = mDraggedItem.HierarchyType;
-            mAddElementViewModel.HierarchyTypeID = mDraggedItem.HierarchyTypeID;
-            mAddElementViewModel.FHierarchyID = mDraggedItem.HierarchyTypeID;
-            mAddElementViewModel.Type.OriginalKid = mDraggedItem.HierarchyTypeID;
-            mAddElementViewModel.Type.OriginalName = mDraggedItem.HierarchyType;
-            mAddElementViewModel.Type.EditedKid = mDraggedItem.HierarchyTypeID;
-            mAddElementViewModel.Type.EditedName = mDraggedItem.HierarchyType;
-            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-            //ViewModelApplication.CurrentPopupViewModel = null;
-            //ViewModelApplication.CurrentPopupContent = PopupContent.SWBilling;
-            ////ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-            ViewModelApplication.PopupVisible = true;
-            //ViewModelApplication.SettingsMenuVisible = true;
+            /// <summary>
+            /// Navigate to next level in hierarchy if possible
+            /// </summary>
+            private void NavigateElement(HierarchyViewModel mDraggedItem)
+            {
+
+                //Prepopulate
+                if (mDraggedItem == null)
+                    return;
+            if (mDraggedItem.Root == "")
+                EditHierarchyElement(mDraggedItem);
+            else
+            //((HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel).mSelectedTreeItem.ShortName = "TEstinG";
+            {
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel(mDraggedItem.Root);
+                ViewModelApplication.CurrentPopupContent = 0;
+                ViewModelApplication.CurrentPopupContent = PopupContent.Hierarchy;
+            }
+            //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+
+            //RunSelectedMenu();
+
         }
+
+
+                /// <summary>
+                /// Use Popup view to edit existing Hierarchy Element
+                /// </summary>
+                private void EditHierarchyElement(HierarchyViewModel mDraggedItem)
+                {
+
+                    //Prepopulate
+                    if (mDraggedItem == null)
+                        return;
+                    ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+
+                    var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
+                    mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
+                    mAddElementViewModel.ShortName.EditedText = mDraggedItem.ShortName;
+                    mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
+                    mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
+                    mAddElementViewModel.Page = mDraggedItem.Page;
+                    mAddElementViewModel.Root.OriginalText = mDraggedItem.Root;
+                    mAddElementViewModel.Root.EditedText = mDraggedItem.Root;
+                    mAddElementViewModel.IsMenuItem = mDraggedItem.IsMenuItem;
+                    mAddElementViewModel.ParentShortName = mDraggedItem.ParentShortName;
+                    mAddElementViewModel.ParentCategoryID = mDraggedItem.ParentCategoryID;
+                    mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
+                    mAddElementViewModel.DateEffective = mDraggedItem.DateEffective;
+                    mAddElementViewModel.DateDiscontinued = mDraggedItem.DateDiscontinued;
+                    mAddElementViewModel.AddNodeButtonText = null;
+                    mAddElementViewModel.EditNodeButtonText = "Update Selected Element";
+                    mAddElementViewModel.DeleteNodeButtonText = null;
+                    mAddElementViewModel.CopyNodeButtonText = null;
+                    mAddElementViewModel.MoveNodeButtonText = null;
+                    mAddElementViewModel.HeadingText = "Update Selected Element";
+                    mAddElementViewModel.HierarchyType = mDraggedItem.HierarchyType;
+                    mAddElementViewModel.HierarchyTypeID = mDraggedItem.HierarchyTypeID;
+                    mAddElementViewModel.FHierarchyID = mDraggedItem.HierarchyTypeID;
+                    mAddElementViewModel.Type.OriginalKid = mDraggedItem.HierarchyTypeID;
+                    mAddElementViewModel.Type.OriginalName = mDraggedItem.HierarchyType;
+                    mAddElementViewModel.Type.EditedKid = mDraggedItem.HierarchyTypeID;
+                    mAddElementViewModel.Type.EditedName = mDraggedItem.HierarchyType;
+                    //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+                    //ViewModelApplication.CurrentPopupViewModel = null;
+                    //ViewModelApplication.CurrentPopupContent = PopupContent.SWBilling;
+                   
+                    ViewModelApplication.PopupVisible = true;
+                    //ViewModelApplication.SettingsMenuVisible = true;
+                }
 
         /// <summary>
         /// Use Popup View to add a Hierarchy Element
@@ -1249,10 +1310,9 @@ namespace Fasetto.Word
         private void AddHierarchyElement(HierarchyViewModel mDraggedItem)
         {
 
-            //var results = mHierarchyTree.mPersist.Where(x => x.KCategoryID == mDraggedItem.ParentCategoryID).OrderBy(x => x.ShortName).ToList();
-            //var mPage = "";
-            //if (results.Count > 0)
-            // mPage = results.FirstOrDefault().Page;
+            if (mDraggedItem == null)
+                return;
+            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             //var ParentNodeClient = results.FirstOrDefault().FClientID;
             var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mAddElementViewModel.ShortName.OriginalText = "New Element Name";
@@ -1298,6 +1358,7 @@ namespace Fasetto.Word
 
             if (mDraggedItem == null)
                 return;
+            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
             mAddElementViewModel.ShortName.EditedText = mDraggedItem.ShortName;
@@ -1337,6 +1398,10 @@ namespace Fasetto.Word
         {
             //Prepopulate
 
+            if (mDraggedItem == null)
+                return;
+            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+
             var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
             mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
@@ -1374,6 +1439,9 @@ namespace Fasetto.Word
         /// </summary>
         public void CopyHierarchyElement(HierarchyViewModel mDraggedItem, HierarchyViewModel mTarget)
         {
+            if (mDraggedItem == null)
+                return;
+            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             //Prepopulate
             var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
@@ -1415,7 +1483,7 @@ namespace Fasetto.Word
         public async Task PersistHierarchyChangesAsync()
         {
             await PersistHierarchyAsync();
-            Close();
+            //Close();
         }
         public async Task PersistHierarchyAsync()
         {

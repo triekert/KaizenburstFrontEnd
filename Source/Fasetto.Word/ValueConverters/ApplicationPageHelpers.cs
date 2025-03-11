@@ -28,8 +28,11 @@ namespace Fasetto.Word
                 case ApplicationPage.Chat:
                     return new ChatPage(viewModel as ChatMessageListViewModel);
 
-                case ApplicationPage.Finance:
-                    return new FinancePage(viewModel as FinancePageViewModel);
+                //case ApplicationPage.Finance:
+                //    return new StructurePage(viewModel as StructurePageViewModel);
+
+                case ApplicationPage.Structure:
+                    return new StructurePage(viewModel as StructurePageViewModel);
 
                 case ApplicationPage.Hierarchy:
                     return new HierarchyPage(viewModel as HierarchyPageViewModel);
@@ -84,8 +87,11 @@ namespace Fasetto.Word
             if (page is RegisterPage)
                 return ApplicationPage.Register;
 
-            if (page is FinancePage)
-                return ApplicationPage.Finance;
+            //if (page is StructurePage)
+            //    return ApplicationPage.Finance;
+
+            if (page is StructurePage)
+                return ApplicationPage.Structure;
 
             if (page is HierarchyPage)
                 return ApplicationPage.Hierarchy;

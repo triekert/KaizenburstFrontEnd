@@ -456,7 +456,7 @@ namespace Fasetto.Word
         /// </summary>
         public void Reconcile()
         {
-            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            ViewModelApplication.CurrentPopupContent = 0;
             ViewModelApplication.FClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid;
             ViewModelApplication.ClientShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedName;
             ViewModelApplication.FCostHierarchyID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid;
@@ -520,7 +520,7 @@ namespace Fasetto.Word
             return await RunCommandAsync(() => ReconcileInProgress, async () =>
             {
 
-                ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+                ViewModelApplication.CurrentPopupContent = 0;
                 ViewModelApplication.FClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid;
                 ViewModelApplication.ClientShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedName;
                 ViewModelApplication.FCostHierarchyID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid;
@@ -786,7 +786,7 @@ namespace Fasetto.Word
         // Close settings menu
         ViewModelApplication.SideMenuVisible = true;
             //ViewModelApplication.CurrentSideMenuViewModel = null;
-            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            ViewModelApplication.CurrentPopupContent = 0;
             ViewModelApplication.FClientID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedKid;
             ViewModelApplication.ClientShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedName;
             ViewModelApplication.FCostHierarchyID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid;

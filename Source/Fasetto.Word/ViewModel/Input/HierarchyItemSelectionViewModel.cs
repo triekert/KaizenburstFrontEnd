@@ -89,7 +89,7 @@ namespace Fasetto.Word
 
         /// <summary>
         /// The action to run when initiating the control.
-        /// Returns true if the prepaation was successful, or false otherwise.
+        /// Returns true if the preparation was successful, or false otherwise.
         /// </summary>
         public Func<Task<bool>> PrepareAction { get; set; }
 

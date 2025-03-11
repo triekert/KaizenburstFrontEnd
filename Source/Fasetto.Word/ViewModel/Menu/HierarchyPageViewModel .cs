@@ -1,7 +1,10 @@
 ﻿using Fasetto.Word.Core;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Fasetto.Word
 {
@@ -71,6 +74,12 @@ namespace Fasetto.Word
         public string DisplayTitle { get; set; }
 
         /// <summary>
+        /// The title of this chat list
+        /// </summary>
+        public string ClientSelect { get; set; }
+
+
+        /// <summary>
         /// True to show the attachment menu, false to hide it
         /// </summary>
         public bool AttachmentMenuVisible { get; set; }
@@ -134,6 +143,18 @@ namespace Fasetto.Word
             }
         }
 
+        /// <summary>
+        /// The Client for which Bulk Meter reconciliation is to be processed
+        /// </summary>
+        public HierarchyItemSelectionViewModel Client { get; set; }
+
+
+        /// <summary>
+        /// True to show the attachment menu, false to hide it
+        /// </summary>
+        public bool UpdateHierarchyCompleted { get; set; }
+
+
         #endregion
 
         #region Public Commands
@@ -186,6 +207,23 @@ namespace Fasetto.Word
             //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
             //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
             DisplayTitle = "Hierarchy Tree Management";
+
+            Client = new HierarchyItemSelectionViewModel
+            {
+                Label = "Select Client",
+                //EditedName = mLoadingText,
+                EditedName = "Selected Client",
+                OriginalName = "Root Client Organisation",
+                OriginalKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                EditedKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
+                CommitAction = UpdateClientSelectionAsync,
+                //CommitAction = SaveFirstNameAsync
+            };
+
+
+
+
             // Create commands
             AttachmentButtonCommand = new RelayCommand(AttachmentButton);
             PopupClickawayCommand = new RelayCommand(PopupClickaway);
@@ -195,6 +233,16 @@ namespace Fasetto.Word
             CloseSearchCommand = new RelayCommand(CloseSearch);
             ClearSearchCommand = new RelayCommand(ClearSearch);
 
+    //        ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(Test3, TimeStart.EditedDateTime,
+    //TimeEnd.EditedDateTime, "", "");
+    //        ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail: " + ShortName;
+    //        //force a reload of the BulkRecon Control
+    //        ViewModelApplication.CurrentPopupContent = 0;
+    //        ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;
+
+    //        ViewModelApplication.PopupVisible = true;
+
+            ClientSelect = null;
             // Make a default menu
             //AttachmentMenu = new ChatAttachmentPopupMenuViewModel();
         }
@@ -202,6 +250,29 @@ namespace Fasetto.Word
         #endregion
 
         #region Command Methods
+
+        public async Task<bool> UpdateClientSelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => UpdateHierarchyCompleted, async () =>
+            {
+                // Update the First Name value on the server...
+
+                //ViewModelApplication.FClientID = Client.EditedKid;
+                //ViewModelApplication.ClientShortName = Client.EditedName;
+                Client.OriginalName = Client.EditedName;
+                ViewModelApplication.PopupVisible = false;
+                ViewModelApplication.CurrentPopupViewModel = null;
+                ViewModelApplication.CurrentPopupContent = 0;
+                //
+                //PopulateAsync();
+
+                return true;
+            });
+
+        }
+
 
         /// <summary>
         /// When the attachment button is clicked show/hide the attachment pop-up

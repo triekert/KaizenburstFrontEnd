@@ -110,7 +110,7 @@ namespace Fasetto.Word
             foreach (var tT in Transaction.ItemsSource)
                 tempT.Add((TransactionViewModel)tT);
 
-            //var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
+            //var mTimeStart = tempBR.OrderBy(x => x.TimeSotStart).ToList().FirstOrDefault().TimeSlotStart;
             //var mTimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart.AddMinutes(30);
             //MessageBox.Show($" timeslot ends at {mTimeEnd}", $" The timeslot selected starts at {mTimeStart}");
         }

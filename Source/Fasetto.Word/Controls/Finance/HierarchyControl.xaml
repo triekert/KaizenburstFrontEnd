@@ -194,11 +194,11 @@
                         <Setter Property="FontWeight" Value="Normal" />
                         <EventSetter Event="DragOver"  Handler="TreeView_DragOver"/>
                         <EventSetter Event="Drop" Handler="TreeView_Drop"/>
-                        <EventSetter Event= "MouseDown" Handler="TreeView_MouseDown"/>
-                        <EventSetter Event="PreviewMouseLeftButtonDown" Handler="TreeView_PreviewMouseLeftButtonDown" />
-                        <EventSetter Event="KeyDown" Handler="TreeView_KeyBoard"/>
+                        <!--<EventSetter Event= "MouseDown" Handler="TreeView_MouseDown"/>-->
+                        <!--<EventSetter Event="PreviewMouseLeftButtonDown" Handler="TreeView_PreviewMouseLeftButtonDown" />-->
+                        <!--<EventSetter Event="KeyDown" Handler="TreeView_KeyBoard"/>-->
                         <EventSetter Event="MouseMove" Handler="TreeView_MouseMove"/>
-                        <EventSetter Event="MouseDoubleClick" Handler="TreeView_MouseDoubleClick"/>
+                        <!--<EventSetter Event="MouseDoubleClick" Handler="TreeView_MouseDoubleClick"/>-->
                         <!--<EventSetter Event="Selected" Handler="TreeViewSelectedItemChanged" />-->                        
                         <!--<EventSetter Event="MouseEnter" Handler="TreeView_MouseEnter"/>
                         <EventSetter Event="MouseLeave" Handler="TreeView_MouseLeave"/>-->

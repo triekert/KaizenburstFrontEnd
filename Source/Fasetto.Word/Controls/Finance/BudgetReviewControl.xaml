@@ -3,9 +3,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"               
              mc:Ignorable="d" 
              xmlns:local="clr-namespace:Fasetto.Word"             
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <local:ContextualEventArgsConverter x:Key="ContextualEventArgsConverter" />
+    </UserControl.Resources>    
     <DockPanel>
         <!-- SEARCH AREA -->
         <Border 
@@ -130,7 +134,7 @@
                 <!--<StackPanel Grid.IsSharedSizeScope="True" Orientation="Vertical">-->
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="10"/>
 
                         <!--<ColumnDefinition Width="150" />-->
                         <ColumnDefinition Width="220" />
@@ -153,89 +157,113 @@
 
         </Border>
         <ScrollViewer x:Name="scrollViewer"  Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="4" BorderThickness="2">
+            
+            
             <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewKeyDown" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="PreviewMouseDoubleClick" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="PreviewMouseRightButtonClick" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                    </i:EventTrigger>
+
+
+                </i:Interaction.Triggers>
 
 
 
+                <TreeView Grid.Row="1"
+                      ItemsSource="{Binding FirstGeneration}" 
+                      TreeViewItem.Selected="TreeView_Selected"            
+                      Name="tvParameters">
 
-                    <TreeView Grid.Row="1"
-                  ItemsSource="{Binding FirstGeneration}" 
-                  TreeViewItem.Selected="TreeView_Selected"            
-                  Name="tvParameters">
+                        <TreeView.Template>
+                            <ControlTemplate>
+                                <Border BorderBrush="{TemplateBinding BorderBrush}"  BorderThickness="{TemplateBinding BorderThickness}"  SnapsToDevicePixels="true">
 
-                    <TreeView.Template>
-                        <ControlTemplate>
-                            <Border BorderBrush="{TemplateBinding BorderBrush}"  BorderThickness="{TemplateBinding BorderThickness}"  SnapsToDevicePixels="true">
-                                <ItemsPresenter/>
+                                    <ItemsPresenter x:Name="ItemsPresenter" Grid.ColumnSpan="1" Grid.Column="1" Grid.Row="1" Margin="-5,0,0,0"/>
                             </Border>
-                        </ControlTemplate>
-                    </TreeView.Template>
+                            </ControlTemplate>
+                        </TreeView.Template>
 
                     <!--AllowDrop="True"  MouseDown="TreeView_MouseDown"  Drop="TreeView_Drop" MouseMove="TreeView_MouseMove">-->
 
-                    <TreeView.ItemContainerStyle>
-                        <!-- 
-                This Style binds a TreeViewItem to a HierarchyViewModel. 
-                -->
+                        <TreeView.ItemContainerStyle>
+                            <!-- 
+                    This Style binds a TreeViewItem to a HierarchyViewModel. 
+                    -->
                     
-                        <Style TargetType="{x:Type TreeViewItem}">
-                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                            <Setter Property="AllowDrop"  Value="True"/>
-                            <Setter Property="FontWeight" Value="Normal" />
-                            <EventSetter Event="DragOver"  Handler="TreeView_DragOver"/>
-                            <EventSetter Event="Drop" Handler="TreeView_Drop"/>
-                            <EventSetter Event= "MouseDown" Handler="TreeView_MouseDown"/>
-                            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="TreeView_PreviewMouseLeftButtonDown" />
-                            <EventSetter Event="KeyDown" Handler="TreeView_KeyBoard"/>
-                            <EventSetter Event="MouseMove" Handler="TreeView_MouseMove"/>
-                            <EventSetter Event="MouseDoubleClick" Handler="TreeView_MouseDoubleClick"/>
-                            <!--<EventSetter Event="MouseEnter" Handler="TreeView_MouseEnter"/>
-                            <EventSetter Event="MouseLeave" Handler="TreeView_MouseLeave"/>-->
-                            <Style.Triggers>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="FontWeight" Value="UltraBold" />
-                                    <Setter Property="Foreground" Value="Darkred"/>
-                                    <!--<Setter Property="Cursor" Value="Hand"/>-->
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TreeView.ItemContainerStyle>
+                            <Style TargetType="{x:Type TreeViewItem}">
+                                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                                <Setter Property="AllowDrop"  Value="True"/>
+                                <Setter Property="FontWeight" Value="Normal" />
+                                <EventSetter Event="DragOver"  Handler="TreeView_DragOver"/>
+                                <EventSetter Event="Drop" Handler="TreeView_Drop"/>
+                                <EventSetter Event= "MouseDown" Handler="TreeView_MouseDown"/>
+                                <EventSetter Event="PreviewMouseLeftButtonDown" Handler="TreeView_PreviewMouseLeftButtonDown" />
+                                <EventSetter Event="KeyDown" Handler="TreeView_KeyBoard"/>
+                                <EventSetter Event="MouseMove" Handler="TreeView_MouseMove"/>
+                                <EventSetter Event="MouseDoubleClick" Handler="TreeView_MouseDoubleClick"/>
+                                <!--<EventSetter Event="MouseEnter" Handler="TreeView_MouseEnter"/>
+                                <EventSetter Event="MouseLeave" Handler="TreeView_MouseLeave"/>-->
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="FontWeight" Value="UltraBold" />
+                                        <Setter Property="Foreground" Value="Darkred"/>
+                                        <!--<Setter Property="Cursor" Value="Hand"/>-->
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TreeView.ItemContainerStyle>
 
-                    <TreeView.ItemTemplate>
+                        <TreeView.ItemTemplate>
 
-                        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"  Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="50"/>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Children}"  >
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"  Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="220" />
+                                            <ColumnDefinition Width="220" />
+                                            <ColumnDefinition Width="220" />
+                                            <ColumnDefinition Width="220" />  
+                                        </Grid.ColumnDefinitions>
 
-                                        <!--<ColumnDefinition Width="150" />-->
-                                        <ColumnDefinition Width="200" />
-                                        <!--<ColumnDefinition Width="150"/>-->
-                                        <ColumnDefinition Width="200" />
-                                        <ColumnDefinition Width="200" />
-                                        <ColumnDefinition Width="200" />                                        
-                                    </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column ="1" Width="220"  HorizontalAlignment="Right"  TextWrapping="WrapWithOverflow" Text="{Binding ShortName}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                        <TextBlock  Grid.Column ="2" Width="220"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding BudgetAmount,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                        <TextBlock  Grid.Column ="3" Width="220"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding BudgetAmountDescendants,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                        <TextBlock  Grid.Column ="4" Width="220"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding BudgetAmountTotal,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
 
-
-
-                                    <TextBlock Grid.Column ="1" Width="200"  HorizontalAlignment="Right"  TextWrapping="WrapWithOverflow" Text="{Binding ShortName}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                                    <TextBlock  Grid.Column ="2" Width="200"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding BudgetAmount,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                                    <TextBlock  Grid.Column ="3" Width="200"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding BudgetAmountDescendants,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                                    <TextBlock  Grid.Column ="4" Width="200"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding BudgetAmountTotal,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-
-                                </Grid>
+                                    </Grid>
                         
-                            </StackPanel>
+                                </StackPanel>
           
-                         </HierarchicalDataTemplate>
-                    </TreeView.ItemTemplate>
+                             </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
                     </TreeView>
             
             <!--</StackPanel>-->

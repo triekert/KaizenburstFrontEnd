@@ -4,13 +4,15 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Fasetto.Word.Core;
+using Fasetto.Word.Core.ApiModels.Controls;
+using System.Threading.Tasks;
 
 namespace Fasetto.Word
 {
     /// <summary>
     /// A view model for a chat message thread list
     /// </summary>
-    public class FinancePageViewModel : BaseViewModel
+    public class StructurePageViewModel : BaseViewModel
     {
         #region Protected Members
 
@@ -63,14 +65,30 @@ namespace Fasetto.Word
         //}
 
         /// <summary>
-        /// The chat thread items for the list that include any search filtering
+        /// The Client for which Bulk Meter reconciliation is to be processed
         /// </summary>
-        //public ObservableCollection<ChatMessageListItemViewModel> FilteredItems { get; set; }
+        public HierarchyItemSelectionViewModel Client { get; set; }
+
+        /// <summary>
+        /// True to show the attachment menu, false to hide it
+        /// </summary>
+        public bool UpdateHierarchyCompleted { get; set; }
+
+
+        /// <summary>
+        /// True to show the attachment menu, false to hide it
+        /// </summary>
+        public bool SetHierarchyCompleted { get; set; }
 
         /// <summary>
         /// The title of this application page
         /// </summary>
         public string DisplayTitle { get; set; }
+
+        /// <summary>
+        /// Populate parameters for retrieval of required hierarchy tree
+        /// </summary>
+        public ParameterHierarchyItemSelectApiModel HierarchyParam { get; set; }
 
         /// <summary>
         /// True to show the attachment menu, false to hide it
@@ -182,37 +200,85 @@ namespace Fasetto.Word
         /// <summary>
         /// Default constructor
         /// </summary>
-        public FinancePageViewModel()
+        public StructurePageViewModel()
         {
             //Populate screen title
             //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
             //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
-            DisplayTitle = "Finance Management";
-            // Create commands
-            AttachmentButtonCommand = new RelayCommand(AttachmentButton);
-            PopupClickawayCommand = new RelayCommand(PopupClickaway);
-            SendCommand = new RelayCommand(Send);
-            SearchCommand = new RelayCommand(Search);
-            OpenSearchCommand = new RelayCommand(OpenSearch);
-            CloseSearchCommand = new RelayCommand(CloseSearch);
-            ClearSearchCommand = new RelayCommand(ClearSearch);
+            DisplayTitle = "Select relevant Client";
+            //BulkMeter = "5249FFEB-6907-46AA-9204-D4527E11F9CE";
 
-            // Make a default menu
-            //AttachmentMenu = new ChatAttachmentPopupMenuViewModel();
+            Client = new HierarchyItemSelectionViewModel
+            {
+                Label = "Select Client",
+                //EditedName = mLoadingText,
+                EditedName = "Selected Client",
+                OriginalName = "Root Client Organisation",
+                OriginalKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                EditedKid = "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
+                CommitAction = UpdateClientSelectionAsync,
+                PrepareAction = SetClientSelectionAsync,
+                //CommitAction = SaveFirstNameAsync
+            };
+
         }
 
         #endregion
 
         #region Command Methods
 
-        /// <summary>
-        /// When the attachment button is clicked show/hide the attachment pop-up
-        /// </summary>
-        public void AttachmentButton()
+
+        public async Task<bool> SetClientSelectionAsync()
         {
-            // Toggle menu visibility
-            AttachmentMenuVisible ^= true;
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the First Name value on the server...
+
+                //((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.ClientID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedKid;
+                //((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.RootID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.RootID;
+                ViewModelApplication.CurrentControlViewModel = ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
+                HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                {
+
+                    //ClientID = ViewModelApplication.FClientID,
+                    //Level = 1,
+                    //HierarchyTypeID = CostHierarchy.HierarchyTypeID
+                };
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
+                return true;
+            });
+
         }
+
+        ///<summary>
+        /// Update Client selection for current session
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> UpdateClientSelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => UpdateHierarchyCompleted, async () =>
+            {
+                // Update the First Name value on the server...
+
+                //ViewModelApplication.FClientID = Client.EditedKid;
+                //ViewModelApplication.ClientShortName = Client.EditedName;
+                Client.OriginalName = Client.EditedName;
+                ViewModelApplication.PopupVisible = false;
+                ViewModelApplication.CurrentPopupViewModel = null;
+                ViewModelApplication.CurrentPopupContent = 0;
+                //
+                //PopulateAsync();
+
+                return true;
+            });
+
+        }
+
 
         /// <summary>
         /// When the pop-up click away area is clicked hide any pop-ups

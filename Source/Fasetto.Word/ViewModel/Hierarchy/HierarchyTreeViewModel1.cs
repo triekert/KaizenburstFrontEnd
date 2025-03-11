@@ -77,16 +77,10 @@ namespace Fasetto.Word
         /// from persistent s
         public HierarchyTreeViewModel1(ParameterHierarchyItemSelectApiModel hierarchyparam)
         {
-
             #region Dummy Root HierarchyListDataModel
             ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
 
-
-
-
             mHDML = new HierarchyListDataModel();
-
-
             mHDM = new HierarchyDataModel
             {
                 KCategoryID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid,
@@ -904,6 +898,7 @@ namespace Fasetto.Word
         public void AddElement(HierarchyElementViewModel element)
         {
             mSearchText = element.KCategoryID;
+            ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
             //Gemerate GUID for root of new hierarchy element
             //var mRoot = element.Root.EditedText == element.Root.OriginalText ? Guid.NewGuid().ToString().ToUpper() : element.Root.EditedText;
             var mPersistElement = new HierarchyResultApiModel

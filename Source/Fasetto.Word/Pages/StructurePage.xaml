@@ -1,4 +1,6 @@
-﻿<local:BasePage x:TypeArguments="local:FinancePageViewModel" x:Class="Fasetto.Word.FinancePage"
+﻿<local:BasePage x:TypeArguments="local:StructurePageViewModel" x:Class="Fasetto.Word.StructurePage"
+                
+                
                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,7 +9,6 @@
                 mc:Ignorable="d" 
       x:Name="Page"
       d:DesignHeight="700" d:DesignWidth="700"
-      d:DataContext="{x:Static local:ChatMessageListDesignModel.Instance}"
       >
     <!-- -->
 
@@ -27,7 +28,7 @@
         </Grid.RowDefinitions>
 
         <!-- Popup Overlay -->
-        <Border Background="Transparent" 
+        <!--<Border Background="{DynamicResource ForegroundLightBrush}" 
                 Grid.RowSpan="2"
                 Panel.ZIndex="1"
                 Visibility="{Binding AnyPopupVisible, Converter={local:BooleanToVisiblityConverter}, ConverterParameter=True}"
@@ -35,59 +36,64 @@
             <Border.InputBindings>
                 <MouseBinding MouseAction="LeftClick" Command="{Binding PopupClickawayCommand}" />
             </Border.InputBindings>
-        </Border>
+        </Border>-->
 
         <!-- Title bar -->
-        <Grid Height="50">
+        <Grid Height="50" Visibility="{Binding ClientSelect, ConverterParameter=True, Converter={local:TextToVisiblityConverter}}">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-
             </Grid.ColumnDefinitions>
 
+            <local:HierarchyItemSelectionControl DataContext="{Binding Client}" FontWeight="ExtraBlack"  />
 
             <!-- Title text -->
-            <TextBlock Text="{Binding DisplayTitle}"
+            <!--<TextBlock Text="{Binding DisplayTitle}"
                        Foreground="{StaticResource ForegroundLightBrush}"
                        FontSize="{StaticResource FontSizeXLarge}"
                        FontFamily="{StaticResource LatoRegular}"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center" Margin="315,0,0,0"
-                       />
+                       />-->
 
             <!-- Main buttons -->
-            <StackPanel Orientation="Horizontal" Grid.Column="1">
+            <!--<StackPanel Orientation="Horizontal" Grid.Column="1">
 
-                <!-- Search Button -->
+                -->
+            <!-- Search Button -->
+            <!--
                 <Button Style="{StaticResource IconGrowButton}" 
                         Content="{StaticResource FontAwesomeSearchIcon}"
                         Command="{Binding OpenSearchCommand}"
                         />
 
                 <Button Style="{StaticResource IconGrowButton}" Content="{StaticResource FontAwesomeEllipsisVerticalIcon}" />
-            </StackPanel>
+            </StackPanel>-->
 
             <!-- Search Overlay -->
-            <Grid Grid.ColumnSpan="2"
+            <!--<Grid Grid.ColumnSpan="3"
                   local:AnimateSlideInFromRightMarginProperty.Value="{Binding SearchIsOpen}"
 
-                  >
-
-                <Grid.ColumnDefinitions>
+                  >-->
+            <!--local:AnimateSlideInFromRightMarginProperty.Value="{Binding SearchIsOpen}"-->
+            <!--<Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
+                <Border Background="{DynamicResource ForegroundLightBrush}"
+                            Grid.Row="1">
+                </Border>-->
 
-                <!-- Close search button -->
-                <Button Style="{StaticResource IconGrowButton}" 
+            <!-- Close search button -->
+            <!--<Button Style="{StaticResource IconGrowButton}" 
                         Content="{StaticResource FontAwesomeCloseIcon}"
                         Command="{Binding  CloseSearchCommand}"
-                        Foreground="{StaticResource WordOrangeBrush}"
-                        />
+                        Foreground="{DynamicResource WordOrangeBrush}"
+                        />-->
 
-                <!-- Search box -->
-                <TextBox 
+            <!-- Search box -->
+            <!--<TextBox 
                     Grid.Column="1" 
                     Tag="Search text..."
                     local:FocusProperty.Value="{Binding SearchIsOpen}"
@@ -96,26 +102,40 @@
                     FontSize="{StaticResource FontSizeRegular}"
                     >
                     <TextBox.InputBindings>
-                        <!-- Clear text on Esc -->
+                        -->
+            <!-- Clear text on Esc -->
+            <!--
                         <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc" />
-                        <!-- Search on enter -->
+                        -->
+            <!-- Search on enter -->
+            <!--
                         <KeyBinding Command="{Binding SearchCommand}" Key="Return" />
                     </TextBox.InputBindings>
-                </TextBox>
+                </TextBox>-->
 
 
-            </Grid>
+            <!--</Grid>-->
 
         </Grid>
 
-        <!-- Chat List -->
+        <!-- Hierarchy Tree-->
+
+
         <local:HierarchyControl 
+            Background="{DynamicResource ForegroundLightBrush}"
             x:Name="Hierarchy" 
-            Grid.Row="1" 
+            Grid.Row="1" Loaded="Hierarchy_Loaded" 
             />
 
+        <!--<local:MeterSelectionControl 
+            Background="{DynamicResource ForegroundLightBrush}"
+            x:Name="MeterSelection" 
+            Grid.Row="1" Loaded="MeterSelection_Loaded" Grid.ColumnSpan="3" 
+            />-->
+
         <!-- Attachment Menu Popup -->
-        <Border Grid.Row="1"
+        <!--<Border  Background="{DynamicResource ForegroundLightBrush}"
+               Grid.Row="1"
                 Panel.ZIndex="2"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Left"
@@ -123,51 +143,35 @@
 
             <local:BubbleContent DataContext="{Binding AttachmentMenu}" />
 
-        </Border>
+        </Border>-->
 
         <!-- Message Send Text box -->
         <Grid Grid.Row="2" 
+              Visibility="Visible"
               Panel.ZIndex="3"
-              MinHeight="50"
+              MinHeight="20"
               MaxHeight="114"
               Background="{StaticResource ForegroundLightBrush}"
               >
 
-            <Grid.ColumnDefinitions>
-                <!-- Attach button -->
+            <!--<Grid.ColumnDefinitions>
+                -->
+            <!-- Attach button -->
+            <!--
                 <ColumnDefinition Width="Auto" />
 
-                <!-- Text entry box -->
+                -->
+            <!-- Text entry box -->
+            <!--
                 <ColumnDefinition Width="*" />
 
-                <!-- Additional buttons -->
+                -->
+            <!-- Additional buttons -->
+            <!--
                 <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+            </Grid.ColumnDefinitions>-->
 
-            <!-- Attach button -->
-            <!--<Button Style="{StaticResource IconGrowButton}"
-                    Height="{Binding MinHeight, RelativeSource={RelativeSource AncestorType=Grid}}"
-                    Content="{StaticResource FontAwesomePaperclipIcon}"
-                    VerticalAlignment="Top"
-                    Command="{Binding AttachmentButtonCommand}"
-                    Foreground="{StaticResource ForegroundDarkBrush}"
-                    />-->
 
-            <!-- Message box -->
-            <!--<TextBox x:Name="MessageText"    
-                     Grid.Column="1" 
-                     Tag="Write a message..."
-                     local:IsFocusedProperty.Value="True"
-                     Text="{Binding PendingMessageText, UpdateSourceTrigger=PropertyChanged}"
-                     FontSize="{StaticResource FontSizeRegular}"
-                     VerticalAlignment="Center"
-                     BorderThickness="0"
-                     Padding="0 10 10 10"
-                     AcceptsReturn="True"
-                     AcceptsTab="True"
-                     VerticalScrollBarVisibility="Auto"
-                     PreviewKeyDown="MessageText_PreviewKeyDown"
-                     />-->
 
             <!-- Additional buttons -->
             <StackPanel Grid.Column="1"
@@ -185,7 +189,7 @@
                     />-->
 
                 <!-- Send button -->
-                <Button Content="Submit Changess"
+                <Button Content="Submit Changes"
                         Padding="8"
                         IsDefault="True"
                         Focusable="False"

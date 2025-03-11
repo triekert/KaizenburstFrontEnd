@@ -9,6 +9,7 @@
         /// Management of Hierarchy Element information
         /// </summary>
         AddElement = 1,
+
         /// <summary>
         /// A list of contacts
         /// </summary>
@@ -29,51 +30,40 @@
         /// </summary>
         Settings = 5,
 
-
         /// <summary>
         /// Detail meter readings for water recon
         /// </summary>
         BulkReconDetail = 6,
-
 
         /// <summary>
         /// Detail meter readings for water recon
         /// </summary>
         MissingMeters = 7,
 
-
         /// <summary>
         /// Popup for selection of BulkMeter and time range
         /// </summary>
         BulkMeterSelectionControl = 8,
-
 
         /// <summary>
         /// Detail meter readings for water recon
         /// </summary>
         BulkRecon = 9,
 
-
         /// <summary>
         /// Hierarchy Selection Control
         /// </summary>
         HierarchySelection = 10,
-
-
 
         /// <summary>
         ///Sewerage and Water Billing calculations
         /// </summary>
         SWBilling = 11,
 
-
-
         /// <summary>
         /// Adjustment to SW calculations
         /// </summary>
         SWAdjust = 12,
-
-
 
         /// <summary>
         /// Return transactions for selected period
@@ -130,6 +120,10 @@
         /// </summary>
         InvestmentReview = 23,
 
+        /// <summary>
+        /// Manage hierarchical structures for the system
+        /// </summary>
+        Hierarchy = 24,
     }
 
 

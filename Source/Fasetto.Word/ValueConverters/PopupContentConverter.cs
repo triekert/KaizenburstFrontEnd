@@ -101,6 +101,11 @@ namespace Fasetto.Word
                 case PopupContent.InvestmentReview:
                     var mInvestmentReviewControl = new StockHoldingAdjustControl();
                     return mInvestmentReviewControl;
+
+                case PopupContent.Hierarchy:
+                    var mHierarchyControl = new HierarchyControl();
+                    return mHierarchyControl;
+
                 // Unknown
                 default:
                     return "No UI yet, sorry :)";

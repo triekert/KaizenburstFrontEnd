@@ -9,16 +9,16 @@ using static Fasetto.Word.DI;
 namespace Fasetto.Word
 {
     /// <summary>
-    /// Interaction logic for FinancePage.xaml
+    /// Interaction logic for StructurePage.xaml
     /// </summary>
-    public partial class FinancePage : BasePage<FinancePageViewModel>
+    public partial class StructurePage : BasePage<StructurePageViewModel>
     {
         #region Constructor
 
         /// <summary>s
         /// Default constructor
         /// </summary>
-        public FinancePage() : base()
+        public StructurePage() : base()
         {
             InitializeComponent();
         }
@@ -27,7 +27,7 @@ namespace Fasetto.Word
         /// Constructor with specific view model
         /// </summary>
         /// <param name="specificViewModel">The specific view model to use for this page</param>
-        public FinancePage(FinancePageViewModel specificViewModel) : base(specificViewModel)
+        public StructurePage(StructurePageViewModel specificViewModel) : base(specificViewModel)
         {
             InitializeComponent();
         }
@@ -39,20 +39,20 @@ namespace Fasetto.Word
         /// <summary>
         /// Fired when the view model changes
         /// </summary>
-        protected override void OnViewModelChanged()
-        {
-            // Make sure UI exists first
-            if (Hierarchy == null)
-                return;
+        //protected override void OnViewModelChanged()
+        //{
+        //    // Make sure UI exists first
+        //    if (hi == null)
+        //        return;
 
-            // Fade in chat message list
-            var storyboard = new Storyboard();
-            storyboard.AddFadeIn(1, from: true);
-            storyboard.Begin(Hierarchy);
+        //    // Fade in chat message list
+        //    var storyboard = new Storyboard();
+        //    storyboard.AddFadeIn(1, from: true);
+        //    storyboard.Begin(Finance);
 
-            // Make the message box focused
-            //MessageText.Focus();
-        }
+        //    // Make the message box focused
+        //    //MessageText.Focus();
+        //}
 
         #endregion
 

@@ -2630,7 +2630,7 @@ namespace Fasetto.Word.Web.Server
                 #region sql query
                 var SqlString = "SELECT  c.[ShortName],coalesce(c.[Description],'') Description,coalesce(convert(nvarchar(50),c.[KCategoryID]),'') KCategoryID, coalesce(convert(nvarchar(50),c.[ParentCategoryID]),'') ParentCategoryID," +
                     "coalesce(convert(nvarchar(50),c.[fIconID]),'') Icon,coalesce(c.DateEffective,convert(datetime,'1753/1/1'))DateEffective,coalesce(c.DateDiscontinued,convert(datetime,'9999/12/31'))DateDiscontinued,coalesce(convert(nvarchar(50),c.[fChangeID]),'') fChangeID,c.[isUnderReview],c.[isNewElement]," +
-                    "coalesce(c.[Page],'') Page, coalesce(c.[Root],'') Root,p.[isMenuItem],coalesce(convert(nvarchar(50),t.[KCategoryID]),'') FHierarchyTypeID,coalesce(t.ShortName,'') HierarchyType, coalesce(convert(nvarchar(50),c.[FClientID]),'') FClientID FROM [Admin].[HierarchyGeneric] c LEFT OUTER JOIN  [Admin].[HierarchyGeneric] p on p.kCategoryID = c.ParentCategoryID AND p.fHierarchyID = c.fHierarchyID  " +
+                    "coalesce(c.[Page],'') Page, coalesce(c.[Root],'') Root,c.[isMenuItem],coalesce(convert(nvarchar(50),t.[KCategoryID]),'') FHierarchyTypeID,coalesce(t.ShortName,'') HierarchyType, coalesce(convert(nvarchar(50),c.[FClientID]),'') FClientID FROM [Admin].[HierarchyGeneric] c LEFT OUTER JOIN  [Admin].[HierarchyGeneric] p on p.kCategoryID = c.ParentCategoryID AND p.fHierarchyID = c.fHierarchyID  " +
                     "LEFT OUTER JOIN[Admin].[HierarchyGeneric] t on t.kCategoryID = c.fHierarchyTypeID WHERE c.fHierarchyID = " +
                     "'" + model + "'";
                     ;// " + model;

@@ -7,7 +7,6 @@
                 mc:Ignorable="d" 
       x:Name="Page"
       d:DesignHeight="700" d:DesignWidth="700"
-      d:DataContext="{x:Static local:ChatMessageListDesignModel.Instance}"
       >
     <!-- -->
 
@@ -38,14 +37,14 @@
         </Border>-->
 
         <!-- Title bar -->
-        <Grid Height="0">
+        <Grid Height="50" Visibility="{Binding ClientSelect, ConverterParameter=True, Converter={local:TextToVisiblityConverter}}">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-
             </Grid.ColumnDefinitions>
 
+            <local:HierarchyItemSelectionControl DataContext="{Binding Client}" FontWeight="ExtraBlack"  />
 
             <!-- Title text -->
             <!--<TextBlock Text="{Binding DisplayTitle}"
@@ -140,8 +139,9 @@
 
         <!-- Message Send Text box -->
         <Grid Grid.Row="2" 
+              Visibility="Visible"
               Panel.ZIndex="3"
-              MinHeight="50"
+              MinHeight="20"
               MaxHeight="114"
               Background="{StaticResource ForegroundLightBrush}"
               >
