@@ -372,6 +372,13 @@ namespace Fasetto.Word
 
                 ViewModelApplication.CurrentPopupViewModel = (HierarchyTreeViewModel1)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
                 ViewModelApplication.CurrentPopupContent = PopupContent.HierarchySelection;
+                //if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Cost Category")
+                //{
+                //    ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
+                //    ViewModelApplication.ControlParameter1 = null;
+                //    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                //    ViewModelApplication.PopupVisible = true;
+                //}
                 //Process the selected cost category
                 ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Save();
             }
@@ -398,51 +405,54 @@ namespace Fasetto.Word
         public void AddNode()
         {
             // Close settings menu
+            if (ViewModelApplication.CurrentControlViewModel != null)
+            { 
 
-            var CVM = ViewModelApplication.CurrentControlViewModel.GetType().Name;
+                var CVM = ViewModelApplication.CurrentControlViewModel.GetType().Name ?? "";
 
-            if (CVM == "HierarchyItemSelectionViewModel")
-            {
-                var mViewModel = (HierarchyTreeViewModel1)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
-                var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-                if (mElementViewModel.Description.OriginalText == null && mElementViewModel.Description.EditedText == "Description of New Element")
+                if (CVM == "HierarchyItemSelectionViewModel")
                 {
-                    mElementViewModel.Description.OriginalText = null;
-                    mElementViewModel.Description.OriginalText = null;
-                }
-                mViewModel.AddElement(mElementViewModel);
-
-                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid = mElementViewModel.KCategoryID;
-                //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid = mElementViewModel.KCategoryID;
-                //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalName = mElementViewModel.ShortName.EditedText;
-                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName = mElementViewModel.ShortName.EditedText;
-                //((HierarchyTreeViewModel1)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).;
-
-                if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Cost Category")
-                {
-                    ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Category.EditedKid = mElementViewModel.KCategoryID;
-                    ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Category.EditedName = mElementViewModel.ShortName.EditedText;
-                    //var tmp = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).PriorPopupViewModel).PriorPopupViewModel).Trans_actionRec;
-                    //var tmp1 = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).PriorPopupViewModel).PriorPopupViewModel).Trans_action[tmp];
-                    //((TransactionViewModel)tmp1).KCategoryID = mElementViewModel.KCategoryID;
-                    //((TransactionViewModel)tmp1).ShortName = mElementViewModel.ShortName.EditedText;
-
-                    ViewModelApplication.ControlPopupCostCategory = null;
-                }
-                else
-                {
-                    if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Linked Party")
+                    var mViewModel = (HierarchyTreeViewModel1)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+                    var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
+                    if (mElementViewModel.Description.OriginalText == null && mElementViewModel.Description.EditedText == "Description of New Element")
                     {
-                        ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Party.EditedKid = mElementViewModel.KCategoryID;
-                        ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Party.EditedName = mElementViewModel.ShortName.EditedText;
+                        mElementViewModel.Description.OriginalText = null;
+                        mElementViewModel.Description.OriginalText = null;
+                    }
+                    mViewModel.AddElement(mElementViewModel);
+
+                    ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid = mElementViewModel.KCategoryID;
+                    //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid = mElementViewModel.KCategoryID;
+                    //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalName = mElementViewModel.ShortName.EditedText;
+                    ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName = mElementViewModel.ShortName.EditedText;
+                    //((HierarchyTreeViewModel1)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).;
+
+                    if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Cost Category")
+                    {
+                        ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Category.EditedKid = mElementViewModel.KCategoryID;
+                        ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Category.EditedName = mElementViewModel.ShortName.EditedText;
                         //var tmp = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).PriorPopupViewModel).PriorPopupViewModel).Trans_actionRec;
                         //var tmp1 = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).PriorPopupViewModel).PriorPopupViewModel).Trans_action[tmp];
-                        //((TransactionViewModel)tmp1).KPartyID = mElementViewModel.KCategoryID;
-                        //((TransactionViewModel)tmp1).KPartyName = mElementViewModel.ShortName.EditedText;
-                        ViewModelApplication.ControlPopupParty = null;
+                        //((TransactionViewModel)tmp1).KCategoryID = mElementViewModel.KCategoryID;
+                        //((TransactionViewModel)tmp1).ShortName = mElementViewModel.ShortName.EditedText;
+
+                        ViewModelApplication.ControlPopupCostCategory = null;
                     }
+                    else
+                    {
+                        if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Linked Party")
+                        {
+                            ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Party.EditedKid = mElementViewModel.KCategoryID;
+                            ((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).Party.EditedName = mElementViewModel.ShortName.EditedText;
+                            //var tmp = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).PriorPopupViewModel).PriorPopupViewModel).Trans_actionRec;
+                            //var tmp1 = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.ControlParameter1).PriorPopupViewModel).PriorPopupViewModel).Trans_action[tmp];
+                            //((TransactionViewModel)tmp1).KPartyID = mElementViewModel.KCategoryID;
+                            //((TransactionViewModel)tmp1).KPartyName = mElementViewModel.ShortName.EditedText;
+                            ViewModelApplication.ControlPopupParty = null;
+                        }
 
 
+                    }
                 }
                 var Pgtype = ViewModelApplication.CurrentPageViewModel.GetType().Name;
                 if (ViewModelApplication.CurrentPopupViewModel == null || (ViewModelApplication.CurrentPopupViewModel.GetType().Name != "ManageClassificationViewModel"))

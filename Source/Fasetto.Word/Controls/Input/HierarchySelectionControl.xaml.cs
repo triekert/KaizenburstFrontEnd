@@ -330,6 +330,41 @@ namespace Fasetto.Word
             //e.Handled = true;
 
         }
+
+        /// <summary>
+        ///         /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TreeView_MouseEnter(object sender,  MouseEventArgs e)
+        {
+
+                        e.Handled = true;
+                //var item = GetNearestContainer(e.OriginalSource as UIElement);
+                //        mDraggedItemTest = (HierarchyViewModel)item.Header;
+                var TmpTmp = e.OriginalSource as UIElement;
+                var TmpTmpName = TmpTmp.GetType().Name;
+                //try
+                if (TmpTmp.GetType().Name == "TreeViewItem")
+                {
+                var item = e.OriginalSource as TreeViewItem;
+                var CategoryID = ((HierarchyViewModel)item.Header).KCategoryID;
+                 var Name = ((HierarchyViewModel)item.Header).ShortName;
+                //return;
+            }
+                //mSelectedTreeItem = (HierarchyViewModel)(((ContextualEventArgs)parameter).Context);
+
+            //    if (item != null)
+            //    {
+         
+
+            
+            //}
+
+         }
+
+
+
         /// <summary>
         /// Monitor keyboard for use of Insert key
         /// </summary>
@@ -384,9 +419,10 @@ namespace Fasetto.Word
         {
             var element = e.OriginalSource as FrameworkElement;
             // Figure out a relative position of the selected node to the scrollviewer
-            var relativePosition = element.TranslatePoint(new Point(0, 0), scrollViewer);
-            scrollViewer.ScrollToVerticalOffset(relativePosition.Y);
+            //var relativePosition = element.TranslatePoint(new Point(0, 0), scrollViewer);
+            //scrollViewer.ScrollToVerticalOffset(relativePosition.Y);
             element.BringIntoView();
+            element.Focus();
         }
 
         public void Close()

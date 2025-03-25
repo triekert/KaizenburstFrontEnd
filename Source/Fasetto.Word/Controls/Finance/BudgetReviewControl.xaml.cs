@@ -454,13 +454,22 @@ namespace Fasetto.Word
         /// </summary>
         /// <param name="sender">the selected treeview item</param>
         /// <param name="e"></param>
+        //private void TreeView_Selected(object sender, RoutedEventArgs e)
+        //{
+        //    var element = e.OriginalSource as FrameworkElement;
+        //    // Figure out a relative position of the selected node to the scrollviewer
+        //    var relativePosition = element.TranslatePoint(new Point(0, 0), scrollViewer);
+        //    scrollViewer.ScrollToVerticalOffset(relativePosition.Y);
+        //    element.BringIntoView();
+        //}
         private void TreeView_Selected(object sender, RoutedEventArgs e)
         {
             var element = e.OriginalSource as FrameworkElement;
             // Figure out a relative position of the selected node to the scrollviewer
-            var relativePosition = element.TranslatePoint(new Point(0, 0), scrollViewer);
-            scrollViewer.ScrollToVerticalOffset(relativePosition.Y);
+            //var relativePosition = element.TranslatePoint(new Point(0, 0), scrollViewer);
+            //scrollViewer.ScrollToVerticalOffset(relativePosition.Y);
             element.BringIntoView();
+            element.Focus();
         }
 
         public void Close()

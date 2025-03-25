@@ -89,8 +89,8 @@ namespace Fasetto.Word
             //"ItemsSource is a dependency property, so it's easy enough to be notified when the property is changed to something else"
             //ItemsControl Represents a control that can be used to present a collection of items, ItemsSourceProperty is a dependency property which 
             //check this out
-            var dpd = DependencyPropertyDescriptor.FromProperty(ItemsControl.ItemsSourceProperty, typeof(DataGrid));
-            dpd?.AddValueChanged(Transaction, ItemsPropertyIsChanged);
+            //var dpd = DependencyPropertyDescriptor.FromProperty(ItemsControl.ItemsSourceProperty, typeof(DataGrid));
+            //dpd?.AddValueChanged(Transaction, ItemsPropertyIsChanged);
 
         }
 
@@ -113,15 +113,15 @@ namespace Fasetto.Word
             //MessageBox.Show($"The timeslot selected is {TransactionRec.TimeSlotStart}", $"The timeslot selected is {TransactionRec.TimeSlotStart}");
         }
 
-        private void TreeView_KeyBoard(object sender, KeyboardEventArgs e)
-        {
-            //check to determine whether user would like to add an item to the hierarchy
+        //private void TreeView_KeyBoard(object sender, KeyboardEventArgs e)
+        //{
+        //    //check to determine whether user would like to add an item to the hierarchy
 
-            if (Keyboard.IsKeyDown(Key.Escape))
-            { }
+        //    if (Keyboard.IsKeyDown(Key.Escape))
+        //    { }
 
                
-        }
+        //}
 
 
 
@@ -410,6 +410,7 @@ namespace Fasetto.Word
 
             }
             else
+            if (Merge.Count == 1)
             { 
                 ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec = Transaction.SelectedIndex;
 

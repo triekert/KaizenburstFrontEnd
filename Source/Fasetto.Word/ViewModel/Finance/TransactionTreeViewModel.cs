@@ -6,10 +6,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
+using System.Windows.Controls;
 
 namespace Fasetto.Word
 {
@@ -27,7 +29,7 @@ namespace Fasetto.Word
         /// <summary>
         /// A set of Bulk Meter Recon records for the selected period
         /// </summary>
-        public ObservableCollection<TransactionViewModel>Trans_action{ get; set; }
+        public ObservableCollection<TransactionViewModel> Trans_action { get; set; }
         public ObservableCollection<TransactionViewModel> OrgTransaction { get; set; }
         public ObservableCollection<TransactionViewModel> MPersist { get; set; }
 
@@ -50,7 +52,7 @@ namespace Fasetto.Word
         public TransactionListDataModel mTDML;
 
         public TransactionResultListApiModel mChange;
-  
+
         public TransactionViewModel mTVM;
         public ParameterTransactionApiModel mRequest;
         public string mClient;
@@ -66,7 +68,7 @@ namespace Fasetto.Word
         //    MatchingCategoryEnumerator = matchingCategoryEnumerator;
         //}
 
-         private string mSearchText = "", mSearchKCategoryID = string.Empty, mParentCategoryID = string.Empty;
+        private string mSearchText = "", mSearchKCategoryID = string.Empty, mParentCategoryID = string.Empty;
 
         #endregion // Data
         #region Public Commands
@@ -75,6 +77,10 @@ namespace Fasetto.Word
         /// </summary>
         public ICommand CloseCommand { get; set; }
         #endregion//Public Commands
+        public ICommand GestureHandlerCommand { get; set; }
+
+        //public ActionCommand<DragEventArgs> DropCommand { get; private set; }
+
 
         #region Constructor
         /// <summary>
@@ -86,7 +92,7 @@ namespace Fasetto.Word
         /// <param name="hierarchyTable"></param>
         /// The hierarchyTable passed through as a parameter identifies the specific hierarchy set to be retrieved
         /// from persistent s
-        public TransactionTreeViewModel(string client, DateTime timeStart, DateTime timeEnd, string category,string budget)
+        public TransactionTreeViewModel(string client, DateTime timeStart, DateTime timeEnd, string category, string budget)
         {
             #region Build HierarchyViewCollection
 
@@ -109,7 +115,7 @@ namespace Fasetto.Word
             Trans_action.Add(mTVM);
 
             mRequest = new ParameterTransactionApiModel
-            { 
+            {
                 Client = client,
                 MonthStart = int.Parse(timeStart.ToString("yyyyMMdd")),
                 MonthEnd = int.Parse(timeEnd.ToString("yyyyMMdd")),
@@ -133,8 +139,9 @@ namespace Fasetto.Word
 
 
             //UpdateTreeViewElements();
-            
+
             CloseCommand = new RelayCommand(Close);
+            GestureHandlerCommand = new DelegateCommand<ContextualEventArgs>(GestureHandler);
             //mSearchCommand = new SearchCategoryTreeCommand(this);
         }
 
@@ -253,7 +260,7 @@ namespace Fasetto.Word
                 //mOriginal = result.ServerResponse.Response;
 
                 ;
-               
+
                 try
                 {
                     //var hierarchyResultApiModels = mOriginal.ToList();
@@ -308,7 +315,7 @@ namespace Fasetto.Word
 
                         //Lock collection to prevent contention with UI
 
-                            MPersist.Add(mTVM);
+                        MPersist.Add(mTVM);
                     }
 
 
@@ -316,14 +323,14 @@ namespace Fasetto.Word
                     //Clone(Trans_action, OrgTransaction);
 
                     Trans_actionRec = 0;
-                    
+
                     //if (Trans_action.Count != mPersist.Count)
                     //{ 
                     //};
 
 
                 }
-                 catch (Exception e)
+                catch (Exception e)
                 {
                     throw e;
                 }
@@ -358,14 +365,14 @@ namespace Fasetto.Word
 
         //#endregion // Properties
 
-        
+
 
         #region Search Logic //KCategoryID
         public IEnumerator<TransactionViewModel> MatchingKCategoryEnumerator { get; private set; }
 
         #endregion // SearchKCategoryID
 
- 
+
 
         public void Close()
         {
@@ -379,18 +386,18 @@ namespace Fasetto.Word
 
 
 
-            if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel" ||ViewModelApplication.CurrentPageViewModel.GetType().Name == "ExpenditureVSBudgetPageViewModel")
+            if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel" || ViewModelApplication.CurrentPageViewModel.GetType().Name == "ExpenditureVSBudgetPageViewModel")
             {
                 if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel")
-                { 
-                ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;
-                ViewModelApplication.CurrentPopupContent = PopupContent.BudgetReview;
-                ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;// ((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
-                ViewModelApplication.PopupVisible = true;
+                {
+                    ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;
+                    ViewModelApplication.CurrentPopupContent = PopupContent.BudgetReview;
+                    ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;// ((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+                    ViewModelApplication.PopupVisible = true;
                 }
                 else
-                { 
-                ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;
+                {
+                    ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;
                     if (ViewModelApplication.CurrentPopupViewModel.GetType().Name == "ExpenditureAdjustViewModel")
 
                     {
@@ -398,12 +405,12 @@ namespace Fasetto.Word
                         ViewModelApplication.CurrentPopupContent = PopupContent.ExpenditureAdjust;
                         ViewModelApplication.PopupVisible = true;
                     }
-                    else { 
+                    else {
 
-                            ViewModelApplication.CurrentPopupContent = PopupContent.ExpenditureReview;
-                            ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;// ((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
-                            ViewModelApplication.PopupVisible = true;
-                          }
+                        ViewModelApplication.CurrentPopupContent = PopupContent.ExpenditureReview;
+                        ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;// ((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+                        ViewModelApplication.PopupVisible = true;
+                    }
                 }
             }
             else
@@ -472,11 +479,11 @@ namespace Fasetto.Word
         /// This function allows the addition of an TransactionViewModel to the Trans_action collection
         /// </summary>
         /// <param name="item"></param>
-        public void AddItem( TransactionViewModel item)
+        public void AddItem(TransactionViewModel item)
         {
             lock (mStocksLock)
             {
-               Trans_action.Add(item);
+                Trans_action.Add(item);
 
             }
         }
@@ -588,11 +595,344 @@ namespace Fasetto.Word
                 AddItem(mTVM);
 
             }
-
-
         }
+
+
+        //Interpret Keyboard Gestures
+        public void GestureHandler(object parameter)
+        {
+            var tmp = ((ContextualEventArgs)parameter).OriginalEventArgs;
+            var eventTmp = tmp.GetType().Name;
+            if (eventTmp == "MouseEventArgs" && ((MouseEventArgs)tmp).RoutedEvent.Name == "PreviewMouseMove")
+            {
+                var TmpTmp = ((MouseEventArgs)tmp).OriginalSource as UIElement;
+                //try
+                //{
+                //    var item = GetNearestContainer(((MouseEventArgs)tmp).OriginalSource as UIElement);
+                //    //mDraggedItemTest = (HierarchyViewModel)item.Header;
+                //    if (((MouseEventArgs)tmp).LeftButton == MouseButtonState.Pressed)
+                //    {
+                //        var isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                //        var currentPosition = ((MouseEventArgs)tmp).GetPosition(item);
+
+                //        //Check for dragging of treeview item
+                //        if ((Math.Abs(currentPosition.X - mLastMouseDown.X) > 10.0) ||
+                //            (Math.Abs(currentPosition.Y - mLastMouseDown.Y) > 10.0))
+                //        {
+
+                //            var mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
+                //            mLastMouseDown = currentPosition;
+                //            //mSourceCategoryName = mDraggedItem.ShortName;
+                //            //draggedItem = (TreeViewItem)tvParameters.SelectedItem;
+                //            //mSource = (TreeViewItem)tvParameters.SelectedItem;
+                //            if (mDraggedItem != null)
+                //            {
+                //                //mTarget = null;//ensure target is reset
+                //                if (!isCtrl)
+                //                {
+
+                //                    var finalDropEffect = DragDrop.DoDragDrop(tvParameters, tvParameters.SelectedValue,
+                //                      DragDropEffects.Move);
+                //                    //Checking target is not null and item is dragging(moving)
+                //                    if ((finalDropEffect == DragDropEffects.Move) && (mTarget != null))
+                //                    {
+                //                        // A Move drop was accepted
+                //                        //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
+                //                        //{
+                //                        MoveHierarchyElement();// MoveItem();
+                //                        mTargetT = null;
+                //                        mSource = null;
+                //                        //}
+
+                //                    }
+                //                }
+                //                else
+                //                {
+                //                    var finalDropEffect = DragDrop.DoDragDrop(tvParameters, tvParameters.SelectedValue,
+                //                      DragDropEffects.Copy);
+                //                    if ((finalDropEffect == DragDropEffects.Copy) && (mTarget != null))
+                //                    {
+                //                        // A Copy drop was accepted
+                //                        //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
+                //                        //{
+                //                        CopyHierarchyElement();// CopyItem();
+                //                        mTargetT = null;
+                //                        mSource = null;
+                //                        //}
+
+                //                    }
+                //                }
+
+
+
+                //            }
+                //        }
+                //    }
+
+                //}
+                //catch (Exception)
+                //{
+                //}
+
+
+
+                ((MouseEventArgs)tmp).Handled = true;
+            }
+            else
+            {
+                var tmp1 = ((ContextualEventArgs)parameter).Context.GetType().Name;
+
+
+                if (ViewModelApplication.SideMenuVisible && ViewModelApplication.CurrentPopupViewModel == null)
+                //if (mTableName == "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0")
+
+                {
+                    //if Gesture handler is triggered from Text Search Box...               
+                    if (tmp1 == "String")
+                    {
+                        SearchText = SearchText;
+                        if (((KeyEventArgs)tmp).Key == Key.Enter)
+                        { }
+                        //((KeyEventArgs)tmp).Handled = true;
+                        //{ SearchCommand.Execute(null); }
+                    }
+                    else
+                    {
+
+                        //mSelectedTreeItem = (HierarchyViewModel)(((ContextualEventArgs)parameter).Context);
+                        //ViewModelApplication.SideMenuVisible = true;
+
+                        if (eventTmp == "MouseButtonEventArgs")
+                        {
+                            if ((((MouseButtonEventArgs)tmp).RightButton == MouseButtonState.Pressed) || (((MouseButtonEventArgs)tmp).LeftButton == MouseButtonState.Pressed))
+                            {
+                                ((MouseButtonEventArgs)tmp).Handled = true;
+                                //RunSelectedMenu();
+                            }
+                        }
+                        else
+                        if (eventTmp == "KeyEventArgs")
+                        {
+                            if ((((KeyEventArgs)tmp).Key == Key.Enter) || (((KeyEventArgs)tmp).Key == Key.Insert) || (((KeyEventArgs)tmp).Key == Key.Delete))
+                            {
+                                ((KeyEventArgs)tmp).Handled = true;
+                                //RunSelectedMenu();
+                            }
+                            ((KeyEventArgs)tmp).Handled = true;
+                        }
+                        //}
+                    }
+                }
+                else
+                //enable editing of hierarchy menu structure
+                //if Gesture handler is triggered from Text Search Box...
+                //
+
+                {
+
+                    if (tmp1 == "String")
+                    {
+                        SearchText = SearchText;
+                        if (((KeyEventArgs)tmp).Key == Key.Enter)
+                        { }
+                        //((KeyEventArgs)tmp).Handled = true;
+                        //{ SearchCommand.Execute(null); }
+                    }
+                    else
+                    {
+                        //mSelectedTreeItem = (HierarchyViewModel)(((ContextualEventArgs)parameter).Context);
+                        //ViewModelApplication.SideMenuVisible = true;
+                        if (eventTmp == "MouseButtonEventArgs")
+                        {
+                            if ((((MouseButtonEventArgs)tmp).RightButton == MouseButtonState.Pressed) || (((MouseButtonEventArgs)tmp).LeftButton == MouseButtonState.Pressed))
+                            {
+                                ((MouseButtonEventArgs)tmp).Handled = true;
+                                //EditHierarchyElement(mSelectedTreeItem);
+                            }
+                        }
+                        else
+                        if (eventTmp == "KeyEventArgs")
+
+                        //Edit element
+                        {
+
+
+                            var Transaction = ((KeyEventArgs)tmp).Source as DataGrid;
+                            //var ttype = Transaction.GetType().Name;
+                            if (((KeyEventArgs)tmp).Key == Key.Enter)
+                            {
+
+                                //((KeyEventArgs)tmp).Handled = true;
+                                NavigateOnAsync(Transaction);
+                                //EditHierarchyElement(mSelectedTreeItem);
+                            }
+                            else
+                                if (((KeyEventArgs)tmp).Key == Key.Insert)
+                            {
+                                ((KeyEventArgs)tmp).Handled = true;
+                                //AddHierarchyElement(mSelectedTreeItem);
+                            }
+                            else
+                                    if (((KeyEventArgs)tmp).Key == Key.Delete)
+                            {
+                                ((KeyEventArgs)tmp).Handled = true;
+                                //DeleteHierarchyElement(mSelectedTreeItem);
+                            }
+                            else
+                                    if (((KeyEventArgs)tmp).Key == Key.F2)
+                            {
+                                ((KeyEventArgs)tmp).Handled = true;
+                                //NavigateElement(mSelectedTreeItem);
+                            }
+                        }
+                        //((KeyEventArgs)tmp).Handled = true;
+                    }
+
+                }
+            }
+        }
+
+
+    //}
+    private async void NavigateOnAsync(DataGrid Transaction)
+        {
+
+            var MKFinTranID = ((TransactionViewModel)Transaction.SelectedItem).KFinTranID;
+            var RawTable = Transaction.Items;
+            var Merge = Transaction.SelectedItems;
+
+            if (Merge.Count == 2)
+            {
+                //If 2 items have been selected, merge the first transaction with the second,moving all the allocations from the second to the first
+                //and deleting the second transaction thereafter
+                //var matches = Merge.
+                if (((TransactionViewModel)Merge[0]).TransAmount != ((TransactionViewModel)Merge[1]).TransAmount || ((TransactionViewModel)Merge[0]).KAccountID != ((TransactionViewModel)Merge[1]).KAccountID)
+                {
+                    //if transaction totals differ, or if the account is different, they cannot be merged
+                    System.Windows.MessageBox.Show($"Only transactions having the same transaction value and Account Name may be merged!");
+                    return;
+                }
+                //Confirm with user that 2 transactions are to be merged irreversibly...
+
+                if (MessageBox.Show("Merging of Transactions - Irreversible!", "Confirm",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+
+
+                    foreach (var item in Merge)
+                    {
+                        var u = new TransactionResultApiModel
+                        {
+                            Posted_Date = ((TransactionViewModel)item).Posted_Date,
+                            Month = ((TransactionViewModel)item).Month,
+                            Description = ((TransactionViewModel)item).Description,
+                            TransAmount = ((TransactionViewModel)item).TransAmount,
+                            ActualAmount = ((TransactionViewModel)item).ActualAmount,
+                            ShortName = ((TransactionViewModel)item).ShortName,
+                            KCategoryID = ((TransactionViewModel)item).KCategoryID,
+                            KFinActualID = ((TransactionViewModel)item).KFinActualID,
+                            KFinTranID = ((TransactionViewModel)item).KFinTranID,
+                            KPartyName = ((TransactionViewModel)item).KPartyName,
+                            KPartyID = ((TransactionViewModel)item).KPartyID,
+                            FCatSrchID = ((TransactionViewModel)item).FCatSrchID,
+                            KHierarchyID = ((TransactionViewModel)item).KHierarchyID,
+                            KAccountID = ((TransactionViewModel)item).KAccountID,
+                            KAccountName = ((TransactionViewModel)item).KAccountName,
+                            Notes = ((TransactionViewModel)item).Notes,
+                            Units = ((TransactionViewModel)item).Units,
+                            ChangeType = "m",
+                            KClientID = ((TransactionViewModel)item).KClientID,
+                        };
+
+                        ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mChange.Add(u);
+                    }
+                    await ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PersistTransClassAsync();
+                    ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mChange.Clear();
+
+
+                }
+                else
+                {
+                    return;
+                }
+
+            }
+            else
+            if (Merge.Count == 1)
+            {
+                ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec = Transaction.SelectedIndex;
+
+                ViewModelApplication.PopupVisible = false;
+
+                ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(MKFinTranID);
+                ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Allocation ";
+
+                //If only one allocation linked to the Transaction, bypass the 'detail' window...
+
+                if (((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransactionDetail.Count > 1)
+                {                 //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+                    ViewModelApplication.PopupVisible = false;
+                    //ViewModelApplication.CurrentPopupContent = Null;
+                    ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+                    ViewModelApplication.PopupVisible = true;
+                }
+                else
+                {            //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+                    ViewModelApplication.PopupVisible = false;
+                    //ViewModelApplication.CurrentPopupContent = Null;
+                    ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+
+                    var MSelected = new TransactionViewModel();
+
+                    var TransactionDetail = new ObservableCollection<TransactionViewModel>();
+                    //(TransactionViewModel)(TransactionDetail.SelectedItem;
+                    var matches = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).Trans_action.Where(x => x.KFinTranID == MKFinTranID).ToList();
+
+                    foreach (var item in matches)
+                    {
+
+                        var mTDVM = new TransactionViewModel
+
+                        {
+                            Posted_Date = item.Posted_Date,
+                            Month = item.Month,
+                            Description = item.Description,
+                            TransAmount = item.TransAmount,
+                            ActualAmount = item.ActualAmount,
+                            ShortName = item.ShortName,
+                            KCategoryID = item.KCategoryID,
+                            KFinActualID = item.KFinActualID,
+                            KFinTranID = item.KFinTranID,
+                            KPartyName = item.KPartyName,
+                            KPartyID = item.KPartyID,
+                            FCatSrchID = item.FCatSrchID,
+                            KHierarchyID = item.KHierarchyID,
+                            KAccountID = item.KAccountID,
+                            KAccountName = item.KAccountName,
+                            Notes = item.Notes,
+                            Units = item.Units,
+                            KClientID = item.KClientID,
+                        };
+                        TransactionDetail.Add(mTDVM);
+                    }
+
+
+                    //var RawTable = ((ObservableCollection<TransactionViewModel>)((TransactionDetailTreeViewModel)(ViewModelApplication.CurrentPopupViewModel)).TransactionDetail).Items;
+                    var tempTDList = new ObservableCollection<TransactionViewModel>();
+                    foreach (var tBR in RawTable)
+                        tempTDList.Add((TransactionViewModel)tBR);
+                    ViewModelApplication.CurrentPopupViewModel = new ManageClassificationViewModel(TransactionDetail, TransactionDetail[0]);
+
+                    //ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+                    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    ViewModelApplication.PopupVisible = true;
+
+                }
+            }
+        }
+
 
     }
 
-
-}
+    }

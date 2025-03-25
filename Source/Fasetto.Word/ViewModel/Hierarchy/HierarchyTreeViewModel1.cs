@@ -6,9 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
 
@@ -31,9 +34,13 @@ namespace Fasetto.Word
         public ObservableCollection<HierarchyViewModel> FirstGeneration { get; set; }
 
 
-        //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
 
-        #endregion
+        /// <summary>
+        /// The HierarchyViewModel of the selected treeViewITem
+        /// </summary>
+        public HierarchyViewModel mSelectedTreeItem { get; set; }
+
+        #endregion Public Properties
 
         #region Data
 
@@ -47,6 +54,10 @@ namespace Fasetto.Word
         public ParameterHierarchyItemSelectApiModel mHierarchy;
         public HierarchyElementViewModel mElement;
         public string mTableName;
+        /// <summary>
+        /// Use Popup View to add a Hierarchy Element
+        /// </summary>
+
 
         //IEnumerator<HierarchyManagementViewModel> mMatchingCategoryEnumerator;
 
@@ -63,6 +74,14 @@ namespace Fasetto.Word
         /// The command to close the settings menu
         /// </summary>
         public ICommand CloseCommand { get; set; }
+
+
+        /// <summary>
+        /// The command to process keyboard stroke in Menu Control
+        /// </summary>
+        public ICommand GestureHandlerCommand { get; set; }
+
+
         #endregion//Public Commands
 
         #region Constructor
@@ -122,6 +141,7 @@ namespace Fasetto.Word
             UpdateTreeViewElements();
             CloseCommand = new RelayCommand(Close);
             mSearchCommand = new SearchCategoryTreeCommand(this);
+            GestureHandlerCommand = new DelegateCommand<ContextualEventArgs>(GestureHandler);
         }
 
         private void UpdateTreeViewElements()
@@ -446,20 +466,45 @@ namespace Fasetto.Word
 
         #region Search Logic -Short Name
 
+        //public void PerformSearch()
+        //{
+        //    if (MatchingCategoryEnumerator == null || !MatchingCategoryEnumerator.MoveNext())
+        //        VerifyMatchingCategoryEnumerator();
+        //    if (MatchingCategoryEnumerator == null)
+        //        return;
+        //    var Category = MatchingCategoryEnumerator.Current;
+        //    if (Category ==null)
+        //        return;
+        //    // Ensure that this Category is in view.
+        //    if (Category.mParent != null)
+        //        Category.mParent.IsExpanded = true;
+
+        //    Category.IsSelected = true;
+        //    //Category.IsExpanded = false;
+        //}
         public void PerformSearch()
         {
-            if (MatchingCategoryEnumerator == null || !MatchingCategoryEnumerator.MoveNext())
-                VerifyMatchingCategoryEnumerator();
-            if (MatchingCategoryEnumerator == null)
-                return;
-            var Category = MatchingCategoryEnumerator.Current;
-            if (Category ==null)
-                return;
-            // Ensure that this Category is in view.
-            if (Category.mParent != null)
-                Category.mParent.IsExpanded = true;
+            var isGuid = Guid.TryParse(mSearchText, out _);
+            if (isGuid)
+            { PerformKIdSearch(); }
+            else
+            {
 
-            Category.IsSelected = true;
+                if (MatchingCategoryEnumerator == null || !MatchingCategoryEnumerator.MoveNext())
+                    VerifyMatchingCategoryEnumerator();
+
+                var Category = MatchingCategoryEnumerator.Current;
+
+                if (Category == null)
+                    return;
+
+                // Ensure that this Category is in view.
+                if (Category.mParent != null)
+                    Category.mParent.IsExpanded = true;
+
+                Category.IsSelected = true;
+            }
+
             //Category.IsExpanded = false;
         }
 
@@ -926,11 +971,13 @@ namespace Fasetto.Word
             RefreshHierarchy();
             //ViewModelApplication.CurrentPopupViewModel = ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             PerformKIdSearch();
+            PersistHierarchyAsync();
+
             //ViewModelApplication.CurrentPopupViewModel = ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             //TO DO: Add code to create root element of hierarchy when creating a new hierarchy type menu item
             //if page == 'Hierarchy', create new element guid(), use hierarchy name +description, parent = 00000000
 
-            Send();
+            //Send();
             //ViewModelApplication.CurrentPopupViewModel = ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
         }
 
@@ -1104,10 +1151,302 @@ namespace Fasetto.Word
                     // We are done
                     return;
 
+                //remove CRUD indicators from mPersist
+                foreach (var row in mPersist)
+
+                {
+                    row.IsNewElement = false;
+                    row.IsDeleteElement = false;
+                }
+
                 // return to menu
 
 
             });
+        }
+
+
+        //Interpret Keyboard Gestures
+        public void GestureHandler(object parameter)
+        {
+            var tmp = ((ContextualEventArgs)parameter).OriginalEventArgs;
+            var eventTmp = tmp.GetType().Name;
+            if (eventTmp == "MouseEventArgs" && ((MouseEventArgs)tmp).RoutedEvent.Name == "MouseEnter")
+            {
+                var item = GetNearestContainer(((MouseEventArgs)tmp).OriginalSource as UIElement);
+                //        mDraggedItemTest = (HierarchyViewModel)item.Header;
+                var TmpTmp = ((MouseEventArgs)tmp).OriginalSource as UIElement;
+                var TmpTmpName = TmpTmp.GetType().Name;
+                //try
+                if (TmpTmpName == "TreeViewItem")
+                {
+                }
+                //mSelectedTreeItem = (HierarchyViewModel)(((ContextualEventArgs)parameter).Context);
+
+                if (item != null)
+                { }
+                ((MouseEventArgs)tmp).Handled = true;
+            }
+            else
+            {
+                var tmp1 = ((ContextualEventArgs)parameter).Context.GetType().Name;
+
+
+                if (ViewModelApplication.SideMenuVisible && ViewModelApplication.CurrentPopupViewModel == null)
+                //if (mTableName == "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0")
+
+                {
+                    //if Gesture handler is triggered from Text Search Box...               
+                    if (tmp1 == "String")
+                    {
+                        SearchText = SearchText;
+                        if (((KeyEventArgs)tmp).Key == Key.Enter)
+                        //((KeyEventArgs)tmp).Handled = true;
+                        { SearchCommand.Execute(null); }
+                    }
+                    else
+                    {
+
+                        mSelectedTreeItem = (HierarchyViewModel)(((ContextualEventArgs)parameter).Context);
+                        //ViewModelApplication.SideMenuVisible = true;
+
+                        if (eventTmp == "MouseButtonEventArgs")
+                        {
+                            if ((((MouseButtonEventArgs)tmp).RightButton == MouseButtonState.Pressed) || (((MouseButtonEventArgs)tmp).LeftButton == MouseButtonState.Pressed))
+                            {
+                                ((MouseButtonEventArgs)tmp).Handled = true;
+                                //RunSelectedMenu();
+                            }
+                        }
+                        else
+                        if (eventTmp == "KeyEventArgs")
+                        {
+                            if ((((KeyEventArgs)tmp).Key == Key.Enter) || (((KeyEventArgs)tmp).Key == Key.Insert) || (((KeyEventArgs)tmp).Key == Key.Delete))
+                            {
+                                //((KeyEventArgs)tmp).Handled = true;
+                                //RunSelectedMenu();
+                            }
+                            ((KeyEventArgs)tmp).Handled = true;
+                        }
+                        //}
+                    }
+                }
+                else
+                //enable editing of hierarchy menu structure
+                //if Gesture handler is triggered from Text Search Box...
+                //
+
+                {
+
+                    if (tmp1 == "String")
+                    {
+                        SearchText = SearchText;
+                        if (((KeyEventArgs)tmp).Key == Key.Enter)
+                        //((KeyEventArgs)tmp).Handled = true;
+                        { SearchCommand.Execute(null); }
+                    }
+                    else
+                    {
+                        mSelectedTreeItem = (HierarchyViewModel)(((ContextualEventArgs)parameter).Context);
+                        //ViewModelApplication.SideMenuVisible = true;
+                        if (eventTmp == "MouseButtonEventArgs")
+                        {
+                            if ((((MouseButtonEventArgs)tmp).RightButton == MouseButtonState.Pressed) || (((MouseButtonEventArgs)tmp).LeftButton == MouseButtonState.Pressed))
+                            {
+                                //((MouseButtonEventArgs)tmp).Handled = true;
+                                //EditHierarchyElement(mSelectedTreeItem);
+                            }
+                        }
+                        else
+                        if (eventTmp == "KeyEventArgs")
+
+                        //Edit element
+                        {
+                            if (((KeyEventArgs)tmp).Key == Key.Enter)
+                            {
+                                ((KeyEventArgs)tmp).Handled = true;
+                                RunSelectedItem();
+                                //EditHierarchyElement(mSelectedTreeItem);
+                            }
+                            else
+                                if (((KeyEventArgs)tmp).Key == Key.Insert)
+                            {
+                                //((KeyEventArgs)tmp).Handled = true;
+                                //AddHierarchyElement(mSelectedTreeItem);
+                            }
+                            else
+                                    if (((KeyEventArgs)tmp).Key == Key.Delete)
+                            {
+                                ((KeyEventArgs)tmp).Handled = true;
+                                //DeleteHierarchyElement(mSelectedTreeItem);
+                            }
+                            else
+                                    if (((KeyEventArgs)tmp).Key == Key.F2)
+                            {
+                                ((KeyEventArgs)tmp).Handled = true;
+                                //NavigateElement(mSelectedTreeItem);
+                            }
+                        }
+                        //((KeyEventArgs)tmp).Handled = true;
+                    }
+
+                }
+            }
+        }
+
+
+        private TreeViewItem GetNearestContainer(UIElement element)
+        {
+            // Walk up the element tree to the nearest tree view item.
+            var container = element as TreeViewItem;
+            while ((container == null) && (element != null))
+            {
+                element = VisualTreeHelper.GetParent(element) as UIElement;
+                container = element as TreeViewItem;
+            }
+            return container;
+        }
+
+
+
+        /// <summary>
+        /// Use Popup View to add a Hierarchy Element
+        /// </summary>
+        private void RunSelectedItem()
+        {
+            //Prepopulate
+            //Only allow one execution of  the function per event
+            //if (!ViewModelApplication.SideMenuVisible)
+            //    return;
+
+
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid = mSelectedTreeItem.KCategoryID;
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName = mSelectedTreeItem.ShortName;
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID = mSelectedTreeItem.FClientID;
+
+
+
+            if ((ViewModelApplication.CurrentPageViewModel.GetType().Name == "SWBillingPageViewModel"))
+            {
+                ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod.mRequest = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedKid;
+                ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).PopulateAsync();
+            }
+            var Pgtype = ViewModelApplication.CurrentPageViewModel.GetType().Name;
+            if (ViewModelApplication.CurrentPopupViewModel == null || (ViewModelApplication.CurrentPopupViewModel.GetType().Name != "ManageClassificationViewModel"))
+            {
+                if ((string)Pgtype == "TransactionSelectionPageViewModel")
+                {
+                    //if (ViewModelApplication.ControlParameter1 != null)
+                    //{
+                    //    ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
+                    //    ViewModelApplication.ControlParameter1 = null;
+                    //    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    //    ViewModelApplication.PopupVisible = true;
+                    //}   
+                    //else
+                    //{
+                    //    //if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Client")
+                    //    //{
+                    //    //    if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid != 
+                    //    //        ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).ClientID
+                    //    //        //If client selection has changed, nullify cost hierarchy selection
+                    //    //        )
+                    //    //        {
+                    //    //        ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid = null;
+                    //    //        ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedName = null;
+
+                    //    //    }
+                    //    //}
+                    //    //ViewModelApplication.PopupVisible = false;
+                    //    //ViewModelApplication.CurrentPopupViewModel = null;
+                    //    //ViewModelApplication.CurrentPopupContent = 0;
+
+                    //}
+                    //ViewModelApplication.CurrentPopupViewModel = null;
+                }
+                else
+                {
+                    if ((string)Pgtype == "HierarchyPageViewModel")
+                    //If the control is being called from the Hierarchy Page view model (and this is a hierarchy element of type hierarchy, then return to the element editing page after selection of hierarchy type
+                    {
+                        //((HierarchyItemSelectionViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).Type).EditedKid = mSelectedTreeItem.KCategoryID;
+                        ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).HierarchyType = mSelectedTreeItem.ShortName;
+                        //((HierarchyItemSelectionViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).Type).ClientID = mSelectedTreeItem.FClientID;
+                        ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).HierarchyTypeID = mSelectedTreeItem.KCategoryID;
+                        //var TempViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
+                        ViewModelApplication.CurrentPopupContent = 0;
+                        ViewModelApplication.CurrentControlViewModel = ViewModelApplication.ControlParameter5;
+
+                        ViewModelApplication.PopupVisible = true;
+                        //ViewModelApplication.AddElementViewModel = TempViewModel;
+                    }
+                    else
+                    {
+                        ViewModelApplication.PopupVisible = false;
+
+                        ViewModelApplication.CurrentPopupContent = 0;
+                    }
+
+
+                }
+
+
+            }
+            else
+            {
+                ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                ViewModelApplication.PopupVisible = true;
+            }
+
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Save();
+
+
+
+        }
+
+
+        /// <summary>
+        /// Use Popup View to add a Hierarchy Element
+        /// </summary>
+        private void AddHierarchyElement(HierarchyViewModel mDraggedItem)
+        {
+
+            if (mDraggedItem == null)
+                return;
+            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            //var ParentNodeClient = results.FirstOrDefault().FClientID;
+            var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
+            mAddElementViewModel.ShortName.OriginalText = "New Element Name";
+            mAddElementViewModel.Description.OriginalText = "Description of New Element";
+            mAddElementViewModel.ShortName.EditedText = "New Element Name";
+            mAddElementViewModel.Description.EditedText = "Description of New Element";
+            //if (mPage == "Hierarchy")
+            //    mAddElementViewModel.Page = mPage;
+            //else
+            mAddElementViewModel.Page = "";
+            mAddElementViewModel.Root.OriginalText = "Element Root";
+            mAddElementViewModel.Root.EditedText = "Element Root";
+            mAddElementViewModel.IsMenuItem = mDraggedItem.IsMenuItem;
+            mAddElementViewModel.ParentShortName = mDraggedItem.ShortName;
+            mAddElementViewModel.ParentCategoryID = mDraggedItem.KCategoryID;
+            mAddElementViewModel.KCategoryID = Guid.NewGuid().ToString().ToUpper();
+            mAddElementViewModel.DateEffective = DateTime.Today;
+            mAddElementViewModel.DateDiscontinued = new DateTime(9999, 12, 31);
+            mAddElementViewModel.AddNodeButtonText = "Add new Hierarchy Element";
+            mAddElementViewModel.EditNodeButtonText = null;
+            mAddElementViewModel.DeleteNodeButtonText = null;
+            mAddElementViewModel.CopyNodeButtonText = null;
+            mAddElementViewModel.MoveNodeButtonText = null;
+            mAddElementViewModel.HierarchyType = mDraggedItem.HierarchyType;
+            mAddElementViewModel.HierarchyTypeID = mDraggedItem.HierarchyTypeID;
+            mAddElementViewModel.Type.OriginalKid = mDraggedItem.HierarchyTypeID;
+            mAddElementViewModel.Type.OriginalName = mDraggedItem.HierarchyType;
+            mAddElementViewModel.FClientID = mDraggedItem.FClientID;
+            mAddElementViewModel.HeadingText = "Add new Hierarchy Element";
+            mAddElementViewModel.FHierarchyID = mDraggedItem.FHierarchyID;
+            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+            ViewModelApplication.PopupVisible = true;
+            //ViewModelApplication.SettingsMenuVisible = true;
         }
 
 

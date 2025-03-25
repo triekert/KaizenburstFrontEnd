@@ -219,6 +219,11 @@
                                     <Setter Property="Foreground" Value="Darkred"/>
                                     <!--<Setter Property="Cursor" Value="Hand"/>-->
                                 </Trigger>
+                                <Trigger Property="local:MyTreeViewHelper.IsMouseDirectlyOverItem" Value="True">
+                                    <Setter Property="FontWeight" Value="Black" />
+                                    <!--<Setter Property="Background" Value="Blue" />
+                                    <Setter Property="Foreground" Value="Blue"/>-->
+                                </Trigger>
                             </Style.Triggers>
                         </Style>
                     </TreeView.ItemContainerStyle>

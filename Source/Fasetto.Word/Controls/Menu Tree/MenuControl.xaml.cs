@@ -443,17 +443,17 @@ namespace Fasetto.Word
 
         //    return null;
         //}
-        //private TreeViewItem GetNearestContainer(UIElement element)
-        //{
-        //    // Walk up the element tree to the nearest tree view item.
-        //    var container = element as TreeViewItem;
-        //    while ((container == null) && (element != null))
-        //    {
-        //        element = VisualTreeHelper.GetParent(element) as UIElement;
-        //        container = element as TreeViewItem;
-        //    }
-        //    return container;
-        //}
+        private TreeViewItem GetNearestContainer(UIElement element)
+        {
+            //Walk up the element tree to the nearest tree view item.
+           var container = element as TreeViewItem;
+            while ((container == null) && (element != null))
+            {
+                element = VisualTreeHelper.GetParent(element) as UIElement;
+                container = element as TreeViewItem;
+            }
+            return container;
+        }
         /// <summary>
         /// This method will programmatically move the scrollbar to ensure that 
         /// a selected item is always in view in the scroll area
@@ -465,12 +465,14 @@ namespace Fasetto.Word
         private void TreeView_Selected(object sender, RoutedEventArgs e)
         {
             var element = e.OriginalSource as FrameworkElement;
-            var tmp1 = element.GetType().Name;
+            //var tmp1 = element.GetType().Name;
             //var element = sender as FrameworkElement;
             // Figure out a relative position of the selected node to the scrollviewer
-            var relativePosition = element.TranslatePoint(new Point(0, 0), scrollViewer);
-            scrollViewer.ScrollToVerticalOffset(relativePosition.Y);
+            //var relativePosition = element.TranslatePoint(new Point(0, 0), scrollViewer);
+            //scrollViewer.ScrollToVerticalOffset(relativePosition.Y);
             element.BringIntoView();
+            element.Focus();
+
         }
 
         //public void Close()
@@ -525,18 +527,18 @@ namespace Fasetto.Word
         /// <summary>
         /// Use Popup View to add a Hierarchy Element
         /// </summary>
-        private void RunSelectedMenu()
-        {
-            //Prepopulate
-            //Only allow one execution of  the function per event
-            if (!ViewModelApplication.SideMenuVisible)
-                return;
+        //private void RunSelectedMenu()
+        //{
+        //    //Prepopulate
+        //    //Only allow one execution of  the function per event
+        //    if (!ViewModelApplication.SideMenuVisible)
+        //        return;
       
-             mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
-            if (mDraggedItem == null || mDraggedItem.Children.Count > 0 || ((string)mDraggedItem.Page).Length == 0)
-                return;
-            ViewModelApplication.OpenMenu(mDraggedItem.Root,mDraggedItem.Page);
-               }
+        //     mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
+        //    if (mDraggedItem == null || mDraggedItem.Children.Count > 0 || ((string)mDraggedItem.Page).Length == 0)
+        //        return;
+        //    ViewModelApplication.OpenMenu(mDraggedItem.Root,mDraggedItem.Page);
+        //       }
         /// <summary>
         /// Use Popup view to edit existing Hiearchy Element
         /// </summary>

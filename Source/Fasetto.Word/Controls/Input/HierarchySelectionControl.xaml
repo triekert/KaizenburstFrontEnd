@@ -3,10 +3,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"                
              mc:Ignorable="d" 
              xmlns:local="clr-namespace:Fasetto.Word"             
              d:DesignHeight="300" d:DesignWidth="300">
-
+    
+    <UserControl.Resources>
+        <local:ContextualEventArgsConverter x:Key="ContextualEventArgsConverter" />
+    </UserControl.Resources>
+    
     <DockPanel>
         <!-- SEARCH AREA -->
         <Border 
@@ -118,7 +123,42 @@
         </Border>
 
         <ScrollViewer x:Name="scrollViewer"  Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            <TreeView 
+
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewKeyDown" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="PreviewMouseDoubleClick" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="PreviewMouseRightButtonClick" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                    </i:EventTrigger>
+                    
+                    <!--<i:EventTrigger EventName="PreviewMouseMove" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                    </i:EventTrigger>-->
+
+                </i:Interaction.Triggers>
+                <TreeView 
               ItemsSource="{Binding FirstGeneration}" 
               TreeViewItem.Selected="TreeView_Selected"            
               Name="tvParameters"
@@ -152,15 +192,21 @@
                         <!--<EventSetter Event="MouseMove" Handler="TreeView_MouseMove"/>-->
                         <!--<EventSetter Event="PreviewMouseDoubleClick" Handler="TreeView_MouseDoubleClick"/>-->
                         <!--<EventSetter Event="PreviewMouseDown" Handler="TreeView_MouseLeftButtonDown"/>-->                        
-                        <!--<EventSetter Event="MouseEnter" Handler="TreeView_MouseEnter"/>
-                        <EventSetter Event="MouseLeave" Handler="TreeView_MouseLeave"/>-->
+                        <!--<EventSetter Event="MouseEnter" Handler="TreeView_MouseEnter"/>-->
+                        <!--<EventSetter Event="MouseLeave" Handler="TreeView_MouseLeave"/>-->
                         <Style.Triggers>
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter Property="FontWeight" Value="UltraBold" />
-                                <Setter Property="Foreground" Value="Darkred"/>
-                                <!--<Setter Property="Cursor" Value="Hand"/>-->
+                                <!--<Setter Property="Foreground" Value="Blue"/>-->
+                              </Trigger>
+
+                            <Trigger Property="local:MyTreeViewHelper.IsMouseDirectlyOverItem" Value="True">
+                                <Setter Property="FontWeight" Value="Black" />
+                                <!--<Setter Property="Background" Value="Blue" />
+                                <Setter Property="Foreground" Value="Blue"/>-->                                
                             </Trigger>
                         </Style.Triggers>
+
                     </Style>
                 </TreeView.ItemContainerStyle>
 

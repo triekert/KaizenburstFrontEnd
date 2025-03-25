@@ -406,19 +406,26 @@ namespace Fasetto.Word
 
         public void PerformSearch()
         {
-            if (MatchingCategoryEnumerator == null || !MatchingCategoryEnumerator.MoveNext())
-                VerifyMatchingCategoryEnumerator();
+            var isGuid = Guid.TryParse(mSearchText, out _);
+            if (isGuid)
+            { PerformKIdSearch(); }
+            else
+            {
 
-            var Category = MatchingCategoryEnumerator.Current;
+                if (MatchingCategoryEnumerator == null || !MatchingCategoryEnumerator.MoveNext())
+                    VerifyMatchingCategoryEnumerator();
 
-            if (Category == null)
-                return;
+                var Category = MatchingCategoryEnumerator.Current;
 
-            // Ensure that this Category is in view.
-            if (Category.mParent != null)
-                Category.mParent.IsExpanded = true;
+                if (Category == null)
+                    return;
 
-            Category.IsSelected = true;
+                // Ensure that this Category is in view.
+                if (Category.mParent != null)
+                    Category.mParent.IsExpanded = true;
+
+                Category.IsSelected = true;
+            }
 
             //Category.IsExpanded = false;
         }
@@ -1392,7 +1399,7 @@ namespace Fasetto.Word
         }
 
         /// <summary>
-        /// Use Popup view to move existing Hiearchy Element
+        /// Use Popup view to move existing Hierarchy Element
         /// </summary>
         public void MoveHierarchyElement(HierarchyViewModel mDraggedItem, HierarchyViewModel mTarget)
         {

@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"              
              mc:Ignorable="d" 
              xmlns:local="clr-namespace:Fasetto.Word" xmlns:forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" xmlns:sys="clr-namespace:System;assembly=mscorlib" d:DataContext="{d:DesignInstance Type=local:BulkReconViewModel}"
              
@@ -20,6 +21,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <local:ContextualEventArgsConverter x:Key="ContextualEventArgsConverter" />        
         <!--<sys:String x:Key="colCell">dynamic string...</sys:String>
         <Style x:Key="ColumnCellStyle" TargetType="{x:Type DataGridCellsPresenter}" >
             <Setter Property="Template">
@@ -120,7 +122,33 @@
             IsSynchronizedWithCurrentItem="True" SelectedItem="{Binding Trans_actionRec}" SelectionMode="Extended" TargetUpdated="Datagrid_TargetUpdated"
             Loaded="DataGrid_OnLoaded" Unloaded="DataGrid_OnUnLoaded"
         >
-            
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="PreviewKeyDown" >
+                    <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=Transaction}" />
+
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="PreviewMouseDoubleClick" >
+                    <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=Transaction}" />
+
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="PreviewMouseRightButtonClick" >
+                    <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=Transaction}" />
+
+                </i:EventTrigger>
+
+
+            </i:Interaction.Triggers>
             <!--<DataGrid.ColumnHeaderStyle>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="FontWeight"  Value="ExtraBold" />
@@ -140,7 +168,7 @@
                     <EventSetter Event ="KeyDown"  Handler="DataGridRow_KeyDown"/>
                     <EventSetter Event ="PreviewMouseRightButtonDown"  Handler="DataGridRow_MouseRightClick"/>
                     <!--<EventSetter Event ="PreviewKeyDown"  Handler="DataGridRow_PreviewKeyDown"/>-->                    
-                    <EventSetter Event ="Loaded"  Handler="DataGridRow_OnLoaded"/>
+                    <!--<EventSetter Event ="Loaded"  Handler="DataGridRow_OnLoaded"/>-->
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
                     <Setter Property="Background" Value ="AliceBlue"/>
  

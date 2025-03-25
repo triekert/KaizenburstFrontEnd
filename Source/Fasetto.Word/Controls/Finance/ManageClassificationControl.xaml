@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Fasetto.Word" xmlns:forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" xmlns:sys="clr-namespace:System;assembly=mscorlib" d:DataContext="{d:DesignInstance Type=local:BulkReconViewModel}"
              xmlns:core="clr-namespace:Fasetto.Word.Core;assembly=Fasetto.Word.Core"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"                
              mc:Ignorable="d" >
     <UserControl.Resources>
         <sys:String x:Key="colName">dynamic string...</sys:String>
@@ -18,13 +19,49 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <local:ContextualEventArgsConverter x:Key="ContextualEventArgsConverter" />
+
     </UserControl.Resources>
     <Border Background="{DynamicResource BackgroundLightBrush}" 
             Padding="15">
 
 
-                <ScrollViewer x:Name="scrollViewer"  Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+    <ScrollViewer x:Name="scrollViewer"  Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="PreviewKeyDown" >
+                    <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
 
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="PreviewMouseDoubleClick" >
+                    <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="PreviewMouseRightButtonClick" >
+                    <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                </i:EventTrigger>
+
+                <!--<i:EventTrigger EventName="PreviewMouseMove" >
+                    <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                </i:EventTrigger>-->
+
+            </i:Interaction.Triggers>
         <Grid   Keyboard.PreviewKeyDown="TreeView_KeyBoard" ForceCursor="True">
 
 

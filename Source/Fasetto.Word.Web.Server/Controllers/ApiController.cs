@@ -1128,7 +1128,7 @@ namespace Fasetto.Word.Web.Server
 
         #endregion RootPerClientAndType
 
-        #region ptClassification
+        #region PersistClassification
         [Route(ApiRoutes.PersistClassification)]
         /// <summary>
         /// Persist hierarchy changes made on front end
