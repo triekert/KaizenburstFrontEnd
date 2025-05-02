@@ -27,7 +27,7 @@
             Padding="15">
 
 
-    <ScrollViewer x:Name="scrollViewer"  Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+    <ScrollViewer x:Name="scrollViewer"  Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="0,5">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="PreviewKeyDown" >
                     <i:InvokeCommandAction 

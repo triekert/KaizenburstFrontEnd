@@ -79,7 +79,7 @@ namespace Fasetto.Word
         /// </summary>
         /// <param name="updatingFlag">The boolean property flag defining if the command is already running</param>
         /// <param name="action">The action to run if the command is not already running</param>
-        /// <typeparam name="T">The type the action returns</typeparam>
+        /// <typeparam name="T">The type the action returns</typeparam>72
         /// <returns></returns>
         protected async Task<T> RunCommandAsync<T>(Expression<Func<bool>> updatingFlag, Func<Task<T>> action, T defaultValue = default)
         {

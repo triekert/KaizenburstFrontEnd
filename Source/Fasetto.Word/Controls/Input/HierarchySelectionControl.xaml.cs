@@ -587,47 +587,48 @@ namespace Fasetto.Word
             var results = mHierarchyTree.mPersist.Where(x => x.KCategoryID == mDraggedItem.ParentCategoryID).OrderBy(x => x.ShortName).ToList();
             var mPage = "";
             if (results.Count > 0)
+            {
                 mPage = results.FirstOrDefault().Page;
-            var ParentNodeClient = results.FirstOrDefault().FClientID;
-            ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-            var mAddElementViewModel = ViewModelApplication.CurrentPopupViewModel as HierarchyElementViewModel;
-            mAddElementViewModel.ShortName.OriginalText = "New Element Name";
-            mAddElementViewModel.Description.OriginalText = "Description of New Element";
-            mAddElementViewModel.ShortName.EditedText = "New Element Name";
-            mAddElementViewModel.Description.EditedText = "Description of New Element";
-            //if (mPage == "Hierarchy")
-            //    mAddElementViewModel.Page = mPage;
-            //else
-            mAddElementViewModel.Page = "";
-            mAddElementViewModel.Root.OriginalText = "Element Root";
-            mAddElementViewModel.Root.EditedText = "Element Root";
-            mAddElementViewModel.IsMenuItem = mDraggedItem.IsMenuItem;
-            mAddElementViewModel.ParentShortName = mDraggedItem.ShortName;
-            mAddElementViewModel.ParentCategoryID = mDraggedItem.KCategoryID;
-            mAddElementViewModel.KCategoryID = Guid.NewGuid().ToString().ToUpper();
-            mAddElementViewModel.DateEffective = DateTime.Today;
-            mAddElementViewModel.DateDiscontinued = new DateTime(9999, 12, 31);
-            mAddElementViewModel.AddNodeButtonText = "Add new Hierarchy Element";
-            mAddElementViewModel.EditNodeButtonText = null;
-            mAddElementViewModel.DeleteNodeButtonText = null;
-            mAddElementViewModel.CopyNodeButtonText = null;
-            mAddElementViewModel.MoveNodeButtonText = null;
-            mAddElementViewModel.HierarchyType = mDraggedItem.HierarchyType;
-            mAddElementViewModel.HierarchyTypeID = mDraggedItem.HierarchyTypeID;
-            mAddElementViewModel.Type.OriginalKid = mDraggedItem.HierarchyTypeID;
-            mAddElementViewModel.Type.OriginalName = mDraggedItem.HierarchyType;
-            mAddElementViewModel.FClientID = mDraggedItem.FClientID;
-            mAddElementViewModel.HeadingText = "Add new Hierarchy Element";
-            mAddElementViewModel.FHierarchyID = mDraggedItem.FHierarchyID;
-            mAddElementViewModel.Level = mDraggedItem.Level + 1;
+                var ParentNodeClient = results.FirstOrDefault().FClientID;
+                ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
+                var mAddElementViewModel = ViewModelApplication.CurrentPopupViewModel as HierarchyElementViewModel;
+                mAddElementViewModel.ShortName.OriginalText = "New Element Name";
+                mAddElementViewModel.Description.OriginalText = "Description of New Element";
+                mAddElementViewModel.ShortName.EditedText = "New Element Name";
+                mAddElementViewModel.Description.EditedText = "Description of New Element";
+                //if (mPage == "Hierarchy")
+                //    mAddElementViewModel.Page = mPage;
+                //else
+                mAddElementViewModel.Page = "";
+                mAddElementViewModel.Root.OriginalText = "Element Root";
+                mAddElementViewModel.Root.EditedText = "Element Root";
+                mAddElementViewModel.IsMenuItem = mDraggedItem.IsMenuItem;
+                mAddElementViewModel.ParentShortName = mDraggedItem.ShortName;
+                mAddElementViewModel.ParentCategoryID = mDraggedItem.KCategoryID;
+                mAddElementViewModel.KCategoryID = Guid.NewGuid().ToString().ToUpper();
+                mAddElementViewModel.DateEffective = DateTime.Today;
+                mAddElementViewModel.DateDiscontinued = new DateTime(9999, 12, 31);
+                mAddElementViewModel.AddNodeButtonText = "Add new Hierarchy Element";
+                mAddElementViewModel.EditNodeButtonText = null;
+                mAddElementViewModel.DeleteNodeButtonText = null;
+                mAddElementViewModel.CopyNodeButtonText = null;
+                mAddElementViewModel.MoveNodeButtonText = null;
+                mAddElementViewModel.HierarchyType = mDraggedItem.HierarchyType;
+                mAddElementViewModel.HierarchyTypeID = mDraggedItem.HierarchyTypeID;
+                mAddElementViewModel.Type.OriginalKid = mDraggedItem.HierarchyTypeID;
+                mAddElementViewModel.Type.OriginalName = mDraggedItem.HierarchyType;
+                mAddElementViewModel.FClientID = mDraggedItem.FClientID;
+                mAddElementViewModel.HeadingText = "Add new Hierarchy Element";
+                mAddElementViewModel.FHierarchyID = mDraggedItem.FHierarchyID;
+                mAddElementViewModel.Level = mDraggedItem.Level + 1;
 
 
-            //mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
-            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid = mDraggedItem.KCategoryID;
-            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName = mDraggedItem.ShortName;
-            //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID = mDraggedItem.FClientID;
+                //mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
+                //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid = mDraggedItem.KCategoryID;
+                //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName = mDraggedItem.ShortName;
+                //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID = mDraggedItem.FClientID;
 
-
+            }
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;

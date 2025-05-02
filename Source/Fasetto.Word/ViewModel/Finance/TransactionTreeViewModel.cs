@@ -1,17 +1,20 @@
 ﻿
+using CsvHelper;
 using Dna;
 using Fasetto.Word.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
-using System.Windows.Controls;
 
 namespace Fasetto.Word
 {
@@ -40,6 +43,14 @@ namespace Fasetto.Word
         /// </summary>
         public bool TransClassBuildIsRunning { get; set; }
 
+        /// <summary>
+        /// Create placeholder for Datagrid used in View
+        /// </summary>
+        public DataGrid Transaction { get; set; }
+
+        /// <summary>
+        /// Lock for updating observable collection data
+        /// </summary>
         private object mStocksLock = new object();
         #endregion
 
@@ -137,7 +148,7 @@ namespace Fasetto.Word
 
             // Get the OptFinHierarchies currently configured - first populate 'root hierarchy' variable with all configured root hierarchy elements currently available
 
-
+            Transaction = new DataGrid();
             //UpdateTreeViewElements();
 
             CloseCommand = new RelayCommand(Close);
@@ -405,7 +416,8 @@ namespace Fasetto.Word
                         ViewModelApplication.CurrentPopupContent = PopupContent.ExpenditureAdjust;
                         ViewModelApplication.PopupVisible = true;
                     }
-                    else {
+                    else
+                    {
 
                         ViewModelApplication.CurrentPopupContent = PopupContent.ExpenditureReview;
                         ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;// ((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
@@ -603,77 +615,25 @@ namespace Fasetto.Word
         {
             var tmp = ((ContextualEventArgs)parameter).OriginalEventArgs;
             var eventTmp = tmp.GetType().Name;
+            //Get datagrid from relevent event args
+            if (eventTmp == "KeyEventArgs")
+            {
+                Transaction = ((KeyEventArgs)tmp).Source as DataGrid;
+            }
+            else
+            if (eventTmp == "MouseEventArgs")
+            {
+                Transaction = ((MouseEventArgs)tmp).Source as DataGrid;
+            }
+            else
+            if (eventTmp == "MouseButtonEventArgs")
+            {
+                Transaction = ((MouseButtonEventArgs)tmp).Source as DataGrid;
+            }
+
             if (eventTmp == "MouseEventArgs" && ((MouseEventArgs)tmp).RoutedEvent.Name == "PreviewMouseMove")
             {
                 var TmpTmp = ((MouseEventArgs)tmp).OriginalSource as UIElement;
-                //try
-                //{
-                //    var item = GetNearestContainer(((MouseEventArgs)tmp).OriginalSource as UIElement);
-                //    //mDraggedItemTest = (HierarchyViewModel)item.Header;
-                //    if (((MouseEventArgs)tmp).LeftButton == MouseButtonState.Pressed)
-                //    {
-                //        var isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
-                //        var currentPosition = ((MouseEventArgs)tmp).GetPosition(item);
-
-                //        //Check for dragging of treeview item
-                //        if ((Math.Abs(currentPosition.X - mLastMouseDown.X) > 10.0) ||
-                //            (Math.Abs(currentPosition.Y - mLastMouseDown.Y) > 10.0))
-                //        {
-
-                //            var mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
-                //            mLastMouseDown = currentPosition;
-                //            //mSourceCategoryName = mDraggedItem.ShortName;
-                //            //draggedItem = (TreeViewItem)tvParameters.SelectedItem;
-                //            //mSource = (TreeViewItem)tvParameters.SelectedItem;
-                //            if (mDraggedItem != null)
-                //            {
-                //                //mTarget = null;//ensure target is reset
-                //                if (!isCtrl)
-                //                {
-
-                //                    var finalDropEffect = DragDrop.DoDragDrop(tvParameters, tvParameters.SelectedValue,
-                //                      DragDropEffects.Move);
-                //                    //Checking target is not null and item is dragging(moving)
-                //                    if ((finalDropEffect == DragDropEffects.Move) && (mTarget != null))
-                //                    {
-                //                        // A Move drop was accepted
-                //                        //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
-                //                        //{
-                //                        MoveHierarchyElement();// MoveItem();
-                //                        mTargetT = null;
-                //                        mSource = null;
-                //                        //}
-
-                //                    }
-                //                }
-                //                else
-                //                {
-                //                    var finalDropEffect = DragDrop.DoDragDrop(tvParameters, tvParameters.SelectedValue,
-                //                      DragDropEffects.Copy);
-                //                    if ((finalDropEffect == DragDropEffects.Copy) && (mTarget != null))
-                //                    {
-                //                        // A Copy drop was accepted
-                //                        //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
-                //                        //{
-                //                        CopyHierarchyElement();// CopyItem();
-                //                        mTargetT = null;
-                //                        mSource = null;
-                //                        //}
-
-                //                    }
-                //                }
-
-
-
-                //            }
-                //        }
-                //    }
-
-                //}
-                //catch (Exception)
-                //{
-                //}
-
 
 
                 ((MouseEventArgs)tmp).Handled = true;
@@ -747,6 +707,7 @@ namespace Fasetto.Word
                             if ((((MouseButtonEventArgs)tmp).RightButton == MouseButtonState.Pressed) || (((MouseButtonEventArgs)tmp).LeftButton == MouseButtonState.Pressed))
                             {
                                 ((MouseButtonEventArgs)tmp).Handled = true;
+                                NavigateOnAsync(Transaction);
                                 //EditHierarchyElement(mSelectedTreeItem);
                             }
                         }
@@ -757,12 +718,11 @@ namespace Fasetto.Word
                         {
 
 
-                            var Transaction = ((KeyEventArgs)tmp).Source as DataGrid;
+                            //var Transaction = ((KeyEventArgs)tmp).Source as DataGrid;
                             //var ttype = Transaction.GetType().Name;
                             if (((KeyEventArgs)tmp).Key == Key.Enter)
                             {
-
-                                //((KeyEventArgs)tmp).Handled = true;
+                                ((KeyEventArgs)tmp).Handled = true;
                                 NavigateOnAsync(Transaction);
                                 //EditHierarchyElement(mSelectedTreeItem);
                             }
@@ -770,19 +730,19 @@ namespace Fasetto.Word
                                 if (((KeyEventArgs)tmp).Key == Key.Insert)
                             {
                                 ((KeyEventArgs)tmp).Handled = true;
-                                //AddHierarchyElement(mSelectedTreeItem);
-                            }
-                            else
-                                    if (((KeyEventArgs)tmp).Key == Key.Delete)
-                            {
-                                ((KeyEventArgs)tmp).Handled = true;
-                                //DeleteHierarchyElement(mSelectedTreeItem);
+                                Insert();
                             }
                             else
                                     if (((KeyEventArgs)tmp).Key == Key.F2)
                             {
                                 ((KeyEventArgs)tmp).Handled = true;
-                                //NavigateElement(mSelectedTreeItem);
+                                Generate();
+                            }
+                            else
+                                    if (((KeyEventArgs)tmp).Key == Key.F3)
+                            {
+                                ((KeyEventArgs)tmp).Handled = true;
+                                LookupMain();
                             }
                         }
                         //((KeyEventArgs)tmp).Handled = true;
@@ -793,8 +753,8 @@ namespace Fasetto.Word
         }
 
 
-    //}
-    private async void NavigateOnAsync(DataGrid Transaction)
+        //}
+        private async void NavigateOnAsync(DataGrid Transaction)
         {
 
             var MKFinTranID = ((TransactionViewModel)Transaction.SelectedItem).KFinTranID;
@@ -933,6 +893,88 @@ namespace Fasetto.Word
         }
 
 
-    }
+
+
+        /// <summary>
+        /// Add a new Transaction based on the selected existing transaction
+        /// </summary>
+        private void Insert()
+        {
+
+            var NewTransaction = new TransactionViewModel()
+            {
+                KFinTranID = "00000000-0000-0000-0000-000000000001",
+                KFinActualID = Guid.NewGuid().ToString().ToUpper(),
+                Posted_Date = ((TransactionViewModel)Transaction.SelectedItem).Posted_Date,
+                KHierarchyID = ((TransactionViewModel)Transaction.SelectedItem).KHierarchyID,
+                Month = ((TransactionViewModel)Transaction.SelectedItem).Month,
+                KClientID = ((TransactionViewModel)Transaction.SelectedItem).KClientID,
+            };
+            ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).AddItem(NewTransaction);
+            ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MPersist.Add(NewTransaction);
+
+            Transaction.SelectedItem = NewTransaction;
+
+            //((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_action.SelectedItem = (TransactionViewModel)Transaction[Transaction.Items.Count()];
+
+            var RawTable = Transaction.Items;
+
+
+            NavigateOnAsync(Transaction);
+        }
+
+        /// <summary>
+        /// Generate CSV file from selection of transactions
+        /// </summary>
+        private void Generate()
+        {
+
+            var fileName = @"C:\Temp\Transaction Records "
+            //+
+            //    ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeStart.ToString("d_MM_yyyy")
+            //+ " TO " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeEnd.ToString("d_MM_yyyy")
+            + ".csv";
+            try
+            {
+                using (var writer = new StreamWriter(fileName))
+                {
+                    using (var csvOut = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                    {
+                        csvOut.WriteRecords(((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MPersist);
+                    }
+                }
+            }
+            catch (Exception exp)
+            {
+                Console.Write(exp.Message);
+            }
+        }
+
+
+
+        private void LookupMain()
+        {
+
+            var fileName = @"C:\Temp\Transaction Records "
+    //+
+    //    ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeStart.ToString("d_MM_yyyy")
+    //+ " TO " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeEnd.ToString("d_MM_yyyy")
+    + ".csv";
+            try
+            {
+                using (var writer = new StreamWriter(fileName))
+                {
+                    using (var csvOut = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                    {
+                        csvOut.WriteRecords(((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MPersist);
+                    }
+                }
+            }
+            catch (Exception exp)
+            {
+                Console.Write(exp.Message);
+            }
+        }
 
     }
+}

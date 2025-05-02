@@ -106,9 +106,9 @@ namespace Fasetto.Word
 
         private void DataGridRow_MouseRightClick(object sender, MouseButtonEventArgs e)
         {
-            var tempT = new ObservableCollection<TransactionViewModel>();
-            foreach (var tT in Transaction.ItemsSource)
-                tempT.Add((TransactionViewModel)tT);
+            //var tempT = new ObservableCollection<TransactionViewModel>();
+            //foreach (var tT in Transaction.ItemsSource)
+            //    tempT.Add((TransactionViewModel)tT);
 
             //var mTimeStart = tempBR.OrderBy(x => x.TimeSotStart).ToList().FirstOrDefault().TimeSlotStart;
             //var mTimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart.AddMinutes(30);

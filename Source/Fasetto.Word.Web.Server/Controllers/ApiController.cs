@@ -1193,7 +1193,7 @@ namespace Fasetto.Word.Web.Server
                 foreach (var row in results)
                 {
                     para[0].Value = row.ShortName;
-                    para[1].Value = row.Description;
+                    para[1].Value = row.Description.Replace("'", "''");
                     para[2].Value = !string.IsNullOrEmpty(row.KCategoryID) ? new Guid(row.KCategoryID) : (object)DBNull.Value;
                     para[3].Value = new Guid(row.KFinActualID);
                     para[4].Value = new Guid(row.KFinTranID);
@@ -1253,7 +1253,7 @@ namespace Fasetto.Word.Web.Server
                 foreach (var row in results)
                 {
                     para[0].Value = row.ShortName;
-                    para[1].Value = row.Description;
+                    para[1].Value = row.Description.Replace("'","''");
                     para[2].Value = !string.IsNullOrEmpty(row.KCategoryID) ? new Guid(row.KCategoryID) : (object)DBNull.Value;
                     para[3].Value = new Guid(row.KFinActualID);
                     para[4].Value = new Guid(row.KFinTranID);
@@ -1282,10 +1282,10 @@ namespace Fasetto.Word.Web.Server
                     {
                         // Try and run the task
                         _ = await ExecuteAsync(SqlString, para);
-                        if (Convert.ToDecimal(row.ActualAmount)<0)
-                        {
+                        //if (Convert.ToDecimal(row.ActualAmount)<0)
+                        //{
                         _ = await ExecuteAsync(SqlString1, para);
-                        }
+                        //}
                         if (row.IsTemplate)
                         {
                             _ = await GetDataSetAsync(SqlString2);

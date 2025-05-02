@@ -45,6 +45,14 @@ namespace Fasetto.Word
         /// </summary>
         public Func<Task<bool>> CommitAction { get; set; }
 
+        /// <summary>
+        /// The action to run when initiating the control.
+        /// Returns true if the preparation was successful, or false otherwise.
+        /// </summary>
+        public Func<Task<bool>> PrepareAction { get; set; }
+
+
+
         #endregion
 
         #region Public Commands
@@ -93,9 +101,24 @@ namespace Fasetto.Word
             EditedText = OriginalText;
             //OriginalText = "testing|";
             //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            var result = default(bool);
+            Editing = true;
+
+            RunCommandAsync(() => Working, async () =>
+            {
+
+                // Try and do the work
+                result = PrepareAction == null ? true : await PrepareAction();
+
+            }).ContinueWith(t =>
+            {
+                result = result;
+            }
+            );
+
 
             // Go into edit mode
-            Editing = true;
+
         }
 
         /// <summary>
