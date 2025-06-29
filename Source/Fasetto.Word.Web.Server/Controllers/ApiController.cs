@@ -2851,11 +2851,14 @@ namespace Fasetto.Word.Web.Server
 
                 //var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (ShortName,Description,kCategoryID,ParentCategoryID,fIconID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement)" +// ) " +
                 //    "VALUES (@ShortName,@Description,@kCategoryID,@ParentCategoryID,@fIconID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement)";//)";
-                var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (fHierarchyID,ShortName,Description,kCategoryID,ParentCategoryID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement,Page,Root,isMenuItem,fHierarchyTypeID,fClientID)" +// ) " +
+                //var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (fHierarchyID,ShortName,Description,kCategoryID,ParentCategoryID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement,Page,Root,isMenuItem,fHierarchyTypeID,fClientID,TimeStamp)" +// ) " +
 
-                    "VALUES (@fHierarchyID,@ShortName,@Description,@kCategoryID,@ParentCategoryID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement,@Page,@Root,@isMenuItem,@HierarchyTypeID,@ClientID)";//)";
-                //If elements are to be added, insert into backend
-                results = mPersist.Where(x => x.IsNewElement == true).OrderBy(x => x.ShortName).ToList();//
+                //    "VALUES (@fHierarchyID,@ShortName,@Description,@kCategoryID,@ParentCategoryID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement,@Page,@Root,@isMenuItem,@HierarchyTypeID,@ClientID, SYSDATETIME())";//)";
+
+                var SqlString = "EXEC [Finance].[spGenericHierarchyCRUD] @fHierarchyID,@ShortName,@Description,@kCategoryID,@ParentCategoryID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement,@Page,@Root,@isMenuItem,@HierarchyTypeID,@ClientID, SYSDATETIME()";
+
+            //If elements are to be added, insert into backend
+            results = mPersist.Where(x => x.IsNewElement == true).OrderBy(x => x.ShortName).ToList();//
                 if (results.Count >0)
 
             

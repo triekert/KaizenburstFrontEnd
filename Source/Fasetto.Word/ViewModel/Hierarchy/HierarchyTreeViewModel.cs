@@ -5,12 +5,15 @@ using Fasetto.Word.Core.ApiModels.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml.Linq;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
 
@@ -129,7 +132,7 @@ namespace Fasetto.Word
 
 
             UpdateTreeViewElements();
-            CloseCommand = new RelayCommand(Close);
+            CloseCommand = new RelayCommand(async () => await CloseAsync());
             GestureHandlerCommand = new DelegateCommand<ContextualEventArgs>(GestureHandler);
             //GestureHandlerCommand= new RelayParameterizedCommand<ContextualEventArgs>(ExecuteItemModeSelectionChanged);
             mSearchCommand = new SearchCategoryTreeCommand(this);
@@ -167,6 +170,11 @@ namespace Fasetto.Word
         /// A flag indicating if the login command is running
         /// </summary>
         public bool HierarchyBuildIsRunning { get; set; }
+
+        /// <summary>
+        /// A flag indicating if the login command is running
+        /// </summary>
+        public bool PersistHierarchyIsRunning { get; set; }
 
         /// <summary>
         /// Title to be published on Control
@@ -961,52 +969,63 @@ namespace Fasetto.Word
 
         #endregion //Tree Manipulation
 
-        public void Close()
+        public async Task CloseAsync()
         {
-            PersistHierarchyChangesAsync();
             // Close settings menu
+            //await RunCommandAsync(() => HierarchyBuildIsRunning, async () =>
+            //{
+                //PersistHierarchyChangesAsync();
+                TaskManager.RunAndForget(PersistHierarchyAsync);
+            // Close settings menu
+            //Log($"Done work on calling thread *****");
+
             if (mTableName == "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0")
-            {
-                ViewModelApplication.SideMenuVisible = true;
-            }
-            if (ViewModelApplication.CurrentPopupContent == null)
-            {
-                TaskManager.RunAndForget(((HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel).HierarchyAsync);
-                //ViewModelApplication.CurrentSideMenuViewModel = null;
-                //TaskManager.RunAndForget(HierarchyAsync);
+                {
+                    ViewModelApplication.SideMenuVisible = true;
+                }
+                if (ViewModelApplication.CurrentPopupContent == null)
+                {
+                    TaskManager.RunAndForget(((HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel).HierarchyAsync);
+                    //ViewModelApplication.CurrentSideMenuViewModel = null;
+                    //TaskManager.RunAndForget(HierarchyAsync);
+
+                    ViewModelApplication.GoToPage(ApplicationPage.Chat);
+                }
+                else
+                {
+                    if (ViewModelApplication.CurrentPopupViewModel != null && ViewModelApplication.CurrentPopupViewModel.GetType().Name == "HierarchyTreeViewModel" && ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel != null)
+                    {
+                        ViewModelApplication.CurrentPopupViewModel = ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+                        ViewModelApplication.CurrentPopupContent = 0;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.Hierarchy;
+
+                    }
+                    else
+                    {
+                        ViewModelApplication.CurrentPopupViewModel = null;
+                        ViewModelApplication.PopupVisible = false;
+                    }
+                }
+
+
+                //// Close settings menu
+                //ViewModelApplication.SideMenuVisible = true;
+                ////TaskManager.RunAndForget(((HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel).HierarchyAsync);
+                ////ViewModelApplication.CurrentSideMenuViewModel = null;
+                ////TaskManager.RunAndForget(HierarchyAsync);
 
                 ViewModelApplication.GoToPage(ApplicationPage.Chat);
-            }
-            else
-            { 
-                if (ViewModelApplication.CurrentPopupViewModel != null && ViewModelApplication.CurrentPopupViewModel.GetType().Name =="HierarchyTreeViewModel" && ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel != null)
-                {
-                    ViewModelApplication.CurrentPopupViewModel = ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel; 
-                    ViewModelApplication.CurrentPopupContent = 0;
-                    ViewModelApplication.CurrentPopupContent = PopupContent.Hierarchy;
-
-                }
-                else 
-                {
-                    ViewModelApplication.CurrentPopupViewModel = null;
-                    ViewModelApplication.PopupVisible = false; 
-                }
-            }
-
-
-            //// Close settings menu
-            //ViewModelApplication.SideMenuVisible = true;
-            ////TaskManager.RunAndForget(((HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel).HierarchyAsync);
-            ////ViewModelApplication.CurrentSideMenuViewModel = null;
-            ////TaskManager.RunAndForget(HierarchyAsync);
-
-            ViewModelApplication.GoToPage(ApplicationPage.Chat);
+            //});
 
         }
 
 
 
-        //Interpret Keyboard Gestures
+
+        /// <summary>
+        /// Interpret Keyboard and Pointing device Gestures
+        /// </summary>
+        /// <param name="parameter"></param>
         public void GestureHandler(object parameter)
         {
             var tmp = ((ContextualEventArgs)parameter).OriginalEventArgs;
@@ -1212,7 +1231,7 @@ namespace Fasetto.Word
             //Only allow one execution of  the function per event
             //if (!ViewModelApplication.SideMenuVisible)
             //    return;
-            if (mSelectedTreeItem == null || ((string)mSelectedTreeItem.Page).Length == 0) //|| mSelectedTreeItem.Children.Count > 0
+            if (mSelectedTreeItem == null || ((string)mSelectedTreeItem.Page).Length == 0 || mSelectedTreeItem.Page == "Folder")//|| mSelectedTreeItem.Children.Count > 0
                 return;
             if (mSelectedTreeItem.Page == "Hierarchy")
             {
@@ -1347,7 +1366,7 @@ namespace Fasetto.Word
             mAddElementViewModel.HierarchyTypeID = mDraggedItem.HierarchyTypeID;
             mAddElementViewModel.Type.OriginalKid = mDraggedItem.HierarchyTypeID;
             mAddElementViewModel.Type.OriginalName = mDraggedItem.HierarchyType;
-            mAddElementViewModel.FClientID = mDraggedItem.FClientID;
+            mAddElementViewModel.FClientID = ViewModelApplication.FClientID;
             mAddElementViewModel.HeadingText = "Add new Hierarchy Element";
             mAddElementViewModel.FHierarchyID = mDraggedItem.FHierarchyID;
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
@@ -1494,38 +1513,74 @@ namespace Fasetto.Word
         }
         public async Task PersistHierarchyAsync()
         {
-            await RunCommandAsync(() => HierarchyBuildIsRunning, async () =>
+            //await RunCommandAsync(() => PersistHierarchyIsRunning, async () =>
+            //{
+            await Task.Run(async () =>
             {
+                // Log it
+                //Log($"Doing work on inner thread for ");
+
+                // Wait 
+                //await Task.Delay(500);
+
+                // Log it
+                //Log($"Done work on inner thread for ");
+
 
                 // Store single transcient instance of client data store
-                var scopedClientDataStore = ClientDataStore;
+                await Task.Delay(1);
+                var matches = mPersist.Where(x => x.IsUnderReview  == true).OrderByDescending(x => x.DateEffective).ToList();
+                var category = matches.FirstOrDefault();
 
-                // Update values from local cache
-                // Get the user token
-                var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
-                // Call the server and attempt to register with the provided credentials
-                // If we don't have a token (then not logged in...)
-                if (string.IsNullOrEmpty(token))
-                    // Then do nothing more
-                    return;
-                var result = await WebRequests.PostAsync<ApiResponse<HierarchyResultListApiModel>>(
-                // Set URL
-                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.PersistHierarchy),
-                    mPersist,
-                    bearerToken: token);
+                //
 
-                // If the response has an error...
-                if (await result.HandleErrorIfFailedAsync("Hierarchy retrieval Failed"))
-                    // We are done
-                    return;
+                if (category != null)
+                {
 
+                    var scopedClientDataStore = ClientDataStore;
+
+                    // Update values from local cache
+                    // Get the user token
+                    var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+                    // Call the server and attempt to register with the provided credentials
+                    // If we don't have a token (then not logged in...)
+                    if (string.IsNullOrEmpty(token))
+                        // Then do nothing more
+                        return;
+                    var result = await WebRequests.PostAsync<ApiResponse<HierarchyResultListApiModel>>(
+                        // Set URL
+                        RouteHelpers.GetAbsoluteRoute(ApiRoutes.PersistHierarchy),
+                        mPersist,
+                        bearerToken: token);
+
+                    // If the response has an error...
+                    if (await result.HandleErrorIfFailedAsync("Hierarchy retrieval Failed"))
+                        // We are done
+                        return;
+
+                    // Log it
+                    //Log($"Done work on inner thread for ");
+                }
                 // return to menu
-
-
             });
+
+        //    }
+        //);
         }
 
+        #region Helper Methods
 
+        /// <summary>
+        /// Output a message with the current thread ID appended
+        /// </summary>
+        /// <param name="message"></param>
+        private static void Log(string message)
+        {
+            // Write line
+            Debug.WriteLine($"{message} [{Thread.CurrentThread.ManagedThreadId}]");
+        }
+
+        #endregion
 
     }
 

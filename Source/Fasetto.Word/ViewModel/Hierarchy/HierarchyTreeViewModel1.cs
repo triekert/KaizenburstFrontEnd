@@ -139,7 +139,7 @@ namespace Fasetto.Word
 
 
             UpdateTreeViewElements();
-            CloseCommand = new RelayCommand(Close);
+            CloseCommand = new RelayCommand(async () => await CloseAsync());
             mSearchCommand = new SearchCategoryTreeCommand(this);
             GestureHandlerCommand = new DelegateCommand<ContextualEventArgs>(GestureHandler);
         }
@@ -314,7 +314,7 @@ namespace Fasetto.Word
                      MessageBoxImage.Information
                      );
                     ViewModelApplication.ControlPopupCostHierarchy = null;
-                    Close();
+                    CloseAsync();
 
                 }
 
@@ -1044,29 +1044,33 @@ namespace Fasetto.Word
 
         #endregion //Tree Manipulation
 
-        public void Close()
+        public async Task CloseAsync()
         {
             // Close settings menu
-
-            //If user escapes from window whilst processing hierarchy control calls on the manage classification window, return to transaction detail
-            var Pgtype = ViewModelApplication.CurrentPageViewModel.GetType().Name;
-            if (((string)Pgtype == "TransactionSelectionPageViewModel" ||(string)Pgtype == "BudgetSelectionPageViewModel")&& ViewModelApplication.ControlParameter1 != null)
-
+            await RunCommandAsync(() => HierarchyBuildIsRunning, async () =>
             {
-                //ViewModelApplication.CurrentPopupViewModel = (ManageClassificationViewModel)ViewModelApplication.ControlParameter1;
-                var mViewModel = (HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel;
-                //var mViewModel = (ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel;
-               
-                mViewModel.Save();
+                {
+                    //If user escapes from window whilst processing hierarchy control calls on the manage classification window, return to transaction detail
+                    var Pgtype = ViewModelApplication.CurrentPageViewModel.GetType().Name;
+                    if (((string)Pgtype == "TransactionSelectionPageViewModel" || (string)Pgtype == "BudgetSelectionPageViewModel") && ViewModelApplication.ControlParameter1 != null)
 
-            }
+                    {
+                        //ViewModelApplication.CurrentPopupViewModel = (ManageClassificationViewModel)ViewModelApplication.ControlParameter1;
+                        var mViewModel = (HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel;
+                        //var mViewModel = (ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel;
 
-            else
-            {
+                        mViewModel.Save();
 
-                ViewModelApplication.PopupVisible = false;
-                ViewModelApplication.CurrentPopupContent = 0;
-            }
+                    }
+
+                    else
+                    {
+
+                        ViewModelApplication.PopupVisible = false;
+                        ViewModelApplication.CurrentPopupContent = 0;
+                    }
+                }
+            });
         }
 
         /// <summary>

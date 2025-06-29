@@ -288,8 +288,10 @@ namespace Fasetto.Word
                                     // A Move drop was accepted
                                     //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
                                     //{
-                                    ((HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel).MoveHierarchyElement(mDraggedItem,mTarget);// MoveItem();
-                                        mTargetT = null;
+                                    //((HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel).MoveHierarchyElement(mDraggedItem,mTarget);// MoveItem();
+                                    ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MoveHierarchyElement(mDraggedItem, mTarget);// MoveItem();
+
+                                    mTargetT = null;
                                         mSource= null;
                                     //}
 
