@@ -60,6 +60,7 @@ namespace Fasetto.Word
         public HierarchyResultListApiModel mPersist, mPersistTmp,mOriginal;
         public HierarchyDataModel mHDM;
         public string mTableName;
+        public ParameterHierarchyItemSelectApiModel mHierarchy;
         public HierarchyElementViewModel mElement;
         private Point mLastMouseDown;
 
@@ -116,6 +117,11 @@ namespace Fasetto.Word
             mHDML.Add(mHDM);
 
             mTableName = hierarchyTable;
+            mHierarchy = new ParameterHierarchyItemSelectApiModel
+            {
+                FHierarchyID = hierarchyTable,
+                ClientID = ViewModelApplication.FClientID
+            };
             #endregion
             //retrieve hierarchy from persistent storage on server
             //To Do: Add mTableName as parameter when calling HierarchyAsync to populate hierarchy
@@ -252,7 +258,8 @@ namespace Fasetto.Word
 
                 // Update values from local cache
                 // Get the user token
-                var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+                //var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+                var token = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Token;
                 // Call the server and attempt to register with the provided credentials
                 // If we don't have a token (then not logged in...)
                 if (string.IsNullOrEmpty(token))
@@ -260,12 +267,16 @@ namespace Fasetto.Word
                     return;
                 var result = await WebRequests.PostAsync<ApiResponse<HierarchyResultListApiModel>>(
                 // Set URL
-                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.ReturnHierarchy),
-                    mTableName,
+                    //RouteHelpers.GetAbsoluteRoute(ApiRoutes.ReturnHierarchy),
+                    //mTableName,
+                    //bearerToken: token);
+
+                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.GenericHierarchyLookup),
+                    mHierarchy,
                     bearerToken: token);
 
-                // If the response has an error...
-                if (await result.HandleErrorIfFailedAsync("Hierarchy retrieval Failed"))
+            // If the response has an error...
+            if (await result.HandleErrorIfFailedAsync("Hierarchy retrieval Failed"))
                     // We are done
                     return;
 
@@ -298,7 +309,7 @@ namespace Fasetto.Word
 
         /// <summary>
         /// Method to refresh element Hierarchy
-        /// -used when elements of the treefiew are being manipulated on the front end
+        /// -used when elements of the treeview are being manipulated on the front end
         /// </summary>
         public void RefreshHierarchy()
         {
@@ -1028,6 +1039,7 @@ namespace Fasetto.Word
         /// <param name="parameter"></param>
         public void GestureHandler(object parameter)
         {
+            
             var tmp = ((ContextualEventArgs)parameter).OriginalEventArgs;
             var eventTmp = tmp.GetType().Name;
             if (eventTmp == "MouseEventArgs" && ((MouseEventArgs)tmp).RoutedEvent.Name=="PreviewMouseMove")
@@ -1235,14 +1247,22 @@ namespace Fasetto.Word
                 return;
             if (mSelectedTreeItem.Page == "Hierarchy")
             {
-                var HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                if (mSelectedTreeItem.Root != "")
                 {
-                    FHierarchyID = mSelectedTreeItem.Root,
-                };
-                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel((string)mSelectedTreeItem.Root);//root);
-                ViewModelApplication.CurrentPopupContent = 0;
-                ViewModelApplication.CurrentPopupContent = PopupContent.Hierarchy;
-                ViewModelApplication.PopupVisible = true;
+                    var HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                    {
+                        FHierarchyID = mSelectedTreeItem.Root,
+                    };
+                    ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel((string)mSelectedTreeItem.Root);//root);
+                    ViewModelApplication.CurrentPopupContent = 0;
+                    ViewModelApplication.CurrentPopupContent = PopupContent.Hierarchy;
+                    ViewModelApplication.PopupVisible = true;
+                }
+                else
+                {
+                    EditHierarchyElement(mSelectedTreeItem);
+                }
+
             }
             else
             { ViewModelApplication.OpenMenu(mSelectedTreeItem.Root, mSelectedTreeItem.Page); }
@@ -1528,7 +1548,7 @@ namespace Fasetto.Word
 
 
                 // Store single transcient instance of client data store
-                await Task.Delay(1);
+                //await Task.Delay(1);
                 var matches = mPersist.Where(x => x.IsUnderReview  == true).OrderByDescending(x => x.DateEffective).ToList();
                 var category = matches.FirstOrDefault();
 
@@ -1541,7 +1561,8 @@ namespace Fasetto.Word
 
                     // Update values from local cache
                     // Get the user token
-                    var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+                    //var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+                    var token = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Token;
                     // Call the server and attempt to register with the provided credentials
                     // If we don't have a token (then not logged in...)
                     if (string.IsNullOrEmpty(token))

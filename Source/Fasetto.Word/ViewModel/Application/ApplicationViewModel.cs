@@ -184,6 +184,19 @@ namespace Fasetto.Word
         /// Persistence of view model for Party lookup
         /// </summary>
         public object ControlPopupParty { get; set; }
+
+
+        /// <summary>
+        /// Current credential data for user
+        /// </summary>
+        public LoginCredentialsDataModel CurrentCredential  { get; set; }
+        
+        /// <summary>
+        /// Current token value
+        /// </summary>
+        public string MToken { get; set; }
+
+
         #endregion
 
         #region Public Commands

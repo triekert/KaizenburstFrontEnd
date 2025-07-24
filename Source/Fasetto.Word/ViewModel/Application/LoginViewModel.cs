@@ -80,10 +80,31 @@ namespace Fasetto.Word
 
                 // OK successfully logged in... now get users data
                 var loginResult = result.ServerResponse.Response;
+                //ViewModelApplication.CurrentCredential = loginResult.ToLoginCredentialsDataModel();
 
+                var dataModel = loginResult.ToLoginCredentialsDataModel();
+                //set changed flag to true if any changes detected in login credentials
+                var changed = (
+                    dataModel.ClientID != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).ClientID ||
+                    dataModel.ClientShortName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).ClientShortName ||
+                    dataModel.CostHierarchyID != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).CostHierarchyID ||
+                    dataModel.CostHierarchyShortName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).CostHierarchyShortName ||
+                    dataModel.Username != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Username ||
+                    dataModel.LastName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).LastName ||
+                    dataModel.FirstName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).FirstName ||
+                    dataModel.Email != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Email||
+                    dataModel.Token != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Token
+                    );
+
+                if (changed)
+                {
+                    ViewModelApplication.CurrentCredential = dataModel;
+                    await ViewModelApplication.HandleSuccessfulLoginAsync(loginResult);                    // Save the new information in the data store
+
+                }
                 // Let the application view model handle what happens
                 // with the successful login
-                await ViewModelApplication.HandleSuccessfulLoginAsync(loginResult);
+
             });
         }
 

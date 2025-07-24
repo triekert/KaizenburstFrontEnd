@@ -64,7 +64,7 @@ namespace Fasetto.Word
         }
 
         /// <summary>
-        /// the Overloading of MenuControl() with a parameter that selects the Menu Hierarchy for naviagion by passing the parameter
+        /// the Overloading of MenuControl() with a parameter that selects the Menu Hierarchy for navigation by passing the parameter
         /// </summary>
         /// <param name="root"></param>
         public MenuControl(string root)

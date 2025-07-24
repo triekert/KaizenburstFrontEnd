@@ -249,7 +249,7 @@ namespace Fasetto.Word
 
                 // Update values from local cache
                 // Get the user token
-                var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+                                var token = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Token;
                 // Call the server and attempt to register with the provided credentials
                 // If we don't have a token (then not logged in...)
                 if (string.IsNullOrEmpty(token))
@@ -459,7 +459,7 @@ namespace Fasetto.Word
 
                 // Update values from local cache
                 // Get the user token
-                var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+                                var token = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Token;
                 // Call the server and attempt to register with the provided credentials
                 // If we don't have a token (then not logged in...)
                 if (string.IsNullOrEmpty(token))

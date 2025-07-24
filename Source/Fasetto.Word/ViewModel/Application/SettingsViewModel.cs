@@ -376,52 +376,73 @@ namespace Fasetto.Word
             // Lock this command to ignore any other requests while processing
             await RunCommandAsync(() => SettingsLoading, async () =>
             {
-                // Store single transient instance of client data store
-                var scopedClientDataStore = ClientDataStore;
+            // Store single transient instance of client data store
+            var scopedClientDataStore = ClientDataStore;
 
-                // Update values from local cache
-                await UpdateValuesFromLocalStoreAsync(scopedClientDataStore);
+            // Update values from local cache
+            await UpdateValuesFromLocalStoreAsync(scopedClientDataStore);
 
-                // Get the user token
-                var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+            // Get the user token
+            //var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+            //var token = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Token;
+            var token = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Token;
+            //var test1 = (await scopedClientDataStore.GetLoginCredentialsAsync());
+            //reduce wait time for token when required in calls to back end
+            //ViewModelApplication.MToken = token;
 
+            // If we don't have a token (so we are not logged in...)
+            if (string.IsNullOrEmpty(token))
+                // Then do nothing more
+                return;
 
+            //Add default client for selection of models
+            //ViewModelApplication.FClientID =  (await scopedClientDataStore.GetLoginCredentialsAsync())?.ClientID;
+            // Load user profile details from server
+            //var path = RouteHelpers.GetAbsoluteRoute(WebRoutes.Private);
+            var result = await WebRequests.PostAsync<ApiResponse<UserProfileDetailsApiModel>>(
+                // Set URL
+                RouteHelpers.GetAbsoluteRoute(ApiRoutes.GetUserProfile),
+                //RouteHelpers.GetAbsoluteRoute(WebRoutes.Private),
 
-                // If we don't have a token (so we are not logged in...)
-                if (string.IsNullOrEmpty(token))
-                    // Then do nothing more
-                    return;
+                // Pass in user Token
+                bearerToken: token);
 
-                //Add default client for selection of models
-                ViewModelApplication.FClientID =  (await scopedClientDataStore.GetLoginCredentialsAsync())?.ClientID;
-                // Load user profile details from server
-                //var path = RouteHelpers.GetAbsoluteRoute(WebRoutes.Private);
-                var result = await WebRequests.PostAsync<ApiResponse<UserProfileDetailsApiModel>>(
-                    // Set URL
-                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.GetUserProfile),
-                    //RouteHelpers.GetAbsoluteRoute(WebRoutes.Private),
+            // If the response has an error...
+            if (await result.HandleErrorIfFailedAsync("Load User Details Failed"))
+                // We are done
+                return;
 
-                    // Pass in user Token
-                    bearerToken: token);
+            // TODO: Should we check if the values are different before saving?
 
-                // If the response has an error...
-                if (await result.HandleErrorIfFailedAsync("Load User Details Failed"))
-                    // We are done
-                    return;
-
-                // TODO: Should we check if the values are different before saving?
-
-                // Create data model from the response
-                var dataModel = result.ServerResponse.Response.ToLoginCredentialsDataModel();
+            // Create data model from the response
+            var dataModel = result.ServerResponse.Response.ToLoginCredentialsDataModel();
+            //set changed flag to true if any changes detected in login credentials
+            var changed = (
+                dataModel.ClientID != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).ClientID ||
+                dataModel.ClientShortName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).ClientShortName ||
+                dataModel.CostHierarchyID != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).CostHierarchyID ||
+                dataModel.CostHierarchyShortName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).CostHierarchyShortName||
+                dataModel.Username != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Username||
+                dataModel.LastName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).LastName ||
+                dataModel.FirstName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).FirstName ||
+                dataModel.Email != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Email
+                );
+                dataModel.Token = token; 
 
                 // Re-add our known token
-                dataModel.Token = token;
 
-                // Save the new information in the data store
-                await scopedClientDataStore.SaveLoginCredentialsAsync(dataModel);
 
-                // Update values from local cache
-                await UpdateValuesFromLocalStoreAsync(scopedClientDataStore);
+                ViewModelApplication.MToken = token;
+
+                if (changed)
+                { 
+                        ViewModelApplication.CurrentCredential = dataModel;
+                        // Save the new information in the data store
+                        await scopedClientDataStore.SaveLoginCredentialsAsync(dataModel);
+
+                        // Update values from local cache
+                        await UpdateValuesFromLocalStoreAsync(scopedClientDataStore);
+                }
             });
         }
 
@@ -797,6 +818,8 @@ namespace Fasetto.Word
         {
             // Get the stored credentials
             var storedCredentials = await clientDataStore.GetLoginCredentialsAsync();
+
+            ViewModelApplication.CurrentCredential = storedCredentials;
 
             // Set first name
             FirstName.OriginalText = storedCredentials?.FirstName;

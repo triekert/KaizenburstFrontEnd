@@ -268,10 +268,12 @@ namespace Fasetto.Word
 
                 // Store single transcient instance of client data store
                 var scopedClientDataStore = ClientDataStore;
-
+                //default date to transaction date
+                //mHierarchy.DateTarget = mHierarchy.
                 // Update values from local cache
                 // Get the user token
-                var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+                //var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+                var token = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Token;
                 // Call the server and attempt to register with the provided credentials
                 // If we don't have a token (then not logged in...)
                 if (string.IsNullOrEmpty(token))
@@ -1050,19 +1052,21 @@ namespace Fasetto.Word
             await RunCommandAsync(() => HierarchyBuildIsRunning, async () =>
             {
                 {
-                    //If user escapes from window whilst processing hierarchy control calls on the manage classification window, return to transaction detail
-                    var Pgtype = ViewModelApplication.CurrentPageViewModel.GetType().Name;
-                    if (((string)Pgtype == "TransactionSelectionPageViewModel" || (string)Pgtype == "BudgetSelectionPageViewModel") && ViewModelApplication.ControlParameter1 != null)
-
+                    if (ViewModelApplication.CurrentPageViewModel != null)
                     {
-                        //ViewModelApplication.CurrentPopupViewModel = (ManageClassificationViewModel)ViewModelApplication.ControlParameter1;
-                        var mViewModel = (HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel;
-                        //var mViewModel = (ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel;
+                        //If user escapes from window whilst processing hierarchy control calls on the manage classification window, return to transaction detail
+                        var Pgtype = ViewModelApplication.CurrentPageViewModel.GetType().Name;
+                        if (((string)Pgtype == "TransactionSelectionPageViewModel" || (string)Pgtype == "BudgetSelectionPageViewModel") && ViewModelApplication.ControlParameter1 != null)
 
-                        mViewModel.Save();
+                        {
+                            //ViewModelApplication.CurrentPopupViewModel = (ManageClassificationViewModel)ViewModelApplication.ControlParameter1;
+                            var mViewModel = (HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel;
+                            //var mViewModel = (ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel;
 
+                            mViewModel.Save();
+
+                        }
                     }
-
                     else
                     {
 
@@ -1138,7 +1142,8 @@ namespace Fasetto.Word
 
                 // Update values from local cache
                 // Get the user token
-                var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+                //var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+                var token = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Token;
                 // Call the server and attempt to register with the provided credentials
                 // If we don't have a token (then not logged in...)
                 if (string.IsNullOrEmpty(token))
@@ -1328,81 +1333,92 @@ namespace Fasetto.Word
             ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName = mSelectedTreeItem.ShortName;
             ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID = mSelectedTreeItem.FClientID;
 
-
-
-            if ((ViewModelApplication.CurrentPageViewModel.GetType().Name == "SWBillingPageViewModel"))
+            if (ViewModelApplication.CurrentPageViewModel != null)
             {
-                ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod.mRequest = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedKid;
-                ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).PopulateAsync();
-            }
-            var Pgtype = ViewModelApplication.CurrentPageViewModel.GetType().Name;
-            if (ViewModelApplication.CurrentPopupViewModel == null || (ViewModelApplication.CurrentPopupViewModel.GetType().Name != "ManageClassificationViewModel"))
-            {
-                if ((string)Pgtype == "TransactionSelectionPageViewModel")
+
+                if ((ViewModelApplication.CurrentPageViewModel.GetType().Name == "SWBillingPageViewModel"))
                 {
-                    //if (ViewModelApplication.ControlParameter1 != null)
-                    //{
-                    //    ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
-                    //    ViewModelApplication.ControlParameter1 = null;
-                    //    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
-                    //    ViewModelApplication.PopupVisible = true;
-                    //}   
-                    //else
-                    //{
-                    //    //if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Client")
-                    //    //{
-                    //    //    if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid != 
-                    //    //        ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).ClientID
-                    //    //        //If client selection has changed, nullify cost hierarchy selection
-                    //    //        )
-                    //    //        {
-                    //    //        ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid = null;
-                    //    //        ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedName = null;
-
-                    //    //    }
-                    //    //}
-                    //    //ViewModelApplication.PopupVisible = false;
-                    //    //ViewModelApplication.CurrentPopupViewModel = null;
-                    //    //ViewModelApplication.CurrentPopupContent = 0;
-
-                    //}
-                    //ViewModelApplication.CurrentPopupViewModel = null;
+                    ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod.mRequest = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedKid;
+                    ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).PopulateAsync();
                 }
-                else
+                var Pgtype = ViewModelApplication.CurrentPageViewModel.GetType().Name;
+                if (ViewModelApplication.CurrentPopupViewModel == null || (ViewModelApplication.CurrentPopupViewModel.GetType().Name != "ManageClassificationViewModel"))
                 {
-                    if ((string)Pgtype == "HierarchyPageViewModel")
-                    //If the control is being called from the Hierarchy Page view model (and this is a hierarchy element of type hierarchy, then return to the element editing page after selection of hierarchy type
+                    if ((string)Pgtype == "TransactionSelectionPageViewModel")
                     {
-                        //((HierarchyItemSelectionViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).Type).EditedKid = mSelectedTreeItem.KCategoryID;
-                        ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).HierarchyType = mSelectedTreeItem.ShortName;
-                        //((HierarchyItemSelectionViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).Type).ClientID = mSelectedTreeItem.FClientID;
-                        ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).HierarchyTypeID = mSelectedTreeItem.KCategoryID;
-                        //var TempViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-                        ViewModelApplication.CurrentPopupContent = 0;
-                        ViewModelApplication.CurrentControlViewModel = ViewModelApplication.ControlParameter5;
+                        //if (ViewModelApplication.ControlParameter1 != null)
+                        //{
+                        //    ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
+                        //    ViewModelApplication.ControlParameter1 = null;
+                        //    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                        //    ViewModelApplication.PopupVisible = true;
+                        //}   
+                        //else
+                        //{
+                        //    //if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Client")
+                        //    //{
+                        //    //    if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid != 
+                        //    //        ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).ClientID
+                        //    //        //If client selection has changed, nullify cost hierarchy selection
+                        //    //        )
+                        //    //        {
+                        //    //        ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid = null;
+                        //    //        ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedName = null;
 
-                        ViewModelApplication.PopupVisible = true;
-                        //ViewModelApplication.AddElementViewModel = TempViewModel;
+                        //    //    }
+                        //    //}
+                        //    //ViewModelApplication.PopupVisible = false;
+                        //    //ViewModelApplication.CurrentPopupViewModel = null;
+                        //    //ViewModelApplication.CurrentPopupContent = 0;
+
+                        //}
+                        //ViewModelApplication.CurrentPopupViewModel = null;
                     }
                     else
                     {
-                        ViewModelApplication.PopupVisible = false;
+                        if ((string)Pgtype == "HierarchyPageViewModel")
+                        //If the control is being called from the Hierarchy Page view model (and this is a hierarchy element of type hierarchy, then return to the element editing page after selection of hierarchy type
+                        {
+                            //((HierarchyItemSelectionViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).Type).EditedKid = mSelectedTreeItem.KCategoryID;
+                            ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).HierarchyType = mSelectedTreeItem.ShortName;
+                            //((HierarchyItemSelectionViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).Type).ClientID = mSelectedTreeItem.FClientID;
+                            ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).HierarchyTypeID = mSelectedTreeItem.KCategoryID;
+                            //var TempViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
+                            ViewModelApplication.CurrentPopupContent = 0;
+                            ViewModelApplication.CurrentControlViewModel = ViewModelApplication.ControlParameter5;
 
-                        ViewModelApplication.CurrentPopupContent = 0;
+                            ViewModelApplication.PopupVisible = true;
+                            //ViewModelApplication.AddElementViewModel = TempViewModel;
+                        }
+                        else
+                        {
+                            ViewModelApplication.PopupVisible = false;
+
+                            ViewModelApplication.CurrentPopupContent = 0;
+                        }
+
+
                     }
 
 
                 }
-
+                else
+                {
+                    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    ViewModelApplication.PopupVisible = true;
+                }
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Save();
 
             }
             else
-            {
-                ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
-                ViewModelApplication.PopupVisible = true;
-            }
+             {
+                ViewModelApplication.PopupVisible = false;
 
-            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Save();
+                ViewModelApplication.CurrentPopupContent = 0;
+
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Save();
+
+            }
 
 
 

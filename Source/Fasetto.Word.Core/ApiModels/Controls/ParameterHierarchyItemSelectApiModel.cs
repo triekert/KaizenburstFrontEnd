@@ -10,13 +10,13 @@ namespace Fasetto.Word.Core.ApiModels.Controls
     /// 
     public class ParameterHierarchyItemSelectApiModel
     {
-        // <summary>
+        /// <summary>
         /// GUID of Client
         /// </summary>
         public string ClientID { get; set; }
 
 
-        // <summary>
+        /// <summary>
         /// GUID of Hierarchy Type
         /// </summary>
         public string HierarchyTypeID { get; set; }
@@ -25,6 +25,11 @@ namespace Fasetto.Word.Core.ApiModels.Controls
         /// GUID of Root item if only a subset is to be retrieved
         /// </summary>
         public string RootID { get; set; }
+
+        /// <summary>
+        /// The date of reference for returning the hierarchy
+        /// </summary>
+        public DateTime DateTarget { get; set; }
 
 
         // <summary>

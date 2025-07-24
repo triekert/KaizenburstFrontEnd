@@ -304,7 +304,7 @@ namespace Fasetto.Word.Web.Server
             // Return token to user
             return new ApiResponse<UserProfileDetailsApiModel>
             {
-                // Pass back the user details and the token
+                // Pass back the user details but no
                 Response = new UserProfileDetailsApiModel
                 {
                     FirstName = user.FirstName,
@@ -2727,16 +2727,19 @@ namespace Fasetto.Word.Web.Server
 
             #region sql query
 
+            if (model.DateTarget == Convert.ToDateTime("0001/01/01 00:00:00"))
+                model.DateTarget = Convert.ToDateTime("1753/01/01 00:00:00");
+
             var SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '";
                 if (model.RootID != null)
-                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fClientID = NULL,  @Level = 100, @fHierarchyTypeID = NULL, @fRootID = '" + model.RootID + "'"; }
+                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fClientID = NULL,  @Level = 100, @fHierarchyTypeID = NULL, @fRootID = '" + model.RootID + "',@DateTarget= '" + model.DateTarget + "'"; }
 
                     //{ SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '" + model.FHierarchyID + "',  @fClientID = '" + model.ClientID + "',  @Level = 100, @fHierarchyTypeID = NULL, @fRootID = '" + model.RootID + "'"; }
                 else
                     if (model.FHierarchyID == null)
-                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fRootID = NULL,  @Level ='" + model.Level + "',  @fClientID = '" + model.ClientID + "', @fHierarchyTypeID = '" + model.HierarchyTypeID + "'"; }
+                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fRootID = NULL,  @Level ='" + model.Level + "',  @fClientID = '" + model.ClientID + "', @fHierarchyTypeID = '" + model.HierarchyTypeID + "',@DateTarget= '" + model.DateTarget + "'"; }
                     else
-                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '" + model.FHierarchyID + "',  @fClientID = NULL, @fRootID = NULL,  @Level = 100, @fHierarchyTypeID = NULL"; }
+                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '" + model.FHierarchyID + "',  @fClientID ='" + model.ClientID + "', @fRootID = NULL,  @Level = 100, @fHierarchyTypeID = NULL,@DateTarget= '" + model.DateTarget + "'"; }
                 try
                 {
                     // Try and run the task
@@ -2830,7 +2833,7 @@ namespace Fasetto.Word.Web.Server
                 var mHierarchyLink = results.FirstOrDefault().KCategoryID;
 
 
-                var para = new SqlParameter[16];
+                var para = new SqlParameter[17];
                 para[0] = new SqlParameter("@ShortName", SqlDbType.NVarChar);
                 para[1] = new SqlParameter("@Description", SqlDbType.NVarChar);
                 para[2] = new SqlParameter("@kCategoryID", SqlDbType.UniqueIdentifier);
@@ -2847,15 +2850,16 @@ namespace Fasetto.Word.Web.Server
                 para[13] = new SqlParameter("@fHierarchyID", SqlDbType.UniqueIdentifier);
                 para[14] = new SqlParameter("@HierarchyTypeID", SqlDbType.UniqueIdentifier);
                 para[15] = new SqlParameter("@ClientID", SqlDbType.UniqueIdentifier);
+                para[16] = new SqlParameter("@Action", SqlDbType.NVarChar);
 
 
-                //var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (ShortName,Description,kCategoryID,ParentCategoryID,fIconID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement)" +// ) " +
-                //    "VALUES (@ShortName,@Description,@kCategoryID,@ParentCategoryID,@fIconID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement)";//)";
-                //var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (fHierarchyID,ShortName,Description,kCategoryID,ParentCategoryID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement,Page,Root,isMenuItem,fHierarchyTypeID,fClientID,TimeStamp)" +// ) " +
+            //var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (ShortName,Description,kCategoryID,ParentCategoryID,fIconID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement)" +// ) " +
+            //    "VALUES (@ShortName,@Description,@kCategoryID,@ParentCategoryID,@fIconID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement)";//)";
+            //var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (fHierarchyID,ShortName,Description,kCategoryID,ParentCategoryID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement,Page,Root,isMenuItem,fHierarchyTypeID,fClientID,TimeStamp)" +// ) " +
 
-                //    "VALUES (@fHierarchyID,@ShortName,@Description,@kCategoryID,@ParentCategoryID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement,@Page,@Root,@isMenuItem,@HierarchyTypeID,@ClientID, SYSDATETIME())";//)";
+            //    "VALUES (@fHierarchyID,@ShortName,@Description,@kCategoryID,@ParentCategoryID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement,@Page,@Root,@isMenuItem,@HierarchyTypeID,@ClientID, SYSDATETIME())";//)";
 
-                var SqlString = "EXEC [Finance].[spGenericHierarchyCRUD] @fHierarchyID,@ShortName,@Description,@kCategoryID,@ParentCategoryID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement,@Page,@Root,@isMenuItem,@HierarchyTypeID,@ClientID, SYSDATETIME()";
+            var SqlString = "EXEC [Admin].[spGenericHierarchyCRUD] @fHierarchyID,@ShortName,@Description,@kCategoryID,@ParentCategoryID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement,@Page,@Root,@isMenuItem,@HierarchyTypeID,@ClientID,@Action";
 
             //If elements are to be added, insert into backend
             results = mPersist.Where(x => x.IsNewElement == true).OrderBy(x => x.ShortName).ToList();//
@@ -2917,6 +2921,7 @@ namespace Fasetto.Word.Web.Server
                         else
                         //para[14].Value = Guid.NewGuid();
                         para[15].Value = DBNull.Value;
+                        para[16].Value = "a";
                     try
                         {
                             // Try and run the task
@@ -2998,6 +3003,7 @@ namespace Fasetto.Word.Web.Server
                         else
                         //para[14].Value = Guid.NewGuid();
                         para[15].Value = DBNull.Value;
+                        para[16].Value = "a";
                     try
                     
                         {
