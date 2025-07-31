@@ -89,10 +89,10 @@ namespace Fasetto.Word
                 // Set the backing field
                 mSettingsMenuVisible = value;
 
-                // If the settings menu is now visible...
-                if (value)
-                    // Reload settings
-                    TaskManager.RunAndForget(ViewModelSettings.LoadAsync);
+                //If the settings menu is now visible...
+                //if (value)
+                //    // Reload settings
+                //    TaskManager.RunAndForget(ViewModelSettings.LoadAsync);
             }
         }
 

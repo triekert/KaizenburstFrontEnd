@@ -48,7 +48,7 @@
 
             <!-- Main Content -->
             <Grid Grid.Row="1"
-                  Width="600"
+                  Width="700"
                   VerticalAlignment="Top"
                   >
 
@@ -93,11 +93,16 @@
                     <local:HierarchyItemSelectionControl DataContext="{Binding Client}" FontWeight="ExtraBlack"  />
                     <local:HierarchyItemSelectionControl DataContext="{Binding CostHierarchy}" FontWeight="ExtraBlack"  />
 
+                    <Button Content="{Binding UpdateButtonText}"
+                            Command="{Binding UpdateCommand}"
+                            FontSize="{StaticResource FontSizeRegular}"
+                            
+                            />
                     <Button Content="{Binding LogoutButtonText}"
                             Command="{Binding LogoutCommand}"
                             FontSize="{StaticResource FontSizeRegular}"
                             
-                            />
+                            />                    
 
                 </StackPanel>
 

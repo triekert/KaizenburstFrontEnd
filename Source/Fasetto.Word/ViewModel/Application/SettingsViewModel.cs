@@ -4,10 +4,12 @@ using Fasetto.Word.Core.ApiModels.Controls;
 //using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq.Expressions;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using static Dna.FrameworkDI;
 using static Fasetto.Word.DI;
+using static Fasetto.Word.Core.CoreDI;
 namespace Fasetto.Word
 {
     /// <summary>
@@ -75,10 +77,17 @@ namespace Fasetto.Word
         /// The current LoginCredentials for the current user
         /// </summary>
         public LoginCredentialsDataModel LoginCredentials { get; set; }
+
         /// <summary>
         /// The text for the logout button
         /// </summary>
         public string LogoutButtonText { get; set; }
+
+
+        /// <summary>
+        /// The text for the logout button
+        /// </summary>
+        public string UpdateButtonText { get; set; }
 
         #region Transactional Properties
 
@@ -165,6 +174,12 @@ namespace Fasetto.Word
         /// The command to logout of the application
         /// </summary>
         public ICommand LogoutCommand { get; set; }
+
+
+        /// <summary>
+        /// The command to force changes to the login credentials on the backend
+        /// </summary>
+        public ICommand UpdateCommand { get; set; }
 
         /// <summary>
         /// The command to clear the users data from the view model
@@ -299,7 +314,8 @@ namespace Fasetto.Word
 
             // Create commands
             OpenCommand = new RelayCommand(Open);
-            CloseCommand = new RelayCommand(Close);
+            CloseCommand = new RelayCommand(async () => await CloseAsync());
+            UpdateCommand = new RelayCommand(Update);
             LogoutCommand = new RelayCommand(async () => await LogoutAsync());
             ClearUserDataCommand = new RelayCommand(ClearUserData);
             LoadCommand = new RelayCommand(async () => await LoadAsync());
@@ -310,6 +326,7 @@ namespace Fasetto.Word
             UpdateClientSelectionCommand = new RelayCommand(async () => await UpdateClientSelectionAsync());
             // TODO: Get from localization
             LogoutButtonText = "Logout";
+            UpdateButtonText = "Save Changes to User Credentials";
         }
 
         #endregion
@@ -328,11 +345,105 @@ namespace Fasetto.Word
         /// <summary>
         /// Closes the settings menu
         /// </summary>
-        public void Close()
+        /// 
+
+        public async Task CloseAsync()
         {
-            // Close settings menu
+            await RunCommandAsync(() => PasswordIsChanging, async () =>
+            {
+                // Roll back any changes to fields if not proceeding with them
+            
+                Client.OriginalKid = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).ClientID;
+                Client.OriginalName = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).ClientShortName ;
+                CostHierarchy.OriginalKid = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).CostHierarchyID ;
+                CostHierarchy.OriginalName = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).CostHierarchyShortName ;
+                ViewModelApplication.FClientID = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).ClientID;
+                ViewModelApplication.ClientShortName = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).ClientShortName;
+                ViewModelApplication.FCostHierarchyID = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).CostHierarchyID;
+                ViewModelApplication.CostHierarchyShortName = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).CostHierarchyShortName;
+                Username.OriginalText = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Username ;
+                LastName.OriginalText = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).LastName ;
+                FirstName.OriginalText = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).FirstName ;
+                Email.OriginalText = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Email;
+
             ViewModelApplication.SettingsMenuVisible = false;
+            return true;
+            });
+
         }
+
+        public void Update()
+        {
+            TaskManager.RunAndForget(UpdateAsync);
+        }
+
+        /// <summary>
+        /// Updates the backend with modified login credentials
+        /// </summary>
+        /// 
+
+        public async Task UpdateAsync()
+        {
+            await RunCommandAsync(() => PasswordIsChanging, async () =>
+            {
+                // Close settings menu
+                ViewModelApplication.SettingsMenuVisible = false;
+                //LoginCredentials = LoginCredentials;
+                var changed = (
+                LoginCredentials.ClientID != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).ClientID ||
+                LoginCredentials.ClientShortName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).ClientShortName ||
+                LoginCredentials.CostHierarchyID != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).CostHierarchyID ||
+                LoginCredentials.CostHierarchyShortName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).CostHierarchyShortName ||
+
+                LoginCredentials.Username != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Username ||
+                LoginCredentials.LastName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).LastName ||
+                LoginCredentials.FirstName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).FirstName ||
+                LoginCredentials.Email != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Email
+            );
+                if (changed)
+                {
+                    var scopedClientDataStore = ClientDataStore;
+                    var updateApiModel = new UpdateUserProfileApiModel
+                    {
+
+                        ClientID = (LoginCredentials.ClientID != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).ClientID)? LoginCredentials.ClientID : null,
+                        ClientShortName = (LoginCredentials.ClientShortName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).ClientShortName) ? LoginCredentials.ClientShortName : null,
+                        CostHierarchyID = (LoginCredentials.CostHierarchyID!= ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).CostHierarchyID) ? LoginCredentials.CostHierarchyID: null,
+                        CostHierarchyShortName = (LoginCredentials.CostHierarchyShortName!= ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).CostHierarchyShortName) ? LoginCredentials.CostHierarchyShortName: null,
+                        Username = (LoginCredentials.Username!= ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Username) ? LoginCredentials.Username: null,
+                        LastName = (LoginCredentials.LastName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).LastName) ? LoginCredentials.LastName : null,
+                        FirstName = (LoginCredentials.FirstName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).FirstName) ? LoginCredentials.FirstName : null,
+                        Email = (LoginCredentials.Email!= ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Email) ? LoginCredentials.Email: null
+                    };
+                    var result = await WebRequests.PostAsync<ApiResponse>(
+                        // Set URL
+                        RouteHelpers.GetAbsoluteRoute(ApiRoutes.UpdateUserProfile),
+                        // Pass the Api model
+                        updateApiModel,
+                    //Pass in user Token
+
+                    bearerToken: ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Token);
+
+                    if (await result.HandleErrorIfFailedAsync("Load User Details Failed"))
+                        // We are done
+                        return true;
+
+
+                    // Store the new user credentials the data store
+                    await ClientDataStore.SaveLoginCredentialsAsync(LoginCredentials);
+
+                    // Return successful
+                    return true;
+
+                }
+                ////else
+                //{
+                return true;
+            });
+
+        }
+
+
 
         /// <summary>
         /// Logs the user out
@@ -359,6 +470,7 @@ namespace Fasetto.Word
         /// <summary>
         /// Clears any data specific to the current user
         /// </summary>
+
         public void ClearUserData()
         {
             // Clear all view models containing the users info
@@ -382,18 +494,21 @@ namespace Fasetto.Word
             // Update values from local cache
             await UpdateValuesFromLocalStoreAsync(scopedClientDataStore);
 
-            // Get the user token
-            //var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
-            //var token = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Token;
-            var token = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Token;
+                // Get the user token
+                //var token = (await scopedClientDataStore.GetLoginCredentialsAsync())?.Token;
+                //var token = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Token;
+                    var token = "";
+                if (ViewModelApplication.CurrentCredential != null)
+                { token = ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Token; }
+ 
             //var test1 = (await scopedClientDataStore.GetLoginCredentialsAsync());
             //reduce wait time for token when required in calls to back end
             //ViewModelApplication.MToken = token;
 
             // If we don't have a token (so we are not logged in...)
             if (string.IsNullOrEmpty(token))
-                // Then do nothing more
-                return;
+                    // Then do nothing more
+                    return;
 
             //Add default client for selection of models
             //ViewModelApplication.FClientID =  (await scopedClientDataStore.GetLoginCredentialsAsync())?.ClientID;
@@ -412,33 +527,46 @@ namespace Fasetto.Word
                 // We are done
                 return;
 
-            // TODO: Should we check if the values are different before saving?
+                // TODO: Should we check if the values are different before saving?
 
-            // Create data model from the response
-            var dataModel = result.ServerResponse.Response.ToLoginCredentialsDataModel();
-            //set changed flag to true if any changes detected in login credentials
-            var changed = (
-                dataModel.ClientID != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).ClientID ||
-                dataModel.ClientShortName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).ClientShortName ||
-                dataModel.CostHierarchyID != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).CostHierarchyID ||
-                dataModel.CostHierarchyShortName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).CostHierarchyShortName||
-                dataModel.Username != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Username||
-                dataModel.LastName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).LastName ||
-                dataModel.FirstName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).FirstName ||
-                dataModel.Email != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Email
+                // Create data model from the response
+                LoginCredentials = result.ServerResponse.Response.ToLoginCredentialsDataModel();
+                //set changed flag to true if any changes detected in login credentials
+                var changed = (
+                LoginCredentials.ClientID != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).ClientID ||
+                LoginCredentials.ClientShortName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).ClientShortName ||
+                LoginCredentials.CostHierarchyID != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).CostHierarchyID ||
+                LoginCredentials.CostHierarchyShortName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).CostHierarchyShortName ||
+
+                LoginCredentials.Username != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Username||
+                LoginCredentials.LastName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).LastName ||
+                LoginCredentials.FirstName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).FirstName ||
+                LoginCredentials.Email != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Email
                 );
-                dataModel.Token = token; 
+                LoginCredentials.Token = token; 
 
                 // Re-add our known token
 
 
-                ViewModelApplication.MToken = token;
+
 
                 if (changed)
-                { 
-                        ViewModelApplication.CurrentCredential = dataModel;
+                {
+                    ViewModelApplication.CurrentCredential =
+                new LoginCredentialsDataModel
+                {
+                    ClientID = LoginCredentials.ClientID,
+                    ClientShortName = LoginCredentials.ClientShortName,
+                    CostHierarchyID = LoginCredentials.CostHierarchyID,
+                    Username = LoginCredentials.Username,
+                    LastName = LoginCredentials.LastName,
+                    FirstName = LoginCredentials.FirstName,
+                    Email = LoginCredentials.Email,
+                    Token = LoginCredentials.Token
+                };
+
                         // Save the new information in the data store
-                        await scopedClientDataStore.SaveLoginCredentialsAsync(dataModel);
+                        await scopedClientDataStore.SaveLoginCredentialsAsync(LoginCredentials);
 
                         // Update values from local cache
                         await UpdateValuesFromLocalStoreAsync(scopedClientDataStore);
@@ -456,16 +584,18 @@ namespace Fasetto.Word
             return await RunCommandAsync(() => FirstNameIsSaving, async () =>
             {
                 // Update the First Name value on the server...
-                return await UpdateUserCredentialsValueAsync(
-                    // Display name
-                    "First Name",
-                    // Update the first name
-                    (credentials) => credentials.FirstName,
-                    // To new value
-                    FirstName.OriginalText,
-                    // Set Api model value
-                    (apiModel, value) => apiModel.FirstName = value
-                    );
+                //return await UpdateUserCredentialsValueAsync(
+                //    // Display name
+                //    "First Name",
+                //    // Update the first name
+                //    (credentials) => credentials.FirstName,
+                //    // To new value
+                //    FirstName.OriginalText,
+                //    // Set Api model value
+                //    (apiModel, value) => apiModel.FirstName = value
+                //    );
+                LoginCredentials.FirstName = FirstName.EditedText;
+                return true;
             });
         }
 
@@ -479,16 +609,18 @@ namespace Fasetto.Word
             return await RunCommandAsync(() => LastNameIsSaving, async () =>
             {
                 // Update the Last Name value on the server...
-                return await UpdateUserCredentialsValueAsync(
-                    // Display name
-                    "Last Name",
-                    // Update the last name
-                    (credentials) => credentials.LastName,
-                    // To new value
-                    LastName.OriginalText,
-                    // Set Api model value
-                    (apiModel, value) => apiModel.LastName = value
-                    );
+                //return await UpdateUserCredentialsValueAsync(
+                    //// Display name
+                    //"Last Name",
+                    //// Update the last name
+                    //(credentials) => credentials.LastName,
+                    //// To new value
+                    //LastName.OriginalText,
+                    //// Set Api model value
+                    //(apiModel, value) => apiModel.LastName = value
+                    //);
+                LoginCredentials.LastName = LastName.EditedText;
+                return true;
             });
         }
 
@@ -502,16 +634,18 @@ namespace Fasetto.Word
             return await RunCommandAsync(() => UsernameIsSaving, async () =>
             {
                 // Update the Username value on the server...
-                return await UpdateUserCredentialsValueAsync(
-                    // Display name
-                    "Username",
-                    // Update the first name
-                    (credentials) => credentials.Username,
-                    // To new value
-                    Username.OriginalText,
-                    // Set Api model value
-                    (apiModel, value) => apiModel.Username = value
-                    );
+                //return await UpdateUserCredentialsValueAsync(
+                //    // Display name
+                //    "Username",
+                //    // Update the first name
+                //    (credentials) => credentials.Username,
+                //    // To new value
+                //    Username.OriginalText,
+                //    // Set Api model value
+                //    (apiModel, value) => apiModel.Username = value
+                //    );
+                LoginCredentials.Username = Username.EditedText;
+                return true;
             });
         }
 
@@ -525,16 +659,18 @@ namespace Fasetto.Word
             return await RunCommandAsync(() => EmailIsSaving, async () =>
             {
                 // Update the Email value on the server...
-                return await UpdateUserCredentialsValueAsync(
-                    // Display name
-                    "Email",
-                    // Update the email
-                    (credentials) => credentials.Email,
-                    // To new value
-                    Email.OriginalText,
-                    // Set Api model value
-                    (apiModel, value) => apiModel.Email = value
-                    );
+                //return await UpdateUserCredentialsValueAsync(
+                //    // Display name
+                //    "Email",
+                //    // Update the email
+                //    (credentials) => credentials.Email,
+                //    // To new value
+                //    Email.OriginalText,
+                //    // Set Api model value
+                //    (apiModel, value) => apiModel.Email = value
+                //    );
+                LoginCredentials.Email = Email.EditedText;
+                return true;
             });
         }
 
@@ -602,6 +738,7 @@ namespace Fasetto.Word
             });
         }
 
+
         /// <summary>
         /// Prepare Hierarchy Control for selection of Client
         /// </summary>
@@ -617,12 +754,10 @@ namespace Fasetto.Word
                 ViewModelApplication.CurrentControlViewModel = Client;
                 HierarchyParam = new ParameterHierarchyItemSelectApiModel
                 {
-                    //ClientID = Client.ClientID,
-                    //FHierarchyID = Client.OriginalKid,
-                    //RootID = Client.OriginalKid,
+
                     //Level = 1
                     //Always allow the user to reset the default client
-                    RootID =  "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                    RootID = "4766E825-1B58-410D-B06B-5A2639CA22C8",
                     Level = 1
                 };
                 ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
@@ -642,7 +777,7 @@ namespace Fasetto.Word
 
                 //((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.ClientID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedKid;
                 //((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.RootID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.RootID;
-                ViewModelApplication.CurrentControlViewModel =CostHierarchy;
+                ViewModelApplication.CurrentControlViewModel = CostHierarchy;
                 HierarchyParam = new ParameterHierarchyItemSelectApiModel
                 {
 
@@ -657,31 +792,7 @@ namespace Fasetto.Word
         }
 
 
-        ///// <summary>
-        ///// Prepare Hierarchy Control for selection of Client
-        ///// </summary>
-        ///// <returns></returns>
-        //public async Task<bool> UpdateClientSelectionAsync() =>
-        //    // Lock this command to ignore any other requests while processing
-
-        //    await RunCommandAsync(() => UpdateHierarchyCompleted, async () =>
-        //    {
-        //        // Update the First Name value on the server...
-
-        //        ViewModelApplication.FClientID = FClientID.EditedKid;
-        //        ViewModelApplication.ClientShortName = FClientID.EditedName;
-        //        LoginCredentials.ClientID = FClientID.EditedKid;
-        //        LoginCredentials.ClientShortName = FClientID.EditedName;
-        //        await ClientDataStore.SaveLoginCredentialsAsync(LoginCredentials);
-        //        //LoginCredentials = DbContext.LoginCredentials.FirstOrDefault();
-        //        LoginCredentials = await ClientDataStore.GetLoginCredentialsAsync();
-
-
-                ///<summary>
-                /// Update Client selection for current session
-                /// </summary>
-                /// <returns></returns>
-                public async Task<bool> UpdateClientSelectionAsync()
+        public async Task<bool> UpdateClientSelectionAsync()
                 {
                     // Lock this command to ignore any other requests while processing
 
@@ -698,6 +809,10 @@ namespace Fasetto.Word
                         ViewModelApplication.FClientID = Client.EditedKid;
                         ViewModelApplication.ClientShortName = Client.EditedName;
                         Client.OriginalName = Client.EditedName;
+                        Client.OriginalKid = Client.EditedKid;
+                        LoginCredentials.ClientID = Client.EditedKid;
+                        LoginCredentials.ClientShortName = Client.EditedName;
+
 
                         ViewModelApplication.PopupVisible = false;
                         ViewModelApplication.CurrentPopupViewModel = null;
@@ -705,34 +820,34 @@ namespace Fasetto.Word
                         ViewModelApplication.CurrentPopupContent = 0;
 
                         // Update the Client value on the server...
-                        var Test = await UpdateUserCredentialsValueAsync(
-                        // Display name
-                        "Client",
-                        // Update the first name
-                        propertyToUpdate: (credentials) => credentials.ClientID,
-                        // To new value
-                        newValue: Client.EditedKid,
-                        // Set Api model value
-                        setApiModel: (apiModel, value) => apiModel.ClientID = value
-                        );
+                        //var Test = await UpdateUserCredentialsValueAsync(
+                        //// Display name
+                        //"Client",
+                        //// Update the first name
+                        //propertyToUpdate: (credentials) => credentials.ClientID,
+                        //// To new value
+                        //newValue: Client.EditedKid,
+                        //// Set Api model value
+                        //setApiModel: (apiModel, value) => apiModel.ClientID = value
+                        //);
 
 
-                        // Update the Client value on the server...
-                        return await UpdateUserCredentialsValueAsync(
-                        // Display name
-                        "ClientShortName",
-                        // Update the first name
-                        propertyToUpdate: (credentials) => credentials.ClientShortName,
-                        // To new value
-                        newValue: Client.EditedName,
-                        // Set Api model value
-                        setApiModel: (apiModel, value) => apiModel.ClientShortName = value
-                        ); 
-
+                        //// Update the Client value on the server...
+                        //return await UpdateUserCredentialsValueAsync(
+                        //// Display name
+                        //"ClientShortName",
+                        //// Update the first name
+                        //propertyToUpdate: (credentials) => credentials.ClientShortName,
+                        //// To new value
+                        //newValue: Client.EditedName,
+                        //// Set Api model value
+                        //setApiModel: (apiModel, value) => apiModel.ClientShortName = value
+                        //); 
+                        return true;
 
                     });
 
-                }
+        }
 
         ///<summary>
         /// Update Client selection for current session
@@ -748,39 +863,41 @@ namespace Fasetto.Word
 
                 ViewModelApplication.FCostHierarchyID = CostHierarchy.EditedKid;
                 ViewModelApplication.CostHierarchyShortName = CostHierarchy.EditedName;
-                ViewModelApplication.PopupVisible = false;
-                ViewModelApplication.CurrentPopupViewModel = null;
                 ViewModelApplication.CurrentPopupContent = 0;
                 CostHierarchy.OriginalName = CostHierarchy.EditedName;
+                Client.OriginalName = Client.EditedName;
+                LoginCredentials.CostHierarchyID = CostHierarchy.EditedKid;
+                LoginCredentials.CostHierarchyShortName = CostHierarchy.EditedName;
                 ViewModelApplication.PopupVisible = false;
                 ViewModelApplication.CurrentPopupViewModel = null;
 
                 ViewModelApplication.CurrentPopupContent = 0;
 
-                // Update the Client value on the server...
-                var Test = await UpdateUserCredentialsValueAsync(
-                // Display name
-                "CostHierarchy",
-                // Update the first name
-                propertyToUpdate: (credentials) => credentials.CostHierarchyID,
-                // To new value
-                newValue: CostHierarchy .EditedKid,
-                // Set Api model value
-                setApiModel: (apiModel, value) => apiModel.CostHierarchyID = value
-                );
+            // Update the Client value on the server...
+            //var Test = await UpdateUserCredentialsValueAsync(
+            //// Display name
+            //"CostHierarchy",
+            //// Update the first name
+            //propertyToUpdate: (credentials) => credentials.CostHierarchyID,
+            //// To new value
+            //newValue: CostHierarchy .EditedKid,
+            //// Set Api model value
+            //setApiModel: (apiModel, value) => apiModel.CostHierarchyID = value
+            //);
 
 
-                // Update the Client value on the server...
-                return await UpdateUserCredentialsValueAsync(
-                // Display name
-                "CostHierarchyShortName",
-                // Update the first name
-                propertyToUpdate: (credentials) => credentials.CostHierarchyShortName,
-                // To new value
-                newValue: CostHierarchy.EditedName,
-                // Set Api model value
-                setApiModel: (apiModel, value) => apiModel.CostHierarchyShortName = value
-                );
+            //// Update the Client value on the server...
+            //return await UpdateUserCredentialsValueAsync(
+            //// Display name
+            //"CostHierarchyShortName",
+            //// Update the first name
+            //propertyToUpdate: (credentials) => credentials.CostHierarchyShortName,
+            //// To new value
+            //newValue: CostHierarchy.EditedName,
+            //// Set Api model value
+            //setApiModel: (apiModel, value) => apiModel.CostHierarchyShortName = value
+                return true;
+                //);
 
 
             });
@@ -817,9 +934,27 @@ namespace Fasetto.Word
         private async Task UpdateValuesFromLocalStoreAsync(IClientDataStore clientDataStore)
         {
             // Get the stored credentials
+
             var storedCredentials = await clientDataStore.GetLoginCredentialsAsync();
 
-            ViewModelApplication.CurrentCredential = storedCredentials;
+            if (storedCredentials != null)
+            {
+                ViewModelApplication.CurrentCredential =
+                new LoginCredentialsDataModel
+                {
+                    ClientID = storedCredentials.ClientID,
+                    ClientShortName = storedCredentials.ClientShortName,
+                    CostHierarchyID = storedCredentials.CostHierarchyID,
+                    CostHierarchyShortName = storedCredentials.CostHierarchyShortName,
+                    Username = storedCredentials.Username,
+                    LastName = storedCredentials.LastName,
+                    FirstName = storedCredentials.FirstName,
+                    Email = storedCredentials.Email,
+                    Token = storedCredentials.Token
+                };
+
+            }
+
 
             // Set first name
             FirstName.OriginalText = storedCredentials?.FirstName;
@@ -844,7 +979,7 @@ namespace Fasetto.Word
             //Set CostHierarchy
             ViewModelApplication.CostHierarchyShortName = storedCredentials?.CostHierarchyShortName;
             ViewModelApplication.FCostHierarchyID = storedCredentials?.CostHierarchyID;
-            CostHierarchy.OriginalName = storedCredentials? .CostHierarchyShortName;
+            CostHierarchy.OriginalName = storedCredentials?.CostHierarchyShortName;
             CostHierarchy.OriginalKid = storedCredentials?.CostHierarchyID;
             
 

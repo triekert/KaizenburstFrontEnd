@@ -108,6 +108,21 @@ namespace Fasetto.Word
         /// </summary>
         public string KPartyName { get; set; }
 
+
+        /// <summary>
+        /// String representation of GUID for linked person
+        /// </summary>
+
+
+        public string KPersonID { get; set; }
+
+
+        /// <summary>
+        /// Name of linked person
+        /// </summary>
+        public string KPersonName { get; set; }
+
+
         /// <summary>
         /// String representation of GUID for linked Account
         /// </summary>

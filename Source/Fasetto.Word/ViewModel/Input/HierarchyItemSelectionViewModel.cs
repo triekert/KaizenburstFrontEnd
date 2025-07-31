@@ -192,6 +192,8 @@ namespace Fasetto.Word
                 EditedKid = EditedKid;
                 EditedName = EditedName;
 
+                OriginalKid = OriginalKid;
+
                 // Try and do the work
                 result = CommitAction == null ? true : await CommitAction();
 

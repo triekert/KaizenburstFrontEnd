@@ -83,8 +83,11 @@ namespace Fasetto.Word
                 //ViewModelApplication.CurrentCredential = loginResult.ToLoginCredentialsDataModel();
 
                 var dataModel = loginResult.ToLoginCredentialsDataModel();
+                var changed = true;
                 //set changed flag to true if any changes detected in login credentials
-                var changed = (
+                if (ViewModelApplication.CurrentCredential != null)
+                {
+                    changed = (
                     dataModel.ClientID != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).ClientID ||
                     dataModel.ClientShortName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).ClientShortName ||
                     dataModel.CostHierarchyID != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).CostHierarchyID ||
@@ -92,13 +95,26 @@ namespace Fasetto.Word
                     dataModel.Username != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Username ||
                     dataModel.LastName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).LastName ||
                     dataModel.FirstName != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).FirstName ||
-                    dataModel.Email != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Email||
+                    dataModel.Email != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Email ||
                     dataModel.Token != ((LoginCredentialsDataModel)ViewModelApplication.CurrentCredential).Token
                     );
+                }
 
                 if (changed)
                 {
-                    ViewModelApplication.CurrentCredential = dataModel;
+                    ViewModelApplication.CurrentCredential =
+                    new LoginCredentialsDataModel
+                    {
+                        ClientID = dataModel.ClientID,
+                        ClientShortName = dataModel.ClientShortName,
+                        CostHierarchyID = dataModel.CostHierarchyID,
+                        CostHierarchyShortName = dataModel.CostHierarchyShortName,
+                        Username = dataModel.Username,
+                        LastName = dataModel.LastName,
+                        FirstName = dataModel.FirstName,
+                        Email = dataModel.Email,
+                        Token = dataModel.Token
+                    };
                     await ViewModelApplication.HandleSuccessfulLoginAsync(loginResult);                    // Save the new information in the data store
 
                 }

@@ -1066,6 +1066,12 @@ namespace Fasetto.Word
                             mViewModel.Save();
 
                         }
+                        else
+                        {
+
+                            ViewModelApplication.PopupVisible = false;
+                            ViewModelApplication.CurrentPopupContent = 0;
+                        }
                     }
                     else
                     {

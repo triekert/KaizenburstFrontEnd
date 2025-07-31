@@ -82,6 +82,10 @@ namespace Fasetto.Word
         /// </summary>
         public HierarchyItemSelectionViewModel Account { get; set; }
 
+        /// <summary>
+        /// An internal party (Such as family member) to be linked for the allocation
+        /// </summary>
+        public HierarchyItemSelectionViewModel PartyInternal { get; set; }
         public string KCategoryID { get; set; }
 
         /// <summary>
@@ -511,7 +515,7 @@ namespace Fasetto.Word
             };
             Party = new HierarchyItemSelectionViewModel
             {
-                Label = "Select Linked Party",
+                Label = "Select Transacting Party",
                 //EditedName = mLoadingText,
                 EditedName = "Selected Party",
                 OriginalKid = selected.KPartyID,
@@ -525,6 +529,7 @@ namespace Fasetto.Word
                 PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
                 CommitAction = SelectPartyAsync,
             };
+
 
             Account = new HierarchyItemSelectionViewModel
             {
@@ -581,6 +586,22 @@ namespace Fasetto.Word
             };
 
 
+            PartyInternal = new HierarchyItemSelectionViewModel
+            {
+                Label = "Select Specific Person",
+                //EditedName = mLoadingText,
+                EditedName = "Selected Person",
+                OriginalKid = selected.KPersonID,
+                OriginalName = selected.KPersonName,
+                EditedKid = null,
+                ClientID = Selected.KClientID,
+                HierarchyTypeID = "ADEEBB16-F553-48F8-955F-663227A4886C",
+                PrepareAction = SetPartyHierarchySelectionAsync,
+                //HierarchyTypeID = ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).f,
+                //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
+                CommitAction = SelectPartyAsync,
+            };
 
 
             TransactionDate = (selected.Posted_Date).ToString();
@@ -924,7 +945,29 @@ namespace Fasetto.Word
         }
 
 
+        public async Task<bool> SetProjectHierarchySelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
 
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the Party value on the server...
+
+                ViewModelApplication.CurrentControlViewModel = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Project;
+                HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                {
+
+                    Level = 0,
+                    RootID = "FEF29B52-81CE-48A9-8E02-A7DAC07A9297"
+                };
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Account.OriginalKid;
+
+                //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
+                return true;
+            });
+
+        }
 
 
 
