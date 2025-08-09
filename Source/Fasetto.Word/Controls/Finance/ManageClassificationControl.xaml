@@ -176,9 +176,8 @@
                             <local:HierarchyItemSelectionControl DataContext="{Binding Party}" FontWeight="ExtraBlack"  /> 
                             <local:HierarchyItemSelectionControl DataContext="{Binding Account}" FontWeight="ExtraBlack"  />
                             <local:HierarchyItemSelectionControl DataContext="{Binding Asset}" FontWeight="ExtraBlack"  />
-                            <local:HierarchyItemSelectionControl DataContext="{Binding Account}" FontWeight="ExtraBlack"  />
                             <local:HierarchyItemSelectionControl DataContext="{Binding Project}" FontWeight="ExtraBlack"  />
-                            <local:HierarchyItemSelectionControl DataContext="{Binding PartyInternal}" FontWeight="ExtraBlack"  />
+                            <local:HierarchyItemSelectionControl DataContext="{Binding Person}" FontWeight="ExtraBlack"  />
                             <!--</StackPanel>-->
                             <!--</StackPanel>-->
                             <!--<Grid >

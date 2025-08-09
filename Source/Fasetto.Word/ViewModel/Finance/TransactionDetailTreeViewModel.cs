@@ -182,6 +182,12 @@ namespace Fasetto.Word
                     Notes = item.Notes,
                     KAccountID = item.KAccountID,
                     KAccountName = item.KAccountName,
+                    KProjectID = item.KProjectID,
+                    KProjectName = item.KProjectName,
+                    KAssetID = item.KAssetID,
+                    KAssetName = item.KAssetName,
+                    KPersonID = item.KPersonID,
+                    KPersonName = item.KPersonName,
                     Units = item.Units,
                     KClientID = item.KClientID,
 

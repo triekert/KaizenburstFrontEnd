@@ -1063,7 +1063,7 @@ namespace Fasetto.Word
                             var mViewModel = (HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel;
                             //var mViewModel = (ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel;
 
-                            mViewModel.Save();
+                            mViewModel.ProcessSelectionAction();
 
                         }
                         else
@@ -1413,7 +1413,9 @@ namespace Fasetto.Word
                     ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
                     ViewModelApplication.PopupVisible = true;
                 }
-            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Save();
+
+                //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Save();
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ProcessSelection();
 
             }
             else
@@ -1422,8 +1424,8 @@ namespace Fasetto.Word
 
                 ViewModelApplication.CurrentPopupContent = 0;
 
-                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Save();
-
+                //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Save();
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ProcessSelection();
             }
 
 

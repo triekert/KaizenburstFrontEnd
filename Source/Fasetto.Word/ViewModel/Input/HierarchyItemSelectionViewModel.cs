@@ -81,11 +81,16 @@ namespace Fasetto.Word
         public int Level { get; set; }
 
         /// <summary>
-        /// The action to run when saving the text.
+        /// The action to run when saving the newly selected hierarchy item.
         /// Returns true if the commit was successful, or false otherwise.
         /// </summary>
         public Func<Task<bool>> CommitAction { get; set; }
 
+        /// <summary>
+        /// The action to run after selection of  hierarchy item.
+        /// This is in preparation for updating the current field.
+        /// </summary>
+        public Func<Task<bool>> ProcessSelectionAction { get; set; }
 
         /// <summary>
         /// The action to run when initiating the control.
@@ -152,7 +157,7 @@ namespace Fasetto.Word
             EditedName = OriginalName;
 
             // Go into edit mode
-            //Editing = true;
+            Editing = true;
 
             var result = default(bool);
 
@@ -169,9 +174,7 @@ namespace Fasetto.Word
 
             ViewModelApplication.PopupVisible = true;
             ViewModelApplication.CurrentPopupContent = 0;
-
             ViewModelApplication.CurrentPopupContent = PopupContent.HierarchySelection;
-
 
         }
 
@@ -181,6 +184,7 @@ namespace Fasetto.Word
         public void Save()
         {
             // Store the result of a commit call
+            var currentSavedValue = OriginalName;
             var result = default(bool);
 
 
@@ -205,6 +209,43 @@ namespace Fasetto.Word
                 if (!result)
                 {
                     // Restore original value
+                    OriginalName = currentSavedValue;
+
+                    // Go back into edit mode
+                    Editing = true;
+                }
+            });
+        }
+
+        /// <summary>
+        /// Cancels out of edit mode
+        /// </summary>
+        public void ProcessSelection()
+        {
+            var result = default(bool);
+
+
+            RunCommandAsync(() => Working, async () =>
+            {
+                // While working, come out of edit mode
+                Editing = true;
+
+                //EditedKid = EditedKid;
+                //EditedName = EditedName;
+
+                //OriginalKid = OriginalKid;
+
+                // Try and do the work
+                result = ProcessSelectionAction == null ? true : await ProcessSelectionAction();
+
+            }).ContinueWith(t =>
+            {
+                // If we succeeded...
+                // Nothing to do
+                // If we fail...
+                if (!result)
+                {
+                    // Restore original value
                     //OriginalText = currentSavedValue;
 
                     // Go back into edit mode
@@ -213,12 +254,15 @@ namespace Fasetto.Word
             });
         }
 
-
         /// <summary>
         /// Cancels out of edit mode
         /// </summary>
         public void Cancel()
         {
+            EditedKid = "";
+            EditedName = "";
+            OriginalKid = "";
+            OriginalName = "";
             Editing = false;
         }
 

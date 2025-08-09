@@ -321,6 +321,12 @@ namespace Fasetto.Word
                             KClientID = item.KClientID,
                             KAccountID = item.KAccountID,
                             KAccountName = item.KAccountName,
+                            KPersonID = item.KPersonID,
+                            KPersonName = item.KPersonName,
+                            KAssetID = item.KAssetID,
+                            KAssetName = item.KAssetName,
+                            KProjectID = item.KProjectID,
+                            KProjectName = item.KProjectName,
                             Units = item.Units,
                         };
 
@@ -555,6 +561,12 @@ namespace Fasetto.Word
                     IsTemplate = item.IsTemplate,
                     Notes = item.Notes,
                     KClientID = item.KClientID,
+                    KPersonID = item.KPersonID,
+                    KPersonName = item.KPersonName,
+                    KAssetID = item.KAssetID,
+                    KAssetName = item.KAssetName,
+                    KProjectID = item.KProjectID,
+                    KProjectName = item.KProjectName,
                 };
                 target.Add(mTR);
             }
@@ -599,6 +611,12 @@ namespace Fasetto.Word
                     KAccountName = item.KAccountName,
                     Units = item.Units,
                     KClientID = item.KClientID,
+                    KPersonID = item.KPersonID,
+                    KPersonName = item.KPersonName,
+                    KAssetID = item.KAssetID,
+                    KAssetName = item.KAssetName,
+                    KProjectID = item.KProjectID,
+                    KProjectName = item.KProjectName,
                 };
 
                 //Lock collection to prevent contention with UI
@@ -798,6 +816,12 @@ namespace Fasetto.Word
                             KHierarchyID = ((TransactionViewModel)item).KHierarchyID,
                             KAccountID = ((TransactionViewModel)item).KAccountID,
                             KAccountName = ((TransactionViewModel)item).KAccountName,
+                            KProjectName = ((TransactionViewModel)item).KProjectName,
+                            KProjectID = ((TransactionViewModel)item).KProjectID,
+                            KAssetName = ((TransactionViewModel)item).KAssetName,
+                            KAssetID = ((TransactionViewModel)item).KAssetID,
+                            KPersonName = ((TransactionViewModel)item).KPersonName,
+                            KPersonID = ((TransactionViewModel)item).KPersonID,
                             Notes = ((TransactionViewModel)item).Notes,
                             Units = ((TransactionViewModel)item).Units,
                             ChangeType = "m",
@@ -872,6 +896,12 @@ namespace Fasetto.Word
                             Notes = item.Notes,
                             Units = item.Units,
                             KClientID = item.KClientID,
+                            KPersonID = item.KPersonID,
+                            KPersonName = item.KPersonName,
+                            KAssetID = item.KAssetID,
+                            KAssetName = item.KAssetName,
+                            KProjectID = item.KProjectID,
+                            KProjectName = item.KProjectName,
                         };
                         TransactionDetail.Add(mTDVM);
                     }

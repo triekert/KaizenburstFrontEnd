@@ -133,6 +133,43 @@ namespace Fasetto.Word.Core
         public string KPlantName { get; set; }
 
         /// <summary>
+        /// String representation of GUID for linked person
+        /// </summary>
+
+        public string KPersonID { get; set; }
+
+
+        /// <summary>
+        /// Name of linked person
+        /// </summary>
+        public string KPersonName { get; set; }
+
+        /// <summary>
+        /// String representation of GUID for linked Project
+        /// </summary>
+
+        public string KProjectID { get; set; }
+
+
+        /// <summary>
+        /// Name of linked Asset
+        /// </summary>
+        public string KAssetName { get; set; }
+
+        /// <summary>
+        /// String representation of GUID for linked Asset
+        /// </summary>
+
+        public string KAssetID { get; set; }
+
+
+        /// <summary>
+        /// Name of linked project
+        /// </summary>
+        public string KProjectName { get; set; }
+
+
+        /// <summary>
         /// Attach the current activity to a Change object
         /// </summary>
         public string KChangeID { get; set; }

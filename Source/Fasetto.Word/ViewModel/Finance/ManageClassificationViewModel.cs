@@ -85,7 +85,7 @@ namespace Fasetto.Word
         /// <summary>
         /// An internal party (Such as family member) to be linked for the allocation
         /// </summary>
-        public HierarchyItemSelectionViewModel PartyInternal { get; set; }
+        public HierarchyItemSelectionViewModel Person { get; set; }
         public string KCategoryID { get; set; }
 
         /// <summary>
@@ -228,7 +228,7 @@ namespace Fasetto.Word
         /// The action to run when saving the text.
         /// Returns true if the commit was successful, or false otherwise.
         /// </summary>
-        public Func<Task<bool>> CommitAction { get; set; }
+        //public Func<Task<bool>> CommitAction { get; set; }
 
 
         /// <summary>
@@ -496,7 +496,7 @@ namespace Fasetto.Word
 
             Category = new HierarchyItemSelectionViewModel
             {
-                Label = "Select Cost Category",
+                Label = "Cost Category",
                 //EditedName = mLoadingText,
                 EditedName = "Selected Category",
                 OriginalName = selected.ShortName,
@@ -511,11 +511,12 @@ namespace Fasetto.Word
 
                 //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
 
-                CommitAction = SelectCategoryAsync,           
+                CommitAction = SelectCategoryAsync,
+                ProcessSelectionAction = ProcessSelectionActionAsync,
             };
             Party = new HierarchyItemSelectionViewModel
             {
-                Label = "Select Transacting Party",
+                Label = "Transacting Party",
                 //EditedName = mLoadingText,
                 EditedName = "Selected Party",
                 OriginalKid = selected.KPartyID,
@@ -528,67 +529,71 @@ namespace Fasetto.Word
                 //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
                 PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
                 CommitAction = SelectPartyAsync,
+                ProcessSelectionAction = ProcessSelectionActionAsync,
             };
 
 
             Account = new HierarchyItemSelectionViewModel
             {
-                Label = "Select Account",
+                Label = "Transacting Account",
                 //EditedName = mLoadingText,
                 EditedName = "Selected Account",
                 OriginalKid = selected.KAccountID,
                 OriginalName = selected.KAccountName,
                 EditedKid = null,
                 ClientID = Selected.KClientID,
-                HierarchyTypeID = "ADEEBB16-F553-48F8-955F-663227A4886C",
+                HierarchyTypeID = "A806FD4A-8F02-4CA0-BFCE-51A8587D9CC8",
                 PrepareAction = SetAccountHierarchySelectionAsync,
                 //HierarchyTypeID = ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).f,
                 //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
                 PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
                 CommitAction = SelectAccountAsync,
+                ProcessSelectionAction = ProcessSelectionActionAsync,
             };
 
 
             Project = new HierarchyItemSelectionViewModel
             {
-                Label = "Select Project",
+                Label = "Project",
                 //EditedName = mLoadingText,
                 EditedName = "Selected Project",
                 OriginalKid = selected.KProjectID,
                 OriginalName = selected.KProjectName,
                 EditedKid = null,
                 ClientID = Selected.KClientID,
-                HierarchyTypeID = "7D26F714-E4DB-40E1-9F03-B5822E96EF9F",
-                PrepareAction = SetAccountHierarchySelectionAsync,
+                HierarchyTypeID = "C77539FC-A801-46B5-9681-5902496BF83E",
+                PrepareAction = SetProjectHierarchySelectionAsync,
                 //HierarchyTypeID = ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).f,
                 //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
                 PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
-                CommitAction = SelectAccountAsync,
+                CommitAction = SelectProjectAsync,
+                ProcessSelectionAction = ProcessSelectionActionAsync,
             };
 
 
 
             Asset = new HierarchyItemSelectionViewModel
             {
-                Label = "Select Asset",
+                Label = "Asset",
                 //EditedName = mLoadingText,
                 EditedName = "Selected Asset",
                 OriginalKid = selected.KAssetID,
                 OriginalName = selected.KAssetName,
                 EditedKid = null,
                 ClientID = Selected.KClientID,
-                HierarchyTypeID = "ADEEBB16-F553-48F8-955F-663227A4886C",
-                PrepareAction = SetAccountHierarchySelectionAsync,
+                HierarchyTypeID = "56DA3516-FF85-4A9F-A8F6-56874B4CC8E7",
+                PrepareAction = SetAssetHierarchySelectionAsync,
                 //HierarchyTypeID = ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).f,
                 //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
                 PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
-                CommitAction = SelectAccountAsync,
+                CommitAction = SelectAsset1Async,
+                ProcessSelectionAction = ProcessSelectionActionAsync,
             };
 
 
-            PartyInternal = new HierarchyItemSelectionViewModel
+            Person = new HierarchyItemSelectionViewModel
             {
-                Label = "Select Specific Person",
+                Label = "Linked Person",
                 //EditedName = mLoadingText,
                 EditedName = "Selected Person",
                 OriginalKid = selected.KPersonID,
@@ -596,11 +601,12 @@ namespace Fasetto.Word
                 EditedKid = null,
                 ClientID = Selected.KClientID,
                 HierarchyTypeID = "ADEEBB16-F553-48F8-955F-663227A4886C",
-                PrepareAction = SetPartyHierarchySelectionAsync,
+                PrepareAction = SetPersonHierarchySelectionAsync,
                 //HierarchyTypeID = ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).f,
                 //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
                 PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
-                CommitAction = SelectPartyAsync,
+                CommitAction = SelectPersonAsync,
+                ProcessSelectionAction = ProcessSelectionActionAsync,
             };
 
 
@@ -920,6 +926,35 @@ namespace Fasetto.Word
             });
 
         }
+
+        public async Task<bool> SetPersonHierarchySelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the Party value on the server...
+
+                ViewModelApplication.CurrentControlViewModel = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Person;
+                HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                {
+
+                    Level = 0,
+                    ClientID = ViewModelApplication.FClientID,
+                    HierarchyTypeID = Party.HierarchyTypeID,
+                };
+                if (ViewModelApplication.ControlPopupParty == null)
+                { ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam); }
+                else
+                { ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlPopupParty; }
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Party.OriginalKid;
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
+                //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
+                return true;
+            });
+
+        }
         public async Task<bool> SetAccountHierarchySelectionAsync()
         {
             // Lock this command to ignore any other requests while processing
@@ -931,13 +966,37 @@ namespace Fasetto.Word
                 ViewModelApplication.CurrentControlViewModel = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Account;
                 HierarchyParam = new ParameterHierarchyItemSelectApiModel
                 {
-
                     Level = 0,
-                    RootID = "FEF29B52-81CE-48A9-8E02-A7DAC07A9297"
+                    HierarchyTypeID = Account.HierarchyTypeID,
+                    ClientID= ViewModelApplication.FClientID,
                 };
                 ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Account.OriginalKid;
 
+                //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
+                return true;
+            });
+
+        }
+
+
+        public async Task<bool> SetAssetHierarchySelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the Party value on the server...
+
+                ViewModelApplication.CurrentControlViewModel = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Asset;
+                HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                {
+                    Level = 0,
+                    HierarchyTypeID = Asset.HierarchyTypeID,
+                    ClientID = ViewModelApplication.FClientID,
+                };
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Asset.OriginalKid;
                 //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
                 return true;
             });
@@ -956,12 +1015,12 @@ namespace Fasetto.Word
                 ViewModelApplication.CurrentControlViewModel = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Project;
                 HierarchyParam = new ParameterHierarchyItemSelectApiModel
                 {
-
                     Level = 0,
-                    RootID = "FEF29B52-81CE-48A9-8E02-A7DAC07A9297"
+                    HierarchyTypeID = Project.HierarchyTypeID,
+                    ClientID = ViewModelApplication.FClientID,
                 };
                 ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
-                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Account.OriginalKid;
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Project.OriginalKid;
 
                 //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
                 return true;
@@ -989,9 +1048,11 @@ namespace Fasetto.Word
                 ViewModelApplication.ControlPopupCostCategory = ViewModelApplication.CurrentPopupViewModel;
                 if (ViewModelApplication.ControlParameter1 != null)
                 {
-                    ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
-                    ViewModelApplication.ControlParameter1 = null;
-                    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    if (ViewModelApplication.CurrentPopupContent != PopupContent.Classify)
+                    {
+                        ViewModelApplication.ControlParameter1 = null;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    }
                     ViewModelApplication.PopupVisible = true;
                 }
                 //((ManageClassificationViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
@@ -1016,14 +1077,17 @@ namespace Fasetto.Word
             {
 
                 //ViewModelApplication.ControlPopupParty = ViewModelApplication.CurrentPopupViewModel;
-                if (Category.EditedName != "Selected Party")
+                if (Party.EditedName != "Selected Party")
                     Party.OriginalName = Party.EditedName;
                    ViewModelApplication.ControlPopupParty = ViewModelApplication.CurrentPopupViewModel;
                 if (ViewModelApplication.ControlParameter1 != null)
                 {
-                    ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
-                    ViewModelApplication.ControlParameter1 = null;
-                    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+
+                    if (ViewModelApplication.CurrentPopupContent != PopupContent.Classify)
+                    {
+                        ViewModelApplication.ControlParameter1 = null;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    }
                     ViewModelApplication.PopupVisible = true;
                 }
 
@@ -1033,22 +1097,57 @@ namespace Fasetto.Word
         }
 
 
+        /// <summary>
+        /// Initialises the Cost Hierarchy Search
+        /// </summary>
+        /// <returns>Returns true if successful, false otherwise</returns>
+        public async Task<bool> SelectPersonAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+
+            return await RunCommandAsync(() => SelectPartyCompleted, async () =>
+            {
+
+                //ViewModelApplication.ControlPopupParty = ViewModelApplication.CurrentPopupViewModel;
+                if (Person.EditedName != "Selected Person")
+                    Person.OriginalName = Person.EditedName;
+                ViewModelApplication.ControlPopupParty = ViewModelApplication.CurrentPopupViewModel;
+                if (ViewModelApplication.ControlParameter1 != null)
+                {
+                    if (ViewModelApplication.CurrentPopupContent != PopupContent.Classify)
+                    {
+                        ViewModelApplication.ControlParameter1 = null;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    }
+                    ViewModelApplication.PopupVisible = true;
+                }
+
+
+                return true;
+            });
+        }
+
+
+
         public async Task<bool> SelectAccountAsync()
         {
             // Lock this command to ignore any other requests while processing
 
             return await RunCommandAsync(() => SelectAccountCompleted, async () =>
             {
-            if (Category.EditedName != "Selected Account")
+            if (Account.EditedName != "Selected Account")
             //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
             Account.OriginalName = Account.EditedName;
             if (ViewModelApplication.ControlParameter1 != null)
             {
-                ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
-                ViewModelApplication.ControlParameter1 = null;
-                ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
-                ViewModelApplication.PopupVisible = true;
-            }
+                    if (ViewModelApplication.CurrentPopupContent != PopupContent.Classify)
+                    {
+                        ViewModelApplication.ControlParameter1 = null;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    }
+                    ViewModelApplication.PopupVisible = true;
+                }
             //((ManageClassificationViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
             //{
             //    MSelectedCostHierarchy = new CostHierarchyViewModel()
@@ -1057,10 +1156,92 @@ namespace Fasetto.Word
             return true;
         });
         }
-    /// <summary>
-    /// Used tp insert a new node with the currently selected node as parent
-    /// </summary>
-    public void AlterTemplate()
+
+
+        public async Task<bool> SelectAsset1Async()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SelectAccountCompleted, async () =>
+            {
+                if (Asset.EditedName != "Selected Asset")
+                    //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                    Asset.OriginalName = Asset.EditedName;
+                if (ViewModelApplication.ControlParameter1 != null)
+                {
+                    if (ViewModelApplication.CurrentPopupContent != PopupContent.Classify)
+                    {
+                        ViewModelApplication.ControlParameter1 = null;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    }
+                    ViewModelApplication.PopupVisible = true;
+                }
+                //((ManageClassificationViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
+                //{
+                //    MSelectedCostHierarchy = new CostHierarchyViewModel()
+                //};
+                //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                return true;
+            });
+        }
+
+
+
+        public async Task<bool> SelectProjectAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SelectAccountCompleted, async () =>
+            {
+                if (Project.EditedName != "Selected Project")
+                    //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                    Project.OriginalName = Project.EditedName;
+                if (ViewModelApplication.ControlParameter1 != null)
+                {
+                    if (ViewModelApplication.CurrentPopupContent != PopupContent.Classify)
+                    {
+                        ViewModelApplication.ControlParameter1 = null;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    }
+                    ViewModelApplication.PopupVisible = true;
+                }
+                //((ManageClassificationViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
+                //{
+                //    MSelectedCostHierarchy = new CostHierarchyViewModel()
+                //};
+                //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                return true;
+            });
+        }
+
+        /// <summary>
+        /// Used tp insert a new node with the currently selected node as parent
+        /// </summary>
+
+        public async Task<bool> ProcessSelectionActionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SelectAccountCompleted, async () =>
+            {
+
+            //if (ViewModelApplication.ControlParameter1 != null)
+            //{
+            ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
+                if (ViewModelApplication.CurrentPopupContent != PopupContent.Classify)
+                    { ViewModelApplication.ControlParameter1 = null;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.Classify; }
+                    ViewModelApplication.PopupVisible = true;
+                //}
+                //((ManageClassificationViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
+                //{
+                //    MSelectedCostHierarchy = new CostHierarchyViewModel()
+                //};
+                //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                return true;
+            });
+
+        }        public void AlterTemplate()
         {
             //set flag to allow template update
             IsTemplate = true;
@@ -1118,6 +1299,13 @@ namespace Fasetto.Word
                 Selected1.KAccountName = Selected.KAccountName;
                 Selected1.Units = Selected.Units;
                 Selected1.KClientID = Selected.KClientID;
+                Selected1.KAssetID = Selected.KAssetID;
+                Selected1.KAssetName = Selected.KAssetName;
+                Selected1.KPersonID = Selected.KPersonID;
+                Selected1.KPersonName = Selected.KPersonName;
+                Selected1.KProjectID = Selected.KProjectID;
+                Selected1.KProjectName = Selected.KProjectName;
+
 
                 rec.Notes = Selected.Notes;
                 if (TransactionNotes.EditedText != "" && rec.KCategoryID!= "") { rec.Notes = TransactionNotes.EditedText; }
@@ -1163,6 +1351,12 @@ namespace Fasetto.Word
                     Selected.Notes = TransactionNotes.EditedText;
                     Selected.KAccountID = Account.EditedKid ?? Account.OriginalKid;
                     Selected.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
+                    Selected.KPersonID = Person.EditedKid ?? Person.OriginalKid;
+                    Selected.KPersonName = Person.EditedName ?? Person.OriginalName;
+                    Selected.KAssetID = Asset.EditedKid ?? Asset.OriginalKid;
+                    Selected.KAssetName = Asset.EditedName ?? Asset.OriginalName;
+                    Selected.KProjectID = Project.EditedKid ?? Project.OriginalKid;
+                    Selected.KProjectName = Project.EditedName ?? Project.OriginalName;
                     Selected.Units = IntUnits;
                     ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).TransactionDetail[0].KFinTranID = Selected.KFinTranID;
 
@@ -1175,8 +1369,8 @@ namespace Fasetto.Word
                     Mcategory.KCategoryID = Selected.KCategoryID;
                     Mcategory.KFinActualID = Selected.KFinActualID;
                     Mcategory.DateEffective = Selected.DateEffective;
-                    Mcategory.KPartyID = Selected.KPartyID;
-                    Mcategory.KPartyName = Selected.KPartyName;
+                    Mcategory.KPersonID = Selected.KPersonID;
+                    Mcategory.KPersonName = Selected.KPersonName;
                     Mcategory.IsTemplate = Selected.IsTemplate;
                     Mcategory.Notes = Selected.Notes;
                     Mcategory.KAccountID = Account.EditedKid ?? Account.OriginalKid;
@@ -1194,6 +1388,12 @@ namespace Fasetto.Word
                     Mcategory1.DateEffective = Selected.DateEffective;
                     Mcategory1.KPartyID = Selected.KPartyID;
                     Mcategory1.KPartyName = Selected.KPartyName;
+                    Mcategory1.KProjectID = Selected.KProjectID;
+                    Mcategory1.KProjectName = Selected.KProjectName;
+                    Mcategory1.KAssetID = Selected.KAssetID;
+                    Mcategory1.KAssetName = Selected.KAssetName;
+                    Mcategory1.KPersonID = Selected.KPersonID;
+                    Mcategory1.KPersonName = Selected.KPersonName;
                     Mcategory1.IsTemplate = Selected.IsTemplate;
                     Mcategory1.Notes = Selected.Notes;
                     Mcategory1.KAccountID = Account.EditedKid ?? Account.OriginalKid;
@@ -1219,6 +1419,12 @@ namespace Fasetto.Word
                         KClientID = Selected.KClientID,
                         KPartyID = Party.EditedKid ?? Party.OriginalKid,
                         KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
+                        KPersonID = Person.EditedKid ?? Person.OriginalKid,
+                        KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
+                        KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
+                        KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
+                        KProjectID = Project.EditedKid ?? Project.OriginalKid,
+                        KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
                         IsTemplate = IsTemplate,
                         Notes = TransactionNotes.EditedText,
                         KAccountID = Account.EditedKid ?? Account.OriginalKid,
@@ -1324,7 +1530,8 @@ namespace Fasetto.Word
                     //Check for any changes made to transaction assignment
                     if ((Category.EditedKid ?? Category.OriginalKid) != Category.OriginalKid || IntAmnt != OrgActual || (Party.EditedKid ?? Party.OriginalKid) != Party.OriginalKid 
                     || (Account.EditedKid ?? Account.OriginalKid) != Account.OriginalKid  || TstNotes || Selected.Description != (TransactionDescription.EditedText ?? TransactionDescription.OriginalText) 
-                    || Selected.Posted_Date.Date != DateTime.Parse(TransactionDate).Date || IntUnits != Selected.Units )
+                    || Selected.Posted_Date.Date != DateTime.Parse(TransactionDate).Date || IntUnits != Selected.Units || (Project.EditedKid ?? Project.OriginalKid) != Project.OriginalKid || 
+                    (Person.EditedKid ?? Person.OriginalKid) != Person.OriginalKid || (Asset.EditedKid ?? Asset.OriginalKid) != Asset.OriginalKid)
                     {
 
 
@@ -1359,7 +1566,8 @@ namespace Fasetto.Word
 //look for any changes made to the transaction assignment
                         if ((Category.EditedKid ?? Category.OriginalKid) != Category.OriginalKid || IntAmnt != OrgActual || (Party.EditedKid ?? Party.OriginalKid) != Party.OriginalKid || 
                         (Account.EditedKid ?? Account.OriginalKid) != Account.OriginalKid || TstNotes || Selected.Description != (TransactionDescription.EditedText ?? TransactionDescription.OriginalText) || 
-                        Selected.Posted_Date.Date != DateTime.Parse(TransactionDate).Date || IntUnits != Selected.Units)
+                        Selected.Posted_Date.Date != DateTime.Parse(TransactionDate).Date || IntUnits != Selected.Units || (Asset.EditedKid ?? Asset.OriginalKid) != Asset.OriginalKid
+                        || (Person.EditedKid ?? Person.OriginalKid) != Person.OriginalKid || (Project.EditedKid ?? Project.OriginalKid) != Project.OriginalKid)
                         {
                             //if ((Category.EditedKid ?? Category.OriginalKid) != Category.OriginalKid && IntAmnt != OrgActual)
                             //{
@@ -1379,117 +1587,7 @@ namespace Fasetto.Word
                                                 {
                                                     ChangeTranAdjust(IntAmnt, OrgActual, 0);
                                                     ExistCatUsage(IntAmnt, OrgActual, IntUnits);
-                                                    //{
-                                                    //    Mcategory1.ActualAmount = IntAmnt;
-                                                    //    Mcategory1.KCategoryID = Selected.KCategoryID;
-                                                    //    Mcategory.ActualAmount = IntAmnt;
-                                                    //    Mcategory.ShortName = Selected.ShortName;
-                                                    //    Mcategory.KCategoryID = Selected.KCategoryID;
-                                                    //    Mcategory.Units = IntUnits;
-                                                    //    Selected1.ActualAmount = IntAmnt;
-                                                    //    Selected.ActualAmount = IntAmnt;
-                                                    //    Selected1.ShortName = Selected.ShortName;
-                                                    //    Selected1.KCategoryID = Selected.KCategoryID;
-                                                    //    Selected.Units = IntUnits;
-                                                    //    Selected1.KFinActualID = Mcategory.KFinActualID;
-                                                    //    Selected.KFinActualID = Selected1.KFinActualID;
-                                                    //}
-
-
-                                                    //var u = new TransactionResultApiModel
-                                                    //{
-                                                    //    Posted_Date = DateTime.Parse(TransactionDate),
-                                                    //    Month = Selected1.Month,
-                                                    //    Description = TransactionDescription.EditedText ?? Selected.Description,
-                                                    //    TransAmount = Selected1.TransAmount,
-                                                    //    ActualAmount = Selected1.ActualAmount,
-                                                    //    ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                                    //    KCategoryID = Category.EditedKid ?? Category.OriginalKid,
-                                                    //    KFinActualID = Selected1.KFinActualID,
-                                                    //    KFinTranID = Selected1.KFinTranID,
-                                                    //    ChangeType = "c",
-                                                    //    DateEffective = DateTime.Now,
-                                                    //    KHierarchyID = Selected1.KHierarchyID,
-                                                    //    KClientID = Selected.KClientID,
-                                                    //    KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                                    //    KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
-                                                    //    IsTemplate = IsTemplate,
-                                                    //    FCatSrchID = Selected1.FCatSrchID,
-                                                    //    Notes = TransactionNotes.EditedText,
-                                                    //    KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                                    //    KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                    //    Units = IntUnits,
-
-                                                    //};
-                                                    //Mtmp2.Add(u);
-
-
-                                                    //{
-                                                    //    Mexxist2.ActualAmount = Mexxist2.ActualAmount + (OrgActual - IntAmnt);
-                                                    //    Mexxist1.ActualAmount = Mexxist1.ActualAmount + (OrgActual - IntAmnt);
-                                                    //}
-                                                    //if (Mexxist2.ActualAmount == 0)
-                                                    ////Adjustment transaction no longer required
-                                                    //{
-                                                    //    u = new TransactionResultApiModel
-                                                    //    {
-                                                    //        Posted_Date = Selected.Posted_Date,
-                                                    //        Month = Selected1.Month,
-                                                    //        Description = TransactionDescription.EditedText ?? Selected.Description,
-                                                    //        TransAmount = Selected1.TransAmount,
-                                                    //        ActualAmount = Selected1.ActualAmount,
-                                                    //        ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                                    //        KCategoryID = Category.EditedKid ?? Category.OriginalKid,
-                                                    //        KFinActualID = Selected1.KFinActualID,
-                                                    //        KFinTranID = Selected1.KFinTranID,
-                                                    //        ChangeType = "d",
-                                                    //        DateEffective = DateTime.Now,
-                                                    //        KHierarchyID = Selected1.KHierarchyID,
-                                                    //        KClientID = Selected.KClientID,
-                                                    //        KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                                    //        KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
-                                                    //        IsTemplate = IsTemplate,
-                                                    //        FCatSrchID = Selected1.FCatSrchID,
-                                                    //        Notes = TransactionNotes.EditedText,
-                                                    //        KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                                    //        KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                    //        Units = IntUnits,
-
-                                                    //    };
-                                                    //    Mtmp2.Add(u);
-                                                    //    Mtmp1.Remove(Mexxist2);
-                                                    //    Mtmp.Remove(Mexxist1);
-                                                    //}
-                                                    //else
-                                                    //{
-                                                    //    u = new TransactionResultApiModel
-                                                    //    {
-                                                    //        Posted_Date = DateTime.Parse(TransactionDate),
-                                                    //        Month = Selected1.Month,
-                                                    //        Description = TransactionDescription.EditedText ?? Selected.Description,
-                                                    //        TransAmount = Selected1.TransAmount,
-                                                    //        ActualAmount = Selected1.ActualAmount,
-                                                    //        ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                                    //        KCategoryID = Category.EditedKid ?? Category.OriginalKid,
-                                                    //        KFinActualID = Selected1.KFinActualID,
-                                                    //        KFinTranID = Selected1.KFinTranID,
-                                                    //        ChangeType = "c",
-                                                    //        DateEffective = DateTime.Now,
-                                                    //        KHierarchyID = Selected1.KHierarchyID,
-                                                    //        KClientID = Selected.KClientID,
-                                                    //        KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                                    //        KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
-                                                    //        IsTemplate = IsTemplate,
-                                                    //        FCatSrchID = Selected1.FCatSrchID,
-                                                    //        Notes = TransactionNotes.EditedText,
-                                                    //        KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                                    //        KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                    //        Units = IntUnits,
-
-                                                    //    };
-                                                    //Mtmp2.Add(u);
-                                                    //}
-
+    
                                                 }
                                             }
                                             else
@@ -1512,132 +1610,6 @@ namespace Fasetto.Word
                                                             ChangeTranAdjust(IntAmnt, OrgActual, 0);
                                                         }
                                                         ExistCatUsage(IntAmnt, OrgActual, IntUnits);
-                                                        //{
-                                                        //        Mcategory1.ActualAmount = IntAmnt;
-                                                        //        Mcategory1.KCategoryID = Selected.KCategoryID;
-                                                        //       Mcategory.ActualAmount = IntAmnt;
-                                                        //       Mcategory.ShortName = Selected.ShortName;
-                                                        //       Mcategory.KCategoryID = Selected.KCategoryID;
-                                                        //       Mcategory.Units = IntUnits;
-                                                        //        Selected1.ActualAmount = IntAmnt;
-                                                        //        Selected.ActualAmount = IntAmnt;
-                                                        //        Selected1.ShortName = Selected.ShortName;
-                                                        //        Selected1.KCategoryID = Selected.KCategoryID;
-                                                        //        Selected.Units = IntUnits;
-                                                        //        Selected1.KFinActualID = Mcategory.KFinActualID;
-                                                        //        Selected.KFinActualID = Selected1.KFinActualID;
-                                                        //    }
-
-
-                                                        //    var u = new TransactionResultApiModel
-                                                        //    {
-                                                        //        Posted_Date = DateTime.Parse(TransactionDate),
-                                                        //        Month = Selected1.Month,
-                                                        //        Description = TransactionDescription.EditedText ?? Selected.Description,
-                                                        //        TransAmount = Selected1.TransAmount,
-                                                        //        ActualAmount = Selected1.ActualAmount,
-                                                        //        ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                                        //        KCategoryID = Category.EditedKid ?? Category.OriginalKid,
-                                                        //        KFinActualID = Selected1.KFinActualID,
-                                                        //        KFinTranID = Selected1.KFinTranID,
-                                                        //        ChangeType = "c",
-                                                        //        DateEffective = DateTime.Now,
-                                                        //        KHierarchyID = Selected1.KHierarchyID,
-                                                        //        KClientID = Selected.KClientID,
-                                                        //        KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                                        //        KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
-                                                        //        IsTemplate = IsTemplate,
-                                                        //        FCatSrchID = Selected1.FCatSrchID,
-                                                        //        Notes = TransactionNotes.EditedText,
-                                                        //        KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                                        //        KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                        //        Units = IntUnits,
-
-                                                        //    };
-                                                        //    Mtmp2.Add(u);
-
-                                                        //    if (Mexxist2 != null)
-                                                        //    {
-
-                                                        //        {
-                                                        //            Mexxist2.ActualAmount = Mexxist2.ActualAmount + (OrgActual - IntAmnt);
-                                                        //            Mexxist1.ActualAmount = Mexxist1.ActualAmount + (OrgActual - IntAmnt);
-                                                        //        }
-                                                        //        u = new TransactionResultApiModel
-                                                        //        {
-                                                        //            Posted_Date = DateTime.Parse(TransactionDate),
-                                                        //            Month = Selected1.Month,
-                                                        //            Description = TransactionDescription.EditedText ?? Selected.Description,
-                                                        //            TransAmount = Selected1.TransAmount,
-                                                        //            ActualAmount = Selected1.ActualAmount,
-                                                        //            ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                                        //            KCategoryID = Category.EditedKid ?? Category.OriginalKid,
-                                                        //            KFinActualID = Selected1.KFinActualID,
-                                                        //            KFinTranID = Selected1.KFinTranID,
-                                                        //            ChangeType = "c",
-                                                        //            DateEffective = DateTime.Now,
-                                                        //            KHierarchyID = Selected1.KHierarchyID,
-                                                        //            KClientID = Selected.KClientID,
-                                                        //            KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                                        //            KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
-                                                        //            IsTemplate = IsTemplate,
-                                                        //            FCatSrchID = Selected1.FCatSrchID,
-                                                        //            Notes = TransactionNotes.EditedText,
-                                                        //            KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                                        //            KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                        //            Units = IntUnits,
-
-                                                        //        };
-                                                        //        Mtmp2.Add(u);
-                                                            //}
-                                                            //else
-
-                                                            //{
-                                                            //    Selected1.ActualAmount = (OrgActual - IntAmnt);
-                                                            //    Selected1.ShortName = "";
-                                                            //    Selected1.KCategoryID = "";
-                                                            //    Selected1.KFinActualID = Guid.NewGuid().ToString().ToUpper();
-                                                            //    Selected1.Description = Selected.Description;
-                                                            //    Selected1.KFinTranID = Selected.KFinTranID;
-                                                            //    Selected1.KChangeID = Selected.KChangeID;
-                                                            //    Selected1.Posted_Date = Selected.Posted_Date;
-                                                            //    Selected1.Month = Selected.Month;
-                                                            //    Selected1.TransAmount = Selected.TransAmount;
-                                                            //    Selected1.Units = 0;
-                                                            //    Selected1.KClientID = Selected.KClientID;
-                                                            //    Selected1.KPartyID = Selected.KPartyID;
-                                                            //    Selected1.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);
-                                                            //    Selected1.KAccountID = Selected.KAccountID;
-                                                            //    Selected1.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
-
-                                                            //    //Mtmp.Add(Selected1);
-                                                            //    Mtmp.Add(Selected1);
-                                                            //    Mtmp1.Add(Selected1);
-                                                            //    u = new TransactionResultApiModel
-                                                            //    {
-                                                            //        Posted_Date = DateTime.Parse(TransactionDate),
-                                                            //        Month = Selected1.Month,
-                                                            //        Description = Selected1.Description,
-                                                            //        TransAmount = Selected1.TransAmount,
-                                                            //        ActualAmount = Selected1.ActualAmount,
-                                                            //        ShortName = "",
-                                                            //        KCategoryID = "",
-                                                            //        KFinActualID = Selected1.KFinActualID,
-                                                            //        KFinTranID = Selected1.KFinTranID,
-                                                            //        ChangeType = "a",
-                                                            //        DateEffective = DateTime.Now,
-                                                            //        KHierarchyID = Selected1.KHierarchyID,
-                                                            //        KClientID = Selected1.KClientID,
-                                                            //        KPartyID = Selected1.KPartyID,
-                                                            //        KPartyName = Selected1.KPartyName,
-                                                            //        IsTemplate = IsTemplate,
-                                                            //        KAccountID = Selected1.KAccountID,
-                                                            //        KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                            //        Units = 0,
-
-                                                            //    };
-                                                            //    Mtmp2.Add(u);
-                                                            //}
                                                         }
 
                                                         break;
@@ -1646,10 +1618,10 @@ namespace Fasetto.Word
                                                             {
                                                                 Mcategory1.ActualAmount = IntAmnt;
                                                                 Mcategory1.KCategoryID = Selected.KCategoryID;
-                                                               Mcategory.ActualAmount = IntAmnt;
-                                                               Mcategory.ShortName = Selected.ShortName;
-                                                               Mcategory.KCategoryID = Selected.KCategoryID;
-                                                               Mcategory.Units = IntUnits;
+                                                                Mcategory.ActualAmount = IntAmnt;
+                                                                Mcategory.ShortName = Selected.ShortName;
+                                                                Mcategory.KCategoryID = Selected.KCategoryID;
+                                                                Mcategory.Units = IntUnits;
                                                                 Selected1.ActualAmount = IntAmnt;
                                                                 Selected.ActualAmount = IntAmnt;
                                                                 Selected1.ShortName = Selected.ShortName;
@@ -1682,6 +1654,12 @@ namespace Fasetto.Word
                                                                 Notes = TransactionNotes.EditedText,
                                                                 KAccountID = Account.EditedKid ?? Account.OriginalKid,
                                                                 KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                                                                KProjectID = Project.EditedKid ?? Project.OriginalKid,
+                                                                KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
+                                                                KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
+                                                                KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
+                                                                KPersonID = Person.EditedKid ?? Person.OriginalKid,
+                                                                KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
                                                                 Units = IntUnits,
 
                                                             };
@@ -1714,6 +1692,12 @@ namespace Fasetto.Word
                                                                 Notes = TransactionNotes.EditedText,
                                                                 KAccountID = Account.EditedKid ?? Account.OriginalKid,
                                                                 KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                                                                KPersonID = Person.EditedKid ?? Person.OriginalKid,
+                                                                KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
+                                                                KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
+                                                                KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
+                                                                KProjectID = Project.EditedKid ?? Project.OriginalKid,
+                                                                KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
                                                                 Units = IntUnits,
 
                                                             };
@@ -1784,6 +1768,12 @@ namespace Fasetto.Word
                                                             Notes = TransactionNotes.EditedText,
                                                             KAccountID = Account.EditedKid ?? Account.OriginalKid,
                                                             KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                                                            KProjectID = Project.EditedKid ?? Project.OriginalKid,
+                                                            KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
+                                                            KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
+                                                            KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
+                                                            KPersonID = Person.EditedKid ?? Person.OriginalKid,
+                                                            KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
                                                             Units = IntUnits,
 
                                                         };
@@ -1816,6 +1806,12 @@ namespace Fasetto.Word
                                                             Notes = "",
                                                             KAccountID = Account.EditedKid ?? Account.OriginalKid,
                                                             KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                                                            KPersonID = Person.EditedKid ?? Person.OriginalKid,
+                                                            KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
+                                                            KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
+                                                            KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
+                                                            KProjectID = Project.EditedKid ?? Project.OriginalKid,
+                                                            KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
                                                             Units = 0,
 
                                                         };
@@ -1851,138 +1847,6 @@ namespace Fasetto.Word
 
                                             PriorCatUsage(IntAmnt, OrgActual, IntUnits);
 
-                                            ////increase the scalar value of the adjustment
-                                            //{
-                                            //    {
-                                            //        Mcategory1.ActualAmount = IntAmnt;
-                                            //        Mcategory1.KCategoryID = Selected.KCategoryID;
-                                            //        Mcategory.ActualAmount = IntAmnt;
-                                            //        Mcategory.ShortName = Selected.ShortName;
-                                            //        Mcategory.KCategoryID = Selected.KCategoryID;
-                                            //        Mcategory.Units = IntUnits;
-                                            //        Selected1.ActualAmount = IntAmnt;
-                                            //        Selected.ActualAmount = IntAmnt;
-                                            //        Selected1.ShortName = Selected.ShortName;
-                                            //        Selected1.KCategoryID = Selected.KCategoryID;
-                                            //        Selected.Units = IntUnits;
-                                            //        Selected1.KFinActualID = Mcategory.KFinActualID;
-                                            //        Selected.KFinActualID = Selected1.KFinActualID;
-                                            //    }
-
-
-                                            //    var u = new TransactionResultApiModel
-                                            //    {
-                                            //        Posted_Date = DateTime.Parse(TransactionDate),
-                                            //        Month = Selected1.Month,
-                                            //        Description = TransactionDescription.EditedText ?? Selected.Description,
-                                            //        TransAmount = Selected1.TransAmount,
-                                            //        ActualAmount = Selected1.ActualAmount,
-                                            //        ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                            //        KCategoryID = Category.EditedKid ?? Category.OriginalKid,
-                                            //        KFinActualID = Selected1.KFinActualID,
-                                            //        KFinTranID = Selected1.KFinTranID,
-                                            //        ChangeType = "c",
-                                            //        DateEffective = DateTime.Now,
-                                            //        KHierarchyID = Selected1.KHierarchyID,
-                                            //        KClientID = Selected.KClientID,
-                                            //        KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                            //        KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
-                                            //        IsTemplate = IsTemplate,
-                                            //        FCatSrchID = Selected1.FCatSrchID,
-                                            //        Notes = TransactionNotes.EditedText,
-                                            //        KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                            //        KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                            //        Units = IntUnits,
-
-                                            //    };
-                                            //    Mtmp2.Add(u);
-
-                                            //    if (Mexxist1 != null)
-                                            //    //no adjustment currently exists for transaction
-                                            //    {
-                                            //        Mexxist1.ActualAmount += (OrgActual - IntAmnt);
-                                            //        Mexxist2.ActualAmount += (OrgActual - IntAmnt);
-                                            //        {
-                                            //            u = new TransactionResultApiModel
-                                            //            {
-                                            //                Posted_Date = Mexxist1.Posted_Date,
-                                            //                Month = Mexxist1.Month,
-                                            //                Description = Mexxist1.Description,
-                                            //                TransAmount = Mexxist1.TransAmount,
-                                            //                ActualAmount = Mexxist1.ActualAmount,
-                                            //                ShortName = Mexxist1.ShortName,
-                                            //                KCategoryID = Mexxist1.KCategoryID,
-                                            //                KFinActualID = Mexxist1.KFinActualID,
-                                            //                KFinTranID = Mexxist1.KFinTranID,
-                                            //                ChangeType = "c",
-                                            //                DateEffective = DateTime.Now,
-                                            //                KHierarchyID = Mexxist1.KHierarchyID,
-                                            //                KClientID = Mexxist1.KClientID,
-                                            //                KPartyID = Mexxist1.KPartyID,
-                                            //                KPartyName = Mexxist1.KPartyName,
-                                            //                IsTemplate = Mexxist1.IsTemplate,
-                                            //                FCatSrchID = Mexxist1.FCatSrchID,
-                                            //                Notes = Mexxist1.Notes,
-                                            //                KAccountID = Mexxist1.KAccountID,
-                                            //                KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName) ,
-                                            //                Units = Mexxist1.Units,
-
-                                            //            };
-                                            //            Mtmp2.Add(u);
-                                            //        }
-
-                                            //    }
-                                            //    else
-                                            //    //no adjustment currently exists at transaction level - add 
-                                            //    {
-                                            //        Selected1.ActualAmount = (OrgActual - IntAmnt);
-                                            //        Selected1.ShortName = "";
-                                            //        Selected1.KCategoryID = "";
-                                            //        Selected1.KFinActualID = Guid.NewGuid().ToString().ToUpper();
-                                            //        Selected1.Description = Selected.Description;
-                                            //        Selected1.KFinTranID = Selected.KFinTranID;
-                                            //        Selected1.KChangeID = Selected.KChangeID;
-                                            //        Selected1.Posted_Date = Selected.Posted_Date;
-                                            //        Selected1.Month = Selected.Month;
-                                            //        Selected1.TransAmount = Selected.TransAmount;
-                                            //        Selected1.Units = 0;
-                                            //        Selected1.KClientID = Selected.KClientID;
-                                            //        Selected1.KPartyID = Selected.KPartyID;
-                                            //        Selected1.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);
-                                            //        Selected1.KAccountID = Selected.KAccountID;
-                                            //        Selected1.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
-
-                                            //        //Mtmp.Add(Selected1);
-                                            //        Mtmp.Add(Selected1);
-                                            //        Mtmp1.Add(Selected1);
-                                            //        u = new TransactionResultApiModel
-                                            //        {
-                                            //            Posted_Date = DateTime.Parse(TransactionDate),
-                                            //            Month = Selected1.Month,
-                                            //            Description = Selected1.Description,
-                                            //            TransAmount = Selected1.TransAmount,
-                                            //            ActualAmount = Selected1.ActualAmount,
-                                            //            ShortName = "",
-                                            //            KCategoryID = "",
-                                            //            KFinActualID = Selected1.KFinActualID,
-                                            //            KFinTranID = Selected1.KFinTranID,
-                                            //            ChangeType = "a",
-                                            //            DateEffective = DateTime.Now,
-                                            //            KHierarchyID = Selected1.KHierarchyID,
-                                            //            KClientID = Selected1.KClientID,
-                                            //            KPartyID = Selected1.KPartyID,
-                                            //            KPartyName = Selected1.KPartyName,
-                                            //            IsTemplate = IsTemplate,
-                                            //            KAccountID = Selected1.KAccountID,
-                                            //            KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                            //            Units = 0,
-
-                                            //        };
-                                            //    }
-
-                                            //    Mtmp2.Add(u);
-
-                                            //}
                                         }
 
                                         else
@@ -1991,117 +1855,8 @@ namespace Fasetto.Word
                                         //if scalar value of allocation is less, and opposite sign transaction adjustment had already been created,change value of adjustment
                                         ChangeTranAdjust(IntAmnt, OrgActual, 0);
                                         ExistCatUsage(IntAmnt, OrgActual, IntUnits);
-                                            //{
-                                            //    {
-                                            //        Mcategory1.ActualAmount = IntAmnt;
-                                            //        Mcategory1.KCategoryID = Selected.KCategoryID;
-                                            //        Mcategory.ActualAmount = IntAmnt;
-                                            //        Mcategory.ShortName = Selected.ShortName;
-                                            //        Mcategory.KCategoryID = Selected.KCategoryID;
-                                            //        Mcategory.Units = IntUnits;
-                                            //        Selected1.ActualAmount = IntAmnt;
-                                            //        Selected.ActualAmount = IntAmnt;
-                                            //        Selected1.ShortName = Selected.ShortName;
-                                            //        Selected1.KCategoryID = Selected.KCategoryID;
-                                            //        Selected.Units = IntUnits;
-                                            //        Selected1.KFinActualID = Mcategory.KFinActualID;
-                                            //        Selected.KFinActualID = Selected1.KFinActualID;
-                                            //    }
 
 
-                                            //    var u = new TransactionResultApiModel
-                                            //    {
-                                            //        Posted_Date = DateTime.Parse(TransactionDate),
-                                            //        Month = Selected1.Month,
-                                            //        Description = TransactionDescription.EditedText ?? Selected.Description,
-                                            //        TransAmount = Selected1.TransAmount,
-                                            //        ActualAmount = Selected1.ActualAmount,
-                                            //        ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                            //        KCategoryID = Category.EditedKid ?? Category.OriginalKid,
-                                            //        KFinActualID = Selected1.KFinActualID,
-                                            //        KFinTranID = Selected1.KFinTranID,
-                                            //        ChangeType = "c",
-                                            //        DateEffective = DateTime.Now,
-                                            //        KHierarchyID = Selected1.KHierarchyID,
-                                            //        KClientID = Selected.KClientID,
-                                            //        KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                            //        KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
-                                            //        IsTemplate = IsTemplate,
-                                            //        FCatSrchID = Selected1.FCatSrchID,
-                                            //        Notes = TransactionNotes.EditedText,
-                                            //        KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                            //        KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                            //        Units = IntUnits,
-
-                                            //    };
-                                            //    Mtmp2.Add(u);
-
-
-                                            //    {
-                                            //        Mexxist2.ActualAmount = Mexxist2.ActualAmount + (OrgActual - IntAmnt);
-                                            //        Mexxist1.ActualAmount = Mexxist1.ActualAmount + (OrgActual - IntAmnt);
-                                            //    }
-                                            //    if (Mexxist1.ActualAmount == 0)
-                                            //    {
-
-                                            //        u = new TransactionResultApiModel
-                                            //        {
-                                            //            TransAmount = Mexxist1.TransAmount,
-                                            //            ActualAmount = Mexxist1.ActualAmount,
-                                            //            ShortName = Mexxist1.ShortName,
-                                            //            KCategoryID = Mexxist1.KCategoryID,
-                                            //            KFinActualID = Mexxist1.KFinActualID,
-                                            //            KFinTranID = Mexxist1.KFinTranID,
-                                            //            ChangeType = "d",
-                                            //            DateEffective = DateTime.Now,
-                                            //            KHierarchyID = Mexxist1.KHierarchyID,
-                                            //            KClientID = Mexxist1.KClientID,
-                                            //            KPartyID = Mexxist1.KPartyID,
-                                            //            KPartyName = Mexxist1.KPartyName,
-                                            //            IsTemplate = Mexxist1.IsTemplate,
-                                            //            FCatSrchID = Mexxist1.FCatSrchID,
-                                            //            Notes = Mexxist1.Notes,
-                                            //            KAccountID = Mexxist1.KAccountID,
-                                            //            KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                            //            Units = Mexxist1.Units,
-                                            //            Posted_Date = Mexxist1.Posted_Date,
-                                            //            Description = Mexxist1.Description,
-
-                                            //        };
-                                            //        Mtmp2.Add(u);
-                                            //        Mtmp1.Remove(Mexxist2);
-                                            //        Mtmp.Remove(Mexxist1);
-                                            //    }
-                                            //    else
-                                            //    {
-                                            //        u = new TransactionResultApiModel
-                                            //        {
-                                            //            TransAmount = Mexxist1.TransAmount,
-                                            //            ActualAmount = Mexxist1.ActualAmount,
-                                            //            ShortName = Mexxist1.ShortName,
-                                            //            KCategoryID = Mexxist1.KCategoryID,
-                                            //            KFinActualID = Mexxist1.KFinActualID,
-                                            //            KFinTranID = Mexxist1.KFinTranID,
-                                            //            ChangeType = "c",
-                                            //            DateEffective = DateTime.Now,
-                                            //            KHierarchyID = Mexxist1.KHierarchyID,
-                                            //            KClientID = Mexxist1.KClientID,
-                                            //            KPartyID = Mexxist1.KPartyID,
-                                            //            KPartyName = Mexxist1.KPartyName,
-                                            //            IsTemplate = Mexxist1.IsTemplate,
-                                            //            FCatSrchID = Mexxist1.FCatSrchID,
-                                            //            Notes = Mexxist1.Notes,
-                                            //            KAccountID = Mexxist1.KAccountID,
-                                            //            KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                            //            Units = Mexxist1.Units,
-                                            //            Description = TransactionDescription.EditedText ?? Selected.Description,
-                                            //            Posted_Date = Mexxist1.Posted_Date,
-
-                                            //        };
-                                            //        Mtmp2.Add(u);
-                                            //    }
-
-                                            //}
 
                                         }
                                     }
@@ -2117,91 +1872,6 @@ namespace Fasetto.Word
                                         //Just change category, no further manipulation required
                                         {
                                         PriorCatUsage(IntAmnt, OrgActual, IntUnits);
-                                        //remove current assignment record as information has been merged with original
-                                        //var u = new TransactionResultApiModel
-                                        //{
-                                        //    Posted_Date = Mcategory1.Posted_Date,
-                                        //    Month =Mcategory1.Month,
-                                        //    Description = Mcategory1.Description,
-                                        //    TransAmount =Mcategory1.TransAmount,
-                                        //    ActualAmount =Mcategory1.ActualAmount,
-                                        //    ShortName = Mcategory1.ShortName,
-                                        //    KCategoryID = Mcategory1.KCategoryID,
-                                        //    KFinActualID =Mcategory1.KFinActualID,
-                                        //    KFinTranID =Mcategory1.KFinTranID,
-                                        //    ChangeType = "d",
-                                        //    DateEffective = DateTime.Now,
-                                        //    KHierarchyID =Mcategory1.KHierarchyID,
-                                        //    KClientID = Mcategory1.KClientID,
-                                        //    KPartyID = Mcategory1.KClientID,
-                                        //    KPartyName = Mcategory1.KPartyName,
-                                        //    IsTemplate = IsTemplate,
-                                        //    FCatSrchID =Mcategory1.FCatSrchID,
-                                        //    Notes = TransactionNotes.EditedText,
-                                        //    KAccountID = Mcategory1.KAccountID,
-                                        //    KAccountName = Mcategory1.KAccountName,
-                                        //    Units = IntUnits,
-
-                                        //};
-                                        //Mtmp2.Add(u);
-                                        //Mtmp1.Remove(Mcategory1);
-                                        //Mtmp.Remove(Mcategory);
-
-                                        //{
-                                        //    {
-                                        //        Mcategory1.ActualAmount = IntAmnt;
-                                        //        Mcategory1.KCategoryID = (Category.EditedKid == null) ? Category.OriginalKid : (Category.EditedKid ?? Category.OriginalKid);
-                                        //        Mcategory1.ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName);
-                                        //        Mcategory1.Units = IntUnits;
-                                        //        Mcategory1.KPartyID = (Party.EditedKid == null) ? Party.OriginalKid  : (Party.EditedKid ?? Party.OriginalKid);
-                                        //        Mcategory1.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);   
-                                        //        Mcategory1.KAccountID = (Account.EditedKid == null) ? Account.OriginalKid : (Account.EditedKid ?? Account.OriginalKid);
-                                        //        Mcategory1.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);                                                  
-
-                                        //        Mcategory.ActualAmount = IntAmnt;
-                                        //        Mcategory.KCategoryID = (Category.EditedKid == null) ? Category.OriginalKid : (Category.EditedKid ?? Category.OriginalKid);
-                                        //        Mcategory.ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName);
-                                        //        Mcategory.Units = IntUnits;
-                                        //        Mcategory.KPartyID =(Party.EditedKid == null) ? Party.OriginalKid : (Party.EditedKid ?? Party.OriginalKid);
-                                        //        Mcategory.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);
-                                        //        Mcategory.KAccountID = (Account.EditedKid == null) ? Account.OriginalKid : (Account.EditedKid ?? Account.OriginalKid);
-                                        //        Mcategory.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
-
-                                        //        Selected1.ActualAmount = IntAmnt;
-                                        //        Selected.ActualAmount = IntAmnt;
-                                        //        Selected.ShortName = Mcategory.ShortName;
-                                        //        Selected.KCategoryID = Mcategory.KCategoryID;
-                                        //        Selected.Units = IntUnits;
-                                        //    }
-
-
-                                        //    var u = new TransactionResultApiModel
-                                        //    {
-                                        //        Posted_Date = DateTime.Parse(TransactionDate),
-                                        //        Month = Selected1.Month,
-                                        //        Description = TransactionDescription.EditedText ?? Selected.Description,
-                                        //        TransAmount = Selected.TransAmount,
-                                        //        ActualAmount = Selected.ActualAmount,
-                                        //        ShortName = Mcategory.ShortName,
-                                        //        KCategoryID = Mcategory1.KCategoryID,
-                                        //        KFinActualID = Selected.KFinActualID,
-                                        //        KFinTranID = Selected.KFinTranID,
-                                        //        ChangeType = "c",
-                                        //        DateEffective = DateTime.Now,
-                                        //        KHierarchyID = Selected.KHierarchyID,
-                                        //        KClientID = Selected.KClientID,
-                                        //        KPartyID = Mcategory.KPartyID,
-                                        //        KPartyName = Mcategory.KPartyName,
-                                        //        IsTemplate = IsTemplate,
-                                        //        FCatSrchID = Selected.FCatSrchID,
-                                        //        Notes = TransactionNotes.EditedText,
-                                        //        KAccountID = Mcategory.KAccountID,
-                                        //        KAccountName = Mcategory.KAccountName,
-                                        //        Units = IntUnits,
-
-                                        //    };
-                                        //        Mtmp2.Add(u);
-                                        //}
                                     }
                                     else
                                     {
@@ -2232,6 +1902,13 @@ namespace Fasetto.Word
                                                                 Mcategory1.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);
                                                                 Mcategory1.KAccountID = (Account.EditedKid == null) ? Account.OriginalKid : (Account.EditedKid ?? Account.OriginalKid);
                                                                 Mcategory1.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
+                                                                Mcategory1.KProjectID = (Project.EditedKid == null) ? Project.OriginalKid : (Project.EditedKid ?? Project.OriginalKid);
+                                                                Mcategory1.KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName);
+                                                                Mcategory1.KAssetID = (Asset.EditedKid == null) ? Asset.OriginalKid : (Asset.EditedKid ?? Asset.OriginalKid);
+                                                                Mcategory1.KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName);
+                                                                Mcategory1.KPersonID = (Person.EditedKid == null) ? Person.OriginalKid : (Person.EditedKid ?? Person.OriginalKid);
+                                                                Mcategory1.KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName);
+
 
                                                                 Mcategory.ActualAmount = IntAmnt;
                                                                 Mcategory.KCategoryID = (Category.EditedKid == null) ? Category.OriginalKid : (Category.EditedKid ?? Category.OriginalKid);
@@ -2241,6 +1918,13 @@ namespace Fasetto.Word
                                                                 Mcategory.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);
                                                                 Mcategory.KAccountID = (Account.EditedKid == null) ? Account.OriginalKid : (Account.EditedKid ?? Account.OriginalKid);
                                                                 Mcategory.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
+                                                                Mcategory.KPersonID = (Person.EditedKid == null) ? Person.OriginalKid : (Person.EditedKid ?? Person.OriginalKid);
+                                                                Mcategory.KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName);
+                                                                Mcategory.KAssetID = (Asset.EditedKid == null) ? Asset.OriginalKid : (Asset.EditedKid ?? Asset.OriginalKid);
+                                                                Mcategory.KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName);
+                                                                Mcategory.KProjectID = (Project.EditedKid == null) ? Project.OriginalKid : (Project.EditedKid ?? Project.OriginalKid);
+                                                                Mcategory.KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName);
+
 
                                                                 Selected1.ActualAmount = IntAmnt;
                                                                 Selected.ActualAmount = IntAmnt;
@@ -2272,6 +1956,12 @@ namespace Fasetto.Word
                                                                 Notes = TransactionNotes.EditedText,
                                                                 KAccountID = Mcategory.KAccountID,
                                                                 KAccountName = Mcategory.KAccountName,
+                                                                KProjectID = Mcategory.KProjectID,
+                                                                KProjectName = Mcategory.KProjectName,
+                                                                KAssetID = Mcategory.KAssetID,
+                                                                KAssetName = Mcategory.KAssetName,
+                                                                KPersonID = Mcategory.KPersonID,
+                                                                KPersonName = Mcategory.KPersonName,
                                                                 Units = IntUnits,
 
                                                             };
@@ -2307,6 +1997,13 @@ namespace Fasetto.Word
                                                                     Notes = TransactionNotes.EditedText,
                                                                     KAccountID = Account.EditedKid ?? Account.OriginalKid,
                                                                     KAccountName =  (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                                                                    KPersonID = Person.EditedKid ?? Person.OriginalKid,
+                                                                    KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
+                                                                    KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
+                                                                    KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
+                                                                    KProjectID = Project.EditedKid ?? Project.OriginalKid,
+                                                                    KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
+
                                                                     Units = IntUnits,
 
                                                                 };
@@ -2338,6 +2035,13 @@ namespace Fasetto.Word
                                                                     Notes = TransactionNotes.EditedText,
                                                                     KAccountID = Account.EditedKid ?? Account.OriginalKid,
                                                                     KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                                                                    KProjectID = Project.EditedKid ?? Project.OriginalKid,
+                                                                    KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
+                                                                    KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
+                                                                    KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
+                                                                    KPersonID = Person.EditedKid ?? Person.OriginalKid,
+                                                                    KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
+
                                                                     Units = IntUnits,
 
                                                                 };
@@ -2422,6 +2126,13 @@ namespace Fasetto.Word
                                                                         Notes = TransactionNotes.EditedText,
                                                                         KAccountID = Account.EditedKid ?? Account.OriginalKid,
                                                                         KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                                                                        KPersonID = Person.EditedKid ?? Person.OriginalKid,
+                                                                        KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
+                                                                        KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
+                                                                        KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
+                                                                        KProjectID = Project.EditedKid ?? Project.OriginalKid,
+                                                                        KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
+
                                                                         Units = IntUnits,
 
                                                                     };
@@ -2454,6 +2165,13 @@ namespace Fasetto.Word
                                                                         Notes = TransactionNotes.EditedText,
                                                                         KAccountID = Account.EditedKid ?? Account.OriginalKid,
                                                                         KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                                                                        KProjectID = Project.EditedKid ?? Project.OriginalKid,
+                                                                        KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
+                                                                        KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
+                                                                        KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
+                                                                        KPersonID = Person.EditedKid ?? Person.OriginalKid,
+                                                                        KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
+
                                                                         Units = IntUnits,
 
                                                                     };
@@ -2516,6 +2234,13 @@ namespace Fasetto.Word
                                                                     Notes = TransactionNotes.EditedText,
                                                                     KAccountID = Account.EditedKid ?? Account.OriginalKid,
                                                                     KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                                                                    KPersonID = Person.EditedKid ?? Person.OriginalKid,
+                                                                    KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
+                                                                    KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
+                                                                    KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
+                                                                    KProjectID = Project.EditedKid ?? Project.OriginalKid,
+                                                                    KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
+
                                                                     Units = IntUnits,
 
                                                                 };
@@ -2548,6 +2273,13 @@ namespace Fasetto.Word
                                                                     Notes = "",
                                                                     KAccountID = Account.EditedKid ?? Account.OriginalKid,
                                                                     KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                                                                    KProjectID = Project.EditedKid ?? Project.OriginalKid,
+                                                                    KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
+                                                                    KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
+                                                                    KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
+                                                                    KPersonID = Party.EditedKid ?? Party.OriginalKid,
+                                                                    KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
+
                                                                     Units = 0,
 
                                                                 };
@@ -2593,25 +2325,6 @@ namespace Fasetto.Word
                                                 //An adjustment (same sign) currently exists fo
                                                 //r the transaction
                                                 {
-                                                    ////first add 
-
-                                                    //Selected1.ActualAmount -= IntAmnt;
-                                                    //Selected1.ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName);
-                                                    //Selected1.KCategoryID = Category.EditedKid ?? Category.OriginalKid;
-                                                    //Selected1.KFinActualID = Selected.KFinActualID;
-                                                    //Selected1.Description = Selected.Description;
-                                                    //Selected1.KFinTranID = Selected.KFinTranID;
-                                                    //Selected1.KChangeID = Selected.KChangeID;
-                                                    //Selected1.Posted_Date = Selected.Posted_Date;
-                                                    //Selected1.Month = Selected.Month;
-                                                    //Selected1.TransAmount = Selected.TransAmount;
-                                                    //Selected1.Units = IntUnits;
-                                                    //Selected1.KClientID = Selected.KClientID;
-                                                    //Selected1.KPartyID = Party.EditedKid ?? Party.OriginalKid;
-                                                    //Selected1.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);
-                                                    //Selected1.KAccountID = Selected.KAccountID;
-                                                    //Selected1.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
-                                                    //Mcategory = Mcategory;
 
 
                                                     ////Mtmp.Add(Selected1);
@@ -2684,301 +2397,7 @@ namespace Fasetto.Word
 
 
                                                 }
-                                                //else 
-                                                ////Change category allocation AND add adjustment at transaction level to accept the amount 'returned' to the transaction
-                                                //{
 
-                                                //    //                            {
-
-                                                //    var used = Mtmp.Where(x => x.KCategoryID == Category.EditedKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList() ;
-                                                //    var usedRec = used.FirstOrDefault();
-                                                //    var used1 = Mtmp1.Where(x => x.KCategoryID == Category.EditedKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
-                                                //    var usedRec1 = used1.FirstOrDefault();
-
-                                                //    if (usedRec == null)
-                                                //    //Check whether this Category has already being used for this transaction, if not do a straight allocation AND create an adjustment against the transaction
-                                                //    //for the remainder
-                                                //    {
-                                                //        Selected1.ActualAmount = OrgActual-IntAmnt;
-                                                //        Selected1.ShortName = "";
-                                                //        Selected1.KCategoryID = "";
-                                                //        Selected1.KFinActualID = Guid.NewGuid().ToString().ToUpper();
-                                                //        Selected1.Description = Selected1.Description;
-                                                //        Selected1.KFinTranID = Selected1.KFinTranID;
-                                                //        Selected1.KChangeID = Selected1.KChangeID;
-                                                //        Selected1.Posted_Date = Selected1.Posted_Date;
-                                                //        Selected1.Month = Selected1.Month;
-                                                //        Selected1.TransAmount = Selected1.TransAmount;
-                                                //        Selected1.FCatSrchID = Selected1.FCatSrchID;
-                                                //        Selected1.Units = 0;
-                                                //        Selected1.KAccountID = Account.EditedKid ?? Account.OriginalKid;
-                                                //        Selected1.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
-                                                //        Selected1.KPartyID = Party.EditedKid ?? Party.OriginalKid;
-                                                //        Selected1.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);
-                                                //        //Mtmp.Add(Selected1);
-                                                //        //control update to observable collection
-                                                //        Mtmp.Add(Selected1);
-                                                //        Mtmp1.Add(Selected1);
-
-                                                //        var u = new TransactionResultApiModel
-                                                //        {
-                                                //            Posted_Date = Selected1.Posted_Date,
-                                                //            Month = Selected1.Month,
-                                                //            Description = Selected1.Description,
-                                                //            TransAmount = Selected1.TransAmount,
-                                                //            ActualAmount = Selected1.ActualAmount,
-                                                //            ShortName = Selected1.ShortName,
-                                                //            KCategoryID = Selected1.KCategoryID,
-                                                //            KFinActualID = Selected1.KFinActualID,
-                                                //            KFinTranID = Selected1.KFinTranID,
-                                                //            ChangeType = "a",
-                                                //            DateEffective = DateTime.Now,
-                                                //            KHierarchyID = Selected1.KHierarchyID,
-                                                //            KClientID = Selected1.KClientID,
-                                                //            KPartyID = Selected1.KPartyID,
-                                                //            KPartyName = Selected1.KPartyName,
-                                                //            IsTemplate = IsTemplate,
-                                                //            FCatSrchID = Selected1.FCatSrchID,
-                                                //            Notes ="",
-                                                //            KAccountID = Selected1.KAccountID,
-                                                //            KAccountName = Selected1.KAccountName,
-                                                //            Units = Selected1.Units,
-                                                //        };
-                                                //        Mtmp2.Add(u);
-                                                //        //category1.ActualAmount = IntAmnt;
-                                                //        //category1.ShortName = Selected.ShortName;
-                                                //        //category1.KCategoryID = Selected.KCategoryID;
-
-
-                                                //        Mcategory.ActualAmount = IntAmnt;
-                                                //        Mcategory.ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName);
-                                                //        Mcategory.KCategoryID = Category.EditedKid ?? Category.OriginalKid;
-                                                //        Mcategory.Units = IntUnits;
-                                                //        Mcategory.KPartyID = Party.EditedKid ?? Party.OriginalKid;
-                                                //        Mcategory.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);
-                                                //        Mcategory.KAccountID = Account.EditedKid ?? Account.OriginalKid;
-                                                //        Mcategory.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
-                                                //        Mcategory.Notes = Selected.Notes;
-                                                //        Mcategory1.ActualAmount = IntAmnt;
-                                                //        Mcategory1.ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName);
-                                                //        Mcategory1.KCategoryID = Category.EditedKid ?? Category.OriginalKid;
-                                                //        Mcategory1.Units = IntUnits;
-                                                //        Mcategory1.KPartyID = Party.EditedKid ?? Party.OriginalKid;
-                                                //        Mcategory1.KPartyName = Party.EditedName ?? Party.OriginalName;
-                                                //        Mcategory1.KAccountID = Account.EditedKid ?? Account.OriginalKid;
-                                                //        Mcategory1.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
-                                                //        Mcategory1.Notes = Selected.Notes;
-
-
-                                                //        //Selected1.ActualAmount = IntAmnt;
-                                                //        //Selected1.ShortName = Selected.ShortName;
-                                                //        //Selected1.KCategoryID = Selected.KCategoryID;
-                                                //        //Selected.Units = IntUnits;
-
-                                                //        //                            }
-
-                                                //        u = new TransactionResultApiModel
-                                                //        {
-                                                //            Posted_Date   =   Mcategory.Posted_Date  ,
-                                                //            Month         =   Mcategory.Month        ,      
-                                                //            Description   =   Mcategory.Description  ,
-                                                //            TransAmount   =   Mcategory.TransAmount  ,
-                                                //            ActualAmount  =   Mcategory.ActualAmount ,
-                                                //            ShortName     =   Mcategory.ShortName    ,  
-                                                //            KCategoryID   =   Mcategory.KCategoryID  ,
-                                                //            KFinActualID  =   Mcategory.KFinActualID ,
-                                                //            KFinTranID    =   Mcategory.KFinTranID   , 
-                                                //            DateEffective = DateTime.Now,
-                                                //            KHierarchyID  =   Mcategory.KHierarchyID ,
-                                                //            KClientID     =   Mcategory.KClientID    ,  
-                                                //            KPartyID      =   Mcategory.KPartyID     ,   
-                                                //            KPartyName    =   Mcategory.KPartyName   , 
-                                                //            IsTemplate    =   Mcategory.IsTemplate   , 
-                                                //            FCatSrchID    =   Mcategory.FCatSrchID   , 
-                                                //            Notes         =   Mcategory.Notes        ,         
-                                                //            KAccountID    =   Mcategory.KAccountID   , 
-                                                //            KAccountName  =   Mcategory.KAccountName ,
-                                                //            Units         =   Mcategory.Units        ,      
-                                                //            ChangeType = "c"                         ,
-                                                //        };                                          
-                                                //        Mtmp2.Add(u);
-                                                //    }
-                                                //    else
-                                                //    {
-
-                                                //        Selected1.ActualAmount = Mcategory.ActualAmount + IntAmnt;
-                                                //        Selected1.ShortName = Mcategory.ShortName;
-                                                //        Selected1.KCategoryID = Mcategory.KCategoryID;
-                                                //        Selected1.KFinActualID = Mcategory.KFinActualID;
-                                                //        Selected1.Description = Mcategory.Description;
-                                                //        Selected1.KFinTranID = Mcategory.KFinTranID;
-                                                //        Selected1.KChangeID = Mcategory.KChangeID;
-                                                //        Selected1.Posted_Date = Mcategory.Posted_Date;
-                                                //        Selected1.Month = Mcategory.Month;
-                                                //        Selected1.TransAmount = Mcategory.TransAmount;
-                                                //        Selected1.FCatSrchID = Mcategory.FCatSrchID;
-                                                //        Selected1.Units = Mcategory.Units + IntUnits;
-                                                //        Mcategory.ActualAmount = Selected1.ActualAmount;
-                                                //        Mcategory.Units = Selected1.Units;
-
-                                                //        var u = new TransactionResultApiModel
-                                                //        {
-                                                //            Posted_Date = DateTime.Parse(TransactionDate),
-                                                //            Month = Selected1.Month,
-                                                //            Description = Selected1.Description,
-                                                //            TransAmount = Selected1.TransAmount,
-                                                //            ActualAmount = Selected1.ActualAmount,
-                                                //            ShortName = Selected1.ShortName,
-                                                //            KCategoryID = Selected1.KCategoryID,
-                                                //            KFinActualID = Selected1.KFinActualID,
-                                                //            KFinTranID = Selected1.KFinTranID,
-                                                //            ChangeType = "c",
-                                                //            DateEffective = DateTime.Now,
-                                                //            KHierarchyID = Selected1.KHierarchyID,
-                                                //            KClientID = Selected.KClientID,
-                                                //            KPartyID = Party.OriginalKid,
-                                                //            IsTemplate = IsTemplate,
-                                                //            FCatSrchID = Selected1.FCatSrchID,
-                                                //            Notes = Selected1.Notes,
-                                                //            KAccountID = Account.OriginalKid,
-                                                //            KAccountName = (Account.OriginalName),
-                                                //            Units = Selected1.Units,
-                                                //        };
-                                                //        Mtmp2.Add(u);
-                                                //        Selected.ShortName = u.ShortName;
-                                                //        Selected.KCategoryID = u.KCategoryID;
-                                                //        Selected.ActualAmount = u.ActualAmount;
-                                                //        Selected.KPartyName = u.KPartyName;
-                                                //        Selected.KPartyID = u.KPartyID;
-                                                //        Selected.Units = IntUnits;
-                                                //        Mcategory.ShortName = u.ShortName;
-                                                //        Mcategory.KCategoryID = u.KCategoryID;
-                                                //        Mcategory.ActualAmount = u.ActualAmount;
-                                                //        Mcategory.KPartyName = u.KPartyName;
-                                                //        Mcategory.KPartyID = u.KPartyID;
-                                                //        Mcategory.Units = IntUnits;
-                                                //        Mcategory1.ShortName = u.ShortName;
-                                                //        Mcategory1.KCategoryID = u.KCategoryID;
-                                                //        Mcategory1.ActualAmount = u.ActualAmount;
-                                                //        Mcategory1.KPartyName = u.KPartyName;
-                                                //        Mcategory1.KPartyID = u.KPartyID;
-                                                //        Mcategory1.Units = IntUnits;
-                                                //    }
-                                                //}
-                                                //}
-
-                                                //else
-                                                //{
-
-                                                //    //if scalar value of allocation is less, and opposite sign transaction adjustment had already been created,change value of adjustment
-
-                                                //    {
-                                                //        {
-                                                //            Mcategory1.ActualAmount = IntAmnt;
-                                                //            Mcategory1.KCategoryID = Selected.KCategoryID;
-                                                //            Mcategory.ActualAmount = IntAmnt;
-                                                //            Mcategory.ShortName = Selected.ShortName;
-                                                //            Mcategory.KCategoryID = Selected.KCategoryID;
-                                                //            Mcategory.Units = IntUnits;
-                                                //            Selected1.ActualAmount = IntAmnt;
-                                                //            Selected.ActualAmount = IntAmnt;
-                                                //            Selected1.ShortName = Selected.ShortName;
-                                                //            Selected1.KCategoryID = Selected.KCategoryID;
-                                                //            Selected.Units = IntUnits;
-                                                //            Selected1.KFinActualID = Mcategory.KFinActualID;
-                                                //            Selected.KFinActualID = Selected1.KFinActualID;
-                                                //        }
-
-
-                                                //        var u = new TransactionResultApiModel
-                                                //        {
-                                                //            Posted_Date = DateTime.Parse(TransactionDate),
-                                                //            Month = Selected1.Month,
-                                                //            Description = TransactionDescription.EditedText ?? Selected.Description,
-                                                //            TransAmount = Selected1.TransAmount,
-                                                //            ActualAmount = Selected1.ActualAmount,
-                                                //            ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                                //            KCategoryID = Category.EditedKid ?? Category.OriginalKid,
-                                                //            KFinActualID = Selected1.KFinActualID,
-                                                //            KFinTranID = Selected1.KFinTranID,
-                                                //            ChangeType = "c",
-                                                //            DateEffective = DateTime.Now,
-                                                //            KHierarchyID = Selected1.KHierarchyID,
-                                                //            KClientID = Selected.KClientID,
-                                                //            KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                                //            KPartyName = Party.EditedName ?? Party.OriginalName,
-                                                //            IsTemplate = IsTemplate,
-                                                //            FCatSrchID = Selected1.FCatSrchID,
-                                                //            Notes = TransactionNotes.EditedText,
-                                                //            KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                                //            KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                //            Units = IntUnits,
-
-                                                //        };
-                                                //        Mtmp2.Add(u);
-
-
-                                                //        {
-                                                //            Mexxist2.ActualAmount = Mexxist2.ActualAmount + (IntAmnt - OrgActual);
-                                                //            Mexxist1.ActualAmount = Mexxist1.ActualAmount + (IntAmnt - OrgActual);
-                                                //        }
-                                                //        if (Mexxist1.ActualAmount == 0)
-                                                //        {
-                                                //            u = new TransactionResultApiModel
-                                                //            {
-                                                //                TransAmount = Mexxist1.TransAmount,
-                                                //                ActualAmount = Mexxist1.ActualAmount,
-                                                //                ShortName = Mexxist1.ShortName,
-                                                //                KCategoryID = Mexxist1.KCategoryID,
-                                                //                KFinActualID = Mexxist1.KFinActualID,
-                                                //                KFinTranID = Mexxist1.KFinTranID,
-                                                //                ChangeType = "d",
-                                                //                DateEffective = DateTime.Now,
-                                                //                KHierarchyID = Mexxist1.KHierarchyID,
-                                                //                KClientID = Mexxist1.KClientID,
-                                                //                KPartyID = Mexxist1.KPartyID,
-                                                //                KPartyName = Mexxist1.KPartyName,
-                                                //                IsTemplate = Mexxist1.IsTemplate,
-                                                //                FCatSrchID = Mexxist1.FCatSrchID,
-                                                //                Notes = Mexxist1.Notes,
-                                                //                KAccountID = Mexxist1.KAccountID,
-                                                //                KAccountName = Mexxist1.KAccountName,
-                                                //                Units = Mexxist1.Units,
-                                                //                Posted_Date = Mexxist1.Posted_Date,
-                                                //                Description = Mexxist1.Description,
-                                                //            };
-                                                //            Mtmp2.Add(u);
-                                                //            Mtmp1.Remove(Mexxist2);
-                                                //            Mtmp.Remove(Mexxist1);
-                                                //        }
-                                                //        else
-                                                //        {
-                                                //            u = new TransactionResultApiModel
-                                                //            {
-                                                //                TransAmount = Mexxist1.TransAmount,
-                                                //                ActualAmount = Mexxist1.ActualAmount,
-                                                //                ShortName = Mexxist1.ShortName,
-                                                //                KCategoryID = Mexxist1.KCategoryID,
-                                                //                KFinActualID = Mexxist1.KFinActualID,
-                                                //                KFinTranID = Mexxist1.KFinTranID,
-                                                //                ChangeType = "c",
-                                                //                DateEffective = Mexxist1.DateEffective,
-                                                //                KHierarchyID = Mexxist1.KHierarchyID,
-                                                //                KClientID = Mexxist1.KClientID,
-                                                //                KPartyID = Mexxist1.KPartyID,
-                                                //                KPartyName = Mexxist1.KPartyName,
-                                                //                IsTemplate = Mexxist1.IsTemplate,
-                                                //                FCatSrchID = Mexxist1.FCatSrchID,
-                                                //                Notes = Mexxist1.Notes,
-                                                //                KAccountID = Mexxist1.KAccountID,
-                                                //                KAccountName = Mexxist1.KAccountName,
-                                                //                Units = Mexxist1.Units,
-
-                                                //            };
-                                                //            Mtmp2.Add(u);
-                                                //        }
-
-                                                //    }
 
                                             }
                                         }
@@ -2997,6 +2416,12 @@ namespace Fasetto.Word
                                         Mcategory.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);
                                         Mcategory.KAccountID = Account.EditedKid ?? Account.OriginalKid;
                                         Mcategory.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
+                                        Mcategory.KPersonID = Person.EditedKid ?? Person.OriginalKid;
+                                        Mcategory.KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName);
+                                        Mcategory.KAssetID = Asset.EditedKid ?? Asset.OriginalKid;
+                                        Mcategory.KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName);
+                                        Mcategory.KProjectID = Project.EditedKid ?? Project.OriginalKid;
+                                        Mcategory.KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName);
                                         Mcategory.Notes = Selected.Notes;
                                         Mcategory1.ActualAmount = IntAmnt;
                                         Mcategory1.ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName);
@@ -3006,10 +2431,16 @@ namespace Fasetto.Word
                                         Mcategory1.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);
                                         Mcategory1.KAccountID = Account.EditedKid ?? Account.OriginalKid;
                                         Mcategory1.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
+                                        Mcategory1.KProjectID = Project.EditedKid ?? Project.OriginalKid;
+                                        Mcategory1.KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName);
+                                        Mcategory1.KAssetID = Asset.EditedKid ?? Asset.OriginalKid;
+                                        Mcategory1.KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName);
+                                        Mcategory1.KPersonID = Person.EditedKid ?? Person.OriginalKid;
+                                        Mcategory1.KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName);
                                         Mcategory1.Notes = Selected.Notes;
 
-
-                                        //Selected1.ActualAmount = IntAmnt;
+                                    
+                                        //Selected1.ActualAmount = IntAmnt Mtmp3;
                                         //Selected1.ShortName = Selected.ShortName;
                                         //Selected1.KCategoryID = Selected.KCategoryID;
                                         //Selected.Units = IntUnits;
@@ -3032,6 +2463,12 @@ namespace Fasetto.Word
                                             KClientID = Mcategory.KClientID,
                                             KPartyID = Mcategory.KPartyID,
                                             KPartyName = Mcategory.KPartyName,
+                                            KPersonID = Mcategory.KPersonID,
+                                            KPersonName = Mcategory.KPersonName,
+                                            KAssetID = Mcategory.KAssetID,
+                                            KAssetName = Mcategory.KAssetName,
+                                            KProjectID = Mcategory.KProjectID,
+                                            KProjectName = Mcategory.KProjectName,
                                             IsTemplate = Mcategory.IsTemplate,
                                             FCatSrchID = Mcategory.FCatSrchID,
                                             Notes = Mcategory.Notes,
@@ -3118,6 +2555,12 @@ namespace Fasetto.Word
                     KClientID = Selected.KClientID,
                     KPartyID = Party.EditedKid ?? Party.OriginalKid,
                     KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
+                    KProjectID = Project.EditedKid ?? Project.OriginalKid,
+                    KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
+                    KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
+                    KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
+                    KPersonID = Person.EditedKid ?? Person.OriginalKid,
+                    KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
                     IsTemplate = IsTemplate,
                     FCatSrchID = Mexxist1.FCatSrchID,
                     Notes = TransactionNotes.EditedText,
@@ -3149,6 +2592,12 @@ namespace Fasetto.Word
                     KClientID = Selected.KClientID,
                     KPartyID = Party.EditedKid ?? Party.OriginalKid,
                     KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
+                    KProjectID = Project.EditedKid ?? Project.OriginalKid,
+                    KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
+                    KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
+                    KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
+                    KPersonID = Person.EditedKid ?? Person.OriginalKid,
+                    KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
                     IsTemplate = IsTemplate,
                     FCatSrchID =  Mexxist1.FCatSrchID,
                     Notes = TransactionNotes.EditedText,
@@ -3187,6 +2636,12 @@ namespace Fasetto.Word
             Selected1.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);
             Selected1.KAccountID = Selected.KAccountID;
             Selected1.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
+            Selected1.KPersonID = Selected.KPersonID;
+            Selected1.KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName);
+            Selected1.KAssetID = Selected.KAssetID;
+            Selected1.KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName);
+            Selected1.KProjectID = Selected.KProjectID;
+            Selected1.KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName);
             Selected1.DateEffective = DateTime.Now;
 
 
@@ -3207,6 +2662,12 @@ namespace Fasetto.Word
                 KClientID = Selected1.KClientID,
                 KPartyID = Selected1.KPartyID,
                 KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
+                KProjectID = Project.EditedKid ?? Project.OriginalKid,
+                KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
+                KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
+                KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
+                KPersonID = Person.EditedKid ?? Person.OriginalKid,
+                KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
                 IsTemplate = IsTemplate,
                 KAccountID = Selected1.KAccountID,
                 KAccountName = Selected1.KAccountName,
@@ -3229,6 +2690,12 @@ namespace Fasetto.Word
                 KClientID = Selected1.KClientID,
                 KPartyID = Selected1.KPartyID,
                 KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
+                KProjectID = Project.EditedKid ?? Project.OriginalKid,
+                KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
+                KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
+                KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
+                KPersonID = Person.EditedKid ?? Person.OriginalKid,
+                KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
                 IsTemplate = IsTemplate,
                 KAccountID = Selected1.KAccountID,
                 KAccountName = Selected1.KAccountName,
@@ -3266,6 +2733,12 @@ namespace Fasetto.Word
                 Mcategory.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);
                 Mcategory.KAccountID = Account.EditedKid ?? Account.OriginalKid;
                 Mcategory.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
+                Mcategory.KProjectID = Project.EditedKid ?? Project.OriginalKid;
+                Mcategory.KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName);
+                Mcategory.KAssetID = Asset.EditedKid ?? Asset.OriginalKid;
+                Mcategory.KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName);
+                Mcategory.KPersonID = Person.EditedKid ?? Person.OriginalKid;
+                Mcategory.KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName);
                 Mcategory.Notes = Selected.Notes;
                 Mcategory1.ActualAmount = Mcategory.ActualAmount ;
                 Mcategory1.ShortName =    Mcategory.ShortName    ;
@@ -3275,6 +2748,12 @@ namespace Fasetto.Word
                 Mcategory1.KPartyName =   Mcategory.KPartyName   ;
                 Mcategory1.KAccountID =   Mcategory.KAccountID   ;
                 Mcategory1.KAccountName = Mcategory.KAccountName ;
+                Mcategory1.KProjectID = Mcategory.KProjectID;
+                Mcategory1.KProjectName = Mcategory.KProjectName;
+                Mcategory1.KAssetID = Mcategory.KAssetID;
+                Mcategory1.KAssetName = Mcategory.KAssetName;
+                Mcategory1.KPersonID = Mcategory.KPersonID;
+                Mcategory1.KPersonName = Mcategory.KPersonName;
                 Mcategory1.Notes = Mcategory.Notes;
 
 
@@ -3298,6 +2777,12 @@ namespace Fasetto.Word
                     KClientID = Mcategory.KClientID,
                     KPartyID = Mcategory.KPartyID,
                     KPartyName = Mcategory.KPartyName,
+                    KPersonID = Mcategory.KPersonID,
+                    KPersonName = Mcategory.KPersonName,
+                    KAssetID = Mcategory.KAssetID,
+                    KAssetName = Mcategory.KAssetName,
+                    KProjectID = Mcategory.KProjectID,
+                    KProjectName = Mcategory.KProjectName,
                     IsTemplate = Mcategory.IsTemplate,
                     FCatSrchID = Mcategory.FCatSrchID,
                     Notes = Mcategory.Notes,
@@ -3349,6 +2834,12 @@ namespace Fasetto.Word
                     KClientID = Selected.KClientID,
                     KPartyID = Party.EditedKid ?? Party.OriginalKid,
                     KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
+                    KProjectID = Project.EditedKid ?? Project.OriginalKid,
+                    KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
+                    KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
+                    KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
+                    KPersonID = Person.EditedKid ?? Person.OriginalKid,
+                    KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
                     IsTemplate = IsTemplate,
                     FCatSrchID = Selected1.FCatSrchID,
                     Notes = Selected1.Notes,
@@ -3397,6 +2888,12 @@ namespace Fasetto.Word
                         KClientID = Selected.KClientID,
                         KPartyID = Party.EditedKid ?? Party.OriginalKid,
                         KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
+                        KProjectID = Project.EditedKid ?? Project.OriginalKid,
+                        KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
+                        KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
+                        KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
+                        KPersonID = Person.EditedKid ?? Person.OriginalKid,
+                        KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
                         IsTemplate = IsTemplate,
                         FCatSrchID = Mexxist1.FCatSrchID,
                         Notes = TransactionNotes.EditedText,
@@ -3438,6 +2935,12 @@ namespace Fasetto.Word
                 Mcategory1.KPartyName = Mcategory.KPartyName;
                 Mcategory1.KAccountID = Mcategory.KAccountID;
                 Mcategory1.KAccountName = Mcategory.KAccountName;
+                Mcategory1.KPersonID = Mcategory.KPersonID;
+                Mcategory1.KPersonName = Mcategory.KPersonName;
+                Mcategory1.KAssetID = Mcategory.KAssetID;
+                Mcategory1.KAssetName = Mcategory.KAssetName;
+                Mcategory1.KProjectID = Mcategory.KProjectID;
+                Mcategory1.KProjectName = Mcategory.KProjectName;
                 Mcategory1.Notes = Mcategory.Notes;
 
 
@@ -3467,6 +2970,12 @@ namespace Fasetto.Word
                     Notes = Mcategory.Notes,
                     KAccountID = Mcategory.KAccountID,
                     KAccountName = Mcategory.KAccountName,
+                    KProjectID = Mcategory.KProjectID,
+                    KProjectName = Mcategory.KProjectName,
+                    KAssetID = Mcategory.KAssetID,
+                    KAssetName = Mcategory.KAssetName,
+                    KPersonID = Mcategory.KPersonID,
+                    KPersonName = Mcategory.KPersonName,
                     Units = Mcategory.Units,
                     ChangeType = "c",
                 };

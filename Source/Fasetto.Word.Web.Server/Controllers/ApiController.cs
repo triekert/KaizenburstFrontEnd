@@ -698,12 +698,20 @@ namespace Fasetto.Word.Web.Server
                         KPartyID = row[10].ToString().ToUpper(),
                         FCatSrchID = row[12].ToString().ToUpper(),
                         KHierarchyID = row[13].ToString().ToUpper(),
-                        IsDocLinked = (row[18] != DBNull.Value) ? (bool)row[18] : false,
                         Notes = row[14].ToString(),
-                        KAccountName = row[16].ToString(),
                         KAccountID = row[15].ToString().ToUpper(),
+                        KAccountName = row[16].ToString(),
+
                         Units = (int)row[17],
-                        KClientID = row[19].ToString().ToUpper(),
+
+                        KPersonID = row[18].ToString().ToUpper(),
+                        KPersonName = row[19].ToString(),
+                        KAssetID = row[20].ToString().ToUpper(),
+                        KAssetName = row[21].ToString(),
+                        KProjectID = row[22].ToString().ToUpper(),
+                        KProjectName = row[23].ToString(),
+                        IsDocLinked = (row[24] != DBNull.Value) ? (bool)row[24] : false,
+                        KClientID = row[25].ToString().ToUpper(),
                     };
                     results.Add(u);
 
@@ -1157,7 +1165,7 @@ namespace Fasetto.Word.Web.Server
 
 
 
-            var para = new SqlParameter[19];
+            var para = new SqlParameter[25];
             para[0] = new SqlParameter("@ShortName", SqlDbType.NVarChar);
             para[1] = new SqlParameter("@Description", SqlDbType.NVarChar);
             para[2] = new SqlParameter("@kCategoryID", SqlDbType.UniqueIdentifier);
@@ -1177,6 +1185,12 @@ namespace Fasetto.Word.Web.Server
             para[16] = new SqlParameter("@kAccountID", SqlDbType.UniqueIdentifier);
             para[17] = new SqlParameter("@kAccountName", SqlDbType.NVarChar);
             para[18] = new SqlParameter("@Units", SqlDbType.Int);
+            para[19] = new SqlParameter("@PersonName", SqlDbType.NVarChar);
+            para[20] = new SqlParameter("@kPersonID", SqlDbType.UniqueIdentifier);
+            para[21] = new SqlParameter("@AssetName", SqlDbType.NVarChar);
+            para[22] = new SqlParameter("@kAssetID", SqlDbType.UniqueIdentifier);
+            para[23] = new SqlParameter("@ProjectName", SqlDbType.NVarChar);
+            para[24] = new SqlParameter("@kProjectID", SqlDbType.UniqueIdentifier);
 
             //var SqlString = "INSERT INTO [Admin].[HierarchyGeneric]  (ShortName,Description,kCategoryID,ParentCategoryID,fIconID,DateEffective,DateDiscontinued,fChangeID,isUnderReview,isNewElement)" +// ) " +
             //    "VALUES (@ShortName,@Description,@kCategoryID,@ParentCategoryID,@fIconID,@DateEffective,@DateDiscontinued,@fChangeID,@isUnderReview,@isNewElement)";//)";
@@ -1211,10 +1225,16 @@ namespace Fasetto.Word.Web.Server
                     para[16].Value = !string.IsNullOrEmpty(row.KAccountID) ? new Guid(row.KAccountID) : (object)DBNull.Value;
                     para[17].Value = row.KAccountName??"";
                     para[18].Value = row.Units;
+                    para[19].Value = row.KPersonName ?? "";
+                    para[20].Value = !string.IsNullOrEmpty(row.KPersonID) ? new Guid(row.KPersonID) : (object)DBNull.Value;
+                    para[21].Value = row.KAssetName ?? "";
+                    para[22].Value = !string.IsNullOrEmpty(row.KAssetID) ? new Guid(row.KAssetID) : (object)DBNull.Value;
+                    para[23].Value = row.KProjectName ?? "";
+                    para[24].Value = !string.IsNullOrEmpty(row.KProjectID) ? new Guid(row.KProjectID) : (object)DBNull.Value;
 
 
                     SqlString2 = "EXEC [Finance].[spManageCategorySearch] @kClientID = '" + para[9].Value + "' , @HierarchyID = '" + para[10].Value + "', @fPartyID = '" + para[13].Value + "' ,@fCatSrchID = '" + para[14].Value + "' ,@Description = '" + para[1].Value +  "' ,@month = '" + para[11].Value + "'";
-                    SqlString = "EXEC [Finance].[spAddTransactionAllocation] @ActualAmount ,@TransAmount ,@kFinActualID ,@kFinTranID,@kCategoryID,@kClientID,@kHierarchyID ,@Month ,@kPartyID ,@fCatSrchID,@Notes ,@kAccountId ,@Description ,@Posted_Date,@Units";
+                    SqlString = "EXEC [Finance].[spAddTransactionAllocation] @ActualAmount ,@TransAmount ,@kFinActualID ,@kFinTranID,@kCategoryID,@kClientID,@kHierarchyID ,@Month ,@kPartyID ,@fCatSrchID,@Notes ,@kAccountId ,@Description ,@Posted_Date,@Units,@kAssetId,@kPersonId,@kProjectId,";
                     //SqlString = "EXEC [Finance].[spAddTransactionAllocation] @ActualAmount = '" + para[7].Value + "',@kFinActualID = '" + para[3].Value + "',@kFinTranID = '" + para[4].Value +
                     //    "',@kCategoryID = '" + para[2].Value + "',@kClientID = '" + para[9].Value + "',@kHierarchyID = '" + para[10].Value + "',@Month = '" + para[11].Value + "',@kPartyID = '" + para[13].Value +
                     //    "' ,@fCatSrchID = '" + para[14].Value + "',@Notes = '" + para[15].Value + "',@kAccountId = '" + para[16].Value + "' ,@Description = '" + para[1].Value + "' ,@PostedDate = '" + para[8].Value + "'";
@@ -1242,7 +1262,8 @@ namespace Fasetto.Word.Web.Server
 
 
 
-            SqlString = "UPDATE [Finance].[FinActual] SET ActualAmount =@ActualAmount,fCategoryID = @kCategoryID,fPartyID = @kPartyID,fCatSrchID = @fCatSrchID, isFinal =1,Notes = @Notes,fAccountID = @kAccountID ,Units = @Units WHERE kFinActualID = @kFinActualID";
+            SqlString = "UPDATE [Finance].[FinActual] SET ActualAmount =@ActualAmount,fCategoryID = @kCategoryID,fPartyID = @kPartyID,fCatSrchID = @fCatSrchID, isFinal =1,Notes = @Notes,fAccountID = @kAccountID ," +
+                "Units = @Units,fProjectID = @kProjectID,fAssetID = @kAssetID,fPersonID = @kPersonID WHERE kFinActualID = @kFinActualID";
             SqlString1 = "UPDATE [Finance].[FinTran] SET fPartyID = @kPartyID,Description = @Description ,[Posted Date] = @Posted_Date ,fAccountID = @kAccountID WHERE kFinTranID = @kFinTranID";
 
             //If elements are to be updated, insert into backend
@@ -1271,7 +1292,12 @@ namespace Fasetto.Word.Web.Server
                     para[16].Value = !string.IsNullOrEmpty(row.KAccountID) ? new Guid(row.KAccountID) : (object)DBNull.Value;
                     para[17].Value = row.KAccountName ?? "";
                     para[18].Value = row.Units;
-
+                    para[19].Value = row.KPersonName ?? "";
+                    para[20].Value = !string.IsNullOrEmpty(row.KPersonID) ? new Guid(row.KPersonID) : (object)DBNull.Value;
+                    para[21].Value = row.KAssetName ?? "";
+                    para[22].Value = !string.IsNullOrEmpty(row.KAssetID) ? new Guid(row.KAssetID) : (object)DBNull.Value;
+                    para[23].Value = row.KProjectName ?? "";
+                    para[24].Value = !string.IsNullOrEmpty(row.KProjectID) ? new Guid(row.KProjectID) : (object)DBNull.Value;
 
 
 
@@ -1352,6 +1378,12 @@ namespace Fasetto.Word.Web.Server
                     para[16].Value = !string.IsNullOrEmpty(row.KAccountID) ? new Guid(row.KAccountID) : (object)DBNull.Value;
                     para[17].Value = row.KAccountName ?? "";
                     para[18].Value = row.Units;
+                    para[19].Value = row.KPersonName ?? "";
+                    para[20].Value = !string.IsNullOrEmpty(row.KPersonID) ? new Guid(row.KPersonID) : (object)DBNull.Value;
+                    para[21].Value = row.KAssetName ?? "";
+                    para[22].Value = !string.IsNullOrEmpty(row.KAssetID) ? new Guid(row.KAssetID) : (object)DBNull.Value;
+                    para[23].Value = row.KProjectName ?? "";
+                    para[24].Value = !string.IsNullOrEmpty(row.KProjectID) ? new Guid(row.KProjectID) : (object)DBNull.Value;
                     try
 
                     {
@@ -2732,15 +2764,15 @@ namespace Fasetto.Word.Web.Server
 
             var SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '";
                 if (model.RootID != null)
-                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fClientID = NULL,  @Level = 100, @fHierarchyTypeID = NULL, @fRootID = '" + model.RootID + "',@DateTarget= '" + model.DateTarget + "'"; }
+                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fClientID = NULL,  @Level = 100, @fHierarchyTypeID = NULL, @fRootID = '" + model.RootID + "',@DateTarget= '" + model.DateTarget + "',@UserID= '" + user.Id + "'"; }
 
                     //{ SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '" + model.FHierarchyID + "',  @fClientID = '" + model.ClientID + "',  @Level = 100, @fHierarchyTypeID = NULL, @fRootID = '" + model.RootID + "'"; }
                 else
                     if (model.FHierarchyID == null)
-                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fRootID = NULL,  @Level ='" + model.Level + "',  @fClientID = '" + model.ClientID + "', @fHierarchyTypeID = '" + model.HierarchyTypeID + "',@DateTarget= '" + model.DateTarget + "'"; }
-                    else
-                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '" + model.FHierarchyID + "',  @fClientID ='" + model.ClientID + "', @fRootID = NULL,  @Level = 100, @fHierarchyTypeID = NULL,@DateTarget= '" + model.DateTarget + "'"; }
-                try
+                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fRootID = NULL,  @Level ='" + model.Level + "',  @fClientID = '" + model.ClientID + "', @fHierarchyTypeID = '" + model.HierarchyTypeID + "',@DateTarget= '" + model.DateTarget + "',@UserID= '" + user.Id + "'"; }
+            else
+                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '" + model.FHierarchyID + "',  @fClientID ='" + model.ClientID + "', @fRootID = NULL,  @Level = 100, @fHierarchyTypeID = NULL,@DateTarget= '" + model.DateTarget + "',@UserID= '" + user.Id + "'"; }
+            try
                 {
                     // Try and run the task
                     var dataset = await GetDataSetAsync(SqlString);

@@ -16,9 +16,9 @@
         <Grid Background="{StaticResource ForegroundLightBrush}">
 
             <!-- Double click to edit -->
-            <!--<Grid.InputBindings>
+            <Grid.InputBindings>
                 <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding EditCommand}" />
-            </Grid.InputBindings>-->
+            </Grid.InputBindings>
             
             <!-- Hover over to show edit button -->
             <Grid.Triggers>
@@ -75,7 +75,7 @@
 
 
 
-                <TextBlock Text="{Binding EditedName}" Foreground="Green"
+            <TextBlock Text="{Binding EditedName,UpdateSourceTrigger=PropertyChanged}" 
                      Grid.Column="1"
                      Opacity="0"
                      local:AnimateFadeInProperty.Value="{Binding Editing}"
@@ -138,9 +138,9 @@
 
             </Grid>
 
-            <!--<StackPanel Grid.Column="2"
+            <StackPanel Grid.Column="2"
                         Orientation="Horizontal"
-                        >-->
+                        >
 
                 <!-- Save Button -->
                 <Button Content="{StaticResource FontAwesomeTickIcon}"
@@ -184,7 +184,7 @@
                         FontSize="{StaticResource FontSizeSmall}"
                         />-->                
 
-            <!--</StackPanel>-->
+            </StackPanel>
             
         </Grid>
             
