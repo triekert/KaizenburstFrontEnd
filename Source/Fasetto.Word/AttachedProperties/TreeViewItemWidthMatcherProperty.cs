@@ -7,7 +7,7 @@ namespace Fasetto.Word
     /// <summary>
     /// Match the label width of all text entry controls inside this panel
     /// </summary>
-    public class TextEntryWidthMatcherProperty : BaseAttachedProperty<TextEntryWidthMatcherProperty, bool>
+    public class TreeViewItemWidthMatcherProperty : BaseAttachedProperty<TreeViewItemWidthMatcherProperty, bool>
     {
         public override void OnValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
@@ -90,11 +90,6 @@ namespace Fasetto.Word
                 else if (child is PasswordEntryControl pass)
                     // Set each controls LabelWidth value to the max size
                     pass.LabelWidth = gridLength;
-                else if (child is HierarchyItemSelectionControl his)
-                    // Set each controls LabelWidth value to the max size
-                    his.LabelWidth = gridLength;
-
-
             }
 
         }

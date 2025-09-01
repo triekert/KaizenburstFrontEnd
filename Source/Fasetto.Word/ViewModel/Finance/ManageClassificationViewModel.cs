@@ -1,6 +1,7 @@
 ﻿using Dna;
 using Fasetto.Word.Core;
 using Fasetto.Word.Core.ApiModels.Controls;
+using Microsoft.VisualStudio.PlatformUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -887,8 +888,12 @@ namespace Fasetto.Word
                     Level = 100,
                     RootID =ViewModelApplication.FCostHierarchyID,
                 };
+
+                //var TypeName = (ViewModelApplication.ControlPopupCostCategory.GetType().Name) ?? "";
                 if (ViewModelApplication.ControlPopupCostCategory == null||ViewModelApplication.ControlPopupCostCategory.GetType().Name != "HierarchyTreeViewModel1")
-                { ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam); }
+                { ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
+                    ViewModelApplication.ControlPopupCostCategory = ViewModelApplication.CurrentPopupViewModel;
+                }
                 else
                 { ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlPopupCostCategory; }
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Category.OriginalKid;
@@ -997,6 +1002,8 @@ namespace Fasetto.Word
                 };
                 ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Asset.OriginalKid;
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
                 //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
                 return true;
             });
@@ -1045,7 +1052,7 @@ namespace Fasetto.Word
 
                 if (Category.EditedName != "Selected Category")
                 Category.OriginalName = Category.EditedName;
-                ViewModelApplication.ControlPopupCostCategory = ViewModelApplication.CurrentPopupViewModel;
+                //ViewModelApplication.ControlPopupCostCategory = ViewModelApplication.CurrentPopupViewModel;
                 if (ViewModelApplication.ControlParameter1 != null)
                 {
                     if (ViewModelApplication.CurrentPopupContent != PopupContent.Classify)
@@ -1341,22 +1348,23 @@ namespace Fasetto.Word
                     Selected.Description = TransactionDescription.EditedText;
                     Selected.TransAmount = IntAmnt;
                     Selected.ActualAmount = IntAmnt;
-                    Selected.ShortName = Category.EditedName ?? Category.OriginalName;
-                    Selected.KCategoryID = Category.EditedKid ?? Category.OriginalKid;
+                    Selected.ShortName = Category.EditedName ?? Selected.ShortName;
+                    Selected.KCategoryID = Category.EditedKid ?? Selected.KCategoryID;
                     Selected.KFinActualID = Selected1.KFinActualID;
                     Selected.DateEffective = DateTime.Now;
-                    Selected.KPartyID = Party.EditedKid ?? Party.OriginalKid;
-                    Selected.KPartyName = Party.EditedName ?? Party.OriginalName;
+                    Selected.KPartyID = Party.EditedKid ?? Selected.KPartyID;
+                    Selected.KPartyName = Party.EditedName ?? Selected.KPartyName;
                     Selected.IsTemplate = IsTemplate;
                     Selected.Notes = TransactionNotes.EditedText;
-                    Selected.KAccountID = Account.EditedKid ?? Account.OriginalKid;
-                    Selected.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
-                    Selected.KPersonID = Person.EditedKid ?? Person.OriginalKid;
-                    Selected.KPersonName = Person.EditedName ?? Person.OriginalName;
-                    Selected.KAssetID = Asset.EditedKid ?? Asset.OriginalKid;
-                    Selected.KAssetName = Asset.EditedName ?? Asset.OriginalName;
-                    Selected.KProjectID = Project.EditedKid ?? Project.OriginalKid;
-                    Selected.KProjectName = Project.EditedName ?? Project.OriginalName;
+                    Selected.KAccountID = Account.EditedKid ?? Selected.KAccountID;
+                    Selected.KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName);
+                    Selected.KProjectID = Project.EditedKid ?? Selected.KProjectID;
+                    Selected.KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName);
+                    Selected.KAssetID = Asset.EditedKid ?? Selected.KAssetID;
+                    Selected.KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName);
+                    Selected.KPersonID = Person.EditedKid ?? Selected.KPersonID;
+                    Selected.KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName);
+
                     Selected.Units = IntUnits;
                     ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).TransactionDetail[0].KFinTranID = Selected.KFinTranID;
 
@@ -1373,8 +1381,8 @@ namespace Fasetto.Word
                     Mcategory.KPersonName = Selected.KPersonName;
                     Mcategory.IsTemplate = Selected.IsTemplate;
                     Mcategory.Notes = Selected.Notes;
-                    Mcategory.KAccountID = Account.EditedKid ?? Account.OriginalKid;
-                    Mcategory.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
+                    Mcategory.KAccountID = Selected.KAccountID;
+                    Mcategory.KAccountName = Selected.KAccountName;
                     Mcategory.Units = Selected.Units;
 
                     Mcategory1.KFinTranID = Selected.KFinTranID;
@@ -1396,40 +1404,41 @@ namespace Fasetto.Word
                     Mcategory1.KPersonName = Selected.KPersonName;
                     Mcategory1.IsTemplate = Selected.IsTemplate;
                     Mcategory1.Notes = Selected.Notes;
-                    Mcategory1.KAccountID = Account.EditedKid ?? Account.OriginalKid;
-                    Mcategory1.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName) ;
+                    Mcategory1.KAccountID = Selected.KAccountID;
+                    Mcategory1.KAccountName = Selected.KAccountName;
                     Mcategory1.Units = Selected.Units;
 
 
 
                     var u = new TransactionResultApiModel
                     {
-                        Posted_Date = DateTime.Parse(TransactionDate),
+                        
                         Month = Selected.Month,
-                        Description = TransactionDescription.EditedText,
-                        TransAmount = IntAmnt,
-                        ActualAmount = IntAmnt,
-                        ShortName = Category.EditedName ?? Category.OriginalName,
-                        KCategoryID = Category.EditedKid ?? Category.OriginalKid,
-                        KFinActualID = Selected.KFinActualID,
                         KFinTranID = Selected.KFinTranID,
+                        Posted_Date = Selected.Posted_Date,
+                        Description = Selected.Description,
+                        TransAmount = Selected.TransAmount,
+                        ActualAmount = Selected.ActualAmount,
+                        ShortName = Selected.ShortName,
+                        KCategoryID = Selected.KCategoryID,
+                        KFinActualID = Selected.KFinActualID,
+                        DateEffective = Selected.DateEffective,
+                        KPartyID = Selected.KPartyID,
+                        KPartyName = Selected.KPartyName,
+                        KProjectID = Selected.KProjectID,
+                        KProjectName = Selected.KProjectName,
+                        KAssetID = Selected.KAssetID,
+                        KAssetName = Selected.KAssetName,
+                        KPersonID = Selected.KPersonID,
+                        KPersonName = Selected.KPersonName,
+                        IsTemplate = Selected.IsTemplate,
+                        Notes = Selected.Notes,
+                        KAccountID = Selected.KAccountID,
+                        KAccountName = Selected.KAccountName,
+                        Units = Selected.Units,
                         ChangeType = "a",
-                        DateEffective = DateTime.Now,
-                        KHierarchyID = Selected.KHierarchyID,
-                        KClientID = Selected.KClientID,
-                        KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                        KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
-                        KPersonID = Person.EditedKid ?? Person.OriginalKid,
-                        KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
-                        KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
-                        KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
-                        KProjectID = Project.EditedKid ?? Project.OriginalKid,
-                        KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
-                        IsTemplate = IsTemplate,
-                        Notes = TransactionNotes.EditedText,
-                        KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                        KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName) ,
-                        Units = IntUnits,
+
+
                     };
                     Mtmp2.Add(u);
                     if (docs.Count > 0)
@@ -1528,10 +1537,10 @@ namespace Fasetto.Word
 
 
                     //Check for any changes made to transaction assignment
-                    if ((Category.EditedKid ?? Category.OriginalKid) != Category.OriginalKid || IntAmnt != OrgActual || (Party.EditedKid ?? Party.OriginalKid) != Party.OriginalKid 
-                    || (Account.EditedKid ?? Account.OriginalKid) != Account.OriginalKid  || TstNotes || Selected.Description != (TransactionDescription.EditedText ?? TransactionDescription.OriginalText) 
-                    || Selected.Posted_Date.Date != DateTime.Parse(TransactionDate).Date || IntUnits != Selected.Units || (Project.EditedKid ?? Project.OriginalKid) != Project.OriginalKid || 
-                    (Person.EditedKid ?? Person.OriginalKid) != Person.OriginalKid || (Asset.EditedKid ?? Asset.OriginalKid) != Asset.OriginalKid)
+                    if ((Category.EditedKid ?? Selected.KCategoryID) != Selected.KCategoryID || IntAmnt != OrgActual || (Party.EditedKid ?? Party.OriginalKid) != Party.OriginalKid 
+                    || (Account.EditedKid ?? Selected.KAccountID) != Selected.KAccountID || TstNotes || Selected.Description != (TransactionDescription.EditedText ?? TransactionDescription.OriginalText) 
+                    || Selected.Posted_Date.Date != DateTime.Parse(TransactionDate).Date || IntUnits != Selected.Units || (Project.EditedKid ?? Selected.KProjectID) != Selected.KProjectID || 
+                    (Person.EditedKid ?? Selected.KPersonID) != Selected.KPersonID || (Asset.EditedKid ?? Selected.KAssetID) != Selected.KAssetID)
                     {
 
 
@@ -1541,18 +1550,22 @@ namespace Fasetto.Word
 
 
                         //if classificaton being used already exists for this transaction,increase previous allocation
-                        Mexists = Mtmp.Where(x => x.KCategoryID == (Category.EditedKid ?? Category.OriginalKid) && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                        Mexists = Mtmp.Where(x => x.KCategoryID == (Category.EditedKid ?? Selected.KCategoryID) && x.KFinTranID == Selected.KFinTranID && 
+                        x.KAssetID == (Asset.EditedKid ?? Selected.KAssetID) && x.KPersonID == (Person.EditedKid ?? Selected.KPersonID) &&  x.KProjectID == (Project.EditedKid ?? Selected.KProjectID)
+                        ).OrderByDescending(x => x.DateEffective).ToList();
                         Mexxist = Mexists.FirstOrDefault();
                         var IsCategoryUsed = (Mexxist != null);
-                        Mexists1 = Mtmp.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                        Mexists1 = Mtmp.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID ).OrderByDescending(x => x.DateEffective).ToList();
                         Mexxist1 = Mexists1.FirstOrDefault();
                         Mexists2 = Mtmp1.Where(x => x.KCategoryID == "" && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
                         Mexxist2 = Mexists2.FirstOrDefault();
                         var IsEqualiser = (Mexxist1 != null);
 
-                        Mmatches = Mtmp.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                        Mmatches = Mtmp.Where(x => x.KCategoryID == Selected.KCategoryID && x.KFinTranID == Selected.KFinTranID &&
+                        x.KAssetID == (Selected.KAssetID) && x.KPersonID == (Selected.KPersonID) && x.KProjectID == (Selected.KProjectID)).OrderByDescending(x => x.DateEffective).ToList();
                         Mcategory = Mmatches.FirstOrDefault();
-                        Mmatches1 = Mtmp1.Where(x => x.KCategoryID == Category.OriginalKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+                        Mmatches1 = Mtmp1.Where(x => x.KCategoryID == Selected.KCategoryID && x.KFinTranID == Selected.KFinTranID &&
+                        x.KAssetID == (Selected.KAssetID) && x.KPersonID == (Selected.KPersonID) && x.KProjectID == (Selected.KProjectID)).OrderByDescending(x => x.DateEffective).ToList();
                         Mcategory1 = Mmatches1.FirstOrDefault();
                         //Equaliser Allocation can either be of the same sign as the transaction (remainder still available for allocation), or of different sign (where an amount of the opposite sign is required
                         //to balance the 
@@ -1563,16 +1576,17 @@ namespace Fasetto.Word
                             EqualiserValue = Mexxist1.ActualAmount;
                         }
 
-//look for any changes made to the transaction assignment
-                        if ((Category.EditedKid ?? Category.OriginalKid) != Category.OriginalKid || IntAmnt != OrgActual || (Party.EditedKid ?? Party.OriginalKid) != Party.OriginalKid || 
-                        (Account.EditedKid ?? Account.OriginalKid) != Account.OriginalKid || TstNotes || Selected.Description != (TransactionDescription.EditedText ?? TransactionDescription.OriginalText) || 
-                        Selected.Posted_Date.Date != DateTime.Parse(TransactionDate).Date || IntUnits != Selected.Units || (Asset.EditedKid ?? Asset.OriginalKid) != Asset.OriginalKid
-                        || (Person.EditedKid ?? Person.OriginalKid) != Person.OriginalKid || (Project.EditedKid ?? Project.OriginalKid) != Project.OriginalKid)
+                        //look for any changes made to the transaction assignment
+                        if ((Category.EditedKid ?? Selected.KCategoryID) != Selected.KCategoryID || IntAmnt != OrgActual || (Party.EditedKid ?? Party.OriginalKid) != Party.OriginalKid
+                        || (Account.EditedKid ?? Selected.KAccountID) != Selected.KAccountID || TstNotes || Selected.Description != (TransactionDescription.EditedText ?? TransactionDescription.OriginalText)
+                        || Selected.Posted_Date.Date != DateTime.Parse(TransactionDate).Date || IntUnits != Selected.Units || (Project.EditedKid ?? Selected.KProjectID) != Selected.KProjectID ||
+                        (Person.EditedKid ?? Selected.KPersonID) != Selected.KPersonID || (Asset.EditedKid ?? Selected.KAssetID) != Selected.KAssetID)
                         {
                             //if ((Category.EditedKid ?? Category.OriginalKid) != Category.OriginalKid && IntAmnt != OrgActual)
                             //{
                                 //Same category assigned as previously, but amount assigned has changed
-                                if ((Category.EditedKid ?? Category.OriginalKid) == Category.OriginalKid && IntAmnt != OrgActual)
+                                if ((Category.EditedKid ?? Selected.KCategoryID) == Selected.KCategoryID && (Project.EditedKid ?? Selected.KProjectID) == Selected.KProjectID &&
+                                (Person.EditedKid ?? Selected.KPersonID) == Selected.KPersonID && (Asset.EditedKid ?? Selected.KAssetID) == Selected.KAssetID && IntAmnt != OrgActual)
                                     {
                                     //New value has a greater scalar value
                                     if (TstAmnt)
@@ -1626,6 +1640,13 @@ namespace Fasetto.Word
                                                                 Selected.ActualAmount = IntAmnt;
                                                                 Selected1.ShortName = Selected.ShortName;
                                                                 Selected1.KCategoryID = Selected.KCategoryID;
+
+                                                                Selected1.KProjectID = Selected.KProjectID;
+                                                                Selected1.KProjectName = Selected.KProjectName;
+                                                                Selected1.KAssetID = Selected.KAssetID; 
+                                                                Selected1.KAssetName = Selected.KAssetName;
+                                                                Selected1.KPersonID = Selected.KPersonID;
+                                                                Selected1.KPersonName = Selected.KPersonName;
                                                                 Selected.Units = IntUnits;
                                                                 Selected1.KFinActualID =Mcategory.KFinActualID;
                                                                 Selected.KFinActualID = Selected1.KFinActualID;
@@ -1639,27 +1660,27 @@ namespace Fasetto.Word
                                                                 Description = TransactionDescription.EditedText ?? Selected.Description,
                                                                 TransAmount = Selected1.TransAmount,
                                                                 ActualAmount = Selected1.ActualAmount,
-                                                                ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                                                KCategoryID = Category.EditedKid ?? Category.OriginalKid,
+                                                                ShortName = (Category.EditedKid == null) ? Selected.ShortName : (Category.EditedName ?? Selected.ShortName),
+                                                                KCategoryID = Category.EditedKid ?? Selected.KCategoryID,
                                                                 KFinActualID = Selected1.KFinActualID,
                                                                 KFinTranID = Selected1.KFinTranID,
                                                                 ChangeType = "c",
                                                                 DateEffective = DateTime.Now,
                                                                 KHierarchyID = Selected1.KHierarchyID,
                                                                 KClientID = Selected.KClientID,
-                                                                KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                                                KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
+                                                                KPartyID = Party.EditedKid ?? Selected.KPartyID,
+                                                                KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
                                                                 IsTemplate = IsTemplate,
                                                                 FCatSrchID = Selected1.FCatSrchID,
                                                                 Notes = TransactionNotes.EditedText,
-                                                                KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                                                KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                                KProjectID = Project.EditedKid ?? Project.OriginalKid,
-                                                                KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
-                                                                KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
-                                                                KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
-                                                                KPersonID = Person.EditedKid ?? Person.OriginalKid,
-                                                                KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
+                                                                KAccountID = Account.EditedKid ?? Selected.KAccountID,
+                                                                KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
+                                                                KProjectID = Project.EditedKid ?? Selected.KProjectID,
+                                                                KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
+                                                                KAssetID = Asset.EditedKid ?? Selected.KAssetID,
+                                                                KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
+                                                                KPersonID = Person.EditedKid ?? Selected.KPersonID,
+                                                                KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
                                                                 Units = IntUnits,
 
                                                             };
@@ -1677,28 +1698,29 @@ namespace Fasetto.Word
                                                                 Description = TransactionDescription.EditedText ?? Selected.Description,
                                                                 TransAmount = Selected1.TransAmount,
                                                                 ActualAmount = Selected1.ActualAmount,
-                                                                ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                                                KCategoryID = Category.EditedKid ?? Category.OriginalKid,
+                                                                ShortName = (Category.EditedKid == null) ? Selected.ShortName : (Category.EditedName ?? Selected.ShortName),
+                                                                KCategoryID = Category.EditedKid ?? Selected.KCategoryID,
                                                                 KFinActualID = Selected1.KFinActualID,
                                                                 KFinTranID = Selected1.KFinTranID,
                                                                 ChangeType = "c",
                                                                 DateEffective = DateTime.Now,
                                                                 KHierarchyID = Selected1.KHierarchyID,
                                                                 KClientID = Selected.KClientID,
-                                                                KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                                                KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
+                                                                KPartyID = Party.EditedKid ?? Selected.KPartyID,
+                                                                KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
                                                                 IsTemplate = IsTemplate,
                                                                 FCatSrchID = Selected1.FCatSrchID,
                                                                 Notes = TransactionNotes.EditedText,
-                                                                KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                                                KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                                KPersonID = Person.EditedKid ?? Person.OriginalKid,
-                                                                KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
-                                                                KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
-                                                                KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
-                                                                KProjectID = Project.EditedKid ?? Project.OriginalKid,
-                                                                KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
+                                                                KAccountID = Account.EditedKid ?? Selected.KAccountID,
+                                                                KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
+                                                                KProjectID = Project.EditedKid ?? Selected.KProjectID,
+                                                                KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
+                                                                KAssetID = Asset.EditedKid ?? Selected.KAssetID,
+                                                                KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
+                                                                KPersonID = Person.EditedKid ?? Selected.KPersonID,
+                                                                KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
                                                                 Units = IntUnits,
+
 
                                                             };
                                                             Mtmp2.Add(u);
@@ -1753,27 +1775,27 @@ namespace Fasetto.Word
                                                             Description = TransactionDescription.EditedText ?? Selected.Description,
                                                             TransAmount = Selected1.TransAmount,
                                                             ActualAmount = Selected1.ActualAmount,
-                                                            ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                                            KCategoryID = Category.EditedKid ?? Category.OriginalKid,
+                                                            ShortName = (Category.EditedKid == null) ? Selected.ShortName : (Category.EditedName ?? Selected.ShortName),
+                                                            KCategoryID = Category.EditedKid ?? Selected.KCategoryID,
                                                             KFinActualID = Selected1.KFinActualID,
                                                             KFinTranID = Selected1.KFinTranID,
                                                             ChangeType = "c",
                                                             DateEffective = DateTime.Now,
                                                             KHierarchyID = Selected1.KHierarchyID,
                                                             KClientID = Selected.KClientID,
-                                                            KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                                            KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
+                                                            KPartyID = Party.EditedKid ?? Selected.KPartyID,
+                                                            KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
                                                             IsTemplate = IsTemplate,
                                                             FCatSrchID = Selected1.FCatSrchID,
                                                             Notes = TransactionNotes.EditedText,
-                                                            KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                                            KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                            KProjectID = Project.EditedKid ?? Project.OriginalKid,
-                                                            KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
-                                                            KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
-                                                            KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
-                                                            KPersonID = Person.EditedKid ?? Person.OriginalKid,
-                                                            KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
+                                                            KAccountID = Account.EditedKid ?? Selected.KAccountID,
+                                                            KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
+                                                            KProjectID = Project.EditedKid ?? Selected.KProjectID,
+                                                            KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
+                                                            KAssetID = Asset.EditedKid ?? Selected.KAssetID,
+                                                            KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
+                                                            KPersonID = Person.EditedKid ?? Selected.KPersonID,
+                                                            KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
                                                             Units = IntUnits,
 
                                                         };
@@ -1799,19 +1821,19 @@ namespace Fasetto.Word
                                                             DateEffective = DateTime.Now,
                                                             KHierarchyID = Selected1.KHierarchyID,
                                                             KClientID = Selected.KClientID,
-                                                            KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                                            KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
+                                                            KPartyID = Party.EditedKid ?? Selected.KPartyID,
+                                                            KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
                                                             IsTemplate = IsTemplate,
                                                             FCatSrchID = Selected1.FCatSrchID,
                                                             Notes = "",
-                                                            KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                                            KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                            KPersonID = Person.EditedKid ?? Person.OriginalKid,
-                                                            KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
-                                                            KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
-                                                            KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
-                                                            KProjectID = Project.EditedKid ?? Project.OriginalKid,
-                                                            KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
+                                                            KAccountID = "",
+                                                            KAccountName = "",
+                                                            KProjectID = "",
+                                                            KProjectName = "",
+                                                            KAssetID = "",
+                                                            KAssetName = "",
+                                                            KPersonID = "",
+                                                            KPersonName = "",
                                                             Units = 0,
 
                                                         };
@@ -1895,35 +1917,39 @@ namespace Fasetto.Word
                                                         {
                                                             {
                                                                 Mcategory1.ActualAmount = IntAmnt;
-                                                                Mcategory1.KCategoryID = (Category.EditedKid == null) ? Category.OriginalKid : (Category.EditedKid ?? Category.OriginalKid);
-                                                                Mcategory1.ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName);
+                                                                Mcategory1.KCategoryID = (Category.EditedKid == null) ? Selected.KCategoryID : (Category.EditedKid ?? Selected.KCategoryID);
+                                                                Mcategory1.ShortName = (Category.EditedKid == null) ? Selected.ShortName : (Category.EditedName ?? Selected.ShortName);
                                                                 Mcategory1.Units = IntUnits;
-                                                                Mcategory1.KPartyID = (Party.EditedKid == null) ? Party.OriginalKid : (Party.EditedKid ?? Party.OriginalKid);
-                                                                Mcategory1.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);
-                                                                Mcategory1.KAccountID = (Account.EditedKid == null) ? Account.OriginalKid : (Account.EditedKid ?? Account.OriginalKid);
-                                                                Mcategory1.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
-                                                                Mcategory1.KProjectID = (Project.EditedKid == null) ? Project.OriginalKid : (Project.EditedKid ?? Project.OriginalKid);
-                                                                Mcategory1.KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName);
-                                                                Mcategory1.KAssetID = (Asset.EditedKid == null) ? Asset.OriginalKid : (Asset.EditedKid ?? Asset.OriginalKid);
-                                                                Mcategory1.KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName);
-                                                                Mcategory1.KPersonID = (Person.EditedKid == null) ? Person.OriginalKid : (Person.EditedKid ?? Person.OriginalKid);
-                                                                Mcategory1.KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName);
+                                                                Mcategory1.KPartyID = (Party.EditedKid == null) ? Selected.KPartyID : (Party.EditedKid ?? Selected.KPartyID);
+                                                                Mcategory1.KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName);
+                                                                Mcategory1.KAccountID = (Account.EditedKid == null) ? Selected.KAccountID : (Account.EditedKid ?? Selected.KAccountID);
+                                                                Mcategory1.KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName);
+                                                                Mcategory1.KProjectID = (Project.EditedKid == null) ? Selected.KProjectID : (Project.EditedKid ?? Selected.KProjectID);
+                                                                Mcategory1.KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName);
+                                                                Mcategory1.KPersonID = (Person.EditedKid == null) ? Selected.KPersonID : (Person.EditedKid ?? Selected.KPersonID);
+                                                                Mcategory1.KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName);
+                                                                Mcategory1.KAssetID = (Asset.EditedKid == null) ? Selected.KAssetID : (Asset.EditedKid ?? Selected.KAssetID);
+                                                                Mcategory1.KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName);
+
+
 
 
                                                                 Mcategory.ActualAmount = IntAmnt;
-                                                                Mcategory.KCategoryID = (Category.EditedKid == null) ? Category.OriginalKid : (Category.EditedKid ?? Category.OriginalKid);
-                                                                Mcategory.ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName);
+                                                                Mcategory.KCategoryID = Mcategory1.KCategoryID;
+                                                                Mcategory.ShortName = Mcategory1.ShortName;
                                                                 Mcategory.Units = IntUnits;
-                                                                Mcategory.KPartyID = (Party.EditedKid == null) ? Party.OriginalKid : (Party.EditedKid ?? Party.OriginalKid);
-                                                                Mcategory.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);
-                                                                Mcategory.KAccountID = (Account.EditedKid == null) ? Account.OriginalKid : (Account.EditedKid ?? Account.OriginalKid);
-                                                                Mcategory.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
-                                                                Mcategory.KPersonID = (Person.EditedKid == null) ? Person.OriginalKid : (Person.EditedKid ?? Person.OriginalKid);
-                                                                Mcategory.KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName);
-                                                                Mcategory.KAssetID = (Asset.EditedKid == null) ? Asset.OriginalKid : (Asset.EditedKid ?? Asset.OriginalKid);
-                                                                Mcategory.KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName);
-                                                                Mcategory.KProjectID = (Project.EditedKid == null) ? Project.OriginalKid : (Project.EditedKid ?? Project.OriginalKid);
-                                                                Mcategory.KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName);
+                                                                Mcategory.KPartyID     = Mcategory1.KPartyID  ;
+                                                                Mcategory.KPartyName   = Mcategory1.KPartyName;
+                                                                Mcategory.KAccountID   = Mcategory1.KAccountID   ;
+                                                                Mcategory.KAccountName = Mcategory1.KAccountName ;
+                                                                Mcategory.KPersonID    = Mcategory1.KPersonID    ;
+                                                                Mcategory.KPersonName  = Mcategory1.KPersonName  ;
+                                                                Mcategory.KAssetID     = Mcategory1.KAssetID     ;
+                                                                Mcategory.KAssetName   = Mcategory1.KAssetName   ;
+                                                                Mcategory.KProjectID   = Mcategory1.KProjectID   ;
+                                                                Mcategory.KProjectName = Mcategory1.KProjectName ;
+                                                                
+
 
 
                                                                 Selected1.ActualAmount = IntAmnt;
@@ -1982,27 +2008,27 @@ namespace Fasetto.Word
                                                                     Description = TransactionDescription.EditedText ?? Selected.Description,
                                                                     TransAmount = Selected1.TransAmount,
                                                                     ActualAmount = Selected1.ActualAmount,
-                                                                    ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                                                    KCategoryID = Category.EditedKid ?? Category.OriginalKid,
+                                                                    ShortName = (Category.EditedKid == null) ? Selected.ShortName : (Category.OriginalName ?? Selected.ShortName),
+                                                                    KCategoryID = (Category.EditedKid == null) ? Selected.KCategoryID : (Category.EditedKid ?? Selected.KCategoryID),
                                                                     KFinActualID = Selected1.KFinActualID,
                                                                     KFinTranID = Selected1.KFinTranID,
                                                                     ChangeType = "d",
                                                                     DateEffective = DateTime.Now,
                                                                     KHierarchyID = Selected1.KHierarchyID,
                                                                     KClientID = Selected.KClientID,
-                                                                    KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                                                    KPartyName =  (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
+                                                                    KPartyID = Party.EditedKid ?? Selected.KPartyID,
+                                                                    KPartyName =  (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
                                                                     IsTemplate = IsTemplate,
                                                                     FCatSrchID = Selected1.FCatSrchID,
                                                                     Notes = TransactionNotes.EditedText,
-                                                                    KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                                                    KAccountName =  (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                                    KPersonID = Person.EditedKid ?? Person.OriginalKid,
-                                                                    KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
-                                                                    KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
-                                                                    KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
-                                                                    KProjectID = Project.EditedKid ?? Project.OriginalKid,
-                                                                    KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
+                                                                    KAccountID = Account.EditedKid ?? Selected.KAccountID,
+                                                                    KAccountName =  (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
+                                                                    KAssetID = Asset.EditedKid ?? Selected.KAssetID,
+                                                                    KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
+                                                                    KPersonID = Person.EditedKid ?? Selected.KPersonID,
+                                                                    KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
+                                                                    KProjectID = Project.EditedKid ?? Selected.KProjectID,
+                                                                    KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
 
                                                                     Units = IntUnits,
 
@@ -2020,29 +2046,29 @@ namespace Fasetto.Word
                                                                     Description = TransactionDescription.EditedText ?? Selected.Description,
                                                                     TransAmount = Selected1.TransAmount,
                                                                     ActualAmount = Selected1.ActualAmount,
-                                                                    ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                                                    KCategoryID = Category.EditedKid ?? Category.OriginalKid,
+                                                                    ShortName = (Category.EditedKid == null) ? Selected.ShortName : (Category.OriginalName ?? Selected.ShortName),
+                                                                    KCategoryID = (Category.EditedKid == null) ? Selected.KCategoryID : (Category.EditedKid ?? Selected.KCategoryID),
                                                                     KFinActualID = Selected1.KFinActualID,
                                                                     KFinTranID = Selected1.KFinTranID,
                                                                     ChangeType = "c",
                                                                     DateEffective = DateTime.Now,
                                                                     KHierarchyID = Selected1.KHierarchyID,
                                                                     KClientID = Selected.KClientID,
-                                                                    KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                                                    KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
+                                                                    KPartyID = Party.EditedKid ?? Selected.KPartyID,
+                                                                    KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
                                                                     IsTemplate = IsTemplate,
                                                                     FCatSrchID = Selected1.FCatSrchID,
                                                                     Notes = TransactionNotes.EditedText,
-                                                                    KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                                                    KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                                    KProjectID = Project.EditedKid ?? Project.OriginalKid,
-                                                                    KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
-                                                                    KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
-                                                                    KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
-                                                                    KPersonID = Person.EditedKid ?? Person.OriginalKid,
-                                                                    KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
+                                                                    KAccountID = Account.EditedKid ?? Selected.KAccountID,
+                                                                    KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
+                                                                    KProjectID = Project.EditedKid ?? Selected.KProjectID,
+                                                                    KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
+                                                                    KAssetID = Asset.EditedKid ?? Selected.KAssetID,
+                                                                    KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
+                                                                    KPersonID = Person.EditedKid ?? Selected.KPersonID,
+                                                                    KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
 
-                                                                    Units = IntUnits,
+                                                                   Units = IntUnits,
 
                                                                 };
                                                                 Mtmp2.Add(u);
@@ -2111,27 +2137,29 @@ namespace Fasetto.Word
                                                                         Description = TransactionDescription.EditedText ?? Selected.Description,
                                                                         TransAmount = Selected1.TransAmount,
                                                                         ActualAmount = Selected1.ActualAmount,
-                                                                        ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                                                        KCategoryID = Category.EditedKid ?? Category.OriginalKid,
+                                                                        ShortName = (Category.EditedKid == null) ? Selected.ShortName : (Category.EditedName ?? Selected.ShortName),
+                                                                        KCategoryID = Category.EditedKid ?? Selected.KCategoryID,
                                                                         KFinActualID = Selected1.KFinActualID,
                                                                         KFinTranID = Selected1.KFinTranID,
                                                                         ChangeType = "c",
                                                                         DateEffective = DateTime.Now,
                                                                         KHierarchyID = Selected1.KHierarchyID,
                                                                         KClientID = Selected.KClientID,
-                                                                        KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                                                        KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
+
+                                                                        KPartyID = Party.EditedKid ?? Selected.KPartyID,
+                                                                        KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
                                                                         IsTemplate = IsTemplate,
                                                                         FCatSrchID = Selected1.FCatSrchID,
                                                                         Notes = TransactionNotes.EditedText,
-                                                                        KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                                                        KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                                        KPersonID = Person.EditedKid ?? Person.OriginalKid,
-                                                                        KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
-                                                                        KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
-                                                                        KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
-                                                                        KProjectID = Project.EditedKid ?? Project.OriginalKid,
-                                                                        KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
+                                                                        KAccountID = Account.EditedKid ?? Selected.KAccountID,
+                                                                        KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
+                                                                        KProjectID = Project.EditedKid ?? Selected.KProjectID,
+                                                                        KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
+                                                                        KAssetID = Asset.EditedKid ?? Selected.KAssetID,
+                                                                        KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
+                                                                        KPersonID = Person.EditedKid ?? Selected.KPersonID,
+                                                                        KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
+
 
                                                                         Units = IntUnits,
 
@@ -2150,27 +2178,28 @@ namespace Fasetto.Word
                                                                         Description = TransactionDescription.EditedText ?? Selected.Description,
                                                                         TransAmount = Selected1.TransAmount,
                                                                         ActualAmount = Selected1.ActualAmount,
-                                                                        ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                                                        KCategoryID = Category.EditedKid ?? Category.OriginalKid,
+                                                                        ShortName = (Category.EditedKid == null) ? Selected.ShortName : (Category.EditedName ?? Selected.ShortName),
+                                                                        KCategoryID = Category.EditedKid ?? Selected.KCategoryID,
                                                                         KFinActualID = Selected1.KFinActualID,
                                                                         KFinTranID = Selected1.KFinTranID,
                                                                         ChangeType = "c",
                                                                         DateEffective = DateTime.Now,
                                                                         KHierarchyID = Selected1.KHierarchyID,
                                                                         KClientID = Selected.KClientID,
-                                                                        KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                                                        KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
+                                                                        KPartyID = Party.EditedKid ?? Selected.KPartyID,
+                                                                        KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
                                                                         IsTemplate = IsTemplate,
                                                                         FCatSrchID = Selected1.FCatSrchID,
                                                                         Notes = TransactionNotes.EditedText,
-                                                                        KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                                                        KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                                        KProjectID = Project.EditedKid ?? Project.OriginalKid,
-                                                                        KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
-                                                                        KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
-                                                                        KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
-                                                                        KPersonID = Person.EditedKid ?? Person.OriginalKid,
-                                                                        KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
+                                                                        KAccountID = Account.EditedKid ?? Selected.KAccountID,
+                                                                        KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
+                                                                        KProjectID = Project.EditedKid ?? Selected.KProjectID,
+                                                                        KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
+                                                                        KAssetID = Asset.EditedKid ?? Selected.KAssetID,
+                                                                        KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
+                                                                        KPersonID = Person.EditedKid ?? Selected.KPersonID,
+                                                                        KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
+
 
                                                                         Units = IntUnits,
 
@@ -2209,6 +2238,7 @@ namespace Fasetto.Word
                                                                     Selected.Units = IntUnits;
                                                                     Selected1.KFinActualID = Mcategory.KFinActualID;
                                                                     Selected.KFinActualID = Selected1.KFinActualID;
+
                                                                 }
 
 
@@ -2219,28 +2249,27 @@ namespace Fasetto.Word
                                                                     Description = TransactionDescription.EditedText ?? Selected.Description,
                                                                     TransAmount = Selected1.TransAmount,
                                                                     ActualAmount = Selected1.ActualAmount,
-                                                                    ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
-                                                                    KCategoryID = Category.EditedKid ?? Category.OriginalKid,
+                                                                    ShortName = (Category.EditedKid == null) ? Selected.ShortName : (Category.EditedName ?? Selected.ShortName),
+                                                                    KCategoryID = Category.EditedKid ?? Selected.KCategoryID,
                                                                     KFinActualID = Selected1.KFinActualID,
                                                                     KFinTranID = Selected1.KFinTranID,
                                                                     ChangeType = "c",
                                                                     DateEffective = DateTime.Now,
                                                                     KHierarchyID = Selected1.KHierarchyID,
                                                                     KClientID = Selected.KClientID,
-                                                                    KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                                                    KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
+                                                                    KPartyID = Party.EditedKid ?? Selected.KPartyID,
+                                                                    KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
                                                                     IsTemplate = IsTemplate,
                                                                     FCatSrchID = Selected1.FCatSrchID,
                                                                     Notes = TransactionNotes.EditedText,
-                                                                    KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                                                    KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                                    KPersonID = Person.EditedKid ?? Person.OriginalKid,
-                                                                    KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
-                                                                    KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
-                                                                    KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
-                                                                    KProjectID = Project.EditedKid ?? Project.OriginalKid,
-                                                                    KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
-
+                                                                    KAccountID = Account.EditedKid ?? Selected.KAccountID,
+                                                                    KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
+                                                                    KProjectID = Project.EditedKid ?? Selected.KProjectID,
+                                                                    KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
+                                                                    KAssetID = Asset.EditedKid ?? Selected.KAssetID,
+                                                                    KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
+                                                                    KPersonID = Person.EditedKid ?? Selected.KPersonID,
+                                                                    KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
                                                                     Units = IntUnits,
 
                                                                 };
@@ -2266,20 +2295,19 @@ namespace Fasetto.Word
                                                                     DateEffective = DateTime.Now,
                                                                     KHierarchyID = Selected1.KHierarchyID,
                                                                     KClientID = Selected.KClientID,
-                                                                    KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                                                                    KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
+                                                                    KPartyID = Party.EditedKid ?? Selected.KPartyID,
+                                                                    KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
                                                                     IsTemplate = IsTemplate,
                                                                     FCatSrchID = Selected1.FCatSrchID,
-                                                                    Notes = "",
-                                                                    KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                                                                    KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                                                                    KProjectID = Project.EditedKid ?? Project.OriginalKid,
-                                                                    KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
-                                                                    KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
-                                                                    KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
-                                                                    KPersonID = Party.EditedKid ?? Party.OriginalKid,
-                                                                    KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
-
+                                                                    Notes = TransactionNotes.EditedText,
+                                                                    KAccountID   =  "",
+                                                                    KAccountName =  "",
+                                                                    KProjectID   =  "",
+                                                                    KProjectName =  "",
+                                                                    KAssetID     =  "",
+                                                                    KAssetName   =  "",
+                                                                    KPersonID    =  "",
+                                                                    KPersonName  =   "",
                                                                     Units = 0,
 
                                                                 };
@@ -2327,74 +2355,6 @@ namespace Fasetto.Word
                                                 {
 
 
-                                                    ////Mtmp.Add(Selected1);
-                                                    //Mtmp.Add(Selected1);
-                                                    //Mtmp1.Add(Selected1);
-                                                    //var u = new TransactionResultApiModel
-                                                    //{
-                                                    //    Posted_Date = DateTime.Parse(TransactionDate),
-                                                    //    Month = Selected1.Month,
-                                                    //    Description = Selected1.Description,
-                                                    //    TransAmount = Selected1.TransAmount,
-                                                    //    ActualAmount = Selected1.ActualAmount,
-                                                    //    ShortName = Selected1.ShortName,
-                                                    //    KCategoryID = Selected1.KCategoryID,
-                                                    //    KFinActualID = Selected1.KFinActualID,
-                                                    //    KFinTranID = Selected1.KFinTranID,
-                                                    //    ChangeType = "c",
-                                                    //    DateEffective = DateTime.Now,
-                                                    //    KHierarchyID = Selected1.KHierarchyID,
-                                                    //    KClientID = Selected1.KClientID,
-                                                    //    KPartyID = Selected1.KPartyID,
-                                                    //    KPartyName = Selected1.KPartyName,
-                                                    //    IsTemplate = IsTemplate,
-                                                    //    KAccountID = Selected1.KAccountID,
-                                                    //    KAccountName = Selected1.KAccountName,
-                                                    //    Units = IntUnits,
-                                                    //};
-                                                    //Mtmp2.Add(u);
-
-
-                                                    ////increase the scalar value of the adjustment
-
-                                                    //Mexxist2.ActualAmount = (OrgActual - IntAmnt);
-                                                    //Mexxist1.ActualAmount = Mexxist2.ActualAmount;
-                                                    //{
-                                                    //    u = new TransactionResultApiModel
-                                                    //    {
-                                                    //        Posted_Date = Mexxist1.Posted_Date,
-                                                    //        Month = Mexxist1.Month,
-                                                    //        Description = Mexxist1.Description,
-                                                    //        TransAmount = Mexxist1.TransAmount,
-                                                    //        ActualAmount = Mexxist1.ActualAmount,
-                                                    //        ShortName = Mexxist1.ShortName,
-                                                    //        KCategoryID = Mexxist1.KCategoryID,
-                                                    //        KFinActualID = Mexxist1.KFinActualID,
-                                                    //        KFinTranID = Mexxist1.KFinTranID,
-                                                    //        ChangeType = "c",
-                                                    //        DateEffective = DateTime.Now,
-                                                    //        KHierarchyID = Mexxist1.KHierarchyID,
-                                                    //        KClientID = Mexxist1.KClientID,
-                                                    //        KPartyID = Mexxist1.KPartyID,
-                                                    //        KPartyName = Selected1.KPartyName,
-                                                    //        //
-                                                    //        IsTemplate = Mexxist1.IsTemplate,
-                                                    //        FCatSrchID = Mexxist1.FCatSrchID,
-                                                    //        Notes = Mexxist1.Notes,
-                                                    //        KAccountID = Mexxist1.KAccountID,
-                                                    //        KAccountName = Mexxist1.KAccountName,
-                                                    //        Units = Mexxist1.Units,
-
-                                                    //    };
-                                                    //    Mtmp2.Add(u);
-                                                    //    Mexxist2.KPartyName = Selected1.KPartyName;
-                                                    //    Mexxist1.KPartyName = Mexxist2.KPartyName;
-                                                    //    //Mexists1 = exists1;
-                                                    //    //exists2 = exists2;
-
-                                                    //}
-
-
 
                                                 }
 
@@ -2409,36 +2369,37 @@ namespace Fasetto.Word
                                         //Allocation amount unchanged, but other details may have been updated
 
                                         Mcategory.ActualAmount = IntAmnt;
-                                        Mcategory.ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName);
-                                        Mcategory.KCategoryID = Category.EditedKid ?? Category.OriginalKid;
+                                        Mcategory.ShortName = (Category.EditedKid == null) ? Selected.ShortName : (Category.EditedName ?? Selected.ShortName);
+                                        Mcategory.KCategoryID = Category.EditedKid ?? Selected.KCategoryID;
                                         Mcategory.Units = IntUnits;
-                                        Mcategory.KPartyID = Party.EditedKid ?? Party.OriginalKid;
-                                        Mcategory.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);
-                                        Mcategory.KAccountID = Account.EditedKid ?? Account.OriginalKid;
-                                        Mcategory.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
-                                        Mcategory.KPersonID = Person.EditedKid ?? Person.OriginalKid;
-                                        Mcategory.KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName);
-                                        Mcategory.KAssetID = Asset.EditedKid ?? Asset.OriginalKid;
-                                        Mcategory.KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName);
-                                        Mcategory.KProjectID = Project.EditedKid ?? Project.OriginalKid;
-                                        Mcategory.KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName);
-                                        Mcategory.Notes = Selected.Notes;
+                                        Mcategory.KPartyID     = Party.EditedKid ?? Selected.KPartyID;
+                                        Mcategory.KPartyName   = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName);
+                                        Mcategory.Notes        = TransactionNotes.EditedText;
+                                        Mcategory.KAccountID   = Account.EditedKid ?? Selected.KAccountID;
+                                        Mcategory.KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName);
+                                        Mcategory.KProjectID   = Project.EditedKid ?? Selected.KProjectID;
+                                        Mcategory.KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName);
+                                        Mcategory.KAssetID     = Asset.EditedKid ?? Selected.KAssetID;
+                                        Mcategory.KAssetName   = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName);
+                                        Mcategory.KPersonID    = Person.EditedKid ?? Selected.KPersonID;
+                                        Mcategory.KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName);       
                                         Mcategory1.ActualAmount = IntAmnt;
                                         Mcategory1.ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName);
                                         Mcategory1.KCategoryID = Category.EditedKid ?? Category.OriginalKid;
                                         Mcategory1.Units = IntUnits;
-                                        Mcategory1.KPartyID = Party.EditedKid ?? Party.OriginalKid;
-                                        Mcategory1.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);
-                                        Mcategory1.KAccountID = Account.EditedKid ?? Account.OriginalKid;
-                                        Mcategory1.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
-                                        Mcategory1.KProjectID = Project.EditedKid ?? Project.OriginalKid;
-                                        Mcategory1.KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName);
-                                        Mcategory1.KAssetID = Asset.EditedKid ?? Asset.OriginalKid;
-                                        Mcategory1.KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName);
-                                        Mcategory1.KPersonID = Person.EditedKid ?? Person.OriginalKid;
-                                        Mcategory1.KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName);
-                                        Mcategory1.Notes = Selected.Notes;
+                                        Mcategory1.KPartyID = Mcategory1.KPartyID;
+                                        Mcategory1.KPartyName = Mcategory1.KPartyName;
+                                        Mcategory1.KAccountID = Mcategory1.KAccountID;
+                                        Mcategory1.KAccountName = Mcategory1.KAccountName;
+                                        Mcategory1.KProjectID = Mcategory1.KProjectID;
+                                        Mcategory1.KProjectName = Mcategory1.KProjectName;
+                                        Mcategory1.KAssetID = Mcategory1.KAssetID;
+                                        Mcategory1.KAssetName = Mcategory1.KAssetName;
+                                        Mcategory1.KPersonID = Mcategory1.KPersonID;
+                                        Mcategory1.KPersonName = Mcategory1.KPersonName;
+                                        Mcategory1.Notes = Mcategory1.Notes;
 
+                                   
                                     
                                         //Selected1.ActualAmount = IntAmnt Mtmp3;
                                         //Selected1.ShortName = Selected.ShortName;
@@ -2553,21 +2514,21 @@ namespace Fasetto.Word
                     DateEffective = DateTime.Now,
                     KHierarchyID = Mexxist1.KHierarchyID,
                     KClientID = Selected.KClientID,
-                    KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                    KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
-                    KProjectID = Project.EditedKid ?? Project.OriginalKid,
-                    KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
-                    KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
-                    KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
-                    KPersonID = Person.EditedKid ?? Person.OriginalKid,
-                    KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
-                    IsTemplate = IsTemplate,
-                    FCatSrchID = Mexxist1.FCatSrchID,
-                    Notes = TransactionNotes.EditedText,
-                    KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                    KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
-                    Units = IntUnits,
 
+                    KPartyID = Party.EditedKid ?? Selected.KPartyID,
+                    KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
+                    IsTemplate = IsTemplate,
+                    FCatSrchID = Selected1.FCatSrchID,
+                    Notes = TransactionNotes.EditedText,
+                    KAccountID = Account.EditedKid ?? Selected.KAccountID,
+                    KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
+                    KProjectID = Project.EditedKid ?? Selected.KProjectID,
+                    KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
+                    KAssetID = Asset.EditedKid ?? Selected.KAssetID,
+                    KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
+                    KPersonID = Person.EditedKid ?? Selected.KPersonID,
+                    KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
+                    Units = IntUnits,
                 };
                 Mtmp2.Add(u);
                 Mtmp1.Remove(Mexxist2);
@@ -2590,20 +2551,22 @@ namespace Fasetto.Word
                     DateEffective = DateTime.Now,
                     KHierarchyID =  Mexxist1.KHierarchyID,
                     KClientID = Selected.KClientID,
-                    KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                    KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
-                    KProjectID = Project.EditedKid ?? Project.OriginalKid,
-                    KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
-                    KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
-                    KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
-                    KPersonID = Person.EditedKid ?? Person.OriginalKid,
-                    KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
+
+                    KPartyID = Party.EditedKid ?? Selected.KPartyID,
+                    KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
                     IsTemplate = IsTemplate,
-                    FCatSrchID =  Mexxist1.FCatSrchID,
+                    FCatSrchID = Selected1.FCatSrchID,
                     Notes = TransactionNotes.EditedText,
-                    KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                    KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                    KAccountID = Account.EditedKid ?? Selected.KAccountID,
+                    KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
+                    KProjectID = Project.EditedKid ?? Selected.KProjectID,
+                    KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
+                    KAssetID = Asset.EditedKid ?? Selected.KAssetID,
+                    KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
+                    KPersonID = Person.EditedKid ?? Selected.KPersonID,
+                    KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
                     Units = IntUnits,
+
 
                 };
                 Mtmp2.Add(u);
@@ -2633,15 +2596,15 @@ namespace Fasetto.Word
             Selected1.Units = 0;
             Selected1.KClientID = Selected.KClientID;
             Selected1.KPartyID = Selected.KPartyID;
-            Selected1.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);
-            Selected1.KAccountID = Selected.KAccountID;
-            Selected1.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
-            Selected1.KPersonID = Selected.KPersonID;
-            Selected1.KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName);
-            Selected1.KAssetID = Selected.KAssetID;
-            Selected1.KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName);
-            Selected1.KProjectID = Selected.KProjectID;
-            Selected1.KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName);
+            Selected1.KPartyName    = Selected.KPartyName;
+            Selected1.KAccountID    = Selected.KAccountID;
+            Selected1.KAccountName  =Selected.KAccountName;
+            Selected1.KPersonID     = Selected.KPersonID;
+            Selected1.KPersonName   = "";
+            Selected1.KAssetID      = "";
+            Selected1.KAssetName    = "";
+            Selected1.KProjectID    = "";
+            Selected1.KProjectName = "";
             Selected1.DateEffective = DateTime.Now;
 
 
@@ -2661,15 +2624,15 @@ namespace Fasetto.Word
                 KHierarchyID = Selected1.KHierarchyID,
                 KClientID = Selected1.KClientID,
                 KPartyID = Selected1.KPartyID,
-                KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
-                KProjectID = Project.EditedKid ?? Project.OriginalKid,
-                KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
-                KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
-                KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
-                KPersonID = Person.EditedKid ?? Person.OriginalKid,
-                KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
+                KPartyName   = Selected1.KPartyName,
+                KProjectID   = Selected1.KProjectID , 
+                KProjectName = Selected1.KProjectName,
+                KAssetID     = Selected1.KAssetID    ,
+                KAssetName   = Selected1.KAssetName  ,
+                KPersonID    = Selected1.KPersonID   ,
+                KPersonName  = Selected1.KPersonName ,
                 IsTemplate = IsTemplate,
-                KAccountID = Selected1.KAccountID,
+                KAccountID   = Selected1.KAccountID,
                 KAccountName = Selected1.KAccountName,
                 Units = 0,
             };
@@ -2689,13 +2652,13 @@ namespace Fasetto.Word
                 KHierarchyID = Selected1.KHierarchyID,
                 KClientID = Selected1.KClientID,
                 KPartyID = Selected1.KPartyID,
-                KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
-                KProjectID = Project.EditedKid ?? Project.OriginalKid,
-                KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
-                KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
-                KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
-                KPersonID = Person.EditedKid ?? Person.OriginalKid,
-                KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
+                KPartyName = Selected1.KPartyName,
+                KProjectID = Selected1.KProjectID,
+                KProjectName = Selected1.KProjectName,
+                KAssetID = Selected1.KAssetID,
+                KAssetName = Selected1.KAssetName,
+                KPersonID = Selected1.KPersonID,
+                KPersonName = Selected1.KPersonName,
                 IsTemplate = IsTemplate,
                 KAccountID = Selected1.KAccountID,
                 KAccountName = Selected1.KAccountName,
@@ -2726,19 +2689,20 @@ namespace Fasetto.Word
 
 
                 Mcategory.ActualAmount = IntAmnt;
-                Mcategory.ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName);
-                Mcategory.KCategoryID = Category.EditedKid ?? Category.OriginalKid;
+                Mcategory.ShortName = (Category.EditedKid == null) ? Selected.ShortName : (Category.EditedName ?? Selected.ShortName);
+                Mcategory.KCategoryID = Category.EditedKid ?? Selected.KCategoryID;
                 Mcategory.Units = IntUnits;
-                Mcategory.KPartyID = Party.EditedKid ?? Party.OriginalKid;
-                Mcategory.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);
-                Mcategory.KAccountID = Account.EditedKid ?? Account.OriginalKid;
-                Mcategory.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
-                Mcategory.KProjectID = Project.EditedKid ?? Project.OriginalKid;
-                Mcategory.KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName);
-                Mcategory.KAssetID = Asset.EditedKid ?? Asset.OriginalKid;
-                Mcategory.KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName);
-                Mcategory.KPersonID = Person.EditedKid ?? Person.OriginalKid;
-                Mcategory.KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName);
+                Mcategory.KPartyID = Party.EditedKid ?? Selected.KPartyID;
+                Mcategory.KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName);
+                Mcategory.Notes = TransactionNotes.EditedText;
+                Mcategory.KAccountID = Account.EditedKid ?? Selected.KAccountID;
+                Mcategory.KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName);
+                Mcategory.KProjectID = Project.EditedKid ?? Selected.KProjectID;
+                Mcategory.KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName);
+                Mcategory.KAssetID = Asset.EditedKid ?? Selected.KAssetID;
+                Mcategory.KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName);
+                Mcategory.KPersonID = Person.EditedKid ?? Selected.KPersonID;
+                Mcategory.KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName);
                 Mcategory.Notes = Selected.Notes;
                 Mcategory1.ActualAmount = Mcategory.ActualAmount ;
                 Mcategory1.ShortName =    Mcategory.ShortName    ;
@@ -2755,9 +2719,6 @@ namespace Fasetto.Word
                 Mcategory1.KPersonID = Mcategory.KPersonID;
                 Mcategory1.KPersonName = Mcategory.KPersonName;
                 Mcategory1.Notes = Mcategory.Notes;
-
-
-
 
                 //                            }
 
@@ -2832,19 +2793,19 @@ namespace Fasetto.Word
                     DateEffective = DateTime.Now,
                     KHierarchyID = Selected1.KHierarchyID,
                     KClientID = Selected.KClientID,
-                    KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                    KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
-                    KProjectID = Project.EditedKid ?? Project.OriginalKid,
-                    KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
-                    KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
-                    KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
-                    KPersonID = Person.EditedKid ?? Person.OriginalKid,
-                    KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
+                    KPartyID = Party.EditedKid ?? Selected.KPartyID,
+                    KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
                     IsTemplate = IsTemplate,
                     FCatSrchID = Selected1.FCatSrchID,
-                    Notes = Selected1.Notes,
-                    KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                    KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                    Notes = TransactionNotes.EditedText,
+                    KAccountID = Account.EditedKid ?? Selected.KAccountID,
+                    KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
+                    KProjectID = Project.EditedKid ?? Selected.KProjectID,
+                    KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
+                    KAssetID = Asset.EditedKid ?? Selected.KAssetID,
+                    KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
+                    KPersonID = Person.EditedKid ?? Selected.KPersonID,
+                    KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
                     Units = Selected1.Units,
                 };
                 Mtmp2.Add(u);
@@ -2886,19 +2847,19 @@ namespace Fasetto.Word
                         DateEffective = DateTime.Now,
                         KHierarchyID = Mexxist1.KHierarchyID,
                         KClientID = Selected.KClientID,
-                        KPartyID = Party.EditedKid ?? Party.OriginalKid,
-                        KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName),
-                        KProjectID = Project.EditedKid ?? Project.OriginalKid,
-                        KProjectName = (Project.EditedKid == null) ? Project.OriginalName : (Project.EditedName ?? Project.OriginalName),
-                        KAssetID = Asset.EditedKid ?? Asset.OriginalKid,
-                        KAssetName = (Asset.EditedKid == null) ? Asset.OriginalName : (Asset.EditedName ?? Asset.OriginalName),
-                        KPersonID = Person.EditedKid ?? Person.OriginalKid,
-                        KPersonName = (Person.EditedKid == null) ? Person.OriginalName : (Person.EditedName ?? Person.OriginalName),
+                        KPartyID = Party.EditedKid ?? Selected.KPartyID,
+                        KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
                         IsTemplate = IsTemplate,
-                        FCatSrchID = Mexxist1.FCatSrchID,
+                        FCatSrchID = Selected1.FCatSrchID,
                         Notes = TransactionNotes.EditedText,
-                        KAccountID = Account.EditedKid ?? Account.OriginalKid,
-                        KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName),
+                        KAccountID = Account.EditedKid ?? Selected.KAccountID,
+                        KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
+                        KProjectID = Project.EditedKid ?? Selected.KProjectID,
+                        KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
+                        KAssetID = Asset.EditedKid ?? Selected.KAssetID,
+                        KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
+                        KPersonID = Person.EditedKid ?? Selected.KPersonID,
+                        KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
                         Units = IntUnits,
 
                     };
@@ -2919,13 +2880,19 @@ namespace Fasetto.Word
         {
             {
                 Mcategory.ActualAmount = IntAmnt;
-                Mcategory.ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName);
-                Mcategory.KCategoryID = Category.EditedKid ?? Category.OriginalKid;
+                Mcategory.ShortName = (Category.EditedKid == null) ? Selected.ShortName: (Category.EditedName ?? Selected.ShortName);
+                Mcategory.KCategoryID = Category.EditedKid ?? Selected.KCategoryID;
+                Mcategory.KPartyID = Party.EditedKid ?? Selected.KPartyID;
+                Mcategory.KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName);
+                Mcategory.KAccountID = Account.EditedKid ?? Selected.KAccountID;
+                Mcategory.KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName);
+                Mcategory.KProjectID = Project.EditedKid ?? Selected.KProjectID;
+                Mcategory.KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName);
+                Mcategory.KAssetID = Asset.EditedKid ?? Selected.KAssetID;
+                Mcategory.KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName);
+                Mcategory.KPersonID = Person.EditedKid ?? Selected.KPersonID;
+                Mcategory.KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName);
                 Mcategory.Units = IntUnits;
-                Mcategory.KPartyID = Party.EditedKid ?? Party.OriginalKid;
-                Mcategory.KPartyName = (Party.EditedKid == null) ? Party.OriginalName : (Party.EditedName ?? Party.OriginalName);
-                Mcategory.KAccountID = Account.EditedKid ?? Account.OriginalKid;
-                Mcategory.KAccountName = (Account.EditedKid == null) ? Account.OriginalName : (Account.EditedName ?? Account.OriginalName);
                 Mcategory.Notes = Mcategory.Notes + " " + TransactionNotes.EditedText;
                 Mcategory1.ActualAmount = Mcategory.ActualAmount;
                 Mcategory1.ShortName = Mcategory.ShortName;

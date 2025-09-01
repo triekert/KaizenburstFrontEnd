@@ -123,14 +123,14 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
+                    <!--<RowDefinition Height="*" />-->
                 </Grid.RowDefinitions>
 
 
                 <!--<StackPanel Grid.IsSharedSizeScope="True" Orientation="Vertical">-->
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="50"/>
 
                         <!--<ColumnDefinition Width="150" />-->
                         <ColumnDefinition Width="120" />
@@ -147,7 +147,7 @@
                         <ColumnDefinition Width="120" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock  Grid.Column ="1"  Width="120"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="          Cost Category" FontFamily="Lato Medium" FontWeight="ExtraBold"  Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                    <TextBlock  Grid.Column ="1"  Width="119"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="          Cost Category" FontFamily="Lato Medium" FontWeight="ExtraBold"  Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                     <TextBlock  Grid.Column ="2"  Width="120"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Budget Amount(This level)" FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                     <TextBlock  Grid.Column ="3"  Width="120"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Budget Amount(Descendant only)" FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                     <TextBlock  Grid.Column ="4"  Width="120"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="Budget Amount Total(All levels) " FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
@@ -179,7 +179,7 @@
 
 
 
-                    <TreeView Grid.Row="1"
+                    <TreeView Grid.Row="0"
                   ItemsSource="{Binding FirstGeneration}" 
                   TreeViewItem.Selected="TreeView_Selected"            
                   Name="tvParameters">

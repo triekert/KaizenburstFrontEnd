@@ -1234,7 +1234,7 @@ namespace Fasetto.Word.Web.Server
 
 
                     SqlString2 = "EXEC [Finance].[spManageCategorySearch] @kClientID = '" + para[9].Value + "' , @HierarchyID = '" + para[10].Value + "', @fPartyID = '" + para[13].Value + "' ,@fCatSrchID = '" + para[14].Value + "' ,@Description = '" + para[1].Value +  "' ,@month = '" + para[11].Value + "'";
-                    SqlString = "EXEC [Finance].[spAddTransactionAllocation] @ActualAmount ,@TransAmount ,@kFinActualID ,@kFinTranID,@kCategoryID,@kClientID,@kHierarchyID ,@Month ,@kPartyID ,@fCatSrchID,@Notes ,@kAccountId ,@Description ,@Posted_Date,@Units,@kAssetId,@kPersonId,@kProjectId,";
+                    SqlString = "EXEC [Finance].[spAddTransactionAllocation] @ActualAmount ,@TransAmount ,@kFinActualID ,@kFinTranID,@kCategoryID,@kClientID,@kHierarchyID ,@Month ,@kPartyID ,@fCatSrchID,@Notes ,@kAccountId ,@Description ,@Posted_Date,@Units,@kAssetId,@kPersonId,@kProjectId";
                     //SqlString = "EXEC [Finance].[spAddTransactionAllocation] @ActualAmount = '" + para[7].Value + "',@kFinActualID = '" + para[3].Value + "',@kFinTranID = '" + para[4].Value +
                     //    "',@kCategoryID = '" + para[2].Value + "',@kClientID = '" + para[9].Value + "',@kHierarchyID = '" + para[10].Value + "',@Month = '" + para[11].Value + "',@kPartyID = '" + para[13].Value +
                     //    "' ,@fCatSrchID = '" + para[14].Value + "',@Notes = '" + para[15].Value + "',@kAccountId = '" + para[16].Value + "' ,@Description = '" + para[1].Value + "' ,@PostedDate = '" + para[8].Value + "'";

@@ -170,6 +170,8 @@ namespace Fasetto.Word
 
         //    } }
         #endregion//Public Properties
+
+        #region Functions
         /// <summary>
         /// Method to refresh View Model 
         /// </summary>
@@ -308,7 +310,7 @@ namespace Fasetto.Word
 
             });
         }
-
+        #endregion Functions
 
         #region SearchCommand
 

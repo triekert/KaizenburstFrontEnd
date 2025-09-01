@@ -13,7 +13,7 @@ namespace Fasetto.Word
     /// <summary>
     /// Interaction logic for HierarchyManagementControl.xaml
     /// </summary>
-    public partial class BudgetReviewControl : UserControl
+    public partial class BudgetReviewControl1 : UserControl
     {
 
         #region Public Properties
@@ -41,7 +41,7 @@ namespace Fasetto.Word
         private BudgetViewModel mDraggedItemTest,mDraggedItem,mTarget;
         public BudgetViewModel mTargetTest;
 
-        public BudgetReviewControl()
+        public BudgetReviewControl1()
         {
 
             //var root = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
@@ -62,7 +62,7 @@ namespace Fasetto.Word
 
         }
 
-        public BudgetReviewControl(string root)
+        public BudgetReviewControl1(string root)
         {
             mHierarchyTree = new BudgetTreeViewModel();//root);
 

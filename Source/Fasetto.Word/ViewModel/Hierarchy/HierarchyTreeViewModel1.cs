@@ -1287,7 +1287,7 @@ namespace Fasetto.Word
                                 if (((KeyEventArgs)tmp).Key == Key.Insert)
                             {
                                 //((KeyEventArgs)tmp).Handled = true;
-                                //AddHierarchyElement(mSelectedTreeItem);
+                                AddHierarchyElement(mSelectedTreeItem);
                             }
                             else
                                     if (((KeyEventArgs)tmp).Key == Key.Delete)

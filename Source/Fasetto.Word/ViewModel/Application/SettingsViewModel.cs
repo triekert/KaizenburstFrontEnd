@@ -268,7 +268,7 @@ namespace Fasetto.Word
 
             Client = new HierarchyItemSelectionViewModel
             {
-                Label = "Select Client",
+                Label = "Client",
                 //EditedName = mLoadingText,
                 EditedName = (string)ViewModelApplication.ClientShortName ?? "Client",
                 OriginalName = (string)ViewModelApplication.ClientShortName ?? "Client Lookup",
@@ -298,7 +298,7 @@ namespace Fasetto.Word
             CostHierarchy = new HierarchyItemSelectionViewModel
             {
 
-                Label = "Select Cost Hierarchy",
+                Label = "Cost Hierarchy",
                 EditedName = (string)ViewModelApplication.CostHierarchyShortName ?? "Cost Hierarchy Name",
                 OriginalName = (string)ViewModelApplication.CostHierarchyShortName ?? "Cost Hierarchy",
                 OriginalKid = (string)ViewModelApplication.FCostHierarchyID,

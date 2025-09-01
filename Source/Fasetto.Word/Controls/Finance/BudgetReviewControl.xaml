@@ -200,14 +200,14 @@
                       TreeViewItem.Selected="TreeView_Selected"            
                       Name="tvParameters">
 
-                        <TreeView.Template>
+                        <!--<TreeView.Template>
                             <ControlTemplate>
                                 <Border BorderBrush="{TemplateBinding BorderBrush}"  BorderThickness="{TemplateBinding BorderThickness}"  SnapsToDevicePixels="true">
 
-                                    <ItemsPresenter x:Name="ItemsPresenter" Grid.ColumnSpan="1" Grid.Column="1" Grid.Row="1" Margin="-5,0,0,0"/>
-                            </Border>
+                                    <ItemsPresenter x:Name="ItemsPresenter" Grid.ColumnSpan="10" Grid.Column="0" Grid.Row="2" Margin="-5,0,0,0"/>
+                                </Border>
                             </ControlTemplate>
-                        </TreeView.Template>
+                        </TreeView.Template>-->
 
                     <!--AllowDrop="True"  MouseDown="TreeView_MouseDown"  Drop="TreeView_Drop" MouseMove="TreeView_MouseMove">-->
 
@@ -242,12 +242,11 @@
                                         <!--<Setter Property="Background" Value="Blue" />
                                     <Setter Property="Foreground" Value="Blue"/>-->
                                     </Trigger>
-                            </Style.Triggers>
+                                </Style.Triggers>
                             </Style>
                         </TreeView.ItemContainerStyle>
 
                         <TreeView.ItemTemplate>
-
                             <HierarchicalDataTemplate ItemsSource="{Binding Children}"  >
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"  Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}">
                                     <Grid>
@@ -263,13 +262,15 @@
                                         <TextBlock  Grid.Column ="2" Width="220"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding BudgetAmount,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                         <TextBlock  Grid.Column ="3" Width="220"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding BudgetAmountDescendants,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                         <TextBlock  Grid.Column ="4" Width="220"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding BudgetAmountTotal,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                                        <!--<ItemsPresenter x:Name="ItemsPresenter" Grid.ColumnSpan="5" Grid.Column="0" Grid.Row="1" Margin="-5,0,0,0"/>-->
 
                                     </Grid>
                         
                                 </StackPanel>
           
                              </HierarchicalDataTemplate>
-                        </TreeView.ItemTemplate>
+
+                    </TreeView.ItemTemplate>
                     </TreeView>
             
             <!--</StackPanel>-->

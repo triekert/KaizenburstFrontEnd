@@ -261,8 +261,8 @@ namespace Fasetto.Word
         {
             EditedKid = "";
             EditedName = "";
-            OriginalKid = "";
-            OriginalName = "";
+            //OriginalKid = "";
+            //OriginalName = "";
             Editing = false;
         }
 
