@@ -262,7 +262,7 @@
                                         <TextBlock  Grid.Column ="2" Width="220"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding BudgetAmount,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                         <TextBlock  Grid.Column ="3" Width="220"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding BudgetAmountDescendants,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                         <TextBlock  Grid.Column ="4" Width="220"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding BudgetAmountTotal,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                                        <!--<ItemsPresenter x:Name="ItemsPresenter" Grid.ColumnSpan="5" Grid.Column="0" Grid.Row="1" Margin="-5,0,0,0"/>-->
+                                        <ItemsPresenter x:Name="ItemsPresenter" Grid.ColumnSpan="3" Grid.Column="0" Grid.Row="1" Margin="-5,0,0,0"/>
 
                                     </Grid>
                         

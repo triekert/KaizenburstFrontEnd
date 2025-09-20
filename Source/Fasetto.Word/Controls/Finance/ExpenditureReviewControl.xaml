@@ -130,7 +130,7 @@
                 <!--<StackPanel Grid.IsSharedSizeScope="True" Orientation="Vertical">-->
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="10"/>
 
                         <!--<ColumnDefinition Width="150" />-->
                         <ColumnDefinition Width="120" />
@@ -234,7 +234,7 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"  Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="75"/>
+                                        <ColumnDefinition Width="0"/>
 
                                         <!--<ColumnDefinition Width="150" />-->
                                         <ColumnDefinition Width="120" />

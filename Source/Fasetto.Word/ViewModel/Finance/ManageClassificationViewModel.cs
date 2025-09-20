@@ -1802,42 +1802,42 @@ namespace Fasetto.Word
                                                         Mtmp2.Add(u);
 
 
-                                                        {
-                                                            Mexxist2.ActualAmount = Mexxist2.ActualAmount + (OrgActual - IntAmnt);
-                                                            Mexxist1.ActualAmount = Mexxist1.ActualAmount + (OrgActual - IntAmnt);
-                                                        }
-                                                        u = new TransactionResultApiModel
-                                                        {
-                                                            Posted_Date = DateTime.Parse(TransactionDate),
-                                                            Month = Selected1.Month,
-                                                            Description = TransactionDescription.EditedText ?? Selected.Description,
-                                                            TransAmount = Selected1.TransAmount,
-                                                            ActualAmount = Mexxist2.ActualAmount,
-                                                            ShortName = "",
-                                                            KCategoryID = "",
-                                                            KFinActualID = Selected1.KFinActualID,
-                                                            KFinTranID = Selected1.KFinTranID,
-                                                            ChangeType = "c",
-                                                            DateEffective = DateTime.Now,
-                                                            KHierarchyID = Selected1.KHierarchyID,
-                                                            KClientID = Selected.KClientID,
-                                                            KPartyID = Party.EditedKid ?? Selected.KPartyID,
-                                                            KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
-                                                            IsTemplate = IsTemplate,
-                                                            FCatSrchID = Selected1.FCatSrchID,
-                                                            Notes = "",
-                                                            KAccountID = "",
-                                                            KAccountName = "",
-                                                            KProjectID = "",
-                                                            KProjectName = "",
-                                                            KAssetID = "",
-                                                            KAssetName = "",
-                                                            KPersonID = "",
-                                                            KPersonName = "",
-                                                            Units = 0,
+                                                        //{
+                                                        //    Mexxist2.ActualAmount = Mexxist2.ActualAmount + (OrgActual - IntAmnt);
+                                                        //    Mexxist1.ActualAmount = Mexxist1.ActualAmount + (OrgActual - IntAmnt);
+                                                        //}
+                                                        //u = new TransactionResultApiModel
+                                                        //{
+                                                        //    Posted_Date = DateTime.Parse(TransactionDate),
+                                                        //    Month = Selected1.Month,
+                                                        //    Description = TransactionDescription.EditedText ?? Selected.Description,
+                                                        //    TransAmount = Selected1.TransAmount,
+                                                        //    ActualAmount = Mexxist2.ActualAmount,
+                                                        //    ShortName = "",
+                                                        //    KCategoryID = "",
+                                                        //    KFinActualID = Selected1.KFinActualID,
+                                                        //    KFinTranID = Selected1.KFinTranID,
+                                                        //    ChangeType = "c",
+                                                        //    DateEffective = DateTime.Now,
+                                                        //    KHierarchyID = Selected1.KHierarchyID,
+                                                        //    KClientID = Selected.KClientID,
+                                                        //    KPartyID = Party.EditedKid ?? Selected.KPartyID,
+                                                        //    KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
+                                                        //    IsTemplate = IsTemplate,
+                                                        //    FCatSrchID = Selected1.FCatSrchID,
+                                                        //    Notes = "",
+                                                        //    KAccountID = "",
+                                                        //    KAccountName = "",
+                                                        //    KProjectID = "",
+                                                        //    KProjectName = "",
+                                                        //    KAssetID = "",
+                                                        //    KAssetName = "",
+                                                        //    KPersonID = "",
+                                                        //    KPersonName = "",
+                                                        //    Units = 0,
 
-                                                        };
-                                                        Mtmp2.Add(u);
+                                                        //};
+                                                        //Mtmp2.Add(u);
                                                     }
 
                                                     break;

@@ -71,11 +71,11 @@ namespace Fasetto.Word
 
         public HierarchyControl(string root)
         {
-            ViewModelApplication.CurrentControlViewModel = new HierarchyTreeViewModel(root);//root);
+            ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel(root);//root);
 
-            DataContext = ViewModelApplication.CurrentControlViewModel;
+            DataContext = ViewModelApplication.CurrentPopupViewModel;
             InitializeComponent();
-            //ViewModelApplication.CurrentControlViewModel = mHierarchyTree;   
+            //ViewModelApplication.CurrentPopupViewModel = mHierarchyTree;   
         }
 
 
@@ -262,6 +262,7 @@ namespace Fasetto.Word
                 if (e.LeftButton == MouseButtonState.Pressed)
                 {
                     var isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                    var isShift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
                     var currentPosition = e.GetPosition(item);
 
                     //Check for dragging of treeview item
@@ -277,7 +278,7 @@ namespace Fasetto.Word
                         if (mDraggedItem != null)
                         {
                             mTarget = null;//ensure target is reset
-                            if (!isCtrl)
+                            if (!isCtrl & !isShift)
                             {
 
                                 var finalDropEffect = DragDrop.DoDragDrop(item, mDraggedItem,
@@ -288,7 +289,7 @@ namespace Fasetto.Word
                                     // A Move drop was accepted
                                     //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
                                     //{
-                                    //((HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel).MoveHierarchyElement(mDraggedItem,mTarget);// MoveItem();
+                                    //((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MoveHierarchyElement(mDraggedItem,mTarget);// MoveItem();
                                     ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MoveHierarchyElement(mDraggedItem, mTarget);// MoveItem();
 
                                     mTargetT = null;
@@ -301,17 +302,31 @@ namespace Fasetto.Word
                             {
                                 var finalDropEffect = DragDrop.DoDragDrop(tvParameters, tvParameters.SelectedValue,
                                   DragDropEffects.Copy);
-                                if ((finalDropEffect == DragDropEffects.Copy) && (mTarget != null))
+                                if ((finalDropEffect == DragDropEffects.Copy) && (mTarget != null) && isCtrl)
                                 {
                                     // A Copy drop was accepted
                                     //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
                                     //{
-                                    ((HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel).CopyHierarchyElement(mDraggedItem, mTarget);// CopyItem();
+                                    ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).CopyHierarchyElement(mDraggedItem, mTarget);// CopyItem();
                                     mTargetT = null;
                                     mSource = null;
                                     //}
 
                                 }
+                                else
+                               {
+                                    finalDropEffect = DragDrop.DoDragDrop(tvParameters, tvParameters.SelectedValue,
+                                   DragDropEffects.Link);
+                                    // A Copy drop was accepted
+                                    //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
+                                    //{
+                                    ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).CopyHierarchyElement(mDraggedItem, mTarget);// CopyItem();
+                                    mTargetT = null;
+                                    mSource = null;
+                                    //}
+
+                                }
+
                             }
 
 

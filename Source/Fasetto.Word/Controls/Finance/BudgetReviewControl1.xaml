@@ -6,40 +6,39 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"               
              mc:Ignorable="d" 
              xmlns:local="clr-namespace:Fasetto.Word"
-             Template="{DynamicResource TreeViewItemControlTemplate1}"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <local:ContextualEventArgsConverter x:Key="ContextualEventArgsConverter" />
         <local:IndentConverter x:Key="IndentConverter" />
 
-        <!--<ControlTemplate x:Key="TreeViewItemControlTemplate1" TargetType="{x:Type TreeViewItem}">
+        <ControlTemplate x:Key="TreeViewItemControlTemplate1" TargetType="{x:Type TreeViewItem}">
             <Grid x:Name="tvGrid">
                 <Grid.ColumnDefinitions>
+                    <!--<ColumnDefinition Width="0"/>
+                    <ColumnDefinition Width="0"/>
+                    <ColumnDefinition Width="0"/>-->
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    --><!--<ColumnDefinition Width="0"/>--><!--
+                    <!--<ColumnDefinition Width="Auto"/>-->
                     <ColumnDefinition MinWidth="19" Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
+                    <!--<ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>-->
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
 
-                --><!-- Left buttons --><!--
-                <Button Grid.Column="0" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" />
+                 <!--Left buttons--> 
+                <!--<Button Grid.Column="0" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" />
                 <Button Grid.Column="1" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" />
-                <Button Grid.Column="2" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" />
+                <Button Grid.Column="2" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" />-->
 
-                <Rectangle Grid.Column="3" Width="{Binding Path=(local:TreeViewItemHelper.Indent).Value, Mode=OneWay, RelativeSource={RelativeSource AncestorType=ItemsPresenter}}" Fill="Transparent"/>
+                <Rectangle x:Name ="Indent" Grid.Column="0" Width="{Binding Path=(local:TreeViewItemHelper.Indent).Value, Mode=OneWay, RelativeSource={RelativeSource AncestorType=ItemsPresenter}}" Fill="Transparent"/>
 
-                <ToggleButton x:Name="Expander" Grid.Column="4" ClickMode="Press" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}">
+                <ToggleButton x:Name="Expander" Grid.Column="1" ClickMode="Press" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}">
                     <ToggleButton.Style>
                         <Style TargetType="{x:Type ToggleButton}">
                             <Setter Property="Focusable" Value="False"/>
@@ -84,16 +83,16 @@
                         </Style>
                     </ToggleButton.Style>
                 </ToggleButton>
-                <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Grid.Column="5" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Grid.Column="2" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
                     <ContentPresenter x:Name="PART_Header" ContentTemplate="{TemplateBinding HeaderTemplate}" Content="{TemplateBinding Header}" ContentStringFormat="{TemplateBinding HeaderStringFormat}" ContentSource="Header" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                 </Border>
 
-                --><!-- Right buttons --><!--
-                <Button Grid.Column="7" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" />
+                 <!--Right buttons--> 
+                <!--<Button Grid.Column="7" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" />
                 <Button Grid.Column="8" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" />
-                <Button Grid.Column="9" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" />
+                <Button Grid.Column="9" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" />-->
 
-                <ItemsPresenter x:Name="ItemsHost" Grid.ColumnSpan="10" Grid.Column="0" Grid.Row="1"
+                <ItemsPresenter x:Name="ItemsHost" Grid.ColumnSpan="4" Grid.Column="0" Grid.Row="1"
             local:TreeViewItemHelper.Indent="{Binding Path=(local:TreeViewItemHelper.Indent), Mode=OneWay, RelativeSource={RelativeSource AncestorType=ItemsPresenter}, Converter={StaticResource IndentConverter}}" />
             </Grid>
             <ControlTemplate.Triggers>
@@ -124,7 +123,79 @@
         <Style TargetType="TreeViewItem">
             <Setter Property="Template" Value="{DynamicResource TreeViewItemControlTemplate1}" />
             <Setter Property="IsExpanded" Value="True" />
+            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+            <Setter Property="AllowDrop"  Value="True"/>
+            <Setter Property="FontWeight" Value="Normal" />
+            <EventSetter Event="DragOver"  Handler="TreeView_DragOver"/>
+            <EventSetter Event="Drop" Handler="TreeView_Drop"/>
+            <EventSetter Event= "MouseDown" Handler="TreeView_MouseDown"/>
+            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="TreeView_PreviewMouseLeftButtonDown" />
+            <EventSetter Event="KeyDown" Handler="TreeView_KeyBoard"/>
+            <EventSetter Event="MouseMove" Handler="TreeView_MouseMove"/>
+            <EventSetter Event="MouseDoubleClick" Handler="TreeView_MouseDoubleClick"/>
+        
+        </Style>
+
+        <!--<Style x:Key="TreeViewItemStyle1" TargetType="{x:Type TreeViewItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition MinWidth="19" Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <ToggleButton x:Name="Expander" ClickMode="Press" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" Style="{StaticResource ExpandCollapseToggleStyle}"/>
+                            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Grid.Column="1" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+                                <ContentPresenter x:Name="PART_Header" ContentSource="Header" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </Border>
+                            <ItemsPresenter x:Name="ItemsHost" Grid.ColumnSpan="2" Grid.Column="1" Grid.Row="1" Margin="-12,0,0,0" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="false">
+                                <Setter Property="Visibility" TargetName="ItemsHost" Value="Collapsed"/>
+                            </Trigger>
+                            <Trigger Property="HasItems" Value="false">
+                                <Setter Property="Visibility" TargetName="Expander" Value="Hidden"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter Property="Background" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="true"/>
+                                    <Condition Property="IsSelectionActive" Value="false"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                            </MultiTrigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="VirtualizingStackPanel.IsVirtualizing" Value="true">
+                    <Setter Property="ItemsPanel">
+                        <Setter.Value>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel/>
+                            </ItemsPanelTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
         </Style>-->
+
+
     </UserControl.Resources>
 
 
@@ -329,10 +400,10 @@
 
                     <!--AllowDrop="True"  MouseDown="TreeView_MouseDown"  Drop="TreeView_Drop" MouseMove="TreeView_MouseMove">-->
 
-                    <TreeView.ItemContainerStyle>
-                        <!-- 
+                    <!--<TreeView.ItemContainerStyle>
+                        --><!-- 
                 This Style binds a TreeViewItem to a HierarchyViewModel. 
-                -->
+                --><!--
 
                         <Style TargetType="{x:Type TreeViewItem}">
                             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
@@ -346,23 +417,23 @@
                             <EventSetter Event="KeyDown" Handler="TreeView_KeyBoard"/>
                             <EventSetter Event="MouseMove" Handler="TreeView_MouseMove"/>
                             <EventSetter Event="MouseDoubleClick" Handler="TreeView_MouseDoubleClick"/>
-                            <!--<EventSetter Event="MouseEnter" Handler="TreeView_MouseEnter"/>
-                            <EventSetter Event="MouseLeave" Handler="TreeView_MouseLeave"/>-->
+                            --><!--<EventSetter Event="MouseEnter" Handler="TreeView_MouseEnter"/>
+                            <EventSetter Event="MouseLeave" Handler="TreeView_MouseLeave"/>--><!--
                             <Style.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter Property="FontWeight" Value="UltraBold" />
                                     <Setter Property="Foreground" Value="Darkred"/>
-                                    <!--<Setter Property="Cursor" Value="Hand"/>-->
+                                    --><!--<Setter Property="Cursor" Value="Hand"/>--><!--
                                 </Trigger>
 
                                 <Trigger Property="local:MyTreeViewHelper.IsMouseDirectlyOverItem" Value="True">
                                     <Setter Property="FontWeight" Value="Black" />
-                                    <!--<Setter Property="Background" Value="Blue" />
-                                <Setter Property="Foreground" Value="Blue"/>-->
+                                    --><!--<Setter Property="Background" Value="Blue" />
+                                <Setter Property="Foreground" Value="Blue"/>--><!--
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
-                    </TreeView.ItemContainerStyle>
+                    </TreeView.ItemContainerStyle>-->
 
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate ItemsSource="{Binding Children}"  >
@@ -387,6 +458,18 @@
                             </StackPanel>
 
                         </HierarchicalDataTemplate>
+                        <!--<TreeView>
+                            <TreeView.Resources>
+                                <HierarchicalDataTemplate DataType="{x:Type local:YourDataType}" ItemsSource="{Binding Children}">
+                                    <StackPanel Margin="20,0,0,0">
+                                        --><!-- Adjust the margin --><!--
+                                        <TextBlock Text="{Binding Name}" />
+                                    </StackPanel>
+                                </HierarchicalDataTemplate>
+                            </TreeView.Resources>
+                        </TreeView>-->
+
+
 
                     </TreeView.ItemTemplate>
                 </TreeView>
