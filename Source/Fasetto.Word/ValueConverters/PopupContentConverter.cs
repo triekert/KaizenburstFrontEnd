@@ -79,7 +79,7 @@ namespace Fasetto.Word
                     return mSWBillingDetailControl;
 
                 case PopupContent.BudgetReview:
-                    var mBudgetReviewControl = new BudgetReviewControl1();
+                    var mBudgetReviewControl = new BudgetReviewControl();
                     return mBudgetReviewControl;
 
                 case PopupContent.BudgetAdjust:

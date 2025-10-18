@@ -1271,6 +1271,12 @@ namespace Fasetto.Word
                                 //((MouseButtonEventArgs)tmp).Handled = true;
                                 //EditHierarchyElement(mSelectedTreeItem);
                             }
+                            if (((MouseButtonEventArgs)tmp).RoutedEvent.Name == "PreviewMouseDoubleClick")
+                                    {
+                                    ((MouseButtonEventArgs)tmp).Handled = true;
+                                    RunSelectedItem();
+                                    //EditHierarchyElement(mSelectedTreeItem);
+                                }
                         }
                         else
                         if (eventTmp == "KeyEventArgs")
