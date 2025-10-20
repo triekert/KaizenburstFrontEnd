@@ -870,14 +870,14 @@ namespace Fasetto.Word.Web.Server
                         BudgetAmountTotal = (decimal)row[10],
                         BudgetAmountDescendants = (decimal)row[9],
                         BudgetAmount = (decimal)row[1],
-                        ActualAmountTotal =(decimal)row[12],
-                        ActualAmountDescendants = (decimal)row[11],
-                        ActualAmount= (decimal)row[2],
-                        Deviation = (decimal)row[12] - (decimal)row[10],
+                        ActualAmountTotal = (row[12] != DBNull.Value) ? (decimal)row[12] : 0M,
+                        ActualAmountDescendants = (row[11] != DBNull.Value) ? (decimal)row[112] : 0M,
+                        ActualAmount = (row[2] != DBNull.Value) ? (decimal)row[2]:0M,
+                        Deviation = (row[12] != DBNull.Value) ? (decimal)row[12] : 0M - (decimal)row[10],
                         DeviationCum = (decimal)row[18],
                         BudgetTotCum = (decimal)row[16],
                         ActualTotCum = (decimal)row[17],
-                        IsStockTracked = (row[18] != DBNull.Value) ? (bool)row[19] : false,
+                        IsStockTracked = (row[19] != DBNull.Value) ? (bool)row[19] : false,
                     };
                     results.Add(u);
 

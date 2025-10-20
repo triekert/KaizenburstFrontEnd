@@ -313,19 +313,19 @@
      BorderBrush="#FF734444" 
      BorderThickness="1,0,1,1">
 
-            <Grid>
+            <!--<Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
 
-                <!--<StackPanel Grid.IsSharedSizeScope="True" Orientation="Vertical">-->
+                --><!--<StackPanel Grid.IsSharedSizeScope="True" Orientation="Vertical">--><!--
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="10"/>
 
-                        <!--<ColumnDefinition Width="150" />-->
+                        --><!--<ColumnDefinition Width="150" />--><!--
                         <ColumnDefinition Width="220" />
                         <ColumnDefinition Width="220" />
                         <ColumnDefinition Width="220" />
@@ -340,7 +340,7 @@
 
                 </Grid>
 
-            </Grid>
+            </Grid>-->
 
 
 
@@ -385,25 +385,25 @@
 
 
                 <TreeView Grid.Row="1"
-                  ItemsSource="{Binding FirstGeneration}" 
-                  TreeViewItem.Selected="TreeView_Selected"            
-                  Name="tvParameters">
+                      ItemsSource="{Binding FirstGeneration}" 
+                      TreeViewItem.Selected="TreeView_Selected"            
+                      Name="tvParameters">
 
                     <!--<TreeView.Template>
-                        <ControlTemplate>
-                            <Border BorderBrush="{TemplateBinding BorderBrush}"  BorderThickness="{TemplateBinding BorderThickness}"  SnapsToDevicePixels="true">
+                            <ControlTemplate>
+                                <Border BorderBrush="{TemplateBinding BorderBrush}"  BorderThickness="{TemplateBinding BorderThickness}"  SnapsToDevicePixels="true">
 
-                                <ItemsPresenter x:Name="ItemsPresenter" Grid.ColumnSpan="10" Grid.Column="0" Grid.Row="2" Margin="-5,0,0,0"/>
-                            </Border>
-                        </ControlTemplate>
-                    </TreeView.Template>-->
+                                    <ItemsPresenter x:Name="ItemsPresenter" Grid.ColumnSpan="10" Grid.Column="0" Grid.Row="2" Margin="-5,0,0,0"/>
+                                </Border>
+                            </ControlTemplate>
+                        </TreeView.Template>-->
 
                     <!--AllowDrop="True"  MouseDown="TreeView_MouseDown"  Drop="TreeView_Drop" MouseMove="TreeView_MouseMove">-->
 
-                    <!--<TreeView.ItemContainerStyle>
-                        --><!-- 
-                This Style binds a TreeViewItem to a HierarchyViewModel. 
-                --><!--
+                    <TreeView.ItemContainerStyle>
+                        <!-- 
+                    This Style binds a TreeViewItem to a HierarchyViewModel. 
+                    -->
 
                         <Style TargetType="{x:Type TreeViewItem}">
                             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
@@ -417,23 +417,23 @@
                             <EventSetter Event="KeyDown" Handler="TreeView_KeyBoard"/>
                             <EventSetter Event="MouseMove" Handler="TreeView_MouseMove"/>
                             <EventSetter Event="MouseDoubleClick" Handler="TreeView_MouseDoubleClick"/>
-                            --><!--<EventSetter Event="MouseEnter" Handler="TreeView_MouseEnter"/>
-                            <EventSetter Event="MouseLeave" Handler="TreeView_MouseLeave"/>--><!--
+                            <!--<EventSetter Event="MouseEnter" Handler="TreeView_MouseEnter"/>
+                                <EventSetter Event="MouseLeave" Handler="TreeView_MouseLeave"/>-->
                             <Style.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter Property="FontWeight" Value="UltraBold" />
                                     <Setter Property="Foreground" Value="Darkred"/>
-                                    --><!--<Setter Property="Cursor" Value="Hand"/>--><!--
+                                    <!--<Setter Property="Cursor" Value="Hand"/>-->
                                 </Trigger>
 
                                 <Trigger Property="local:MyTreeViewHelper.IsMouseDirectlyOverItem" Value="True">
                                     <Setter Property="FontWeight" Value="Black" />
-                                    --><!--<Setter Property="Background" Value="Blue" />
-                                <Setter Property="Foreground" Value="Blue"/>--><!--
+                                    <!--<Setter Property="Background" Value="Blue" />
+                                    <Setter Property="Foreground" Value="Blue"/>-->
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
-                    </TreeView.ItemContainerStyle>-->
+                    </TreeView.ItemContainerStyle>
 
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate ItemsSource="{Binding Children}"  >
@@ -451,27 +451,17 @@
                                     <TextBlock  Grid.Column ="2" Width="220"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding BudgetAmount,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                     <TextBlock  Grid.Column ="3" Width="220"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding BudgetAmountDescendants,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                                     <TextBlock  Grid.Column ="4" Width="220"  HorizontalAlignment="Right"    TextWrapping="WrapWithOverflow" Text="{Binding BudgetAmountTotal,StringFormat=C,ConverterCulture='en-ZA'}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                                    <!--<ItemsPresenter x:Name="ItemsPresenter" Grid.ColumnSpan="5" Grid.Column="0" Grid.Row="1" Margin="-5,0,0,0"/>-->
+                                    <ItemsPresenter x:Name="ItemsPresenter" Grid.ColumnSpan="3" Grid.Column="0" Grid.Row="1" Margin="-5,0,0,0"/>
 
                                 </Grid>
 
                             </StackPanel>
 
                         </HierarchicalDataTemplate>
-                        <!--<TreeView>
-                            <TreeView.Resources>
-                                <HierarchicalDataTemplate DataType="{x:Type local:YourDataType}" ItemsSource="{Binding Children}">
-                                    <StackPanel Margin="20,0,0,0">
-                                        --><!-- Adjust the margin --><!--
-                                        <TextBlock Text="{Binding Name}" />
-                                    </StackPanel>
-                                </HierarchicalDataTemplate>
-                            </TreeView.Resources>
-                        </TreeView>-->
-
-
 
                     </TreeView.ItemTemplate>
+                    
+                    
                 </TreeView>
 
                 <!--</StackPanel>-->

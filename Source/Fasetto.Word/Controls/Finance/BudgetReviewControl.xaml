@@ -124,19 +124,19 @@
          BorderBrush="#FF734444" 
          BorderThickness="1,0,1,1">
 
-            <Grid>
+            <!--<Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
 
-                <!--<StackPanel Grid.IsSharedSizeScope="True" Orientation="Vertical">-->
+                --><!--<StackPanel Grid.IsSharedSizeScope="True" Orientation="Vertical">--><!--
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="10"/>
 
-                        <!--<ColumnDefinition Width="150" />-->
+                        --><!--<ColumnDefinition Width="150" />--><!--
                         <ColumnDefinition Width="220" />
                         <ColumnDefinition Width="220" />
                         <ColumnDefinition Width="220" />
@@ -151,7 +151,7 @@
 
                 </Grid>
                 
-                </Grid>
+                </Grid>-->
 
 
 
