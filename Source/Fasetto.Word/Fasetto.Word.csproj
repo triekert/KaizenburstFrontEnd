@@ -74,7 +74,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="MahApps.Metro" Version="1.6.5" />
+    <PackageReference Include="MahApps.Metro" Version="2.4.11" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
       <PrivateAssets>all</PrivateAssets>
@@ -150,6 +150,8 @@
     <PackageReference Include="Ninject" Version="3.3.6" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Animation\MyTreeViewHelper.cs" />
+    <Compile Remove="AttachedProperties\TreeViewItemHelper.cs" />
     <Compile Remove="Controls\Finance\HierarchyElementControl - Copy.cs" />
     <Compile Remove="Fonts\Controls\BubbleContent.xaml.cs" />
     <Compile Remove="Fonts\Controls\Chat\ChatList\ChatListControl.xaml.cs" />
@@ -186,6 +188,7 @@
     <Compile Remove="Fonts\Controls\Services\WaterReadingControl.xaml .cs" />
     <Compile Remove="Fonts\Controls\SettingsControl.xaml.cs" />
     <Compile Remove="Fonts\Controls\SideMenuControl.xaml.cs" />
+    <Compile Remove="StringRGBToBrushConverter.cs" />
     <Compile Remove="ViewModel\Application\FinanceSelectionViewModel .cs" />
     <Compile Remove="ViewModel\Base\TreeViewItemModel.cs" />
     <Compile Remove="ViewModel\Finance\Expenditure\HierarchyManagementDesignViewModel.cs" />

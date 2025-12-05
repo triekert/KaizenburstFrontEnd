@@ -11,7 +11,7 @@ namespace Fasetto.Word
         //
         // The TreeViewItem that the mouse is currently directly over (or null).
         //
-        private static TreeViewItem _currentItem = null;
+        private static TreeViewItem  _currentItem = null;
 
         //
         // IsMouseDirectlyOverItem:  A DependencyProperty that will be true only on the 
@@ -52,7 +52,7 @@ namespace Fasetto.Word
                 // Figure out a relative position of the selected node to the scrollviewer
                 //var relativePosition = element.TranslatePoint(new Point(0, 0), scrollViewer);
                 //scrollViewer.ScrollToVerticalOffset(relativePosition.Y);
-                element.BringIntoView();mytreeview
+                element.BringIntoView();
                 element.Focus();
                 return true;
             }

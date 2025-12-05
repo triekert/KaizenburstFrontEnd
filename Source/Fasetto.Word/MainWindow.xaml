@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Fasetto.Word"
         xmlns:core="clr-namespace:Fasetto.Word.Core;assembly=Fasetto.Word.Core"
+       xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"        
         mc:Ignorable="d"
         WindowStyle="None"
         AllowsTransparency="True"

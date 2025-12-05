@@ -1629,101 +1629,101 @@ namespace Fasetto.Word
                                                         break;
                                                     case MessageBoxResult.No:
                                                         {
-                                                            {
-                                                                Mcategory1.ActualAmount = IntAmnt;
-                                                                Mcategory1.KCategoryID = Selected.KCategoryID;
-                                                                Mcategory.ActualAmount = IntAmnt;
-                                                                Mcategory.ShortName = Selected.ShortName;
-                                                                Mcategory.KCategoryID = Selected.KCategoryID;
-                                                                Mcategory.Units = IntUnits;
-                                                                Selected1.ActualAmount = IntAmnt;
-                                                                Selected.ActualAmount = IntAmnt;
-                                                                Selected1.ShortName = Selected.ShortName;
-                                                                Selected1.KCategoryID = Selected.KCategoryID;
+                                                            //{
+                                                            //    Mcategory1.ActualAmount = IntAmnt;
+                                                            //    Mcategory1.KCategoryID = Selected.KCategoryID;
+                                                            //    Mcategory.ActualAmount = IntAmnt;
+                                                            //    Mcategory.ShortName = Selected.ShortName;
+                                                            //    Mcategory.KCategoryID = Selected.KCategoryID;
+                                                            //    Mcategory.Units = IntUnits;
+                                                            //    Selected1.ActualAmount = IntAmnt;
+                                                            //    Selected.ActualAmount = IntAmnt;
+                                                            //    Selected1.ShortName = Selected.ShortName;
+                                                            //    Selected1.KCategoryID = Selected.KCategoryID;
 
-                                                                Selected1.KProjectID = Selected.KProjectID;
-                                                                Selected1.KProjectName = Selected.KProjectName;
-                                                                Selected1.KAssetID = Selected.KAssetID; 
-                                                                Selected1.KAssetName = Selected.KAssetName;
-                                                                Selected1.KPersonID = Selected.KPersonID;
-                                                                Selected1.KPersonName = Selected.KPersonName;
-                                                                Selected.Units = IntUnits;
-                                                                Selected1.KFinActualID =Mcategory.KFinActualID;
-                                                                Selected.KFinActualID = Selected1.KFinActualID;
-                                                            }
-
-
-                                                            var u = new TransactionResultApiModel
-                                                            {
-                                                                Posted_Date = DateTime.Parse(TransactionDate),
-                                                                Month = Selected1.Month,
-                                                                Description = TransactionDescription.EditedText ?? Selected.Description,
-                                                                TransAmount = Selected1.TransAmount,
-                                                                ActualAmount = Selected1.ActualAmount,
-                                                                ShortName = (Category.EditedKid == null) ? Selected.ShortName : (Category.EditedName ?? Selected.ShortName),
-                                                                KCategoryID = Category.EditedKid ?? Selected.KCategoryID,
-                                                                KFinActualID = Selected1.KFinActualID,
-                                                                KFinTranID = Selected1.KFinTranID,
-                                                                ChangeType = "c",
-                                                                DateEffective = DateTime.Now,
-                                                                KHierarchyID = Selected1.KHierarchyID,
-                                                                KClientID = Selected.KClientID,
-                                                                KPartyID = Party.EditedKid ?? Selected.KPartyID,
-                                                                KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
-                                                                IsTemplate = IsTemplate,
-                                                                FCatSrchID = Selected1.FCatSrchID,
-                                                                Notes = TransactionNotes.EditedText,
-                                                                KAccountID = Account.EditedKid ?? Selected.KAccountID,
-                                                                KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
-                                                                KProjectID = Project.EditedKid ?? Selected.KProjectID,
-                                                                KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
-                                                                KAssetID = Asset.EditedKid ?? Selected.KAssetID,
-                                                                KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
-                                                                KPersonID = Person.EditedKid ?? Selected.KPersonID,
-                                                                KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
-                                                                Units = IntUnits,
-
-                                                            };
-                                                            Mtmp2.Add(u);
+                                                            //    Selected1.KProjectID = Selected.KProjectID;
+                                                            //    Selected1.KProjectName = Selected.KProjectName;
+                                                            //    Selected1.KAssetID = Selected.KAssetID; 
+                                                            //    Selected1.KAssetName = Selected.KAssetName;
+                                                            //    Selected1.KPersonID = Selected.KPersonID;
+                                                            //    Selected1.KPersonName = Selected.KPersonName;
+                                                            //    Selected.Units = IntUnits;
+                                                            //    Selected1.KFinActualID =Mcategory.KFinActualID;
+                                                            //    Selected.KFinActualID = Selected1.KFinActualID;
+                                                            //}
 
 
-                                                            {
-                                                                Mexxist2.ActualAmount = Mexxist2.ActualAmount + (OrgActual - IntAmnt);
-                                                                Mexxist1.ActualAmount = Mexxist1.ActualAmount + (OrgActual - IntAmnt);
-                                                            }
-                                                            u = new TransactionResultApiModel
-                                                            {
-                                                                Posted_Date = DateTime.Parse(TransactionDate),
-                                                                Month = Selected1.Month,
-                                                                Description = TransactionDescription.EditedText ?? Selected.Description,
-                                                                TransAmount = Selected1.TransAmount,
-                                                                ActualAmount = Selected1.ActualAmount,
-                                                                ShortName = (Category.EditedKid == null) ? Selected.ShortName : (Category.EditedName ?? Selected.ShortName),
-                                                                KCategoryID = Category.EditedKid ?? Selected.KCategoryID,
-                                                                KFinActualID = Selected1.KFinActualID,
-                                                                KFinTranID = Selected1.KFinTranID,
-                                                                ChangeType = "c",
-                                                                DateEffective = DateTime.Now,
-                                                                KHierarchyID = Selected1.KHierarchyID,
-                                                                KClientID = Selected.KClientID,
-                                                                KPartyID = Party.EditedKid ?? Selected.KPartyID,
-                                                                KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
-                                                                IsTemplate = IsTemplate,
-                                                                FCatSrchID = Selected1.FCatSrchID,
-                                                                Notes = TransactionNotes.EditedText,
-                                                                KAccountID = Account.EditedKid ?? Selected.KAccountID,
-                                                                KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
-                                                                KProjectID = Project.EditedKid ?? Selected.KProjectID,
-                                                                KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
-                                                                KAssetID = Asset.EditedKid ?? Selected.KAssetID,
-                                                                KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
-                                                                KPersonID = Person.EditedKid ?? Selected.KPersonID,
-                                                                KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
-                                                                Units = IntUnits,
+                                                            //var u = new TransactionResultApiModel
+                                                            //{
+                                                            //    Posted_Date = DateTime.Parse(TransactionDate),
+                                                            //    Month = Selected1.Month,
+                                                            //    Description = TransactionDescription.EditedText ?? Selected.Description,
+                                                            //    TransAmount = Selected1.TransAmount,
+                                                            //    ActualAmount = Selected1.ActualAmount,
+                                                            //    ShortName = (Category.EditedKid == null) ? Selected.ShortName : (Category.EditedName ?? Selected.ShortName),
+                                                            //    KCategoryID = Category.EditedKid ?? Selected.KCategoryID,
+                                                            //    KFinActualID = Selected1.KFinActualID,
+                                                            //    KFinTranID = Selected1.KFinTranID,
+                                                            //    ChangeType = "c",
+                                                            //    DateEffective = DateTime.Now,
+                                                            //    KHierarchyID = Selected1.KHierarchyID,
+                                                            //    KClientID = Selected.KClientID,
+                                                            //    KPartyID = Party.EditedKid ?? Selected.KPartyID,
+                                                            //    KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
+                                                            //    IsTemplate = IsTemplate,
+                                                            //    FCatSrchID = Selected1.FCatSrchID,
+                                                            //    Notes = TransactionNotes.EditedText,
+                                                            //    KAccountID = Account.EditedKid ?? Selected.KAccountID,
+                                                            //    KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
+                                                            //    KProjectID = Project.EditedKid ?? Selected.KProjectID,
+                                                            //    KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
+                                                            //    KAssetID = Asset.EditedKid ?? Selected.KAssetID,
+                                                            //    KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
+                                                            //    KPersonID = Person.EditedKid ?? Selected.KPersonID,
+                                                            //    KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
+                                                            //    Units = IntUnits,
+
+                                                            //};
+                                                            //Mtmp2.Add(u);
 
 
-                                                            };
-                                                            Mtmp2.Add(u);
+                                                            //{
+                                                            //    Mexxist2.ActualAmount = Mexxist2.ActualAmount + (OrgActual - IntAmnt);
+                                                            //    Mexxist1.ActualAmount = Mexxist1.ActualAmount + (OrgActual - IntAmnt);
+                                                            //}
+                                                            //u = new TransactionResultApiModel
+                                                            //{
+                                                            //    Posted_Date = DateTime.Parse(TransactionDate),
+                                                            //    Month = Selected1.Month,
+                                                            //    Description = TransactionDescription.EditedText ?? Selected.Description,
+                                                            //    TransAmount = Selected1.TransAmount,
+                                                            //    ActualAmount = Selected1.ActualAmount,
+                                                            //    ShortName = (Category.EditedKid == null) ? Selected.ShortName : (Category.EditedName ?? Selected.ShortName),
+                                                            //    KCategoryID = Category.EditedKid ?? Selected.KCategoryID,
+                                                            //    KFinActualID = Selected1.KFinActualID,
+                                                            //    KFinTranID = Selected1.KFinTranID,
+                                                            //    ChangeType = "c",
+                                                            //    DateEffective = DateTime.Now,
+                                                            //    KHierarchyID = Selected1.KHierarchyID,
+                                                            //    KClientID = Selected.KClientID,
+                                                            //    KPartyID = Party.EditedKid ?? Selected.KPartyID,
+                                                            //    KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
+                                                            //    IsTemplate = IsTemplate,
+                                                            //    FCatSrchID = Selected1.FCatSrchID,
+                                                            //    Notes = TransactionNotes.EditedText,
+                                                            //    KAccountID = Account.EditedKid ?? Selected.KAccountID,
+                                                            //    KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
+                                                            //    KProjectID = Project.EditedKid ?? Selected.KProjectID,
+                                                            //    KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
+                                                            //    KAssetID = Asset.EditedKid ?? Selected.KAssetID,
+                                                            //    KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
+                                                            //    KPersonID = Person.EditedKid ?? Selected.KPersonID,
+                                                            //    KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
+                                                            //    Units = IntUnits,
+
+
+                                                            //};
+                                                            //Mtmp2.Add(u);
                                                         }
                                                         break;
                                                     default:

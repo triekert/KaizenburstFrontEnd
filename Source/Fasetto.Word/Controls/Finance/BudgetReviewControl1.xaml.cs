@@ -40,6 +40,7 @@ namespace Fasetto.Word
         private TreeViewItem mTargetT, mSource;
         private BudgetViewModel mDraggedItemTest,mDraggedItem,mTarget;
         public BudgetViewModel mTargetTest;
+        private ContextualEventArgsConverter res = new ContextualEventArgsConverter();
 
         public BudgetReviewControl1()
         {
