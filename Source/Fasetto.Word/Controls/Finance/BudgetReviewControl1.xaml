@@ -381,8 +381,36 @@
 
 
                 </i:Interaction.Triggers>
+                
 
-
+                <!--<treeListView:TreeListView
+            ChildrenPropertyName="Children"
+            ItemsSource="{Binding Collection}"
+            Style="{StaticResource VirtualizedMetroTreeListView}">
+                    <treeListView:TreeListView.View>
+                        <GridView>
+                            <GridViewColumn Width="200" Header="Name">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Foreground="#e74c3c" Text="{Binding Name}" TextWrapping="Wrap"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn
+                        Width="100"
+                        DisplayMemberBinding="{Binding Category}"
+                        Header="Category" />
+                            <GridViewColumn
+                        Width="200"
+                        DisplayMemberBinding="{Binding Description}"
+                        Header="Description" />
+                            <GridViewColumn
+                        Width="200"
+                        DisplayMemberBinding="{Binding Description}"
+                        Header="Something New" />
+                        </GridView>
+                    </treeListView:TreeListView.View>
+                </treeListView:TreeListView>-->
 
                 <TreeView Grid.Row="1"
                       ItemsSource="{Binding FirstGeneration}" 
@@ -440,7 +468,7 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"  Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="220"  />
                                         <ColumnDefinition Width="220" />
                                         <ColumnDefinition Width="220" />
                                         <ColumnDefinition Width="220" />
@@ -460,8 +488,22 @@
                         </HierarchicalDataTemplate>
 
                     </TreeView.ItemTemplate>
-                    
-                    
+                    <!--<TreeViewItem Header="Column Headers">
+                        <TreeViewItem.HeaderTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="200" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Header 1" Grid.Column="0" FontWeight="Bold" />
+                                    <TextBlock Text="Header 2" Grid.Column="1" FontWeight="Bold" />
+                                </Grid>
+                            </DataTemplate>
+                        </TreeViewItem.HeaderTemplate>
+                        <TreeViewItem ItemsSource="{Binding RootItems}" />
+                    </TreeViewItem>-->
+
                 </TreeView>
 
                 <!--</StackPanel>-->
