@@ -35,6 +35,13 @@ namespace Fasetto.Word
 
         public ObservableCollection<BudgetViewModel> FirstGeneration1 { get; set; }
 
+
+
+        /// <summary>
+        /// The BudgetViewModel of the selected treeViewITem
+        /// </summary>
+        public BudgetViewModel mSelectedTreeItem { get; set; }
+
         #endregion
 
         #region Data
@@ -70,6 +77,15 @@ namespace Fasetto.Word
         /// The command to close the settings menu
         /// </summary>
         public ICommand CloseCommand { get; set; }
+
+        /// <summary>
+        /// The command to process keyboard stroke in Menu Control
+        /// </summary>
+        public ICommand GestureHandlerCommand { get; set; }
+
+        //public ActionCommand<DragEventArgs> DropCommand { get; private set; }
+
+
         #endregion//Public Commands
 
         #region Constructor
@@ -137,6 +153,7 @@ namespace Fasetto.Word
             PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
             UpdateTreeViewElements();
             CloseCommand = new RelayCommand(Close);
+            GestureHandlerCommand = new DelegateCommand<ContextualEventArgs>(GestureHandler);
             mSearchCommand = new SearchCategoryTreeCommand(this);
         }
 
@@ -594,6 +611,237 @@ namespace Fasetto.Word
 
 
         }
+
+
+
+        /// <summary>
+        /// Interpret Keyboard and Pointing device Gestures
+        /// </summary>
+        /// <param name="parameter"></param>
+        public void GestureHandler(object parameter)
+        {
+
+            var tmp = ((ContextualEventArgs)parameter).OriginalEventArgs;
+            var eventTmp = tmp.GetType().Name;
+            if (eventTmp == "MouseEventArgs" && ((MouseEventArgs)tmp).RoutedEvent.Name == "PreviewMouseMove")
+            {
+                var TmpTmp = ((MouseEventArgs)tmp).OriginalSource as UIElement;
+                //try
+                //{
+                //    var item = GetNearestContainer(((MouseEventArgs)tmp).OriginalSource as UIElement);
+                //    //mDraggedItemTest = (BudgetViewModel)item.Header;
+                //    if (((MouseEventArgs)tmp).LeftButton == MouseButtonState.Pressed)
+                //    {
+                //        var isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                //        var currentPosition = ((MouseEventArgs)tmp).GetPosition(item);
+
+                //        //Check for dragging of treeview item
+                //        if ((Math.Abs(currentPosition.X - mLastMouseDown.X) > 10.0) ||
+                //            (Math.Abs(currentPosition.Y - mLastMouseDown.Y) > 10.0))
+                //        {
+
+                //            var mDraggedItem = (BudgetViewModel)tvParameters.SelectedItem;
+                //            mLastMouseDown = currentPosition;
+                //            //mSourceCategoryName = mDraggedItem.ShortName;
+                //            //draggedItem = (TreeViewItem)tvParameters.SelectedItem;
+                //            //mSource = (TreeViewItem)tvParameters.SelectedItem;
+                //            if (mDraggedItem != null)
+                //            {
+                //                //mTarget = null;//ensure target is reset
+                //                if (!isCtrl)
+                //                {
+
+                //                    var finalDropEffect = DragDrop.DoDragDrop(tvParameters, tvParameters.SelectedValue,
+                //                      DragDropEffects.Move);
+                //                    //Checking target is not null and item is dragging(moving)
+                //                    if ((finalDropEffect == DragDropEffects.Move) && (mTarget != null))
+                //                    {
+                //                        // A Move drop was accepted
+                //                        //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
+                //                        //{
+                //                        MoveHierarchyElement();// MoveItem();
+                //                        mTargetT = null;
+                //                        mSource = null;
+                //                        //}
+
+                //                    }
+                //                }
+                //                else
+                //                {
+                //                    var finalDropEffect = DragDrop.DoDragDrop(tvParameters, tvParameters.SelectedValue,
+                //                      DragDropEffects.Copy);
+                //                    if ((finalDropEffect == DragDropEffects.Copy) && (mTarget != null))
+                //                    {
+                //                        // A Copy drop was accepted
+                //                        //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
+                //                        //{
+                //                        CopyHierarchyElement();// CopyItem();
+                //                        mTargetT = null;
+                //                        mSource = null;
+                //                        //}
+
+                //                    }
+                //                }
+
+
+
+                //            }
+                //        }
+                //    }
+
+                //}
+                //catch (Exception)
+                //{
+                //}
+
+
+
+                ((MouseEventArgs)tmp).Handled = true;
+            }
+            else
+            {
+                var tmp1 = ((ContextualEventArgs)parameter).Context.GetType().Name;
+
+
+                if (ViewModelApplication.SideMenuVisible && ViewModelApplication.CurrentPopupViewModel == null)
+                //if (mTableName == "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0")
+
+                {
+                    //if Gesture handler is triggered from Text Search Box...               
+                    if (tmp1 == "String")
+                    {
+                        SearchText = SearchText;
+                        if (((KeyEventArgs)tmp).Key == Key.Enter)
+                        //((KeyEventArgs)tmp).Handled = true;
+                        { SearchCommand.Execute(null); }
+                    }
+                    else
+                    {
+
+                        mSelectedTreeItem = (BudgetViewModel)(((ContextualEventArgs)parameter).Context);
+                        //ViewModelApplication.SideMenuVisible = true;
+
+                        if (eventTmp == "MouseButtonEventArgs")
+                        {
+                            if ((((MouseButtonEventArgs)tmp).RightButton == MouseButtonState.Pressed) || (((MouseButtonEventArgs)tmp).LeftButton == MouseButtonState.Pressed))
+                            {
+                                ((MouseButtonEventArgs)tmp).Handled = true;
+                                //RunSelectedMenu();
+                            }
+                        }
+                        else
+                            if (eventTmp == "KeyEventArgs")
+                            {
+                                if ((((KeyEventArgs)tmp).Key == Key.Enter) || (((KeyEventArgs)tmp).Key == Key.Insert) || (((KeyEventArgs)tmp).Key == Key.Delete))
+                                {
+                                    ((KeyEventArgs)tmp).Handled = true;
+                                    //RunSelectedMenu();
+                                }
+                                ((KeyEventArgs)tmp).Handled = true;
+                            }
+                        //}
+                    }
+                }
+                else
+                //enable editing of hierarchy menu structure
+                //if Gesture handler is triggered from Text Search Box...
+                //
+
+                {
+
+                    if (tmp1 == "String")
+                    {
+                        SearchText = SearchText;
+                        if (((KeyEventArgs)tmp).Key == Key.Enter)
+                        //((KeyEventArgs)tmp).Handled = true;
+                        { SearchCommand.Execute(null); }
+                    }
+                    else
+                    {
+                        mSelectedTreeItem = (BudgetViewModel)(((ContextualEventArgs)parameter).Context);
+                        //ViewModelApplication.SideMenuVisible = true;
+                        if (eventTmp == "MouseButtonEventArgs")
+                        {
+                            if ((((MouseButtonEventArgs)tmp).RightButton == MouseButtonState.Pressed) || (((MouseButtonEventArgs)tmp).LeftButton == MouseButtonState.Pressed))
+                            {
+                                ((MouseButtonEventArgs)tmp).Handled = true;
+                                //EditHierarchyElement(mSelectedTreeItem);
+                            }
+                        }
+                        else
+                            if (eventTmp == "KeyEventArgs")
+
+                            //Edit element
+                            {
+                                if (((KeyEventArgs)tmp).Key == Key.Enter)
+                                {
+                                    ((KeyEventArgs)tmp).Handled = true;
+                                    //EditHierarchyElement(mSelectedTreeItem);
+                                }
+                                else
+                                    if (((KeyEventArgs)tmp).Key == Key.Insert)
+                                    {
+                                        ((KeyEventArgs)tmp).Handled = true;
+                                        //AddHierarchyElement(mSelectedTreeItem);
+                                    }
+                                    else
+                                        if (((KeyEventArgs)tmp).Key == Key.Delete)
+                                        {
+                                            ((KeyEventArgs)tmp).Handled = true;
+                                            //DeleteHierarchyElement(mSelectedTreeItem);
+                                        }
+                                        else
+                                            if (((KeyEventArgs)tmp).Key == Key.F2)
+                                            {
+                                                ((KeyEventArgs)tmp).Handled = true;
+                                                ReviewTransactions();
+                                            }
+                            }
+                        //((KeyEventArgs)tmp).Handled = true;
+                    }
+
+                }
+            }
+        }
+
+        /// <summary>
+        /// Return details of transactions for the selected cost hierarchy item for the previous year
+        /// </summary>
+        public void ReviewTransactions()
+        {
+            var duration = new TimeSpan(-365, 0, 0, 0);
+            var TimeStart = DateTime.Now.Add(duration);
+            var TimeEnd = DateTime.Now;
+            if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel")
+                //Select appropriate page view model for further processing
+            {
+                ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(
+                ((HierarchyItemSelectionViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid,
+                TimeStart,//SelectedBudgetMonth
+                TimeEnd,//SelectedBudgetMonth -12 mo
+                mSelectedTreeItem.KCategoryID,
+                ((BudgetPeriodViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID
+                );
+            }
+            else
+            {
+                ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(
+                ((HierarchyItemSelectionViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid,
+                TimeStart,//SelectedBudgetMonth
+                TimeEnd,//SelectedBudgetMonth -12 mo
+                mSelectedTreeItem.KCategoryID,
+                ((BudgetPeriodViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID
+                );
+            }
+
+            ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail for Selected Budget Category : " + mSelectedTreeItem.ShortName;
+            //force a reload of the BulkRecon Control
+            ViewModelApplication.CurrentPopupContent = 0;
+            ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;
+            ViewModelApplication.PopupVisible = true;
+        }
+
+
 
         /// <summary>
         /// Persist all items changed or added on hierarchy to back end database. Depending on stage

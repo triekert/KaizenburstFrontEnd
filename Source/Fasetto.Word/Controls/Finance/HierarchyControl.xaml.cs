@@ -100,7 +100,11 @@ namespace Fasetto.Word
 
 
 
-        //
+        /// <summary>
+        /// When selected item changes, centre window on newly seleted item
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TreeViewSelectedItemChanged(object sender, RoutedEventArgs e)
         {
             if (sender is TreeViewItem item)
@@ -486,6 +490,7 @@ namespace Fasetto.Word
         private void TreeView_Selected(object sender, RoutedEventArgs e)
         {
             var element = e.OriginalSource as FrameworkElement;
+            var elementItem =( (TreeViewItem)element).Header;
             // Figure out a relative position of the selected node to the scrollviewer
             //var relativePosition = element.TranslatePoint(new Point(0, 0), scrollViewer);
             //scrollViewer.ScrollToVerticalOffset(relativePosition.Y);

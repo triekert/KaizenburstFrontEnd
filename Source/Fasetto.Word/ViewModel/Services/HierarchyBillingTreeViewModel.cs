@@ -35,7 +35,11 @@ namespace Fasetto.Word
         public ObservableCollection<HierarchyBillingViewModel> FirstGeneration { get; set; }
 
 
-        //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
+        /// <summary>
+        /// The HierarchyViewModel of the selected treeViewITem
+        /// </summary>
+        public HierarchyViewModel mSelectedTreeItem { get; set; }
+
 
         #endregion
 

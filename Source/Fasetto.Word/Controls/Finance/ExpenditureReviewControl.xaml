@@ -4,8 +4,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" 
-             xmlns:local="clr-namespace:Fasetto.Word"             
+             xmlns:local="clr-namespace:Fasetto.Word"           
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"                 
              d:DesignHeight="300" d:DesignWidth="300">
+
+    <UserControl.Resources>
+        <local:ContextualEventArgsConverter x:Key="ContextualEventArgsConverter" />
+    </UserControl.Resources>
+
     <DockPanel>
         <!-- SEARCH AREA -->
         <Border 
@@ -175,11 +181,39 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewKeyDown" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="PreviewMouseDoubleClick" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="PreviewMouseRightButtonClick" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                    </i:EventTrigger>
+
+
+                </i:Interaction.Triggers>
 
 
 
 
-                    <TreeView Grid.Row="0"
+
+                <TreeView Grid.Row="0"
                   ItemsSource="{Binding FirstGeneration}" 
                   TreeViewItem.Selected="TreeView_Selected"            
                   Name="tvParameters">

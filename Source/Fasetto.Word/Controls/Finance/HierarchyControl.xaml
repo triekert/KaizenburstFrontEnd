@@ -42,7 +42,7 @@
                 </i:Interaction.Triggers>                
                 <TextBox 
                       x:Name="searchTextBox"
-                      KeyDown="SearchTextBox_KeyDown"
+
                       Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                       Width ="225" FontSize="18" TextWrapping="Wrap" RenderTransformOrigin="0.1,0.616" AutomationProperties.HelpText="Begin entering name...."
                     >
