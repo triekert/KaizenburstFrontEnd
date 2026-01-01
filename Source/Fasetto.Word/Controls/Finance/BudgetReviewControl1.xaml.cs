@@ -466,9 +466,24 @@ namespace Fasetto.Word
         private void TreeView_Selected(object sender, RoutedEventArgs e)
         {
             var element = e.OriginalSource as FrameworkElement;
+            var treeListViewItem =
+             WpfExtensions.VisualUpwardSearch<TreeListViewItem>(e.OriginalSource as DependencyObject);
             // Figure out a relative position of the selected node to the scrollviewer
             //var relativePosition = element.TranslatePoint(new Point(0, 0), scrollViewer);
             //scrollViewer.ScrollToVerticalOffset(relativePosition.Y);
+            if (treeListViewItem.Header != null)
+            {
+                var mA = ((BudgetViewModel)treeListViewItem.Header).ShortName;
+                //treeListViewItem.Focus();
+                //treeListViewItem.IsSelected = true;
+                //e.Handled = true;
+            }
+            if (((TreeListViewItem)element).Header != null)
+            {
+                var cat = ((BudgetViewModel)((TreeListViewItem)element).Header).ShortName;
+                var cat1 = ((TreeListViewItem)element).Header;
+            }
+            ;
             element.BringIntoView();
             element.Focus();
         }

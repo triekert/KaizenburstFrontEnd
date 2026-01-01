@@ -46,7 +46,7 @@ namespace Fasetto.Word
 
         #region Data
 
-        protected BudgetViewModel mRootHierarchyElement;
+        public BudgetViewModel mRootHierarchyElement;
         public BudgetViewModel mRootHierarchyElement1;
         private readonly ICommand mSearchCommand;
         public BudgetListDataModel mBDDML;
@@ -504,8 +504,12 @@ namespace Fasetto.Word
                 // Ensure that this Category is in view.
                 if (Category.mParent != null)
                     Category.mParent.IsExpanded = true;
+                var test = Category.ShortName;
+                var test1 = Category.IsExpanded;
 
                 Category.IsSelected = true;
+
+
             }
 
             //Category.IsExpanded = false;
@@ -621,7 +625,9 @@ namespace Fasetto.Word
         public void GestureHandler(object parameter)
         {
 
+            var treeViewModel = ViewModelApplication.CurrentControlViewModel;
             var tmp = ((ContextualEventArgs)parameter).OriginalEventArgs;
+
             var eventTmp = tmp.GetType().Name;
             if (eventTmp == "MouseEventArgs" && ((MouseEventArgs)tmp).RoutedEvent.Name == "PreviewMouseMove")
             {

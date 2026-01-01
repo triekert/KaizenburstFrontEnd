@@ -173,6 +173,7 @@
             ChildrenPropertyName="Children"
             x:Name="tvParameters"                   
             ItemsSource="{Binding FirstGeneration}"    
+            TreeViewItem.Selected="TreeView_Selected"                        
             Style="{StaticResource VirtualizedMetroTreeListView}">
                     <local:TreeListView.View>
                         <GridView>

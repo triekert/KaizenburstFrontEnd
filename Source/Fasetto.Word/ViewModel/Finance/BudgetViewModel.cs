@@ -1,6 +1,5 @@
 ﻿using Fasetto.Word.Core;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -16,8 +15,8 @@ namespace Fasetto.Word
     {
         //#region Data
 
-        public readonly BudgetViewModel mParent;
-        private readonly BudgetDataModel mElement;
+        public  BudgetViewModel mParent;
+        public BudgetDataModel mElement;
         public ObservableCollection<BudgetViewModel> mChildren;
 
         public bool mIsExpanded;
@@ -209,6 +208,7 @@ namespace Fasetto.Word
                 if (value != mIsExpanded)
                 {
                     mIsExpanded = value;
+                    var name1 = ShortName;
                     //OnPropertyChanged("IsExpanded");
                 }
 
