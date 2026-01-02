@@ -475,8 +475,9 @@ namespace Fasetto.Word
             // Figure out a relative position of the selected node to the scrollviewer
             //var relativePosition = element.TranslatePoint(new Point(0, 0), scrollViewer);
             //scrollViewer.ScrollToVerticalOffset(relativePosition.Y);
-            element.BringIntoView();
             element.Focus();
+            element.BringIntoView();
+
         }
 
         public void Close()

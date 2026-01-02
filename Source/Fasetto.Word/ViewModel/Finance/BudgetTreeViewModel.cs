@@ -508,7 +508,7 @@ namespace Fasetto.Word
                 var test1 = Category.IsExpanded;
 
                 Category.IsSelected = true;
-
+                //var treeListView = (TreeListView)ViewModelApplication.CurrentPageViewModel.tvParameters;
 
             }
 

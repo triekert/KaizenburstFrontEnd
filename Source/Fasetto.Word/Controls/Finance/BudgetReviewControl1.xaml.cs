@@ -484,8 +484,9 @@ namespace Fasetto.Word
                 var cat1 = ((TreeListViewItem)element).Header;
             }
             ;
-            element.BringIntoView();
             element.Focus();
+            element.BringIntoView();
+            
         }
 
         public void Close()

@@ -194,9 +194,9 @@
             <Setter.Value>
                 <ControlTemplate TargetType="TreeView">
                     <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                        <ScrollViewer Padding="{TemplateBinding Padding}" Style="{StaticResource MetroTreeGridViewScrollViewerStyle}">
+                        <!--<ScrollViewer Padding="{TemplateBinding Padding}" Style="{StaticResource MetroTreeGridViewScrollViewerStyle}">-->
                             <ItemsPresenter />
-                        </ScrollViewer>
+                        <!--</ScrollViewer>-->
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
