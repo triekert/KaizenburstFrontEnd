@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -1144,8 +1145,19 @@ namespace Fasetto.Word
                         {
                             if ((((MouseButtonEventArgs)tmp).RightButton == MouseButtonState.Pressed) || (((MouseButtonEventArgs)tmp).LeftButton == MouseButtonState.Pressed))
                             {
-                                ((MouseButtonEventArgs)tmp).Handled = true;
-                                RunSelectedMenu();
+                                if (!(mSelectedTreeItem == null || ((string)mSelectedTreeItem.Page).Length == 0 || mSelectedTreeItem.Page == "Folder"))
+                                {
+                                    {( (MouseButtonEventArgs)tmp).Handled = true;
+                                        RunSelectedMenu(); }
+                                }
+                                //If tree item is of type folder, then expand the next level of the hierarchy
+                                if (mSelectedTreeItem.Page == "Folder")
+                                        {
+                                    mSelectedTreeItem.IsExpanded = !mSelectedTreeItem.IsExpanded;
+                                    ((MouseButtonEventArgs)tmp).Handled = true;
+                                }
+                                ;
+
                             }
                         }
                         else
@@ -1237,14 +1249,16 @@ namespace Fasetto.Word
 
         /// Use Popup View to add a Hierarchy Element
         /// </summary>
-        private void RunSelectedMenu()
+        private void RunSelectedMenu( )
         {
             //Prepopulate
             //Only allow one execution of  the function per event
             //if (!ViewModelApplication.SideMenuVisible)
             //    return;
-            if (mSelectedTreeItem == null || ((string)mSelectedTreeItem.Page).Length == 0 || mSelectedTreeItem.Page == "Folder")//|| mSelectedTreeItem.Children.Count > 0
-                return;
+            //if (mSelectedTreeItem == null || ((string)mSelectedTreeItem.Page).Length == 0 || mSelectedTreeItem.Page == "Folder")//|| mSelectedTreeItem.Children.Count > 0
+            //    return;
+            //((KeyEventArgs)tmp).Handled = true;
+            //If the item selected is part of a hierarchy structure, navigate to the next level
             if (mSelectedTreeItem.Page == "Hierarchy")
             {
                 if (mSelectedTreeItem.Root != "")

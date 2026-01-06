@@ -110,6 +110,7 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" MinWidth="19" />
                                         <ColumnDefinition Width="*" />
+                                        
                                     </Grid.ColumnDefinitions>
                                     <ToggleButton
                                      x:Name="Expander"
@@ -118,11 +119,13 @@
                                      Style="{StaticResource ExpandCollapseToggleStyle}" />
                                 </Grid>
                                 <GridViewRowPresenter
-                                 x:Name="PART_Header"
-                                 Margin="19,0,0,0"
-                                 VerticalAlignment="Center"
-                                 Columns="{Binding Path=View.Columns, RelativeSource={RelativeSource AncestorType={x:Type local:TreeListView}}}"
-                                 Content="{TemplateBinding Header}" />
+                                     x:Name="PART_Header"
+                                     Margin="19,0,0,0"
+                                     VerticalAlignment="Center"
+                                     HorizontalAlignment="Stretch"
+
+                                     Columns="{Binding Path=View.Columns, RelativeSource={RelativeSource AncestorType={x:Type local:TreeListView}}}"
+                                     Content="{TemplateBinding Header}" />
                             </Grid>
                         </Border>
                         <ItemsPresenter x:Name="ItemsHost" />

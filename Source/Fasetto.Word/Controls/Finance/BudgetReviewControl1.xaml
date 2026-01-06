@@ -122,10 +122,32 @@
                 </Grid>
             </Grid>
         </Border>
-        <Border         DockPanel.Dock="Top" 
+        <Border        
+            DockPanel.Dock="Top" 
          BorderBrush="#FF734444" 
          BorderThickness="1,0,1,1">
 
+
+            <!--<StackPanel Grid.IsSharedSizeScope="True" Orientation="Vertical">-->
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="25"/>
+
+                    <!--<ColumnDefinition Width="150" />-->
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="150" />
+
+                </Grid.ColumnDefinitions>
+
+                <TextBlock  Grid.Column ="1"  Width="200"  TextAlignment="Center"    TextWrapping="WrapWithOverflow" Text=" Cost Category" FontFamily="Lato Medium" FontWeight="ExtraBold"  Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                <TextBlock  Grid.Column ="2"  Width="100"  HorizontalAlignment="Right"    TextAlignment ="Right" TextWrapping="WrapWithOverflow" Text="Budget Amount(This level)" FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                <TextBlock  Grid.Column ="3"  Width="100"  HorizontalAlignment="Right"      TextAlignment ="Right" TextWrapping="WrapWithOverflow" Text="Budget Amount(Descendant only)" FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                <TextBlock  Grid.Column ="4"  Width="100"  HorizontalAlignment="Right"      TextAlignment ="Right" TextWrapping="WrapWithOverflow" Text="Budget Amount Total(All levels) " FontFamily="Lato Medium"  FontWeight="ExtraBold" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+
+
+            </Grid>
 
 
 
@@ -167,35 +189,63 @@
 
                 </i:Interaction.Triggers>
 
-
-
                 <local:TreeListView
             ChildrenPropertyName="Children"
             x:Name="tvParameters"                   
             ItemsSource="{Binding FirstGeneration}"    
-            TreeViewItem.Selected="TreeView_Selected"                        
+            TreeViewItem.Selected="TreeView_Selected" 
+  
             Style="{StaticResource VirtualizedMetroTreeListView}">
                     <local:TreeListView.View>
                         <GridView>
                             <GridViewColumn Width="200" Header="Name">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Foreground="#e74c3c" Text="{Binding ShortName}" />
+                                        <TextBlock 
+                                                   FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"
+                                                   Text="{Binding ShortName}" 
+                                                   TextWrapping="Wrap"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
                             <GridViewColumn
-                        Width="100"
-                        DisplayMemberBinding="{Binding BudgetAmountTotal}"
-                        Header="Budget Total" />
+                                Width="150"
+                                Header="Budget Total" >
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Foreground="Brown" Text="{Binding BudgetAmountTotal, StringFormat=C,ConverterCulture='en-ZA' }"
+                                                   TextAlignment="Right" TextWrapping="Wrap"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+
                             <GridViewColumn
-                        Width="200"
-                        DisplayMemberBinding="{Binding Description}"
-                        Header="Description" />
+                                Width="150"
+                                Header="Budget Total" >
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Foreground="Brown" Text="{Binding BudgetAmountDescendants, StringFormat=C,ConverterCulture='en-ZA' }"
+                                                   TextAlignment="Right" TextWrapping="Wrap"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+
+
                             <GridViewColumn
-                        Width="200"
-                        DisplayMemberBinding="{Binding Description}"
-                        Header="Something New" />
+                                Width="150"
+                                Header="Description" >
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Foreground="Brown" Text="{Binding BudgetAmountTotal, StringFormat=C,ConverterCulture='en-ZA' }"
+                                                   TextAlignment="Right" TextWrapping="Wrap"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>    
+                            
+                            <GridViewColumn
+                                Width="200"
+                                DisplayMemberBinding="{Binding Description}"
+                                Header="Something New" />
                         </GridView>
                     </local:TreeListView.View>
                 </local:TreeListView>

@@ -190,40 +190,40 @@ namespace Fasetto.Word
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        //private void TreeView_KeyBoard(object sender, KeyboardEventArgs e)
-        //{
-        //    //check to determine whether user would like to add an item to the hierarchy
-        //    //if (ViewModelApplication.PopupVisible == false)
-        //    //{ 
-        //    //Pass  keyboard event args through 
-        //    ((BudgetTreeViewModel)ViewModelApplication.CurrentControlViewModel).mRootHierarchyElement1 = (BudgetViewModel)tvParameters.SelectedItem;
+        private void TreeView_KeyBoard(object sender, KeyboardEventArgs e)
+        {
+            //check to determine whether user would like to add an item to the hierarchy
+            //if (ViewModelApplication.PopupVisible == false)
+            //{ 
+            //Pass  keyboard event args through 
+            ((BudgetTreeViewModel)ViewModelApplication.CurrentControlViewModel).mRootHierarchyElement1 = (BudgetViewModel)tvParameters.SelectedItem;
 
-        //    mTargetTest = (BudgetViewModel)tvParameters.SelectedItem;
-        //    mDraggedItem = (BudgetViewModel)tvParameters.SelectedItem;
+            mTargetTest = (BudgetViewModel)tvParameters.SelectedItem;
+            mDraggedItem = (BudgetViewModel)tvParameters.SelectedItem;
 
-        //    if (Keyboard.IsKeyDown(Key.F2))
-        //        {
-        //        ReviewTransactions();
-        //        e.Handled= true;
-        //        }
-        //        else
-        //            if (Keyboard.IsKeyDown(Key.Enter))
-        //        {
-        //        AddAdjustment();
-        //        e.Handled = true;
+            if (Keyboard.IsKeyDown(Key.F2))
+            {
+                ReviewTransactions();
+                e.Handled = true;
+            }
+            else
+                if (Keyboard.IsKeyDown(Key.Enter))
+                {
+                    AddAdjustment();
+                    e.Handled = true;
 
-        //        }
-        //        else
-        //            if (Keyboard.IsKeyDown(Key.Escape))
-        //            {
-        //        Close();
-        //        e.Handled = true;
+                }
+                else
+                    if (Keyboard.IsKeyDown(Key.Escape))
+                    {
+                        Close();
+                        e.Handled = true;
 
-        //        }
+                    }
 
 
-        //    //}
-        //}
+            //}
+        }
 
         /// <summary>
         /// 
@@ -300,7 +300,7 @@ namespace Fasetto.Word
         //    }
         //}
 
-       
+
         /// <summary>
         /// Handle event when tree view item is dragged over potential
         /// target objects
@@ -318,7 +318,7 @@ namespace Fasetto.Word
         //        {
         //            // Verify that this is a valid drop and then store the drop target
         //            var item = GetNearestContainer(e.OriginalSource as UIElement);
-   
+
         //            if (item == null)
         //            { e.Effects = DragDropEffects.None; }
         //            else
@@ -352,7 +352,7 @@ namespace Fasetto.Word
         //{
         //    //try
         //    //{
-   
+
         //    ((HierarchyViewModel)((TreeViewItem)sender).DataContext).IsSelected = true;
 
         //    e.Handled = true;
@@ -542,26 +542,27 @@ namespace Fasetto.Word
         /// <summary>
         /// Use Popup View to add a Hierarchy Element
         /// </summary>
-        //private void AddAdjustment()
-        //{
-        //    //Prepopulate
-        //    if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel") 
-        //    { 
-        //    mDraggedItem = (BudgetViewModel)tvParameters.SelectedItem;
-        //    if (mDraggedItem == null)
-        //        return;
-        //    var mCurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+        private void AddAdjustment()
+        {
+            //Prepopulate
+            if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel")
+            {
+                mDraggedItem = (BudgetViewModel)tvParameters.SelectedItem;
+                if (mDraggedItem == null)
+                    return;
+                var mCurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
 
-        //    //var mSWAdjustViewModel = new SWAdjustViewModel();
+                //var mSWAdjustViewModel = new SWAdjustViewModel();
 
-        //    ViewModelApplication.CurrentPopupContent = PopupContent.BudgetAdjust;
-        //    var MAdjustmentVM = (BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel;
-        //    MAdjustmentVM.PriorPopupViewModel = mCurrentPopupViewModel;
-        //    MAdjustmentVM.KCategoryID = mDraggedItem.KCategoryID;
-        //    MAdjustmentVM.HeadingText = MAdjustmentVM.HeadingText + mDraggedItem.ShortName;
-        //    ViewModelApplication.PopupVisible = true;}
-        //    //ViewModelApplication.SettingsMenuVisible = true;
-        //}
+                ViewModelApplication.CurrentPopupContent = PopupContent.BudgetAdjust;
+                var MAdjustmentVM = (BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel;
+                MAdjustmentVM.PriorPopupViewModel = mCurrentPopupViewModel;
+                MAdjustmentVM.KCategoryID = mDraggedItem.KCategoryID;
+                MAdjustmentVM.HeadingText = MAdjustmentVM.HeadingText + mDraggedItem.ShortName;
+                ViewModelApplication.PopupVisible = true;
+            }
+            //ViewModelApplication.SettingsMenuVisible = true;
+        }
 
         public void ReviewTransactions()
         {

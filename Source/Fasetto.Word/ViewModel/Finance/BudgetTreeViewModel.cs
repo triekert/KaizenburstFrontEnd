@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -781,8 +782,9 @@ namespace Fasetto.Word
                             {
                                 if (((KeyEventArgs)tmp).Key == Key.Enter)
                                 {
+                                    AddAdjustment();
                                     ((KeyEventArgs)tmp).Handled = true;
-                                    //EditHierarchyElement(mSelectedTreeItem);
+
                                 }
                                 else
                                     if (((KeyEventArgs)tmp).Key == Key.Insert)
@@ -845,6 +847,54 @@ namespace Fasetto.Word
             ViewModelApplication.CurrentPopupContent = 0;
             ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;
             ViewModelApplication.PopupVisible = true;
+        }
+
+
+        /// <summary>
+        /// Use Popup View to add a Hierarchy Element
+        /// </summary>
+        //private void AddAdjustment()
+        //{
+        //    //Prepopulate
+        //    mDraggedItem = (BudgetViewModel)tvParameters.SelectedItem;
+        //    if (mDraggedItem == null)
+        //        return;
+        //    var mCurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+
+        //    //var mSWAdjustViewModel = new SWAdjustViewModel();
+
+        //    ViewModelApplication.CurrentPopupContent = PopupContent.ExpenditureAdjust;
+        //    var MAdjustmentVM = (ExpenditureAdjustViewModel)ViewModelApplication.CurrentPopupViewModel;
+        //    MAdjustmentVM.PriorPopupViewModel = mCurrentPopupViewModel;
+        //    MAdjustmentVM.KCategoryID = mDraggedItem.KCategoryID;
+        //    MAdjustmentVM.HeadingText = MAdjustmentVM.HeadingText + mDraggedItem.ShortName;
+        //    ViewModelApplication.PopupVisible = true;
+        //    //ViewModelApplication.SettingsMenuVisible = true;
+        //}
+
+        /// <summary>
+        /// Use Popup View to add a Hierarchy Element
+        /// </summary>
+        private void AddAdjustment()
+        {
+            //Prepopulate
+            if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel")
+            {
+                //mDraggedItem = mSelectedTreeItem;
+                //if (mDraggedItem == null)
+                //    return;
+                var mCurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+
+                //var mSWAdjustViewModel = new SWAdjustViewModel();
+
+                ViewModelApplication.CurrentPopupContent = PopupContent.BudgetAdjust;
+                var MAdjustmentVM = (BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel;
+                MAdjustmentVM.PriorPopupViewModel = mCurrentPopupViewModel;
+                MAdjustmentVM.KCategoryID = mSelectedTreeItem.KCategoryID;
+                MAdjustmentVM.HeadingText = MAdjustmentVM.HeadingText + mSelectedTreeItem.ShortName;
+                ViewModelApplication.PopupVisible = true;
+            }
+            //ViewModelApplication.SettingsMenuVisible = true;
         }
 
 
