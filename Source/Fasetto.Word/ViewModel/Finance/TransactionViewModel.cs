@@ -212,7 +212,7 @@ namespace Fasetto.Word
 
 
         /// <summary>
-        /// String representation of GUID for CostHierarchy
+        /// String representation of GUID for CostHierarchy element
         /// </summary>
 
         public string KHierarchyID { get; set; }

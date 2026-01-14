@@ -771,7 +771,7 @@ namespace Fasetto.Word
                         {
                             if ((((MouseButtonEventArgs)tmp).RightButton == MouseButtonState.Pressed) || (((MouseButtonEventArgs)tmp).LeftButton == MouseButtonState.Pressed))
                             {
-                                ((MouseButtonEventArgs)tmp).Handled = true;
+                                //((MouseButtonEventArgs)tmp).Handled = true;
                                 //EditHierarchyElement(mSelectedTreeItem);
                             }
                         }

@@ -1043,7 +1043,7 @@ namespace Fasetto.Word
             
             var tmp = ((ContextualEventArgs)parameter).OriginalEventArgs;
             var eventTmp = tmp.GetType().Name;
-            if (eventTmp == "MouseEventArgs" && ((MouseEventArgs)tmp).RoutedEvent.Name=="PreviewMouseMove")
+            if (eventTmp == "MouseEventArgs" && ((MouseEventArgs)tmp).RoutedEvent.Name== "PreviewMouseMove" && ((MouseEventArgs)tmp).Source.GetType().Name == "TreeView")
             {
                 var TmpTmp = ((MouseEventArgs)tmp).OriginalSource as UIElement;
                 //try
@@ -1141,7 +1141,8 @@ namespace Fasetto.Word
                         mSelectedTreeItem = (HierarchyViewModel)(((ContextualEventArgs)parameter).Context);
                         //ViewModelApplication.SideMenuVisible = true;
 
-                        if (eventTmp == "MouseButtonEventArgs")
+                        if (eventTmp == "MouseButtonEventArgs" && ((MouseEventArgs)tmp).Source.GetType().Name == "TreeView")
+                            //Prevent action for mouse event if mouse is not over a TreeView Item
                         {
                             if ((((MouseButtonEventArgs)tmp).RightButton == MouseButtonState.Pressed) || (((MouseButtonEventArgs)tmp).LeftButton == MouseButtonState.Pressed))
                             {

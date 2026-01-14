@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.Intrinsics.X86;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
@@ -837,7 +838,7 @@ namespace Fasetto.Word
                 decimal.TryParse(Allocation.EditedText, NumberStyles.Currency, CultureInfo.CurrentCulture, out decAllocation);
 
                 //Allocation amount cannot have the sign of the value changed - it can be removed by setting equal to zero
-                if (Math.Sign(decAllocation)!= Math.Sign(Selected.ActualAmount)&&(Math.Sign(Selected.ActualAmount) != 0))
+                if (Math.Sign(decAllocation)!= Math.Sign(Selected.ActualAmount)&&(Math.Sign(decAllocation) != 0))
                     {
                         System.Windows.MessageBox.Show($"The sign of the changed Allocation amount cannot differ from the sign of the previous allocation");
                         decAllocation = decAllocation * -1;
@@ -1319,7 +1320,7 @@ namespace Fasetto.Word
                 var IntAmnt = Selected.ActualAmount;
                 if (!(Allocation.EditedText == null || Allocation.EditedText == ""))
                 { decimal.TryParse(Allocation.EditedText, NumberStyles.Currency, CultureInfo.CurrentCulture, out IntAmnt); }
-                if (Math.Sign(IntAmnt) != Math.Sign(OrgActual) &&( Math.Sign(OrgActual)!= 0))
+                if (Math.Sign(IntAmnt) != Math.Sign(OrgActual) &&( Math.Sign(IntAmnt)!= 0))
                 {
                     System.Windows.MessageBox.Show($"The sign of the Allocation amount cannot differ from the sign of the previous allocation");
                     return true;
@@ -1434,6 +1435,8 @@ namespace Fasetto.Word
                         IsTemplate = Selected.IsTemplate,
                         Notes = Selected.Notes,
                         KAccountID = Selected.KAccountID,
+                        KClientID = Selected.KClientID,
+                        KHierarchyID = Selected.KHierarchyID,
                         KAccountName = Selected.KAccountName,
                         Units = Selected.Units,
                         ChangeType = "a",
@@ -1861,10 +1864,10 @@ namespace Fasetto.Word
                                             {
                                                 AddTranAdjust(IntAmnt, OrgActual, 0);
                                             }
-                                            else
-                                            {
-                                                ChangeTranAdjust(IntAmnt, OrgActual, 0);
-                                            }
+                                        else
+                                        {
+                                            ChangeTranAdjust(IntAmnt, OrgActual, 0);
+                                        }
 
 
                                             PriorCatUsage(IntAmnt, OrgActual, IntUnits);
@@ -1887,7 +1890,8 @@ namespace Fasetto.Word
                                 //Assignment category has changed and assignment total unchanged - Move entire original assignment to new category
                                 {
                                 //return true;
-                                    if ((Category.EditedKid ?? Category.OriginalKid) != Category.OriginalKid)
+                                    if ((Category.EditedKid ?? Category.OriginalKid) != Category.OriginalKid || (Person.EditedKid ?? Person.OriginalKid) != Person.OriginalKid ||
+                                     (Project.EditedKid ?? Project.OriginalKid) != Project.OriginalKid || (Asset.EditedKid ?? Asset.OriginalKid) != Asset.OriginalKid )
                                     //exclude cases where category is unchanged
                                     {
                                         if (IntAmnt == OrgActual)
@@ -2559,12 +2563,12 @@ namespace Fasetto.Word
                     Notes = TransactionNotes.EditedText,
                     KAccountID = Account.EditedKid ?? Selected.KAccountID,
                     KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
-                    KProjectID = Project.EditedKid ?? Selected.KProjectID,
-                    KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
-                    KAssetID = Asset.EditedKid ?? Selected.KAssetID,
-                    KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
-                    KPersonID = Person.EditedKid ?? Selected.KPersonID,
-                    KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
+                    KProjectID = Project.EditedKid ,
+                    KProjectName = Project.EditedName ,
+                    KAssetID = Asset.EditedKid ,
+                    KAssetName = Asset.EditedName ,
+                    KPersonID =Person.EditedKid,
+                    KPersonName = Person.EditedName ,
                     Units = IntUnits,
 
 
@@ -2676,10 +2680,18 @@ namespace Fasetto.Word
         /// <param name="IntUnits"></param>
         public void PriorCatUsage(decimal IntAmnt, decimal OrgActual, int IntUnits)
         {
-            var used = Mtmp.Where(x => x.KCategoryID == Category.EditedKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+            var used = Mtmp.Where(x => x.KCategoryID == (Category.EditedKid ?? Category.OriginalKid) && x.KFinTranID == Selected.KFinTranID &&  (x.KPersonID?? "") == (Person.EditedKid?? "")
+            && (x.KProjectID ) == (Project.EditedKid ?? Project.OriginalKid)
+           && (x.KAssetID) == (Asset.EditedKid ?? Asset.OriginalKid)
+            ).OrderByDescending(x => x.DateEffective).ToList();
             var usedRec = used.FirstOrDefault();
-            var used1 = Mtmp1.Where(x => x.KCategoryID == Category.EditedKid && x.KFinTranID == Selected.KFinTranID).OrderByDescending(x => x.DateEffective).ToList();
+            var used1 = Mtmp1.Where(x => x.KCategoryID == (Category.EditedKid ?? Category.OriginalKid) && x.KFinTranID == Selected.KFinTranID && (x.KPersonID ?? "") == (Person.EditedKid ?? "")
+            && (x.KProjectID) == (Project.EditedKid ?? Project.OriginalKid)
+            && (x.KAssetID) == (Asset.EditedKid ?? Asset.OriginalKid)
+            ).OrderByDescending(x => x.DateEffective).ToList();
+            var tmp4 = Project.EditedKid ?? "";
             var usedRec1 = used1.FirstOrDefault();
+
 
             if (usedRec == null)
             //Check whether this Category has already being used for this transaction, if not change the category allocation on the currently selected record to the new allocaiton
@@ -2756,6 +2768,7 @@ namespace Fasetto.Word
             }
             else
             {
+
                 Mtmp = Mtmp;
                 Mtmp1 = Mtmp1;
                 Selected1.KCategoryID = "testing 1";
@@ -2809,7 +2822,7 @@ namespace Fasetto.Word
                     Units = Selected1.Units,
                 };
                 Mtmp2.Add(u);
-                //is this needed?
+
                 //Selected.ShortName = u.ShortName;
                 //Selected.KCategoryID = u.KCategoryID;
                 //Selected.ActualAmount = u.ActualAmount;
@@ -2829,46 +2842,49 @@ namespace Fasetto.Word
                 //Mcategory1.KPartyID = u.KPartyID;
                 //Mcategory1.Units = IntUnits;
 
-                if (Category.OriginalKid == "")
-                //delete original NULL allocation as this will not be used for new category allocation
-                {
+
                     u = new TransactionResultApiModel
                     {
                         Posted_Date = Selected.Posted_Date,
-                        Month = Mexxist1.Month,
+                        Month =Selected.Month,
                         Description = TransactionDescription.EditedText ?? Selected.Description,
-                        TransAmount = Mexxist1.TransAmount,
-                        ActualAmount = Mexxist1.ActualAmount,
+                        TransAmount =Selected.TransAmount,
+                        ActualAmount =Selected.ActualAmount,
                         ShortName = (Category.EditedKid == null) ? Category.OriginalName : (Category.EditedName ?? Category.OriginalName),
                         KCategoryID = Category.EditedKid ?? Category.OriginalKid,
-                        KFinActualID = Mexxist1.KFinActualID,
-                        KFinTranID = Mexxist1.KFinTranID,
+                        KFinActualID =Selected.KFinActualID,
+                        KFinTranID =Selected.KFinTranID,
                         ChangeType = "d",
                         DateEffective = DateTime.Now,
-                        KHierarchyID = Mexxist1.KHierarchyID,
+                        KHierarchyID =Selected.KHierarchyID,
                         KClientID = Selected.KClientID,
                         KPartyID = Party.EditedKid ?? Selected.KPartyID,
                         KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
                         IsTemplate = IsTemplate,
-                        FCatSrchID = Selected1.FCatSrchID,
+                        FCatSrchID = Selected.FCatSrchID,
                         Notes = TransactionNotes.EditedText,
-                        KAccountID = Account.EditedKid ?? Selected.KAccountID,
-                        KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
-                        KProjectID = Project.EditedKid ?? Selected.KProjectID,
-                        KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
-                        KAssetID = Asset.EditedKid ?? Selected.KAssetID,
-                        KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
-                        KPersonID = Person.EditedKid ?? Selected.KPersonID,
-                        KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
+                        KAccountID =  Selected.KAccountID,
+                        KAccountName =  Selected.KAccountName,
+                        KProjectID = Selected.KProjectName,
+                        KAssetID =Selected.KAssetID,
+                        KAssetName =  Selected.KAssetName,
+                        KPersonID = Selected.KPersonID,
+                        KPersonName =Selected.KPersonName,
                         Units = IntUnits,
 
                     };
                     Mtmp2.Add(u);
-                    Mtmp1.Remove(Mexxist2);
-                    Mtmp.Remove(Mexxist1);
+                    Selected.Document = null;
+                    Mmatches = Mtmp.Where(x => x.KFinActualID == u.KFinActualID).OrderByDescending(x => x.DateEffective).ToList();
+                    Mcategory = Mmatches.FirstOrDefault();
+                    Mmatches1 = Mtmp1.Where(x => x.KFinActualID == u.KFinActualID).OrderByDescending(x => x.DateEffective).ToList();
+                    Mcategory1 = Mmatches1.FirstOrDefault();
+                    Mtmp1.Remove(Mcategory1);
+                    Mtmp.Remove(Mcategory);
                 }
+
             }
-        }
+
 
         /// <summary>
         /// Check for prior usage of Category/Project/Asset  
@@ -3172,6 +3188,7 @@ namespace Fasetto.Word
         /// <param name="source"></param>
         /// <param name="target"></param>
         public void Remove(List<TransactionViewModel> source, ObservableCollection<TransactionViewModel> target)
+
         {
             foreach (var item in source)
                 target.Remove(item);

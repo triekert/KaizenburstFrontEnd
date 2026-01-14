@@ -149,7 +149,7 @@
 
                 </i:EventTrigger>
 
-                <i:EventTrigger EventName="PreviewMouseRightButtonClick" >
+                <i:EventTrigger EventName="PreviewMouseRightButtonDown" >
                     <i:InvokeCommandAction 
                         Command="{Binding GestureHandlerCommand}"
                         EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
