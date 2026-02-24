@@ -871,7 +871,7 @@ namespace Fasetto.Word.Web.Server
                         BudgetAmountDescendants = (decimal)row[9],
                         BudgetAmount = (decimal)row[1],
                         ActualAmountTotal = (row[12] != DBNull.Value) ? (decimal)row[12] : 0M,
-                        ActualAmountDescendants = (row[11] != DBNull.Value) ? (decimal)row[112] : 0M,
+                        ActualAmountDescendants = (row[11] != DBNull.Value) ? (decimal)row[11] : 0M,
                         ActualAmount = (row[2] != DBNull.Value) ? (decimal)row[2]:0M,
                         Deviation = (row[12] != DBNull.Value) ? (decimal)row[12] : 0M - (decimal)row[10],
                         DeviationCum = (decimal)row[18],
@@ -1462,7 +1462,7 @@ namespace Fasetto.Word.Web.Server
                         }
                         var SqlString = "INSERT INTO [Finance].[TransactionDocument]  (fTransactionID,fChangeID,kDocumentID,DocName,DocDescription,DateEffective)" +// ) " +
 
-                                        "VALUES ('"+doc.FFintranID+"',NULL,'"+doc.KDocID+"','"+doc.DocName+"','"+doc.DocDescription+"',Getdate())";
+                                        "VALUES ('"+doc.FFintranID+"',NULL,'"+doc.KDocID+"','"+doc.DocName.Replace("'", "''") + "','"+doc.DocDescription.Replace("'", "''") + "',Getdate())";
                         _ = await ExecuteAsync(SqlString);
                     }
                     catch (Exception)

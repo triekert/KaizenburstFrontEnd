@@ -873,27 +873,24 @@ namespace Fasetto.Word
         //}
 
         /// <summary>
-        /// Use Popup View to add a Hierarchy Element
+        /// Use Popup View to view specific transction selection
         /// </summary>
         private void AddAdjustment()
         {
             //Prepopulate
-            if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel")
-            {
-                //mDraggedItem = mSelectedTreeItem;
-                //if (mDraggedItem == null)
-                //    return;
-                var mCurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            var mDraggedItem = ((BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mSelectedTreeItem;
+            if (mDraggedItem == null)
+                return;
+            var mCurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
 
-                //var mSWAdjustViewModel = new SWAdjustViewModel();
+            //var mSWAdjustViewModel = new SWAdjustViewModel();
 
-                ViewModelApplication.CurrentPopupContent = PopupContent.BudgetAdjust;
-                var MAdjustmentVM = (BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel;
-                MAdjustmentVM.PriorPopupViewModel = mCurrentPopupViewModel;
-                MAdjustmentVM.KCategoryID = mSelectedTreeItem.KCategoryID;
-                MAdjustmentVM.HeadingText = MAdjustmentVM.HeadingText + mSelectedTreeItem.ShortName;
-                ViewModelApplication.PopupVisible = true;
-            }
+            ViewModelApplication.CurrentPopupContent = PopupContent.ExpenditureAdjust;
+            var MAdjustmentVM = (ExpenditureAdjustViewModel)ViewModelApplication.CurrentPopupViewModel;
+            MAdjustmentVM.PriorPopupViewModel = mCurrentPopupViewModel;
+            MAdjustmentVM.KCategoryID = mDraggedItem.KCategoryID;
+            MAdjustmentVM.HeadingText = MAdjustmentVM.HeadingText + mDraggedItem.ShortName;
+            ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
         }
 
