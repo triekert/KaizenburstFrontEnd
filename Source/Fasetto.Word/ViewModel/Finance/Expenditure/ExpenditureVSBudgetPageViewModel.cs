@@ -160,7 +160,11 @@ namespace Fasetto.Word
         public List<int> BudgetMonth { get; set; }
 
 
+        /// <summary>
+        /// API model for retrieving transaction data
 
+        /// </summary>
+        public ParameterTransactionApiModel mRequest { get; set; }
 
         /// <summary>
         /// The text to search for when we do a search
@@ -453,8 +457,10 @@ namespace Fasetto.Word
             TimeEnd.OriginalDateTime = TimeEnd.EditedDateTime;
             TimeStart.OriginalDateTime = TimeStart.EditedDateTime;
 
-            ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(Test3, TimeStart.EditedDateTime, 
-                TimeEnd.EditedDateTime,"","");
+            ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(mRequest);
+
+            //ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(Test3, TimeStart.EditedDateTime,
+            //    TimeEnd.EditedDateTime, "", "");
             ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail: " + ShortName;
             //force a reload of the BulkRecon Control
             ViewModelApplication.CurrentPopupContent = 0;
@@ -531,8 +537,7 @@ namespace Fasetto.Word
                     TimeEnd.OriginalDateTime = TimeEnd.EditedDateTime;
                     TimeStart.OriginalDateTime = TimeStart.EditedDateTime;
 
-                    ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(Test3, TimeStart.EditedDateTime,
-                        TimeEnd.EditedDateTime, "","");
+                    ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(mRequest);
                     ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail: " + ShortName;
                     //force a reload of the BulkRecon Control
                     ViewModelApplication.CurrentPopupContent = 0;

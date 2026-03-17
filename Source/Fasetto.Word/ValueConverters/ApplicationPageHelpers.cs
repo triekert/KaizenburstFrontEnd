@@ -55,6 +55,9 @@ namespace Fasetto.Word
                 case ApplicationPage.Transactions:
                     return new TransactionSelectionPage(viewModel as TransactionSelectionPageViewModel);
 
+                case ApplicationPage.TransactionAnalysis:
+                    return new TransactionSelectionAnalysisPage(viewModel as TransactionSelectionAnalysisPageViewModel);
+
                 case ApplicationPage.BudgetReview:
                     return new BudgetSelectionPage(viewModel as BudgetSelectionPageViewModel);
 

@@ -2682,7 +2682,7 @@ namespace Fasetto.Word
         {
             var used = Mtmp.Where(x => x.KCategoryID == (Category.EditedKid ?? Category.OriginalKid) && x.KFinTranID == Selected.KFinTranID &&  (x.KPersonID?? "") == (Person.EditedKid?? "")
             && (x.KProjectID ) == (Project.EditedKid ?? Project.OriginalKid)
-           && (x.KAssetID) == (Asset.EditedKid ?? Asset.OriginalKid)
+           && (x.KAssetID) == (Asset.EditedKid ?? Asset.OriginalKid) && x.KFinActualID != Selected.KFinActualID
             ).OrderByDescending(x => x.DateEffective).ToList();
             var usedRec = used.FirstOrDefault();
             var used1 = Mtmp1.Where(x => x.KCategoryID == (Category.EditedKid ?? Category.OriginalKid) && x.KFinTranID == Selected.KFinTranID && (x.KPersonID ?? "") == (Person.EditedKid ?? "")

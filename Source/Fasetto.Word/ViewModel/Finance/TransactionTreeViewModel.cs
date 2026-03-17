@@ -52,6 +52,15 @@ namespace Fasetto.Word
         /// Lock for updating observable collection data
         /// </summary>
         private object mStocksLock = new object();
+
+
+        /// <summary>
+        /// API model for retrieving transaction data
+
+        /// </summary>
+        public ParameterTransactionApiModel mRequest { get; set; };
+
+
         #endregion
 
         #region Data
@@ -65,7 +74,7 @@ namespace Fasetto.Word
         public TransactionResultListApiModel mChange;
 
         public TransactionViewModel mTVM;
-        public ParameterTransactionApiModel mRequest;
+        //public ParameterTransactionApiModel mRequest;
         public string mClient;
         public int mMonthStart;
         public int mMonthEnd;
@@ -103,9 +112,11 @@ namespace Fasetto.Word
         /// <param name="hierarchyTable"></param>
         /// The hierarchyTable passed through as a parameter identifies the specific hierarchy set to be retrieved
         /// from persistent s
-        public TransactionTreeViewModel(string client, DateTime timeStart, DateTime timeEnd, string category, string budget)
+        //public TransactionTreeViewModel(string client, DateTime timeStart, DateTime timeEnd, string category, string budget)
+        public TransactionTreeViewModel(ParameterTransactionApiModel MRequest)
         {
             #region Build HierarchyViewCollection
+            mRequest = MRequest;
 
             Trans_action = new ObservableCollection<TransactionViewModel>();
             BindingOperations.EnableCollectionSynchronization(Trans_action, mStocksLock);
@@ -125,16 +136,16 @@ namespace Fasetto.Word
             };
             Trans_action.Add(mTVM);
 
-            mRequest = new ParameterTransactionApiModel
-            {
-                Client = client,
-                MonthStart = int.Parse(timeStart.ToString("yyyyMMdd")),
-                MonthEnd = int.Parse(timeEnd.ToString("yyyyMMdd")),
-                Category = category,
-                Budget = budget,
-            };
+            //mRequest = new ParameterTransactionApiModel
+            //{
+            //    Client = client,
+            //    MonthStart = int.Parse(timeStart.ToString("yyyyMMdd")),
+            //    MonthEnd = int.Parse(timeEnd.ToString("yyyyMMdd")),
+            //    Category = category,
+            //    Budget = budget,
+            //};
 
-            var MMmonth = timeStart.ToString("MM");
+            //var MMmonth = timeStart.ToString("MM");
             //mTableName = hierarchyTable;
             #endregion
             //retrieve hierarchy from persistent storage on server

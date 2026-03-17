@@ -99,9 +99,29 @@ namespace Fasetto.Word
         /// <summary>
         /// The PartyHierarchy for Transaction processing for the selected client
         /// </summary>
-        public HierarchyItemSelectionViewModel PartyHierarchy { get; set; }
+        public HierarchyItemSelectionViewModel Party { get; set; }
 
-       /// <summary>
+                /// <summary>
+        /// The AccountHierarchy for Transaction processing for the selected client
+        /// </summary>
+        public HierarchyItemSelectionViewModel Account { get; set; }
+
+        /// <summary>
+        /// The AssetHierarchy for Transaction processing for the selected client
+        /// </summary>
+        public HierarchyItemSelectionViewModel Asset { get; set; }
+
+        /// <summary>
+        /// The ProjcetHierarchy for Transaction processing for the selected client
+        /// </summary>
+        public HierarchyItemSelectionViewModel Project { get; set; }
+
+                /// <summary>
+        /// The PersonHierarchy for Transaction processing for the selected client
+        /// </summary>
+        public HierarchyItemSelectionViewModel Person { get; set; }
+
+        /// <summary>
         /// The selected CostHierarchy for the Transaction Classification processing
         /// </summary>
         public BudgetPeriodViewModel SelectedCostHierarchy { get; set; }
@@ -132,6 +152,12 @@ namespace Fasetto.Word
         /// The start time for analysis of readings
         /// </summary>
         public DateTimeViewModel DateReference { get; set; }
+
+        /// <summary>
+        /// API model for retrieving transaction data
+ 
+        /// </summary>
+        public ParameterTransactionApiModel mRequest { get; set; }
 
 
         /// <summary>
@@ -312,6 +338,8 @@ namespace Fasetto.Word
             BulkMeter = "5249FFEB-6907-46AA-9204-D4527E11F9CE";
             ViewModelApplication.CurrentControlViewModel=ViewModelApplication.CurrentControlViewModel;
 
+            mRequest = new ParameterTransactionApiModel();
+
             Client = new HierarchyItemSelectionViewModel
             {
                 Label = "Select Client",
@@ -350,17 +378,86 @@ namespace Fasetto.Word
             //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
             ViewModelApplication.CurrentControlViewModel = Client;
 
+            Party = new HierarchyItemSelectionViewModel
+            {
+                Label = "Transacting Party",
+                //EditedName = mLoadingText,
+                EditedName = "Selected Party",
+                ClientID = ViewModelApplication.FClientID,
+                HierarchyTypeID = "ADEEBB16-F553-48F8-955F-663227A4886C",
+                PrepareAction = SetPartyHierarchySelectionAsync,
+                //HierarchyTypeID = ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).f,
+                //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
+                CommitAction = SelectPartyAsync,
+                ProcessSelectionAction = ProcessSelectionActionAsync,
+            };
 
-            //Meter = new HierarchyItemSelectionViewModel
-            //{
-            //    Label = "Meter Name",
-            //    //EditedName = mLoadingText,
-            //    EditedName = "TD Water Metering",
-            //    OriginalName = "Original Meter Selection",
-            //    EditedKid = "5249FFEB-6907-46AA-9204-D4527E11F9CE",
-            //    HierarchyTypeID = "8A50E984-9E9F-44F6-9392-875E56A0B7CA",
-            //    //CommitAction = SaveFirstNameAsync
-            //};
+
+            Account = new HierarchyItemSelectionViewModel
+            {
+                Label = "Transacting Account",
+                //EditedName = mLoadingText,
+                EditedName = "Selected Account",
+                ClientID = ViewModelApplication.FClientID,
+                HierarchyTypeID = "A806FD4A-8F02-4CA0-BFCE-51A8587D9CC8",
+                PrepareAction = SetAccountHierarchySelectionAsync,
+                //HierarchyTypeID = ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).f,
+                //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
+                CommitAction = SelectAccountAsync,
+                ProcessSelectionAction = ProcessSelectionActionAsync,
+            };
+
+
+            Project = new HierarchyItemSelectionViewModel
+            {
+                Label = "Project",
+                //EditedName = mLoadingText,
+                EditedName = "Selected Project",
+                ClientID = ViewModelApplication.FClientID,
+                HierarchyTypeID = "C77539FC-A801-46B5-9681-5902496BF83E",
+                PrepareAction = SetProjectHierarchySelectionAsync,
+                //HierarchyTypeID = ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).f,
+                //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
+                CommitAction = SelectProjectAsync,
+                ProcessSelectionAction = ProcessSelectionActionAsync,
+            };
+
+
+
+            Asset = new HierarchyItemSelectionViewModel
+            {
+                Label = "Asset",
+                //EditedName = mLoadingText,
+                EditedName = "Selected Asset",
+                ClientID = ViewModelApplication.FClientID,
+                HierarchyTypeID = "56DA3516-FF85-4A9F-A8F6-56874B4CC8E7",
+                PrepareAction = SetAssetHierarchySelectionAsync,
+                //HierarchyTypeID = ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).f,
+                //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
+                CommitAction = SelectAsset1Async,
+                ProcessSelectionAction = ProcessSelectionActionAsync,
+            };
+
+
+            Person = new HierarchyItemSelectionViewModel
+            {
+                Label = "Linked Person",
+                //EditedName = mLoadingText,
+                EditedName = "Selected Person",
+                ClientID = ViewModelApplication.FClientID,
+                HierarchyTypeID = "ADEEBB16-F553-48F8-955F-663227A4886C",
+                PrepareAction = SetPersonHierarchySelectionAsync,
+                //HierarchyTypeID = ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).f,
+                //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
+                CommitAction = SelectPersonAsync,
+                ProcessSelectionAction = ProcessSelectionActionAsync,
+            };
+
 
             TimeStart = new DateTimeViewModel
             {
@@ -388,6 +485,8 @@ namespace Fasetto.Word
             };
             TimeEnd.OriginalTime.Content = "00:00";
             TimeEnd.EditedTime.Content = "00:00";
+
+
 
             //DateReference = new DateTimeViewModel
             //{
@@ -499,8 +598,7 @@ namespace Fasetto.Word
             //TimeEnd.EditedDateTime = DateTime.Parse(t3);
             //TimeEnd.EditedDateTime = DateTime.Parse($"{TimeEnd.EditedDateTime.ToString("yyyy/MM/dd")}{" "}{TimeStart.EditedDateTime.Hour.ToString("00")}{":00:00"}");
 
-            ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(Test3, TimeStart.EditedDateTime, 
-                TimeEnd.EditedDateTime,"","");
+            ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(mRequest);
             ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail: " + ShortName;
             //force a reload of the BulkRecon Control
             ViewModelApplication.CurrentPopupContent = 0;
@@ -561,8 +659,7 @@ namespace Fasetto.Word
                     //TimeEnd.EditedDateTime = DateTime.Parse(t3);
                     //TimeEnd.EditedDateTime = DateTime.Parse($"{TimeEnd.EditedDateTime.ToString("yyyy/MM/dd")}{" "}{TimeStart.EditedDateTime.Hour.ToString("00")}{":00:00"}");
 
-                    ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(Test3, TimeStart.EditedDateTime,
-                        TimeEnd.EditedDateTime, "","");
+                    ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(mRequest);
                     ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail: " + ShortName;
                     //force a reload of the BulkRecon Control
                     ViewModelApplication.CurrentPopupContent = 0;

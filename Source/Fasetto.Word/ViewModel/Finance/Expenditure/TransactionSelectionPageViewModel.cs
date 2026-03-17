@@ -48,6 +48,15 @@ namespace Fasetto.Word
         /// </summary>
         protected bool mSearchIsOpen;
 
+
+        /// <summary>
+        /// API model for retrieving transaction data
+
+        /// </summary>
+        public ParameterTransactionApiModel mRequest { get; set; }
+
+
+
         public HierarchyTreeViewModel mViewModel;
         #endregion
 
@@ -312,6 +321,7 @@ namespace Fasetto.Word
             BulkMeter = "5249FFEB-6907-46AA-9204-D4527E11F9CE";
             ViewModelApplication.CurrentControlViewModel=ViewModelApplication.CurrentControlViewModel;
 
+            mRequest = new ParameterTransactionApiModel();
             Client = new HierarchyItemSelectionViewModel
             {
                 Label = "Select Client",
@@ -499,8 +509,7 @@ namespace Fasetto.Word
             //TimeEnd.EditedDateTime = DateTime.Parse(t3);
             //TimeEnd.EditedDateTime = DateTime.Parse($"{TimeEnd.EditedDateTime.ToString("yyyy/MM/dd")}{" "}{TimeStart.EditedDateTime.Hour.ToString("00")}{":00:00"}");
 
-            ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(Test3, TimeStart.EditedDateTime, 
-                TimeEnd.EditedDateTime,"","");
+            ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(mRequest);
             ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail: " + ShortName;
             //force a reload of the BulkRecon Control
             ViewModelApplication.CurrentPopupContent = 0;
@@ -561,8 +570,7 @@ namespace Fasetto.Word
                     //TimeEnd.EditedDateTime = DateTime.Parse(t3);
                     //TimeEnd.EditedDateTime = DateTime.Parse($"{TimeEnd.EditedDateTime.ToString("yyyy/MM/dd")}{" "}{TimeStart.EditedDateTime.Hour.ToString("00")}{":00:00"}");
 
-                    ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(Test3, TimeStart.EditedDateTime,
-                        TimeEnd.EditedDateTime, "","");
+                    ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(mRequest);
                     ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail: " + ShortName;
                     //force a reload of the BulkRecon Control
                     ViewModelApplication.CurrentPopupContent = 0;

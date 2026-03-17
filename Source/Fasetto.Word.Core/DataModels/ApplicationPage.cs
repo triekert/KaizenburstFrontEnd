@@ -86,6 +86,12 @@
         /// </summary>
         InvestmentManagement = 14,
 
+
+        /// <summary>
+        ///Transaction analysis
+        /// </summary>
+        TransactionAnalysis = 15,
+
     }
 
 }
