@@ -321,7 +321,12 @@ namespace Fasetto.Word
             BulkMeter = "5249FFEB-6907-46AA-9204-D4527E11F9CE";
             ViewModelApplication.CurrentControlViewModel=ViewModelApplication.CurrentControlViewModel;
 
-            mRequest = new ParameterTransactionApiModel();
+            mRequest = new ParameterTransactionApiModel()
+            {
+                Client = (string)ViewModelApplication.FClientID ?? "4766E825-1B58-410D-B06B-5A2639CA22C8",
+               Category = (string)ViewModelApplication.FCostHierarchyID
+          
+            };
             Client = new HierarchyItemSelectionViewModel
             {
                 Label = "Select Client",
@@ -534,6 +539,11 @@ namespace Fasetto.Word
                 ViewModelApplication.ClientShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedName;
                 ViewModelApplication.FCostHierarchyID = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid;
                 ViewModelApplication.CostHierarchyShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedName;
+                mRequest.Client = ViewModelApplication.FClientID;
+
+
+                mRequest.MonthStart = int.Parse(TimeStart.EditedDateTime.ToString("yyyyMMdd"));
+                mRequest.MonthEnd = int.Parse(TimeEnd.EditedDateTime.ToString("yyyyMMdd"));
                 //ViewModelApplication.CurrentPopupContent = 0;
                 //To do: Lookup to be user rights and available options driven
                 //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
@@ -690,6 +700,7 @@ namespace Fasetto.Word
                 ViewModelApplication.CurrentPopupViewModel = null;
                 ViewModelApplication.CurrentPopupContent = 0;
                 CostHierarchy.OriginalName = CostHierarchy.EditedName;
+                mRequest.Category = CostHierarchy.EditedKid;
                 return true;
             });
 

@@ -58,7 +58,7 @@ namespace Fasetto.Word
         /// API model for retrieving transaction data
 
         /// </summary>
-        public ParameterTransactionApiModel mRequest { get; set; };
+        public ParameterTransactionApiModel mRequest { get; set; }
 
 
         #endregion
@@ -444,9 +444,16 @@ namespace Fasetto.Word
             }
             else
             {
-                ViewModelApplication.PopupVisible = false;
-                ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
-
+                if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "TransactionSelectionPageViewModel")
+                {
+                    ViewModelApplication.PopupVisible = false;
+                    ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
+                }
+                else
+                {
+                    ViewModelApplication.PopupVisible = false;
+                    ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionAnalysisPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
+                }
                 if (UpPersist == null || OPersist == null) { return; }
                 var except = UpPersist.Except(OPersist);
                 //TO DO: Map PopupViewModel to PopupContent with converter

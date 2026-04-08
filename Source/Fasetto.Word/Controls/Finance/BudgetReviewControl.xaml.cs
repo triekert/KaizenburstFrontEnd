@@ -20,6 +20,14 @@ namespace Fasetto.Word
 
         //public string ControlTitle { get; set; } = "Title of Control";
 
+
+        /// <summary>
+        /// API model for retrieving transaction data
+
+        /// </summary>
+        public ParameterTransactionApiModel mRequest { get; set; }
+
+
         #endregion//Public Properties
 
         #region Public Commands
@@ -553,12 +561,13 @@ namespace Fasetto.Word
             var TimeEnd = DateTime.Now;
 
 
-            ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(
-                ((HierarchyItemSelectionViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid,
-                TimeStart,//SelectedBudgetMonth
-                TimeEnd,//SelectedBudgetMonth -12 mo
-                mDraggedItem.KCategoryID,
-                ((BudgetPeriodViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID
+            ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(mRequest
+
+                //((HierarchyItemSelectionViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid,
+                //TimeStart,//SelectedBudgetMonth
+                //TimeEnd,//SelectedBudgetMonth -12 mo
+                //mDraggedItem.KCategoryID,
+                //((BudgetPeriodViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID
                 );
                     ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail for Selected Budget Category : " + mDraggedItem.ShortName;
                     //force a reload of the BulkRecon Control

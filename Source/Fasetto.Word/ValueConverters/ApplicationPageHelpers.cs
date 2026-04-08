@@ -67,6 +67,8 @@ namespace Fasetto.Word
                 case ApplicationPage.InvestmentManagement:
                     return new InvestmentSelectionPage(viewModel as InvestmentSelectionPageViewModel);
 
+
+
                 default:
                     Debugger.Break();
                     return null;
@@ -122,6 +124,10 @@ namespace Fasetto.Word
 
             if (page is InvestmentSelectionPage)
                 return ApplicationPage.InvestmentManagement;
+
+
+            if (page is TransactionSelectionAnalysisPage)
+                return ApplicationPage.TransactionAnalysis;
 
             // Alert developer of issue
             Debugger.Break();

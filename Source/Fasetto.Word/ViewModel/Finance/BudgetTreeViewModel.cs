@@ -72,6 +72,14 @@ namespace Fasetto.Word
 
         public string mSearchText = "", mSearchKCategoryID = string.Empty, mParentCategoryID = string.Empty;
 
+
+        /// <summary>
+        /// API model for retrieving transaction data
+
+        /// </summary>
+        public ParameterTransactionApiModel mRequest { get; set; }
+
+
         #endregion // Data
         #region Public Commands
         /// <summary>
@@ -107,6 +115,11 @@ namespace Fasetto.Word
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             //ViewModelApplication.PopupVisible = false;
             mBDDML = new BudgetListDataModel();
+            mRequest = new ParameterTransactionApiModel()
+            {
+                Client = (string)ViewModelApplication.FClientID ?? "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                //CostHierarchy = (string)ViewModelApplication.FCostHierarchyID
+            };
             mBDDM = new BudgetDataModel
             {
                 KCategoryID = new Guid().ToString(),
@@ -820,25 +833,30 @@ namespace Fasetto.Word
             var duration = new TimeSpan(-365, 0, 0, 0);
             var TimeStart = DateTime.Now.Add(duration);
             var TimeEnd = DateTime.Now;
+            mRequest.Client = ViewModelApplication.FClientID;
+            mRequest.Category = mSelectedTreeItem.KCategoryID;
+            mRequest.MonthStart = int.Parse(TimeStart.ToString("yyyyMMdd"));
+            mRequest.MonthEnd = int.Parse(TimeEnd.ToString("yyyyMMdd"));
             if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel")
                 //Select appropriate page view model for further processing
             {
-                ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(
-                ((HierarchyItemSelectionViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid,
-                TimeStart,//SelectedBudgetMonth
-                TimeEnd,//SelectedBudgetMonth -12 mo
-                mSelectedTreeItem.KCategoryID,
-                ((BudgetPeriodViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID
+
+                ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(mRequest
+                //((HierarchyItemSelectionViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid,
+                //TimeStart,//SelectedBudgetMonth
+                //TimeEnd,//SelectedBudgetMonth -12 mo
+                //mSelectedTreeItem.KCategoryID,
+                //((BudgetPeriodViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID
                 );
             }
             else
             {
-                ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(
-                ((HierarchyItemSelectionViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid,
-                TimeStart,//SelectedBudgetMonth
-                TimeEnd,//SelectedBudgetMonth -12 mo
-                mSelectedTreeItem.KCategoryID,
-                ((BudgetPeriodViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID
+                ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(mRequest
+                //((HierarchyItemSelectionViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid,
+                //TimeStart,//SelectedBudgetMonth
+                //TimeEnd,//SelectedBudgetMonth -12 mo
+                //mSelectedTreeItem.KCategoryID,
+                //((BudgetPeriodViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID
                 );
             }
 

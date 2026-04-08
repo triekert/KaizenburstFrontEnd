@@ -665,16 +665,47 @@ namespace Fasetto.Word.Web.Server
 
             #region sql query
 
+            var para = new SqlParameter[13];
+            para[0] = new SqlParameter("@monthbeg", SqlDbType.Int);
+            para[1] = new SqlParameter("@monthend", SqlDbType.Int);
+            para[2] = new SqlParameter("@fClientID", SqlDbType.UniqueIdentifier);
+            para[3] = new SqlParameter("@fCategoryID", SqlDbType.UniqueIdentifier);
+            para[4] = new SqlParameter("@kBudgetID", SqlDbType.UniqueIdentifier);
+            para[5] = new SqlParameter("@fPartyID", SqlDbType.UniqueIdentifier);
+            para[6] = new SqlParameter("@fProjectID", SqlDbType.UniqueIdentifier);
+            para[7] = new SqlParameter("@fPersonID", SqlDbType.UniqueIdentifier);
+            para[8] = new SqlParameter("@fAssetID", SqlDbType.UniqueIdentifier);
+            para[9] = new SqlParameter("@fAccountID", SqlDbType.UniqueIdentifier);
+            para[10] = new SqlParameter("@isNotCategory", SqlDbType.Bit);
+            para[11] = new SqlParameter("@isNotSupplier", SqlDbType.Bit);
+            para[12] = new SqlParameter("@isNotAccount ", SqlDbType.Bit);
+
+            para[0].Value = model.MonthStart;
+            para[1].Value = model.MonthEnd;
+            para[2].Value = !string.IsNullOrEmpty(model.Client) ? new Guid(model.Client) : (object)DBNull.Value;
+            para[3].Value = !string.IsNullOrEmpty(model.Category) ? new Guid(model.Category) : (object)DBNull.Value;
+            para[4].Value = !string.IsNullOrEmpty(model.Budget) ? new Guid(model.Budget) : (object)DBNull.Value;
+            para[5].Value = !string.IsNullOrEmpty(model.Party) ? new Guid(model.Party) : (object)DBNull.Value;
+            para[6].Value = !string.IsNullOrEmpty(model.Project) ? new Guid(model.Project) : (object)DBNull.Value;
+            para[7].Value = !string.IsNullOrEmpty(model.Person) ? new Guid(model.Person) : (object)DBNull.Value;
+            para[8].Value = !string.IsNullOrEmpty(model.Asset) ? new Guid(model.Asset) : (object)DBNull.Value;
+            para[9].Value = !string.IsNullOrEmpty(model.Account) ? new Guid(model.Account) : (object)DBNull.Value;
+            para[10].Value = model.IsNotCategory;
+            para[11].Value = model.IsNotSupplier;
+            para[12].Value = model.IsNotAccount;
+
+
             var SqlString = "";
             if (model.Category == "")
             { SqlString = "EXEC [Finance].spDisplayActualDetails 	 @fClientID =  '" + model.Client + "' ,  @MonthBeg ='" + model.MonthStart.ToString() + "',  @MonthEnd = '" + model.MonthEnd.ToString() + "'"; }
             else
-            { SqlString = "EXEC [Finance].spDisplayActualCategoryDetails 	 @fClientID =  '" + model.Client + "' ,  @MonthBeg ='" + model.MonthStart.ToString() + "',   @MonthEnd = '" + model.MonthEnd.ToString() +  "',  @KBudgetID = '" + model.Budget +  "',@fCategoryID = '" + model.Category +"'"; }
-
+            //{ SqlString = "EXEC [Finance].spDisplayActualCategoryDetails 	 @fClientID =  '" + model.Client + "' ,  @MonthBeg ='" + model.MonthStart.ToString() + "',   @MonthEnd = '" + model.MonthEnd.ToString() +  "',  @KBudgetID = '" + model.Budget +  "',@fCategoryID = '" + model.Category +"'"; }
+            { SqlString = "EXEC [Finance].spDisplayActualCategoryDetails1 	 @monthbeg,@monthend,@fClientID,@fCategoryID,@kBudgetID,@fPartyID,@fProjectID,@fPersonID,@fAssetID,@fAccountID,@isNotCategory,@isNotSupplier,@isNotAccount"; }
             try
             {
                 // Try and run the task
-                var dataset = await GetDataSetAsync(SqlString);
+                //var dataset = await GetDataSetAsync(SqlString);
+                var dataset = await GetDataSetAsync(SqlString, para);
                 var dt = dataset.Tables[0];
                 var results = new TransactionResultListApiModel();
                 //var results = billingPeriodResultListApiModel;

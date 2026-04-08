@@ -140,13 +140,13 @@
                     
                 </i:EventTrigger>
 
-                <i:EventTrigger EventName="PreviewMouseDoubleClick" >
+                <!--<i:EventTrigger EventName="PreviewMouseDoubleClick" >
                     <i:InvokeCommandAction 
                         Command="{Binding GestureHandlerCommand}"
                         EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
                         EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
 
-                </i:EventTrigger>
+                </i:EventTrigger>-->
 
                 <i:EventTrigger EventName="PreviewMouseRightButtonDown" >
                     <i:InvokeCommandAction 

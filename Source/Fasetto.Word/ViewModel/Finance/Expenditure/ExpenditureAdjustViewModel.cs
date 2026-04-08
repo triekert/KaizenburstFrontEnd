@@ -169,6 +169,14 @@ namespace Fasetto.Word
         public ParameterBudgetAdjustApiModel MAPI { get; set; }
 
 
+        /// <summary>
+        /// API model for retrieving transaction data
+
+        /// </summary>
+        public ParameterTransactionApiModel mRequest { get; set; }
+
+
+
 
         #region Transactional Properties
 
@@ -390,12 +398,12 @@ namespace Fasetto.Word
                 {
 
 
-                    ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(
-                    ((HierarchyItemSelectionViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid,
-                        DateStart,//SelectedBudgetMonth
-                        DateEnd,//SelectedBudgetMonth -12 mo
-                        KCategoryID,
-                        ((BudgetPeriodViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID
+                    ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(mRequest
+                    //((HierarchyItemSelectionViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid,
+                    //    DateStart,//SelectedBudgetMonth
+                    //    DateEnd,//SelectedBudgetMonth -12 mo
+                    //    KCategoryID,
+                    //    ((BudgetPeriodViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID
                         );
                     ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = 
                     ((ExpenditureAdjustViewModel)((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).HeadingText ;

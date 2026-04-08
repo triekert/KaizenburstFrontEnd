@@ -95,7 +95,11 @@ namespace Fasetto.Word
         /// </summary>
         public HierarchyItemSelectionViewModel CostHierarchy { get; set; }
 
- 
+        /// <summary>
+        /// The Cost category to be used for the allocation
+        /// </summary>
+        public HierarchyItemSelectionViewModel Category { get; set; }
+
         /// <summary>
         /// The PartyHierarchy for Transaction processing for the selected client
         /// </summary>
@@ -255,6 +259,13 @@ namespace Fasetto.Word
         /// </summary>
         public bool ReconcileInProgress { get; set; }
 
+
+
+        /// <summary>
+        /// A flag indicating if the account selection is complete
+        /// </summary>
+        public bool SelectAccountCompleted { get; set; }
+
         #endregion
 
         #region Public Commands
@@ -338,7 +349,11 @@ namespace Fasetto.Word
             BulkMeter = "5249FFEB-6907-46AA-9204-D4527E11F9CE";
             ViewModelApplication.CurrentControlViewModel=ViewModelApplication.CurrentControlViewModel;
 
-            mRequest = new ParameterTransactionApiModel();
+            mRequest = new ParameterTransactionApiModel()
+            {
+                Client = (string)ViewModelApplication.FClientID ?? "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                Category = (string)ViewModelApplication.FCostHierarchyID
+            };
 
             Client = new HierarchyItemSelectionViewModel
             {
@@ -377,6 +392,24 @@ namespace Fasetto.Word
 
             //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
             ViewModelApplication.CurrentControlViewModel = Client;
+            Category = new HierarchyItemSelectionViewModel
+            {
+                Label = "Cost Category",
+                //EditedName = mLoadingText,
+                EditedName = "Selected Category",
+                ClientID = ViewModelApplication.FClientID,
+
+                //HierarchyTypeID = "64413ae7-822f-4866-9ebe-433083d699ac",
+                RootID = (string)ViewModelApplication.FCostHierarchyID,
+                PrepareAction = SetCostCategorySelectionAsync,
+                PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
+
+                //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+
+                CommitAction = SelectCategoryAsync,
+                ProcessSelectionAction = ProcessSelectionActionAsync,
+            };
+
 
             Party = new HierarchyItemSelectionViewModel
             {
@@ -438,7 +471,7 @@ namespace Fasetto.Word
                 //HierarchyTypeID = ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).f,
                 //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
                 PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
-                CommitAction = SelectAsset1Async,
+                CommitAction = SelectAssetAsync,
                 ProcessSelectionAction = ProcessSelectionActionAsync,
             };
 
@@ -623,6 +656,11 @@ namespace Fasetto.Word
                 ViewModelApplication.ClientShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionAnalysisPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedName;
                 ViewModelApplication.FCostHierarchyID = ((HierarchyItemSelectionViewModel)((TransactionSelectionAnalysisPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid;
                 ViewModelApplication.CostHierarchyShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionAnalysisPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedName;
+                mRequest.Client = ViewModelApplication.FClientID;
+                mRequest.Category = Category.OriginalKid ?? CostHierarchy.OriginalKid;
+                Category.OriginalName = Category.OriginalName ?? CostHierarchy.OriginalName;
+                mRequest.MonthStart = int.Parse(TimeStart.EditedDateTime.ToString("yyyyMMdd"));
+                mRequest.MonthEnd = int.Parse(TimeEnd.EditedDateTime.ToString("yyyyMMdd"));
                 //ViewModelApplication.CurrentPopupContent = 0;
                 //To do: Lookup to be user rights and available options driven
                 //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
@@ -648,7 +686,7 @@ namespace Fasetto.Word
                     //    System.Windows.MessageBox.Show($"First select a valid Transaction Client to proceed...");
                     //    return;
                     //};
-                    ShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionAnalysisPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedName;
+                    ShortName = Category.OriginalName;
                     TimeEnd.OriginalDateTime = TimeEnd.EditedDateTime;
                     TimeStart.OriginalDateTime = TimeStart.EditedDateTime;
 
@@ -672,7 +710,6 @@ namespace Fasetto.Word
                 return true;
             });
         }
-
 
         /// <summary>
         /// When the user clicks the send button, sends the message
@@ -730,6 +767,149 @@ namespace Fasetto.Word
             });
 
         }
+
+
+        public async Task<bool> SetCostCategorySelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the Category Classification value on the server...
+
+                ViewModelApplication.CurrentControlViewModel =Category;
+                //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category;
+                HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                {
+
+                    Level = 100,
+                    RootID = Category.RootID,
+                };
+
+                //var TypeName = (ViewModelApplication.ControlPopupCostCategory.GetType().Name) ?? "";
+                if (ViewModelApplication.ControlPopupCostCategory == null || ViewModelApplication.ControlPopupCostCategory.GetType().Name != "HierarchyTreeViewModel1")
+                {
+                    ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
+                    ViewModelApplication.ControlPopupCostCategory = ViewModelApplication.CurrentPopupViewModel;
+                }
+                else
+                { ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlPopupCostCategory; }
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Category.OriginalKid;
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
+                return true;
+            });
+
+        }
+
+
+        public async Task<bool> SetAccountHierarchySelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the Party value on the server...
+
+                ViewModelApplication.CurrentControlViewModel = Account;
+                HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                {
+                    Level = 0,
+                    HierarchyTypeID = Account.HierarchyTypeID,
+                    ClientID = ViewModelApplication.FClientID,
+                };
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Account.OriginalKid;
+
+                //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
+                return true;
+            });
+
+        }
+        public async Task<bool> SetPartyHierarchySelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the Party value on the server...
+
+                ViewModelApplication.CurrentControlViewModel = Party;
+                HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                {
+
+                    Level = 0,
+                    ClientID = ViewModelApplication.FClientID,
+                    HierarchyTypeID = Party.HierarchyTypeID,
+                };
+                if (ViewModelApplication.ControlPopupParty == null)
+                { ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam); }
+                else
+                { ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlPopupParty; }
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Party.OriginalKid;
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
+                //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
+                return true;
+            });
+
+        }
+
+        public async Task<bool> SetPersonHierarchySelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the Party value on the server...
+
+                ViewModelApplication.CurrentControlViewModel = Person;
+                HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                {
+
+                    Level = 0,
+                    ClientID = ViewModelApplication.FClientID,
+                    HierarchyTypeID = Party.HierarchyTypeID,
+                };
+                if (ViewModelApplication.ControlPopupParty == null)
+                { ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam); }
+                else
+                { ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlPopupParty; }
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Party.OriginalKid;
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
+                //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
+                return true;
+            });
+
+        }
+
+        public async Task<bool> SetProjectHierarchySelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the Party value on the server...
+
+                ViewModelApplication.CurrentControlViewModel = Project;
+                HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                {
+                    Level = 0,
+                    HierarchyTypeID = Project.HierarchyTypeID,
+                    ClientID = ViewModelApplication.FClientID,
+                };
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Project.OriginalKid;
+
+                //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
+                return true;
+            });
+
+        }
+
+
+
         ///<summary>
         /// Update Client selection for current session
         /// </summary>
@@ -779,11 +959,211 @@ namespace Fasetto.Word
                 ViewModelApplication.CurrentPopupViewModel = null;
                 ViewModelApplication.CurrentPopupContent = 0;
                 CostHierarchy.OriginalName = CostHierarchy.EditedName;
+                mRequest.Category = CostHierarchy.OriginalKid;
                 return true;
             });
 
         }
-        
+
+
+        /// <summary>
+        /// Initialises the Cost Hierarchy Search
+        /// </summary>
+        /// <returns>Returns true if successful, false otherwise</returns>
+        public async Task<bool> SelectCategoryAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+
+            return await RunCommandAsync(() => UpdateHierarchyCompleted, async () =>
+            {
+
+
+                mRequest.Category = Category.EditedKid;
+                Category.OriginalName  = Category.EditedName;
+                Category.OriginalKid = Category.EditedKid;
+                return true;
+            });
+        }
+
+        /// <summary>
+        /// Initialises the Cost Hierarchy Search
+        /// </summary>
+        /// <returns>Returns true if successful, false otherwise</returns>
+        public async Task<bool> SelectPartyAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+
+            return await RunCommandAsync(() => UpdateHierarchyCompleted, async () =>
+            {
+
+                //ViewModelApplication.ControlPopupParty = ViewModelApplication.CurrentPopupViewModel;
+                mRequest.Party = Party.EditedKid;
+                Party.OriginalName = Party.EditedName;
+                Party.OriginalKid = Party.EditedKid;
+                return true;
+
+            });
+        }
+
+
+        /// <summary>
+        /// Initialises the Cost Hierarchy Search
+        /// </summary>
+        /// <returns>Returns true if successful, false otherwise</returns>
+        public async Task<bool> SelectPersonAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+
+            return await RunCommandAsync(() => UpdateHierarchyCompleted, async () =>
+            {
+
+                //ViewModelApplication.ControlPopupParty = ViewModelApplication.CurrentPopupViewModel;
+                if (Person.EditedName != "Selected Person")
+                    Person.OriginalName = Person.EditedName;
+                    Person.OriginalKid = Person.EditedKid;
+                    mRequest.Person = Person.EditedKid;
+
+
+                ViewModelApplication.ControlPopupParty = ViewModelApplication.CurrentPopupViewModel;
+                if (ViewModelApplication.ControlParameter1 != null)
+                {
+                    if (ViewModelApplication.CurrentPopupContent != PopupContent.Classify)
+                    {
+                        ViewModelApplication.ControlParameter1 = null;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    }
+                    ViewModelApplication.PopupVisible = true;
+                }
+
+
+                return true;
+            });
+        }
+
+
+
+        public async Task<bool> SelectAccountAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SelectAccountCompleted, async () =>
+            {
+                if (Account.EditedName != "Selected Account")
+                    //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                    Account.OriginalName = Account.EditedName;
+                     mRequest.Account = Account.EditedKid;
+                    Account.OriginalKid = Account.EditedKid;
+
+                if (ViewModelApplication.ControlParameter1 != null)
+                {
+                    if (ViewModelApplication.CurrentPopupContent != PopupContent.Classify)
+                    {
+                        ViewModelApplication.ControlParameter1 = null;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    }
+                    ViewModelApplication.PopupVisible = true;
+                }
+                //((ManageClassificationViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
+                //{
+                //    MSelectedCostHierarchy = new CostHierarchyViewModel()
+                //};
+                //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                return true;
+            });
+        }
+
+
+
+        public async Task<bool> SelectProjectAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SelectAccountCompleted, async () =>
+            {
+                if (Project.EditedName != "Selected Project")
+                    //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                    Project.OriginalName = Project.EditedName;
+                    Project.OriginalKid = Project.EditedKid;
+                    mRequest.Project = Project.EditedKid;
+                if (ViewModelApplication.ControlParameter1 != null)
+                {
+                    if (ViewModelApplication.CurrentPopupContent != PopupContent.Classify)
+                    {
+                        ViewModelApplication.ControlParameter1 = null;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    }
+                    ViewModelApplication.PopupVisible = true;
+                }
+                //((ManageClassificationViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
+                //{
+                //    MSelectedCostHierarchy = new CostHierarchyViewModel()
+                //};
+                //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                return true;
+            });
+        }
+
+
+
+        public async Task<bool> SetAssetHierarchySelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the Party value on the server...
+
+                ViewModelApplication.CurrentControlViewModel = Asset;
+                HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                {
+                    Level = 0,
+                    HierarchyTypeID = Asset.HierarchyTypeID,
+                    ClientID = ViewModelApplication.FClientID,
+                };
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Asset.OriginalKid;
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
+                //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
+                return true;
+            });
+
+        }
+
+
+
+        public async Task<bool> SelectAssetAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SelectAccountCompleted, async () =>
+            {
+                if (Asset.EditedName != "Selected Asset")
+                    //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                    Asset.OriginalName = Asset.EditedName;
+                    Asset.OriginalKid = Asset.EditedKid;
+                    mRequest.Asset = Asset.EditedKid;
+                if (ViewModelApplication.ControlParameter1 != null)
+                {
+                    if (ViewModelApplication.CurrentPopupContent != PopupContent.Classify)
+                    {
+                        ViewModelApplication.ControlParameter1 = null;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    }
+                    ViewModelApplication.PopupVisible = true;
+                }
+                //((ManageClassificationViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
+                //{
+                //    MSelectedCostHierarchy = new CostHierarchyViewModel()
+                //};
+                //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                return true;
+            });
+        }
+
 
         /// <summary>
         /// Searches the current message list and filters the view
@@ -874,6 +1254,36 @@ namespace Fasetto.Word
                 return true;
             });
         }
+
+
+        public async Task<bool> ProcessSelectionActionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SelectAccountCompleted, async () =>
+            {
+
+                //if (ViewModelApplication.ControlParameter1 != null)
+                //{
+                //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
+                //if (ViewModelApplication.CurrentPopupContent != PopupContent.Classify)
+                //{
+                //    ViewModelApplication.ControlParameter1 = null;
+                //    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                //}
+                ViewModelApplication.PopupVisible =false;
+                //}
+                //((ManageClassificationViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
+                //{
+                //    MSelectedCostHierarchy = new CostHierarchyViewModel()
+                //};
+                //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                return true;
+            }
+            );
+        }
+
+
 
         /// <summary>
         /// Closes the search dialog
