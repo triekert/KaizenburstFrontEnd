@@ -14,6 +14,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using System.Xml.Linq;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
@@ -48,6 +49,10 @@ namespace Fasetto.Word
         /// </summary>
         public object PriorPopupViewModel { get; set; }
 
+        private readonly DispatcherTimer _clickTimer;
+        private const int DoubleClickTime = 300; // milliseconds
+        private bool _doubleClickDetected;
+        private object mtmp;
 
         #endregion
 
@@ -143,6 +148,33 @@ namespace Fasetto.Word
             GestureHandlerCommand = new DelegateCommand<ContextualEventArgs>(GestureHandler);
             //GestureHandlerCommand= new RelayParameterizedCommand<ContextualEventArgs>(ExecuteItemModeSelectionChanged);
             mSearchCommand = new SearchCategoryTreeCommand(this);
+
+            // Timer to delay single-click action until we know it's not a double-click
+            _clickTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(DoubleClickTime)
+            };
+            _clickTimer.Tick += ClickTimer_Tick;
+
+            //// Attach mouse event
+            //this.MouseLeftButtonUp += OnMouseLeftButtonUp; 
+
+        }
+
+
+
+        private void ClickTimer_Tick(object sender, EventArgs e)
+        {
+            _clickTimer.Stop();
+
+            if (!_doubleClickDetected)
+            {
+                // Perform single-click action
+            ((MouseButtonEventArgs)mtmp).Handled = true;
+                if (mSelectedTreeItem.Page != "Folder") 
+                RunSelectedMenu();
+                return;
+            }
         }
 
         private void UpdateTreeViewElements()
@@ -730,7 +762,8 @@ namespace Fasetto.Word
 
         /// <summary>
         /// Discontinue the selected element with all its descendants
-
+        ///...
+        //To Do:When a node is approved for deletion, any objects referencing that node must refererence the first ascendant still existing.
         /// </summary>
         /// <param name="mCategoryKId"></param>
         /// <param name="mParentKId"></param>
@@ -1042,85 +1075,43 @@ namespace Fasetto.Word
         {
             
             var tmp = ((ContextualEventArgs)parameter).OriginalEventArgs;
+            mtmp = tmp;
             var eventTmp = tmp.GetType().Name;
+            var tmp1 = ((ContextualEventArgs)parameter).Context.GetType().Name;
+            if (tmp1 != "String")
+            {
+
+                mSelectedTreeItem = (HierarchyViewModel)(((ContextualEventArgs)parameter).Context);
+                if (eventTmp == "MouseButtonEventArgs")
+                //only look for Mouse Button events.
+                {
+                    if (((MouseButtonEventArgs)tmp).ClickCount == 1)
+                    {
+                        _doubleClickDetected = false;
+                        _clickTimer.Stop();
+                        _clickTimer.Start();
+                        return;
+                    }
+                    if (((MouseButtonEventArgs)tmp).ClickCount > 1)
+                    {
+                        _doubleClickDetected = true;
+                        _clickTimer.Stop();
+                        // deal with double click
+                        ((MouseButtonEventArgs)tmp).Handled = true;
+                        EditHierarchyElement(mSelectedTreeItem);
+                        return;
+                    }
+                }
+            }
             if (eventTmp == "MouseEventArgs" && ((MouseEventArgs)tmp).RoutedEvent.Name== "PreviewMouseMove" && ((MouseEventArgs)tmp).Source.GetType().Name == "TreeView")
             {
                 var TmpTmp = ((MouseEventArgs)tmp).OriginalSource as UIElement;
-                //try
-                //{
-                //    var item = GetNearestContainer(((MouseEventArgs)tmp).OriginalSource as UIElement);
-                //    //mDraggedItemTest = (HierarchyViewModel)item.Header;
-                //    if (((MouseEventArgs)tmp).LeftButton == MouseButtonState.Pressed)
-                //    {
-                //        var isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
-                //        var currentPosition = ((MouseEventArgs)tmp).GetPosition(item);
-
-                //        //Check for dragging of treeview item
-                //        if ((Math.Abs(currentPosition.X - mLastMouseDown.X) > 10.0) ||
-                //            (Math.Abs(currentPosition.Y - mLastMouseDown.Y) > 10.0))
-                //        {
-
-                //            var mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
-                //            mLastMouseDown = currentPosition;
-                //            //mSourceCategoryName = mDraggedItem.ShortName;
-                //            //draggedItem = (TreeViewItem)tvParameters.SelectedItem;
-                //            //mSource = (TreeViewItem)tvParameters.SelectedItem;
-                //            if (mDraggedItem != null)
-                //            {
-                //                //mTarget = null;//ensure target is reset
-                //                if (!isCtrl)
-                //                {
-
-                //                    var finalDropEffect = DragDrop.DoDragDrop(tvParameters, tvParameters.SelectedValue,
-                //                      DragDropEffects.Move);
-                //                    //Checking target is not null and item is dragging(moving)
-                //                    if ((finalDropEffect == DragDropEffects.Move) && (mTarget != null))
-                //                    {
-                //                        // A Move drop was accepted
-                //                        //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
-                //                        //{
-                //                        MoveHierarchyElement();// MoveItem();
-                //                        mTargetT = null;
-                //                        mSource = null;
-                //                        //}
-
-                //                    }
-                //                }
-                //                else
-                //                {
-                //                    var finalDropEffect = DragDrop.DoDragDrop(tvParameters, tvParameters.SelectedValue,
-                //                      DragDropEffects.Copy);
-                //                    if ((finalDropEffect == DragDropEffects.Copy) && (mTarget != null))
-                //                    {
-                //                        // A Copy drop was accepted
-                //                        //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
-                //                        //{
-                //                        CopyHierarchyElement();// CopyItem();
-                //                        mTargetT = null;
-                //                        mSource = null;
-                //                        //}
-
-                //                    }
-                //                }
-
-
-
-                //            }
-                //        }
-                //    }
-
-                //}
-                //catch (Exception)
-                //{
-                //}
-
-
 
                 ((MouseEventArgs)tmp).Handled = true;
             }
             else
             {
-                var tmp1 = ((ContextualEventArgs)parameter).Context.GetType().Name;
+
 
 
                 if (ViewModelApplication.SideMenuVisible && ViewModelApplication.CurrentPopupViewModel == null)
@@ -1144,7 +1135,7 @@ namespace Fasetto.Word
                         if (eventTmp == "MouseButtonEventArgs" && ((MouseEventArgs)tmp).Source.GetType().Name == "TreeView")
                             //Prevent action for mouse event if mouse is not over a TreeView Item
                         {
-                            if ((((MouseButtonEventArgs)tmp).RightButton == MouseButtonState.Pressed) || (((MouseButtonEventArgs)tmp).LeftButton == MouseButtonState.Pressed))
+                            if ((((MouseButtonEventArgs)tmp).ClickCount  == 1) )
                             {
                                 if (!(mSelectedTreeItem == null || ((string)mSelectedTreeItem.Page).Length == 0 || mSelectedTreeItem.Page == "Folder"))
                                 {
@@ -1194,7 +1185,7 @@ namespace Fasetto.Word
                         //ViewModelApplication.SideMenuVisible = true;
                         if (eventTmp == "MouseButtonEventArgs")
                         {
-                            if ((((MouseButtonEventArgs)tmp).RightButton == MouseButtonState.Pressed) || (((MouseButtonEventArgs)tmp).LeftButton == MouseButtonState.Pressed))
+                            if (((MouseButtonEventArgs)tmp).ClickCount > 1)
                             {
                                 ((MouseButtonEventArgs)tmp).Handled = true;
                                 EditHierarchyElement(mSelectedTreeItem);
