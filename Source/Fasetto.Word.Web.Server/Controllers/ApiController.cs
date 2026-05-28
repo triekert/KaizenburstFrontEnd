@@ -2688,16 +2688,17 @@ namespace Fasetto.Word.Web.Server
                         ErrorMessage = "User not found"
                     };
 
-                #endregion //Get User
+            #endregion //Get User
 
-                #region sql query
-                var SqlString = "SELECT  c.[ShortName],coalesce(c.[Description],'') Description,coalesce(convert(nvarchar(50),c.[KCategoryID]),'') KCategoryID, coalesce(convert(nvarchar(50),c.[ParentCategoryID]),'') ParentCategoryID," +
-                    "coalesce(convert(nvarchar(50),c.[fIconID]),'') Icon,coalesce(c.DateEffective,convert(datetime,'1753/1/1'))DateEffective,coalesce(c.DateDiscontinued,convert(datetime,'9999/12/31'))DateDiscontinued,coalesce(convert(nvarchar(50),c.[fChangeID]),'') fChangeID,c.[isUnderReview],c.[isNewElement]," +
-                    "coalesce(c.[Page],'') Page, coalesce(c.[Root],'') Root,c.[isMenuItem],coalesce(convert(nvarchar(50),t.[KCategoryID]),'') FHierarchyTypeID,coalesce(t.ShortName,'') HierarchyType, coalesce(convert(nvarchar(50),c.[FClientID]),'') FClientID FROM [Admin].[HierarchyGeneric] c LEFT OUTER JOIN  [Admin].[HierarchyGeneric] p on p.kCategoryID = c.ParentCategoryID AND p.fHierarchyID = c.fHierarchyID  " +
-                    "LEFT OUTER JOIN[Admin].[HierarchyGeneric] t on t.kCategoryID = c.fHierarchyTypeID WHERE c.fHierarchyID = " +
-                    "'" + model + "'";
-                    ;// " + model;
-                try
+            #region sql query
+            var SqlString = "SELECT  c.[ShortName],coalesce(c.[Description],'') Description,coalesce(convert(nvarchar(50),c.[KCategoryID]),'') KCategoryID, coalesce(convert(nvarchar(50),c.[ParentCategoryID]),'') ParentCategoryID," +
+                "coalesce(convert(nvarchar(50),c.[fIconID]),'') Icon,coalesce(c.DateEffective,convert(datetime,'1753/1/1'))DateEffective,coalesce(c.DateDiscontinued,convert(datetime,'9999/12/31'))DateDiscontinued,coalesce(convert(nvarchar(50),c.[fChangeID]),'') fChangeID,c.[isUnderReview],c.[isNewElement]," +
+                "coalesce(c.[Page],'') Page, coalesce(c.[Root],'') Root,c.[isMenuItem],coalesce(convert(nvarchar(50),t.[KCategoryID]),'') FHierarchyTypeID,coalesce(t.ShortName,'') HierarchyType, coalesce(convert(nvarchar(50),c.[FClientID]),'') FClientID FROM [Admin].[HierarchyGeneric] c LEFT OUTER JOIN  [Admin].[HierarchyGeneric] p on p.kCategoryID = c.ParentCategoryID AND p.fHierarchyID = c.fHierarchyID  " +
+                "LEFT OUTER JOIN[Admin].[HierarchyGeneric] t on t.kCategoryID = c.fHierarchyTypeID WHERE c.fHierarchyID = " +
+                "'" + model + "'";
+            ;// " + model;
+
+            try
             {
                     // Try and run the task
                     var dataset = await GetDataSetAsync(SqlString);
@@ -2788,25 +2789,49 @@ namespace Fasetto.Word.Web.Server
 
             #endregion //Get User
 
+
+            var para = new SqlParameter[7];
+            para[0] = new SqlParameter("@fHierarchyID", SqlDbType.UniqueIdentifier);
+            para[1] = new SqlParameter("@fClientID", SqlDbType.UniqueIdentifier);
+            para[2] = new SqlParameter("@fHierarchyTypeID", SqlDbType.UniqueIdentifier);
+            para[3] = new SqlParameter("@fRootID", SqlDbType.UniqueIdentifier);
+            para[4] = new SqlParameter("@Level", SqlDbType.Int);
+            para[5] = new SqlParameter("@DateTarget", SqlDbType.DateTime);
+            para[6] = new SqlParameter("@isUnderReview", SqlDbType.Bit);
+
+
+            para[0].Value = !string.IsNullOrEmpty(model.FHierarchyID) ? new Guid(model.FHierarchyID) : (object)DBNull.Value;
+            para[1].Value = !string.IsNullOrEmpty(model.ClientID) ? new Guid(model.ClientID) : (object)DBNull.Value;
+            para[2].Value = !string.IsNullOrEmpty(model.HierarchyTypeID) ? new Guid(model.HierarchyTypeID) : (object)DBNull.Value;
+            para[3].Value = !string.IsNullOrEmpty(model.RootID) ? new Guid(model.RootID) : (object)DBNull.Value;
+            para[4].Value = model.Level;
+            para[5].Value = model.DateTarget;
+            para[6].Value = model.IsUnderReview;
+
             #region sql query
 
             if (model.DateTarget == Convert.ToDateTime("0001/01/01 00:00:00"))
                 model.DateTarget = Convert.ToDateTime("1753/01/01 00:00:00");
 
-            var SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '";
-                if (model.RootID != null)
-                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fClientID = NULL,  @Level = 100, @fHierarchyTypeID = NULL, @fRootID = '" + model.RootID + "',@DateTarget= '" + model.DateTarget + "',@UserID= '" + user.Id + "'"; }
 
-                    //{ SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '" + model.FHierarchyID + "',  @fClientID = '" + model.ClientID + "',  @Level = 100, @fHierarchyTypeID = NULL, @fRootID = '" + model.RootID + "'"; }
-                else
-                    if (model.FHierarchyID == null)
-                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fRootID = NULL,  @Level ='" + model.Level + "',  @fClientID = '" + model.ClientID + "', @fHierarchyTypeID = '" + model.HierarchyTypeID + "',@DateTarget= '" + model.DateTarget + "',@UserID= '" + user.Id + "'"; }
-            else
-                    { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '" + model.FHierarchyID + "',  @fClientID ='" + model.ClientID + "', @fRootID = NULL,  @Level = 100, @fHierarchyTypeID = NULL,@DateTarget= '" + model.DateTarget + "',@UserID= '" + user.Id + "'"; }
+
+            var SqlString = "EXEC  [Admin].[GenericHierarchyLookup0]   @fHierarchyID,@fClientID,@fHierarchyTypeID,@fRootID,@Level, @DateTarget, @isUnderReview";
+
+            //{ SqlString = "EXEC[Admin].[GenericHierarchyLookup]  	 @monthbeg,@monthend,@fClientID,@fCategoryID,@kBudgetID,@fPartyID,@fProjectID,@fPersonID,@fAssetID,@fAccountID,@isNotCategory,@isNotSupplier,@isNotAccount"; }
+
+            //if (model.RootID != null)
+            //        { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fClientID = NULL,  @Level = 100, @fHierarchyTypeID = NULL, @fRootID = '" + model.RootID + "',@DateTarget= '" + model.DateTarget + "',@UserID= '" + user.Id + "'"; }
+
+            //        //{ SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '" + model.FHierarchyID + "',  @fClientID = '" + model.ClientID + "',  @Level = 100, @fHierarchyTypeID = NULL, @fRootID = '" + model.RootID + "'"; }
+            //    else
+            //        if (model.FHierarchyID == null)
+            //        { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = NULL,  @fRootID = NULL,  @Level ='" + model.Level + "',  @fClientID = '" + model.ClientID + "', @fHierarchyTypeID = '" + model.HierarchyTypeID + "',@DateTarget= '" + model.DateTarget + "',@UserID= '" + user.Id + "'"; }
+            //else
+            //        { SqlString = "EXEC  [Admin].[GenericHierarchyLookup]   @fHierarchyID = '" + model.FHierarchyID + "',  @fClientID ='" + model.ClientID + "', @fRootID = NULL,  @Level = 100, @fHierarchyTypeID = NULL,@DateTarget= '" + model.DateTarget + "',@UserID= '" + user.Id + "'"; }
             try
                 {
                     // Try and run the task
-                    var dataset = await GetDataSetAsync(SqlString);
+                    var dataset = await GetDataSetAsync(SqlString,para);
                     var dt = dataset.Tables[0];
                     var hierarchyResultListApiModel = new HierarchyResultListApiModel();
                     var results = hierarchyResultListApiModel;

@@ -128,7 +128,7 @@
                         Command="{Binding SaveCommand}"
                         Background="{StaticResource WordGreenBrush}"
                         Padding="8 5"
-                        Margin="0 0 5 0"
+                        Margin="0 0 4 0"
                         VerticalAlignment="Center"
                         FontSize="{StaticResource FontSizeSmall}"
                         />
@@ -142,10 +142,26 @@
                         Command="{Binding CancelCommand}"
                         Background="{StaticResource WordOrangeBrush}"
                         Padding="8 5"
+                        Margin="0 0 4 0"
+                        VerticalAlignment="Center"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        />
+
+                <!-- NULL Button -->
+                <Button Content="{StaticResource FontAwesomeNullIcon}"
+                        FontFamily="{StaticResource FontAwesome}"
+                        local:AnimateFadeInProperty.Value="{Binding Editing}"
+                        IsCancel="True"
+                        Cursor="Hand"
+                        Command="{Binding NullifyCommand}"
+                        Background="{StaticResource WordRedBrush}"
+                        Padding="8 5"
                         Margin="0"
                         VerticalAlignment="Center"
                         FontSize="{StaticResource FontSizeSmall}"
                         />
+
+
 
             </StackPanel>
             

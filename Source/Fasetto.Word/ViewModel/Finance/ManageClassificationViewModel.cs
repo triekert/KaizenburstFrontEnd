@@ -84,6 +84,13 @@ namespace Fasetto.Word
         /// </summary>
         public HierarchyItemSelectionViewModel Account { get; set; }
 
+
+        /// <summary>
+        /// Alternative Relative Account linked to the transaction (where applicable)
+        /// </summary>
+        public HierarchyItemSelectionViewModel RelatedAccount { get; set; }
+
+
         /// <summary>
         /// An internal party (Such as family member) to be linked for the allocation
         /// </summary>
@@ -554,6 +561,26 @@ namespace Fasetto.Word
             };
 
 
+            RelatedAccount = new HierarchyItemSelectionViewModel
+            {
+                Label = "Related Account",
+                //EditedName = mLoadingText,
+                EditedName = "Selected Account",
+                OriginalKid = selected.KAccountID,
+                OriginalName = selected.KAccountName,
+                EditedKid = null,
+                ClientID = Selected.KClientID,
+                HierarchyTypeID = "A806FD4A-8F02-4CA0-BFCE-51A8587D9CC8",
+                PrepareAction = SetAccountHierarchySelectionAsync,
+                //HierarchyTypeID = ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).f,
+                //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
+                CommitAction = SelectRelatedAccountAsync,
+                ProcessSelectionAction = ProcessSelectionActionAsync,
+            };
+
+
+
             Project = new HierarchyItemSelectionViewModel
             {
                 Label = "Project",
@@ -797,6 +824,8 @@ namespace Fasetto.Word
             //var mHierarchyBillingTreeViewModel = ViewModelApplication.CurrentPopupViewModel;
             //
 
+
+
             ViewModelApplication.CurrentPopupViewModel = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             var mKFinTranID = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransactionDetail[0].KFinTranID;
 
@@ -888,10 +917,12 @@ namespace Fasetto.Word
 
                     Level = 100,
                     RootID =ViewModelApplication.FCostHierarchyID,
+                    IsUnderReview= false,
+                    DateTarget = Selected.Posted_Date,
                 };
 
                 //var TypeName = (ViewModelApplication.ControlPopupCostCategory.GetType().Name) ?? "";
-                if (ViewModelApplication.ControlPopupCostCategory == null||ViewModelApplication.ControlPopupCostCategory.GetType().Name != "HierarchyTreeViewModel1")
+                if (ViewModelApplication.ControlPopupCostCategory == null||ViewModelApplication.ControlPopupCostCategory.GetType().Name== "HierarchyTreeViewModel1")
                 { ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
                     ViewModelApplication.ControlPopupCostCategory = ViewModelApplication.CurrentPopupViewModel;
                 }
@@ -919,11 +950,12 @@ namespace Fasetto.Word
                     Level = 0,
                     ClientID = ViewModelApplication.FClientID,
                     HierarchyTypeID = Party.HierarchyTypeID,
+                    DateTarget = Selected.Posted_Date,
                 };
-                if (ViewModelApplication.ControlPopupParty == null)
+                //if (ViewModelApplication.ControlPopupParty == null)
                 { ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam); }
-                else
-                { ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlPopupParty; }
+                //else
+                //{ ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlPopupParty; }
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Party.OriginalKid;
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
@@ -948,11 +980,9 @@ namespace Fasetto.Word
                     Level = 0,
                     ClientID = ViewModelApplication.FClientID,
                     HierarchyTypeID = Party.HierarchyTypeID,
+                    DateTarget = Selected.Posted_Date,
                 };
-                if (ViewModelApplication.ControlPopupParty == null)
                 { ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam); }
-                else
-                { ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlPopupParty; }
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Party.OriginalKid;
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
@@ -961,11 +991,10 @@ namespace Fasetto.Word
             });
 
         }
-        public async Task<bool> SetAccountHierarchySelectionAsync()
-        {
+        public async Task<bool> SetAccountHierarchySelectionAsync() =>
             // Lock this command to ignore any other requests while processing
 
-            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            await RunCommandAsync(() => SetHierarchyCompleted, async () =>
             {
                 // Update the Party value on the server...
 
@@ -974,7 +1003,8 @@ namespace Fasetto.Word
                 {
                     Level = 0,
                     HierarchyTypeID = Account.HierarchyTypeID,
-                    ClientID= ViewModelApplication.FClientID,
+                    ClientID = ViewModelApplication.FClientID,
+                    DateTarget = Selected.Posted_Date,
                 };
                 ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Account.OriginalKid;
@@ -982,8 +1012,6 @@ namespace Fasetto.Word
                 //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
                 return true;
             });
-
-        }
 
 
         public async Task<bool> SetAssetHierarchySelectionAsync()
@@ -1000,6 +1028,7 @@ namespace Fasetto.Word
                     Level = 0,
                     HierarchyTypeID = Asset.HierarchyTypeID,
                     ClientID = ViewModelApplication.FClientID,
+                    DateTarget = Selected.Posted_Date,
                 };
                 ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Asset.OriginalKid;
@@ -1026,6 +1055,7 @@ namespace Fasetto.Word
                     Level = 0,
                     HierarchyTypeID = Project.HierarchyTypeID,
                     ClientID = ViewModelApplication.FClientID,
+                    DateTarget = Selected.Posted_Date,
                 };
                 ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Project.OriginalKid;
@@ -1085,9 +1115,19 @@ namespace Fasetto.Word
             {
 
                 //ViewModelApplication.ControlPopupParty = ViewModelApplication.CurrentPopupViewModel;
-                if (Party.EditedName != "Selected Party")
+                if (Party.EditedName != "Selected Party" && Party.EditedKid != null)
+                {
                     Party.OriginalName = Party.EditedName;
-                   ViewModelApplication.ControlPopupParty = ViewModelApplication.CurrentPopupViewModel;
+                    Party.OriginalKid = Party.EditedKid;
+                }
+
+                else
+                {
+                    Party.EditedName = Party.OriginalName;
+                    Party.EditedKid = Party.OriginalKid;
+                }
+
+                ViewModelApplication.ControlPopupParty = ViewModelApplication.CurrentPopupViewModel;
                 if (ViewModelApplication.ControlParameter1 != null)
                 {
 
@@ -1164,6 +1204,36 @@ namespace Fasetto.Word
             return true;
         });
         }
+
+
+        public async Task<bool> SelectRelatedAccountAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SelectAccountCompleted, async () =>
+            {
+                if (Account.EditedName != "Selected Account")
+                    //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                    Account.OriginalName = Account.EditedName;
+                if (ViewModelApplication.ControlParameter1 != null)
+                {
+                    if (ViewModelApplication.CurrentPopupContent != PopupContent.Classify)
+                    {
+                        ViewModelApplication.ControlParameter1 = null;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    }
+                    ViewModelApplication.PopupVisible = true;
+                }
+                //((ManageClassificationViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
+                //{
+                //    MSelectedCostHierarchy = new CostHierarchyViewModel()
+                //};
+                //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                return true;
+            });
+        }
+
+
 
 
         public async Task<bool> SelectAsset1Async()

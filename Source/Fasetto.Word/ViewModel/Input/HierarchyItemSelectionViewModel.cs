@@ -118,6 +118,12 @@ namespace Fasetto.Word
         /// </summary>
         public ICommand SaveCommand { get; set; }
 
+        /// <summary>
+        /// Nullifies the value and saves it
+        /// as well as goes back to non-edit mode
+        /// </summary>
+        public ICommand NullifyCommand { get; set; }
+
 
         /// <summary>
         /// The user can select a hierarchy item based on the 
@@ -138,6 +144,8 @@ namespace Fasetto.Word
             EditCommand = new RelayCommand(Edit);
             CancelCommand = new RelayCommand(Cancel);
             SaveCommand = new RelayCommand(Save);
+           NullifyCommand = new RelayCommand(Nullify);
+
             //HierarchyitemSelectCommand = new RelayCommand(HierarchyitemSelect);
             //ViewModelApplication.CurrentControlViewModel = this;
             //HISVM MviewModel = new HISVM(this);    
@@ -263,6 +271,19 @@ namespace Fasetto.Word
             EditedName = "";
             //OriginalKid = "";
             //OriginalName = "";
+            Editing = false;
+        }
+
+        /// <summary>
+        /// Cancels out of edit mode and nullifes the current content of the field
+        /// </summary>
+        public void Nullify()
+        {
+            Editing = false;
+            EditedKid = "";
+            EditedName = "";
+            OriginalName = "";
+            OriginalKid = "";
             Editing = false;
         }
 

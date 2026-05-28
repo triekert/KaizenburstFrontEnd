@@ -120,6 +120,21 @@ namespace Fasetto.Word.Core
         /// </summary>
         public string KAccountName { get; set; }
 
+
+        /// <summary>
+        /// String representation of GUID for linked Party (legal person including supplier, membership, family etc)
+        /// </summary>
+
+
+        public string KRelatedAccountID { get; set; }
+
+
+        /// <summary>
+        /// Name of linked party
+        /// </summary>
+        public string KRelatedAccountName { get; set; }
+
+
         /// <summary>
         /// String representation of GUID for linked Plant (Including any portion of plant down to lowest BOM level)
         /// </summary>

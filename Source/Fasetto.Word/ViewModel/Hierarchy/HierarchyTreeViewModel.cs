@@ -126,7 +126,8 @@ namespace Fasetto.Word
             mHierarchy = new ParameterHierarchyItemSelectApiModel
             {
                 FHierarchyID = hierarchyTable,
-                ClientID = ViewModelApplication.FClientID
+                ClientID = ViewModelApplication.FClientID,
+                DateTarget = DateTime.Now
             };
             #endregion
             //retrieve hierarchy from persistent storage on server

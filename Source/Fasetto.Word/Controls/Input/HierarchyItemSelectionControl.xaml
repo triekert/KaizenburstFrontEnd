@@ -139,53 +139,55 @@
             </Grid>
 
             <StackPanel Grid.Column="2"
-                        Orientation="Horizontal"
-                        >
+             Orientation="Horizontal"
+             >
 
                 <!-- Save Button -->
                 <Button Content="{StaticResource FontAwesomeTickIcon}"
-                        FontFamily="{StaticResource FontAwesome}"
-                        local:AnimateFadeInProperty.Value="{Binding Editing}"
-                        IsDefault="True"
-                        Cursor="Hand"
-                        Command="{Binding SaveCommand}"
-                        Background="{StaticResource WordGreenBrush}"
-                        Padding="8 5"
-                        Margin="0 0 5 0"
-                        VerticalAlignment="Center"
-                        FontSize="{StaticResource FontSizeSmall}"
-                        />
+             FontFamily="{StaticResource FontAwesome}"
+             local:AnimateFadeInProperty.Value="{Binding Editing}"
+             IsDefault="True"
+             Cursor="Hand"
+             Command="{Binding SaveCommand}"
+             Background="{StaticResource WordGreenBrush}"
+             Padding="8 5"
+             Margin="0 0 4 0"
+             VerticalAlignment="Center"
+             FontSize="{StaticResource FontSizeSmall}"
+             />
 
                 <!-- Cancel Button -->
                 <Button Content="{StaticResource FontAwesomeCloseIcon}"
-                        FontFamily="{StaticResource FontAwesome}"
-                        local:AnimateFadeInProperty.Value="{Binding Editing}"
-                        IsCancel="True"
-                        Cursor="Hand"
-                        Command="{Binding CancelCommand}"
-                        Background="{StaticResource WordOrangeBrush}"
-                        Padding="8 5"
-                        Margin="0"
-                        VerticalAlignment="Center"
-                        FontSize="{StaticResource FontSizeSmall}"
-                        />
-                
-                <!-- Cancel Button -->
-                <!--<Button Content="{StaticResource  FontAwesomeProjectIcon}"
-                        FontFamily="{StaticResource FontAwesome}"
-                        local:AnimateFadeInProperty.Value="{Binding Editing}"
-                        IsCancel="True"
-                        Cursor="Hand"
-                        Command="{Binding HierarchyitemSelectCommand}"
-                        Background="{StaticResource WordVeryLightBlueBrush}"
-                        Padding="8 5"
-                        Margin="0"
-                        VerticalAlignment="Center"
-                        FontSize="{StaticResource FontSizeSmall}"
-                        />-->                
+             FontFamily="{StaticResource FontAwesome}"
+             local:AnimateFadeInProperty.Value="{Binding Editing}"
+             IsCancel="True"
+             Cursor="Hand"
+             Command="{Binding CancelCommand}"
+             Background="{StaticResource WordOrangeBrush}"
+             Padding="8 5"
+             Margin="0 0 4 0"
+             VerticalAlignment="Center"
+             FontSize="{StaticResource FontSizeSmall}"
+             />
+
+                <!-- NULL Button -->
+                <Button Content="{StaticResource FontAwesomeNullIcon}"
+             FontFamily="{StaticResource FontAwesome}"
+             local:AnimateFadeInProperty.Value="{Binding Editing}"
+             IsCancel="True"
+             Cursor="Hand"
+             Command="{Binding NullifyCommand}"
+             Background="{StaticResource WordRedBrush}"
+             Padding="8 5"
+             Margin="0"
+             VerticalAlignment="Center"
+             FontSize="{StaticResource FontSizeSmall}"
+             />
+
+
 
             </StackPanel>
-            
+
         </Grid>
             
     </Border>

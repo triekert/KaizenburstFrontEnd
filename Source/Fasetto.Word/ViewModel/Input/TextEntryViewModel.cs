@@ -73,6 +73,13 @@ namespace Fasetto.Word
         /// </summary>
         public ICommand SaveCommand { get; set; }
 
+
+        /// <summary>
+        /// Nullifies the value and saves it
+        /// as well as goes back to non-edit mode
+        /// </summary>
+        public ICommand NullifyCommand { get; set; }
+
         #endregion
 
         #region Constructor 
@@ -86,6 +93,7 @@ namespace Fasetto.Word
             EditCommand = new RelayCommand(Edit);
             CancelCommand = new RelayCommand(Cancel);
             SaveCommand = new RelayCommand(Save);
+            NullifyCommand = new RelayCommand(Nullify);
         }
 
         #endregion
@@ -128,6 +136,17 @@ namespace Fasetto.Word
         {
             Editing = false;
         }
+
+        /// <summary>
+        /// Cancels out of edit mode and nullifes the current content of the field
+        /// </summary>
+        public void Nullify()
+        {
+            Editing = false;
+            EditedText = "";
+            OriginalText = "";
+          }
+
 
         /// <summary>
         /// Commits the content and exits out of edit mode

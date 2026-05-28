@@ -383,7 +383,7 @@ namespace Fasetto.Word
                 ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ProcessSelection();
             }
             //ViewModelApplication.CurrentPopupContent = null;
-            ViewModelApplication.PopupVisible = false;
+            //ViewModelApplication.PopupVisible = false;
             //var result = default(bool);
             //RunCommandAsync(() => ExitingSaving, async () =>
             //{

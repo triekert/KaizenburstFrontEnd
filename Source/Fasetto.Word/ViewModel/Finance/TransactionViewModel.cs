@@ -131,9 +131,21 @@ namespace Fasetto.Word
 
 
         /// <summary>
+        /// String representation of GUID for linked Account
+        /// </summary>
+
+        public string KRelatedAccountID { get; set; }
+
+
+        /// <summary>
         /// Name of linked account
         /// </summary>
         public string KAccountName { get; set; }
+
+        /// <summary>
+        /// Name of linked account
+        /// </summary>
+        public string KRelatedAccountName { get; set; }
 
 
         /// <summary>
