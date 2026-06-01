@@ -566,8 +566,8 @@ namespace Fasetto.Word
                 Label = "Related Account",
                 //EditedName = mLoadingText,
                 EditedName = "Selected Account",
-                OriginalKid = selected.KAccountID,
-                OriginalName = selected.KAccountName,
+                OriginalKid = selected.KRelatedAccountID,
+                OriginalName = selected.KRelatedAccountName,
                 EditedKid = null,
                 ClientID = Selected.KClientID,
                 HierarchyTypeID = "A806FD4A-8F02-4CA0-BFCE-51A8587D9CC8",
@@ -1375,6 +1375,8 @@ namespace Fasetto.Word
                 Selected1.Notes = Selected.Notes;
                 Selected1.KAccountID = Selected.KAccountID;
                 Selected1.KAccountName = Selected.KAccountName;
+                Selected1.KRelatedAccountID = Selected.KRelatedAccountID;
+                Selected1.KRelatedAccountName = Selected.KRelatedAccountName;
                 Selected1.Units = Selected.Units;
                 Selected1.KClientID = Selected.KClientID;
                 Selected1.KAssetID = Selected.KAssetID;
