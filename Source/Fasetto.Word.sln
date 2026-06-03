@@ -8,6 +8,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fasetto.Word.Core", "Fasett
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fasetto.Word.Relational", "Fasetto.Word.Relational\Fasetto.Word.Relational.csproj", "{95BCE913-1777-4823-ACD3-B9A853117F1E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dna.Framework.AspNet", "..\..\repos\dna-framework\Source\Dna.Framework.AspNet\Dna.Framework.AspNet.csproj", "{734B5A19-0D0B-4DBE-0D3A-B30B3DD468A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dna.Framework", "..\..\repos\dna-framework\Source\Dna.Framework\Dna.Framework.csproj", "{E29508C3-5693-9DD7-38DA-67DE2202BC0E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +30,14 @@ Global
 		{95BCE913-1777-4823-ACD3-B9A853117F1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95BCE913-1777-4823-ACD3-B9A853117F1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95BCE913-1777-4823-ACD3-B9A853117F1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{734B5A19-0D0B-4DBE-0D3A-B30B3DD468A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{734B5A19-0D0B-4DBE-0D3A-B30B3DD468A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{734B5A19-0D0B-4DBE-0D3A-B30B3DD468A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{734B5A19-0D0B-4DBE-0D3A-B30B3DD468A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E29508C3-5693-9DD7-38DA-67DE2202BC0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E29508C3-5693-9DD7-38DA-67DE2202BC0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E29508C3-5693-9DD7-38DA-67DE2202BC0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E29508C3-5693-9DD7-38DA-67DE2202BC0E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
