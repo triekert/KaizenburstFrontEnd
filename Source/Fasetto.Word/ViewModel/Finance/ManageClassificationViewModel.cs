@@ -928,9 +928,10 @@ namespace Fasetto.Word
                 }
                 else
                 { ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlPopupCostCategory; }
+
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Category.OriginalKid;
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
-                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
+                //((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
                 return true;
             });
 
@@ -958,7 +959,7 @@ namespace Fasetto.Word
                 //{ ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlPopupParty; }
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Party.OriginalKid;
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
-                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
+                //((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
                 //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
                 return true;
             });
@@ -985,7 +986,7 @@ namespace Fasetto.Word
                 { ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam); }
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Party.OriginalKid;
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
-                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
+                //((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
                 //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
                 return true;
             });
@@ -1008,7 +1009,7 @@ namespace Fasetto.Word
                 };
                 ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Account.OriginalKid;
-
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
                 //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
                 return true;
             });
@@ -1059,7 +1060,7 @@ namespace Fasetto.Word
                 };
                 ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
                 ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Project.OriginalKid;
-
+                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
                 //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
                 return true;
             });
@@ -1392,7 +1393,7 @@ namespace Fasetto.Word
                 var IntAmnt = Selected.ActualAmount;
                 if (!(Allocation.EditedText == null || Allocation.EditedText == ""))
                 { decimal.TryParse(Allocation.EditedText, NumberStyles.Currency, CultureInfo.CurrentCulture, out IntAmnt); }
-                if (Math.Sign(IntAmnt) != Math.Sign(OrgActual) &&( Math.Sign(IntAmnt)!= 0))
+                if (Math.Sign(IntAmnt) != Math.Sign(OrgActual) &&( Math.Sign(OrgActual)!= 0))
                 {
                     System.Windows.MessageBox.Show($"The sign of the Allocation amount cannot differ from the sign of the previous allocation");
                     return true;

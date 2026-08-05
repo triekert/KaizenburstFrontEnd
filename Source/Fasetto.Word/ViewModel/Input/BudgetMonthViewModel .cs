@@ -7,7 +7,7 @@ namespace Fasetto.Word
     /// <summary>
     /// The Hierarchy element as a view model
     /// </summary>
-    public class BudgetMonthViewModel : BaseViewModel
+    public class BudgetMonthDataModel 
 
     {
         //#region Data
@@ -27,7 +27,7 @@ namespace Fasetto.Word
 
 
         /// <summary>
-        /// Integer representing the start month for the budget
+        /// Integer representing the relevant budget Month
         /// </summary>
         public int BudgetMonth { get; set; }
 
@@ -41,16 +41,7 @@ namespace Fasetto.Word
         /// </summary>
         public string Title { get; set; } = "Budget Month";
 
-        /// <summary>
-        /// The action to run when initiating the control.
-        /// Returns true if the preparation was successful, or false otherwise.
-        /// </summary>
-        public Func<Task<bool>> PrepareAction { get; set; }
 
-        /// <summary>
-        /// Indicates if the current text is in edit mode
-        /// </summary>
-        public bool Editing { get; set; }
 
 
 
@@ -85,7 +76,7 @@ namespace Fasetto.Word
         #endregion
         #region Constructors
 
-        public BudgetMonthViewModel ()
+        public BudgetMonthDataModel ()
 
         {
 

@@ -1,10 +1,19 @@
-﻿using Fasetto.Word.Core;
+﻿using CsvHelper;
+using Fasetto.Word.Core;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Data;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+
+//using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using static Fasetto.Word.DI;
@@ -14,14 +23,19 @@ namespace Fasetto.Word
     /// <summary>
     /// Interaction logic for HierarchyManagementControl.xaml
     /// </summary>
-    public partial class ListControl : UserControl
+    public partial class ListControl: UserControl
     {
 
         #region Public Properties
 
         //public string ControlTitle { get; set; } = "Title of Control";
+        private int MaxKeyCount = 3;
+        private List<Key> PressedKeys = new List<Key>();
+        private List<Key> AllowedKeys = new List<Key>();
+        private string comboKeys;
 
         #endregion//Public Properties
+
 
         #region Public Commands
         /// <summary>
@@ -31,629 +45,544 @@ namespace Fasetto.Word
         #endregion//Public Commands
 
 
-        private readonly HierarchyTreeViewModel mHierarchyTree;
-        private string mSourceCategory;
-        private string mSourceCategoryName;
-        private string mDestinationCategoryID, mDestinationID,mSourceID,mParentID;
-        private string mDestinationCategoryName;
-        private bool mIsSourceObtained = false, mIsEqual = false;
-        private Point mLastMouseDown;
-        private TreeViewItem mTargetT, mSource;
-        private HierarchyViewModel mDraggedItemTest,mDraggedItem,mTarget;
-        //private readonly object mFamilyTree;
-        private readonly HierarchyViewModel mTargetTest;
-        //public string mControlTitle = "testing";
+        public bool TransactionBuildIsRunning { get; set; }
+        private TransactionDataModel mTransactionItem;
+        private TransactionListDataModel mTransaction = new TransactionListDataModel();
+        public TransactionResultListApiModel mTransactionApi = new TransactionResultListApiModel();
+        public BudgetPeriodListViewModel mBudgetPeriodListView;
+
+        public string DisplayTitle { get; set; }
+
 
         //[Obsolete]
         //public HierarchyManagementControl(HierarchyManagementTreeDataModel hierarchyManagementTreeDataModel)
-        /// <summary>
-        /// This initiation of the Menu Control tree
-        /// </summary>
         public ListControl()
         {
 
-            //Set the root of the hierarchy to return the Menu structure
-            var root = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
-            mHierarchyTree = new HierarchyTreeViewModel(root);//root);
+            //var root = "1C225789-3938-4480-86CB-071863DC5D33";
+            mBudgetPeriodListView = (BudgetPeriodListViewModel)ViewModelApplication.CurrentPopupViewModel;
+            DataContext = mBudgetPeriodListView;
+            DisplayTitle = "Budget Periods"; 
+            //((TransactionPageViewModel)ViewModelApplication.CurrentPageViewModel).DisplayTitle = ((TransactionPageViewModel)ViewModelApplication.CurrentPageViewModel).DisplayTitle + mBulkMeter;
 
-            DataContext = mHierarchyTree;
             InitializeComponent();
-            ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
-            //CloseCommand = new RelayCommand(Close);
 
         }
 
-        /// <summary>
-        /// the Overloading of MenuControl() with a parameter that selects the Menu Hierarchy for naviagion by passing the parameter
-        /// </summary>
-        /// <param name="root"></param>
-        public ListControl(string root)
-        {
-            mHierarchyTree = new HierarchyTreeViewModel(root);//root);
+        //private void ItemsPropertyIsChanged(object sender, EventArgs e)
+        //{
+        //    if (((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_action.Count != ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MPersist.Count)
+        //    {
+        //        return;
+        //    }
+        //    SelectRowByIndex(Transaction, ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec);
+        //}
 
-            DataContext = mHierarchyTree;
-            InitializeComponent();
-            ViewModelApplication.CurrentSideMenuViewModel = mHierarchyTree;
+
+
+        private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var row = sender as DataGridRow;
+            var TransactionRec = row.DataContext as BudgetPeriodDataModel;
+            NavigateOnAsync();
+            //MessageBox.Show($"The timeslot selected is {TransactionRec.TimeSlotStart}", $"The timeslot selected is {TransactionRec.TimeSlotStart}");
         }
 
-        private void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
+        //private void TreeView_KeyBoard(object sender, KeyboardEventArgs e)
+        //{
+        //    //check to determine whether user would like to add an item to the hierarchy
+
+        //    if (Keyboard.IsKeyDown(Key.Escape))
+        //    { }
+
+
+        //}
+
+
+
+        private void DataGridRow_KeyDown(object sender, KeyEventArgs e)
         {
+            var VisibleRows = 0;
+
+
+            foreach (var Item in Transaction.Items)
+            {
+                var Row = (DataGridRow)Transaction.ItemContainerGenerator.ContainerFromItem(Item);
+
+                if (Row != null)
+                {
+                    if (Row.TransformToVisual(Transaction).Transform(new Point(0, 0)).Y + Row.ActualHeight >= Transaction.ActualHeight)
+                    {
+                        break;
+                    }
+
+                    VisibleRows++;
+                }
+            }
+            //var mPgSize = ((DataGridCellsPresenter)e.Source).Items.Count;
+
             if (e.Key == Key.Enter)
-             mHierarchyTree.SearchCommand.Execute(null) ;
-                   }
-
-        private static List<HierarchyTreeDataModel> FillRecursive(List<HierarchyDataModel> flatObjects, string parentId)
-        {
-            return flatObjects.Where(x => x.ParentCategoryID.Equals(parentId)).Select(item => new HierarchyTreeDataModel
             {
-                ShortName = item.ShortName,
-                Description = item.Description,
-
-                KCategoryID = item.KCategoryID,
-                Children = FillRecursive(flatObjects,
-                                         item.KCategoryID)
-            }).ToList();
-        }
-        /// <summary>
-        /// The TreeView_MouseDown event does not cater for the left mouse button on Tree View Items
-        /// A soulution is to use the PreViewMouseDown event and to allow it to bubble down to the selected treeview item
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TreeView_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            //var tst = e.OriginalSource;
-            //if (e.ChangedButton == MouseButton.Left)
-
-            //{
-            //    if (((TreeViewItem)sender).IsSelected)
-            //    {
-            //        if (!((TreeViewItem)sender).IsExpanded)
-            //        {
-            //            ((TreeViewItem)sender).IsExpanded = true;
-            //            e.Handled = true;
-            //        }
-            //        else 
-            //        { 
-            //        
-            //        EditHierarchyElement();
-            //        
-            //    }
-            //}
-
-            //    mDraggedItem = null;
-            //mSource =(TreeViewItem)sender;
-            if (e.ChangedButton == MouseButton.Left)
+                NavigateOnAsync();
+            }
+            else if (e.Key == Key.F2)
             {
-                
-                if (((TreeViewItem)sender).IsSelected  && (((TreeViewItem)sender).IsExpanded ||(((HierarchyViewModel)((TreeViewItem)sender).DataContext).Children.Count() == 0)))
-                {
-
-                    //e.Handled = true;
-                    //EditHierarchyElement();
-                }
-                //
+                Generate();
+            }
+            else if (e.Key == Key.F3)
+            {
+                LookupMain();
+            }
+            else if (Keyboard.IsKeyDown(Key.PageDown) && (Keyboard.IsKeyDown(Key.RightCtrl) || Keyboard.IsKeyDown(Key.LeftCtrl)))
+            {
+                SelectRowByIndex(Transaction, Transaction.Items.Count - 1);
+            }
+            else if (Keyboard.IsKeyDown(Key.PageUp) && (Keyboard.IsKeyDown(Key.RightCtrl) || Keyboard.IsKeyDown(Key.LeftCtrl)))
+            {
+                SelectRowByIndex(Transaction, 0);
+            }
+            else if (Keyboard.IsKeyDown(Key.Up))
+            {
+                SelectRowByIndex(Transaction, (Transaction.SelectedIndex - 1 < 0) ? 0 : (Transaction.SelectedIndex - 1));
+            }
+            else if (Keyboard.IsKeyDown(Key.Down))
+            {
+                SelectRowByIndex(Transaction, (Transaction.SelectedIndex + 1 > Transaction.Items.Count - 1) ? Transaction.Items.Count - 1 : Transaction.SelectedIndex + 1);
+            }
+            else if (Keyboard.IsKeyDown(Key.PageUp))
+            {
+                SelectRowByIndex(Transaction, (Transaction.SelectedIndex - VisibleRows < 0) ? 0 : Transaction.SelectedIndex - VisibleRows);
+            }
+            else if (Keyboard.IsKeyDown(Key.PageDown))
+            {
+                SelectRowByIndex(Transaction, (Transaction.SelectedIndex + VisibleRows > Transaction.Items.Count - 1) ? Transaction.Items.Count - 1 : Transaction.SelectedIndex + VisibleRows);
+            }
+            else if (Keyboard.IsKeyDown(Key.Insert))
+            {
+                Insert();
+            }
+            else if (Keyboard.IsKeyDown(Key.F2))
+            {
+                Generate();
             }
 
-            //mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
-            //mSourceCategoryName = mDraggedItem.ShortName;
-
-            //e.Handled = true; This cannot be set if the correct object is to be retrieved
-        }
-
-
-
-        /// <summary>
-        /// This method responds to the MouseDown event and evaluates for the right click event
-        /// -If the event is not handled at the treeview item level, it will pass through again at the treeview root level...
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TreeView_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Right)
-            {
-                if (((TreeViewItem)sender).IsSelected)
-                {
-                    RunSelectedMenu();
-                }
-            }
-            else
-                if (e.ChangedButton == MouseButton.Middle)
-            {
-                if (((TreeViewItem)sender).IsSelected)
-                {
-                    RunSelectedMenu();
-                }
-            }
             e.Handled = true;
         }
-        private void TreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        { if (e.ChangedButton == MouseButton.Right)
-            {
-             RunSelectedMenu();
-                e.Handled = true;
-            }
-            else
-                if (e.ChangedButton == MouseButton.Left)
-                    {
-                RunSelectedMenu();
-            }
-            e.Handled = true;
-        }
-        /// <summary>
-        /// Monitor keyboard for use of Insert key
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TreeView_KeyBoard(object sender, KeyboardEventArgs e)
+        private void DataGridRow_MouseRightClick(object sender, MouseButtonEventArgs e)
         {
-            //check to determine whether user would like to add an item to the hierarchy
-            if (ViewModelApplication.PopupVisible == false)
-            { 
+            var tempT = new ObservableCollection<TransactionViewModel>();
+            foreach (var tT in Transaction.ItemsSource)
+                tempT.Add((TransactionViewModel)tT);
 
-                if (Keyboard.IsKeyDown(Key.Insert))
-                {
-                    RunSelectedMenu();                    
-                    e.Handled= true;
-                }
-                else
-                    if (Keyboard.IsKeyDown(Key.Enter))
-                {
-                    RunSelectedMenu();
-                    e.Handled = true;
-
-                }
-                else
-                    if (Keyboard.IsKeyDown(Key.Delete))
-                    {
-                    RunSelectedMenu();
-                    e.Handled = true;
-
-                }
-
-
-            }
+            //var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
+            //var mTimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart.AddMinutes(30);
+            //MessageBox.Show($" timeslot ends at {mTimeEnd}", $" The timeslot selected starts at {mTimeStart}");
         }
 
-        /// <summary>
+
+        private void DataGridRow_OnLoaded(object sender, RoutedEventArgs e)
+        {
+
+
+            //var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
+            //var mTimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart.AddMinutes(30);
+            //MessageBox.Show($" timeslot ends at {mTimeEnd}", $" The timeslot selected starts at {mTimeStart}");
+        }
+        private void DataGridRow_OnUnLoaded(object sender, RoutedEventArgs e)
+        {
+            //    var source = ((DataGridRow)sender).ItemsSource;
+            //    var view = (IEditableCollectionView)CollectionViewSource.GetDefaultView(source);
+            //    view.CommitEdit();
+
+            //var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
+            //var mTimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart.AddMinutes(30);
+            //MessageBox.Show($" timeslot ends at {mTimeEnd}", $" The timeslot selected starts at {mTimeStart}");
+        }
+
+        private void DataGrid_OnUnLoaded(object sender, RoutedEventArgs e)
+        {
+            var source = ((DataGrid)sender).ItemsSource;
+            var view = (IEditableCollectionView)CollectionViewSource.GetDefaultView(source);
+            view.CommitEdit();
+
+
+            //var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
+            //var mTimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart.AddMinutes(30);
+            //MessageBox.Show($" timeslot ends at {mTimeEnd}", $" The timeslot selected starts at {mTimeStart}");
+        }
+
+        private void DataGrid_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var source = ((DataGrid)sender).ItemsSource;
+            var view = (IEditableCollectionView)CollectionViewSource.GetDefaultView(source);
+            view.CommitEdit();
+            SelectRowByIndex(Transaction, ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec);
+
+
+            //var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
+            //var mTimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart.AddMinutes(30);
+            //MessageBox.Show($" timeslot ends at {mTimeEnd}", $" The timeslot selected starts at {mTimeStart}");
+        }
+
+        /// when called, this method will determine whether more detail is available for further selection and will either
+        /// pass control to the Manage Classification window directly or first display transaction detail allocations made
         /// 
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        //private void TreeView_MouseMove(object sender, MouseEventArgs e)
-        //{
-        //    try
-        //    {
-        //        var item = GetNearestContainer(e.OriginalSource as UIElement);
-        //        mDraggedItemTest = (HierarchyViewModel)item.Header;
-        //        if (e.LeftButton == MouseButtonState.Pressed)
-        //        {
-        //            var isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
-        //            var currentPosition = e.GetPosition(tvParameters);
-
-        //            //Check for dragging of treeview item
-        //            if ((Math.Abs(currentPosition.X - mLastMouseDown.X) > 10.0) ||
-        //                (Math.Abs(currentPosition.Y - mLastMouseDown.Y) > 10.0))
-        //            {
-
-        //                mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
-        //                mSourceCategoryName = mDraggedItem.ShortName;
-        //                //draggedItem = (TreeViewItem)tvParameters.SelectedItem;
-        //                //mSource = (TreeViewItem)tvParameters.SelectedItem;
-        //                if (mDraggedItem != null)
-        //                {
-        //                    mTarget = null;//ensure target is reset
-        //                    if (!isCtrl)
-        //                    {
-
-        //                        var finalDropEffect = DragDrop.DoDragDrop(tvParameters, tvParameters.SelectedValue,
-        //                          DragDropEffects.Move);
-        //                        //Checking target is not null and item is dragging(moving)
-        //                        if ((finalDropEffect == DragDropEffects.Move) && (mTarget != null))
-        //                        {
-        //                            // A Move drop was accepted
-        //                            //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
-        //                            //{
-        //                            MoveHierarchyElement();// MoveItem();
-        //                                mTargetT = null;
-        //                                mSource= null;
-        //                            //}
-
-        //                        }
-        //                    }
-        //                    else
-        //                    {
-        //                        var finalDropEffect = DragDrop.DoDragDrop(tvParameters, tvParameters.SelectedValue,
-        //                          DragDropEffects.Copy);
-        //                        if ((finalDropEffect == DragDropEffects.Copy) && (mTarget != null))
-        //                        {
-        //                            // A Copy drop was accepted
-        //                            //if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
-        //                            //{
-        //                            CopyHierarchyElement();// CopyItem();
-        //                            mTargetT = null;
-        //                            mSource = null;
-        //                            //}
-
-        //                        }
-        //                    }
+        /// 
 
 
 
-        //                }
-        //            }
-        //        }
-
-        //    }
-        //    catch (Exception)
-        //    {
-        //    }
-        //}
-
-       
-        /// <summary>
-        /// Handle event when tree view item is dragged over potential
-        /// target objects
+        /// when called, this method will determine whether more detail is available for further selection and will either
+        /// pass control to the Manage Classification window directly or first display transaction detail allocations made
+        /// 
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        //private void TreeView_DragOver(object sender, DragEventArgs e)
-        //{
-        //    try
-        //    {
-        //        var currentPosition = e.GetPosition(tvParameters);
+        /// 
 
-        //        if ((Math.Abs(currentPosition.X - mLastMouseDown.X) > 10.0) ||
-        //           (Math.Abs(currentPosition.Y - mLastMouseDown.Y) > 10.0))
-        //        {
-        //            // Verify that this is a valid drop and then store the drop target
-        //            var item = GetNearestContainer(e.OriginalSource as UIElement);
-   
-        //            if (item == null)
-        //            { e.Effects = DragDropEffects.None; }
-        //            else
-        //            {
-        //                mTargetT = item;
-        //                mTarget = (HierarchyViewModel)item.GetType().GetProperties().Single(c => c.Name == "DataContext").GetValue(item);
-        //                if (e.Effects == DragDropEffects.Move)
-        //                { e.Effects = CheckDropTarget(mTarget, mDraggedItem) ? DragDropEffects.Move : DragDropEffects.None;}
-        //                else
-        //                { e.Effects = CheckDropTarget(mTarget, mDraggedItem) ? DragDropEffects.Copy : DragDropEffects.None;}
-        //            }
-        //        }
-        //        e.Handled = true;
-
-        //    }
-        //    catch (Exception)
-        //    {
-        //    }
-        //}
-        //private void TreeView_Drop(object sender, DragEventArgs e)
-        //{
-        //    //try
-        //    //{
-
-        //        Mouse.SetCursor(Cursors.Wait);
-        //            e.Handled = true;
-        //            return;
-
-        //}
-        //private void TreeView_MouseEnter(object sender, MouseEventArgs e)
-        //{
-        //    //try
-        //    //{
-   
-        //    ((HierarchyViewModel)((TreeViewItem)sender).DataContext).IsSelected = true;
-
-        //    e.Handled = true;
-        //    return;
-        //}
-        //private void TreeView_MouseLeave(object sender, MouseEventArgs e)
-        //{
-        //    //try
-        //    //{
-        //    ((HierarchyViewModel)((TreeViewItem)sender).DataContext).IsSelected = false;
-
-
-        //    e.Handled = true;
-        //    return;
-
-        //}
-
-        /// <summary>
-        /// Check whether it is possible to allow drop into the current
-        /// Desitination view model
-        /// </summary>
-        /// <param name="mTargetN"></param>
-        /// <param name="mDraggedN"></param>
-        /// <returns></returns>
-
-        //private bool CheckDropTarget(HierarchyViewModel mTargetN, HierarchyViewModel mDraggedN)
-        //{
-        //    //Check whether the target item is meeting your condition
-
-
-        //    //TO DO:
-
-        //    //Check that move will not cause infinite loop(Ancestor-descendant - Ancestor)
-        //    //Check that the item being moved is not an Ancestor of the item being moved to
-        //    //the KCategoryID attribute of the item being moved may not be an ancestor of the
-        //    //item being moved too.
-        //    //If this constraint is met, the boolean is set to TRUE
-
-        //    mDestinationID = mTargetN.KCategoryID;
-        //    mSourceID = mDraggedItem.KCategoryID;
-        //    mParentID = mDraggedItem.ParentCategoryID;
-        //        //mSourceCategoryName = (string)res.GetType().GetProperties().Single(c => c.Name == "ShortName").GetValue(res);
-        //        if (mSourceID == mDestinationID
-        //            || mParentID == mDestinationID)
-        //            { return false; }
-        //        //var mDestinationID = (string)res.GetType().GetProperties().Single(c => c.Name == "KId").GetValue(res);
-
-        //        MatchingKCategoryEnumerator = null;
- 
-        //        return PerformKIdSearch();
-
-
-
-
-        //}
-
-
-
-
-        //public void AddChild(TreeViewItem _sourceItem, TreeViewItem _targetItem)
-        //{
-        //    // add item in target TreeViewItem 
-        //    var item1 = new TreeViewItem
-        //    {
-        //        Header = _sourceItem.DataContext
-
-        //    };
-        //    _targetItem.Items.Add(item1);
-        //    foreach (TreeViewItem item in _sourceItem.Items)
-        //    {
-        //        AddChild(item, item1);
-        //    }
-
-        //}
-
-        //private static TObject FindVisualParent<TObject>(UIElement child) where TObject : UIElement
-        //{
-        //    if (child == null)
-        //    {
-        //        return null;
-        //    }
-
-        //    var parent = VisualTreeHelper.GetParent(child) as UIElement;
-
-        //    while (parent != null)
-        //    {
-        //        if (parent is TObject found)
-        //        {
-        //            return found;
-        //        }
-        //        else
-        //        {
-        //            parent = VisualTreeHelper.GetParent(parent) as UIElement;
-        //        }
-        //    }
-
-        //    return null;
-        //}
-        private TreeViewItem GetNearestContainer(UIElement element)
+        public static T FindVisualChild<T>(DependencyObject obj) where T : DependencyObject
         {
-            // Walk up the element tree to the nearest tree view item.
-            var container = element as TreeViewItem;
-            while ((container == null) && (element != null))
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
             {
-                element = VisualTreeHelper.GetParent(element) as UIElement;
-                container = element as TreeViewItem;
+                var child = VisualTreeHelper.GetChild(obj, i);
+                if (child != null && child is T t)
+                    return t;
+                else
+                {
+                    var childOfChild = FindVisualChild<T>(child);
+                    if (childOfChild != null)
+                        return childOfChild;
+                }
             }
-            return container;
-        }
-        /// <summary>
-        /// This method will programmatically move the scrollbar to ensure that 
-        /// a selected item is always in view in the scroll area
-        /// It requires the use of the scrollViewer control prior to defining the 
-        /// TreeView structure in XAML
-        /// </summary>
-        /// <param name="sender">the selected treeview item</param>
-        /// <param name="e"></param>
-        private void TreeView_Selected(object sender, RoutedEventArgs e)
-        {
-            var element = e.OriginalSource as FrameworkElement;
-            // Figure out a relative position of the selected node to the scrollviewer
-            var relativePosition = element.TranslatePoint(new Point(0, 0), scrollViewer);
-            scrollViewer.ScrollToVerticalOffset(relativePosition.Y);
-            element.BringIntoView();
+            return null;
         }
 
-        public void Close()
+        public static void SelectRowByIndex(DataGrid dataGrid, int rowIndex)
         {
-            // Close settings menu
-            ViewModelApplication.PopupVisible = false;
+            if (!dataGrid.SelectionUnit.Equals(DataGridSelectionUnit.FullRow))
+                throw new ArgumentException("The SelectionUnit of the DataGrid must be set to FullRow.");
 
-        }
-        #region Search Logic //KCategoryID
-        public IEnumerator<HierarchyViewModel> MatchingKCategoryEnumerator { get; private set; }
+            if (rowIndex < 0 || rowIndex > (dataGrid.Items.Count - 1))
+                throw new ArgumentException(string.Format("{0} is an invalid row index.", rowIndex));
 
-        #endregion // SearchKCategoryID
+            dataGrid.SelectedItems.Clear();
+            /* set the SelectedItem property */
+            var item = dataGrid.Items[rowIndex]; // = Product X
+            dataGrid.SelectedItem = item;
 
 
-
-        #region Search Logic //KCategoryID
-        public bool PerformKIdSearch()
-        {
-
-            if (MatchingKCategoryEnumerator == null || !MatchingKCategoryEnumerator.MoveNext())
-                VerifyMatchingKCategoryEnumerator();
-            var KCategory = MatchingKCategoryEnumerator.Current;
-
-            if (KCategory == null)
-                return true;
-
-            return false;
-        }
-
-        private void VerifyMatchingKCategoryEnumerator()
-        {
-            //var matchK = FindKMatches(mParentID, mTarget);
-            var matchK = FindKMatches(mDestinationID, mDraggedItem);
-            MatchingKCategoryEnumerator = matchK.GetEnumerator();
-            _ = !MatchingKCategoryEnumerator.MoveNext();
-
+            if (!(dataGrid.ItemContainerGenerator.ContainerFromIndex(rowIndex) is DataGridRow row))
+            {
+                /* bring the data item (Product object) into view
+                 * in case it has been virtualized away */
+                dataGrid.ScrollIntoView(item);
+                row = dataGrid.ItemContainerGenerator.ContainerFromIndex(rowIndex) as DataGridRow;
+            }
+            if (row != null)
+            {
+                var cell = GetCell(dataGrid, row, 0);
+                cell?.Focus();
+            }
+            //TODO: Retrieve and focus a DataGridCell object
         }
 
-        public IEnumerable<HierarchyViewModel> FindKMatches(string searchText, HierarchyViewModel Category)
+        public static DataGridCell GetCell(DataGrid dataGrid, DataGridRow rowContainer, int column)
         {
-            //var mSearchText = searchText;
-            if (Category.KCategoryIdContainsText(searchText))
-                yield return Category;
-
-            foreach (var child in Category.Children)
-                foreach (var matchK in FindKMatches(searchText, child))
-                    yield return matchK;
+            if (rowContainer != null)
+            {
+                var presenter = FindVisualChild<DataGridCellsPresenter>(rowContainer);
+                if (presenter == null)
+                {
+                    /* if the row has been virtualized away, call its ApplyTemplate() method 
+                     * to build its visual tree in order for the DataGridCellsPresenter
+                     * and the DataGridCells to be created */
+                    rowContainer.ApplyTemplate();
+                    presenter = FindVisualChild<DataGridCellsPresenter>(rowContainer);
+                }
+                if (presenter != null)
+                {
+                    if (!(presenter.ItemContainerGenerator.ContainerFromIndex(column) is DataGridCell cell))
+                    {
+                        /* bring the column into view
+                         * in case it has been virtualized away */
+                        dataGrid.ScrollIntoView(rowContainer, dataGrid.Columns[column]);
+                        cell = presenter.ItemContainerGenerator.ContainerFromIndex(column) as DataGridCell;
+                    }
+                    return cell;
+                }
+            }
+            return null;
         }
 
-        #endregion // Search Logic
-        #region Element manipulation
-        /// <summary>
-        /// Use Popup View to add a Hierarchy Element
-        /// </summary>
-        private void RunSelectedMenu()
+
+        //    public static void SelectRowByIndex(DataGrid dataGrid, int rowIndex)
+        //    {
+        //        ...
+        //DataGridRow row = dataGrid.ItemContainerGenerator.ContainerFromIndex(rowIndex) as DataGridRow;
+        //        ...
+        //if (row != null)
+        //        {
+        //            DataGridCell cell = GetCell(dataGrid, row, 0);
+        //            if (cell != null)
+        //                cell.Focus();
+        //        }
+        //    }
+
+
+        private async void NavigateOnAsync()
         {
-            //Prepopulate
-            //Only allow one execution of  the function per event
-            if (!ViewModelApplication.SideMenuVisible)
-                return;
-      
-             mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
-            if (mDraggedItem == null || mDraggedItem.Children.Count > 0 || ((string)mDraggedItem.Page).Length == 0)
-                return;
-            ViewModelApplication.OpenMenu(mDraggedItem.Root,mDraggedItem.Page);
-               }
-        /// <summary>
-        /// Use Popup view to edit existing Hiearchy Element
-        /// </summary>
-        private void EditHierarchyElement()
-        {
-            //Prepopulate
-            mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
-            if (mDraggedItem == null)
-                return;
-            var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-            mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
-            mAddElementViewModel.ShortName.EditedText = mDraggedItem.ShortName;
-            mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
-            mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
-            mAddElementViewModel.ParentShortName = mDraggedItem.ParentShortName;
-            mAddElementViewModel.ParentCategoryID = mDraggedItem.ParentCategoryID;
-            mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
-            mAddElementViewModel.DateEffective = mDraggedItem.DateEffective;
-            mAddElementViewModel.DateDiscontinued = mDraggedItem.DateDiscontinued;
-            mAddElementViewModel.AddNodeButtonText = null;
-            mAddElementViewModel.EditNodeButtonText = "Update Selected Element";
-            mAddElementViewModel.DeleteNodeButtonText = null;
-            mAddElementViewModel.CopyNodeButtonText = null;
-            mAddElementViewModel.MoveNodeButtonText = null;
-            mAddElementViewModel.HeadingText = "Update Selected Element";
-            
-            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-            ViewModelApplication.PopupVisible = true;
-            //ViewModelApplication.SettingsMenuVisible = true;
+
+            var MKFinTranID = ((BudgetPeriodDataModel)Transaction.SelectedItem).KBudgetID;
+            var RawTable = Transaction.Items;
+            var Merge = Transaction.SelectedItems;
+
+            if (Merge.Count == 2)
+            {
+                //If 2 items have been selected, merge the first transaction with the second,moving all the allocations from the second to the first
+                //and deleting the second transaction thereafter
+                //var matches = Merge.
+                if (((BudgetPeriodDataModel)Merge[0]).KBudgetID != ((BudgetPeriodDataModel)Merge[1]).KBudgetID)
+                {
+                    //if transaction totals differ, or if the account is different, they cannot be merged
+                    System.Windows.MessageBox.Show($"Only transactions having the same transaction value and Account Name may be merged!");
+                    return;
+                }
+                //Confirm with user that 2 transactions are to be merged irreversibly...
+
+                if (MessageBox.Show("Merging of Transactions - Irreversible!", "Confirm",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+
+
+                    foreach (var item in Merge)
+                    {
+                        var u = new TransactionResultApiModel
+                        {
+                            Posted_Date = ((TransactionViewModel)item).Posted_Date,
+                            Month = ((TransactionViewModel)item).Month,
+                            Description = ((TransactionViewModel)item).Description,
+                            TransAmount = ((TransactionViewModel)item).TransAmount,
+                            ActualAmount = ((TransactionViewModel)item).ActualAmount,
+                            ShortName = ((TransactionViewModel)item).ShortName,
+                            KCategoryID = ((TransactionViewModel)item).KCategoryID,
+                            KFinActualID = ((TransactionViewModel)item).KFinActualID,
+                            KFinTranID = ((TransactionViewModel)item).KFinTranID,
+                            KPartyName = ((TransactionViewModel)item).KPartyName,
+                            KPartyID = ((TransactionViewModel)item).KPartyID,
+                            FCatSrchID = ((TransactionViewModel)item).FCatSrchID,
+                            KHierarchyID = ((TransactionViewModel)item).KHierarchyID,
+                            KAccountID = ((TransactionViewModel)item).KAccountID,
+                            KAccountName = ((TransactionViewModel)item).KAccountName,
+                            Notes = ((TransactionViewModel)item).Notes,
+                            Units = ((TransactionViewModel)item).Units,
+                            ChangeType = "m",
+                            KClientID = ((TransactionViewModel)item).KClientID,
+                        };
+
+                        ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mChange.Add(u);
+                    }
+                    await ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PersistTransClassAsync();
+                    ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mChange.Clear();
+
+
+                }
+                else
+                {
+                    return;
+                }
+
+            }
+            else
+                if (Merge.Count == 1)
+                {
+                    ((BudgetPeriodDataModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec = Transaction.SelectedIndex;
+
+                    ViewModelApplication.PopupVisible = false;
+
+                    ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(MKFinTranID);
+                    ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Allocation ";
+
+                    //If only one allocation linked to the Transaction, bypass the 'detail' window...
+
+                    if (((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransactionDetail.Count > 1)
+                    {                 //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+                        ViewModelApplication.PopupVisible = false;
+                        //ViewModelApplication.CurrentPopupContent = Null;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+                        ViewModelApplication.PopupVisible = true;
+                    }
+                    else
+                    {            //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+                        ViewModelApplication.PopupVisible = false;
+                        //ViewModelApplication.CurrentPopupContent = Null;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+
+                        var MSelected = new TransactionViewModel();
+
+                        var TransactionDetail = new ObservableCollection<TransactionViewModel>();
+                        //(TransactionViewModel)(TransactionDetail.SelectedItem;
+                        var matches = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).Trans_action.Where(x => x.KFinTranID == MKFinTranID).ToList();
+
+                        foreach (var item in matches)
+                        {
+
+                            var mTDVM = new TransactionViewModel
+
+                            {
+                                Posted_Date = item.Posted_Date,
+                                Month = item.Month,
+                                Description = item.Description,
+                                TransAmount = item.TransAmount,
+                                ActualAmount = item.ActualAmount,
+                                ShortName = item.ShortName,
+                                KCategoryID = item.KCategoryID,
+                                KFinActualID = item.KFinActualID,
+                                KFinTranID = item.KFinTranID,
+                                KPartyName = item.KPartyName,
+                                KPartyID = item.KPartyID,
+                                FCatSrchID = item.FCatSrchID,
+                                KHierarchyID = item.KHierarchyID,
+                                KAccountID = item.KAccountID,
+                                KAccountName = item.KAccountName,
+                                Notes = item.Notes,
+                                Units = item.Units,
+                                KClientID = item.KClientID,
+                            };
+                            TransactionDetail.Add(mTDVM);
+                        }
+
+
+                        //var RawTable = ((ObservableCollection<TransactionViewModel>)((TransactionDetailTreeViewModel)(ViewModelApplication.CurrentPopupViewModel)).TransactionDetail).Items;
+                        var tempTDList = new ObservableCollection<TransactionViewModel>();
+                        foreach (var tBR in RawTable)
+                            tempTDList.Add((TransactionViewModel)tBR);
+                        ViewModelApplication.CurrentPopupViewModel = new ManageClassificationViewModel(TransactionDetail, TransactionDetail[0]);
+
+                        //ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                        ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                        ViewModelApplication.PopupVisible = true;
+
+                    }
+                }
         }
-        private void DeleteHierarchyElement()
+
+
+
+        private void Insert()
         {
-            //Prepopulate
-            mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
-            if (mDraggedItem == null)
-                return;
-            var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-            mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
-            mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
-            mAddElementViewModel.ParentShortName = mDraggedItem.ParentShortName;
-            mAddElementViewModel.ParentCategoryID = mDraggedItem.ParentCategoryID;
-            mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
-            mAddElementViewModel.DateEffective = mDraggedItem.DateEffective;
-            mAddElementViewModel.DateDiscontinued = mDraggedItem.DateDiscontinued;
-            mAddElementViewModel.AddNodeButtonText = null;
-            mAddElementViewModel.EditNodeButtonText = null;
-            mAddElementViewModel.CopyNodeButtonText = null;
-            mAddElementViewModel.MoveNodeButtonText = null;
-            mAddElementViewModel.DeleteNodeButtonText = "Delete Selected Element";
-            mAddElementViewModel.HeadingText = "Delete Selected Element";
-            
-            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-            ViewModelApplication.PopupVisible = true;
-            //ViewModelApplication.SettingsMenuVisible = true;
+
+            var NewTransaction = new TransactionViewModel()
+            {
+                KFinTranID = "00000000-0000-0000-0000-000000000001",
+                KFinActualID = Guid.NewGuid().ToString().ToUpper(),
+                Posted_Date = ((TransactionViewModel)Transaction.SelectedItem).Posted_Date,
+                KHierarchyID = ((TransactionViewModel)Transaction.SelectedItem).KHierarchyID,
+                Month = ((TransactionViewModel)Transaction.SelectedItem).Month,
+                KClientID = ((TransactionViewModel)Transaction.SelectedItem).KClientID,
+            };
+            ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).AddItem(NewTransaction);
+            ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MPersist.Add(NewTransaction);
+
+            Transaction.SelectedItem = NewTransaction;
+
+            //((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_action.SelectedItem = (TransactionViewModel)Transaction[Transaction.Items.Count()];
+
+            var RawTable = Transaction.Items;
+
+            //((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec = Transaction.Items.Count;
+            //ViewModelApplication.PopupVisible = false;
+
+            //ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(((TransactionViewModel)NewTransaction).KFinTranID);
+            //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Allocation ";
+
+            ////Only one allocation linked to the Transaction, bypass the 'detail' window...
+
+            //    ViewModelApplication.PopupVisible = false;
+            //    //ViewModelApplication.CurrentPopupContent = Null;
+            //    ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+
+
+            //    var TransactionDetail = new ObservableCollection<TransactionViewModel>();
+            //    //(TransactionViewModel)(TransactionDetail.SelectedItem;
+
+
+            //        var mTDVM = new TransactionViewModel
+
+            //        {
+            //            Posted_Date = NewTransaction.Posted_Date,
+            //            Month = NewTransaction.Month,
+            //            KFinActualID = NewTransaction.KFinActualID,
+            //            KFinTranID = NewTransaction.KFinTranID,
+            //            KHierarchyID = NewTransaction.KHierarchyID,
+            //        };
+            //        TransactionDetail.Add(mTDVM);
+
+
+            //    //var RawTable = ((ObservableCollection<TransactionViewModel>)((TransactionDetailTreeViewModel)(ViewModelApplication.CurrentPopupViewModel)).TransactionDetail).Items;
+            //    ViewModelApplication.CurrentPopupViewModel = new ManageClassificationViewModel(TransactionDetail, TransactionDetail[0]);
+
+            //    //ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+            //    ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+            //    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+            //    ViewModelApplication.PopupVisible = true;
+            NavigateOnAsync();
         }
-        /// <summary>
-        /// Use Popup view to move existing Hiearchy Element
-        /// </summary>
-        private void MoveHierarchyElement()
+
+
+        private void Generate()
         {
-            //Prepopulate
-            mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
 
-            var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-            mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
-            mAddElementViewModel.Description.OriginalText = mDraggedItem.Description; 
-            mAddElementViewModel.ShortName.EditedText = mDraggedItem.ShortName;
-            mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
-            mAddElementViewModel.ParentShortName = mTarget.ShortName;
-            mAddElementViewModel.ParentCategoryID = mTarget.KCategoryID;
-            mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
-            mAddElementViewModel.DateEffective = mDraggedItem.DateEffective;
-            mAddElementViewModel.DateDiscontinued = new DateTime(9999, 12, 31);
-            mAddElementViewModel.AddNodeButtonText = null;
-            mAddElementViewModel.MoveNodeButtonText = "Move Selected Element";
-            mAddElementViewModel.DeleteNodeButtonText = null;
-            mAddElementViewModel.CopyNodeButtonText = null;
-            mAddElementViewModel.EditNodeButtonText = null;
-            mAddElementViewModel.HeadingText = "Move Selected Element (with descendants)";
-            
-            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-            ViewModelApplication.PopupVisible = true;
-            //ViewModelApplication.SettingsMenuVisible = true;
+            var fileName = @"C:\Temp\Transaction Records "
+            //+
+            //    ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeStart.ToString("d_MM_yyyy")
+            //+ " TO " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeEnd.ToString("d_MM_yyyy")
+            + ".csv";
+            try
+            {
+                using (var writer = new StreamWriter(fileName))
+                {
+                    using (var csvOut = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                    {
+                        csvOut.WriteRecords(((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MPersist);
+                    }
+                }
+            }
+            catch (Exception exp)
+            {
+                Console.Write(exp.Message);
+            }
         }
-        /// <summary>
-        /// Copy the selected hierarchy (with all descendants) to the element selected as the destination
-        /// "Copy Of " is used as a prefix for all elements in the element family being copied
-        /// </summary>
-        private void CopyHierarchyElement()
+
+
+
+        private void LookupMain()
         {
-            //Prepopulate
-            mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
-            var mAddElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
-            mAddElementViewModel.ShortName.OriginalText = mDraggedItem.ShortName;
-            mAddElementViewModel.Description.OriginalText = mDraggedItem.Description;
-            mAddElementViewModel.ShortName.EditedText = mDraggedItem.ShortName;
-            mAddElementViewModel.Description.EditedText = mDraggedItem.Description;
-            mAddElementViewModel.ParentShortName = mTarget.ShortName;
-            mAddElementViewModel.ParentCategoryID = mTarget.KCategoryID;
-            mAddElementViewModel.KCategoryID = mDraggedItem.KCategoryID;
-            mAddElementViewModel.DateEffective = DateTime.Today;
-            mAddElementViewModel.DateDiscontinued = new DateTime(9999,12,31);
-            mAddElementViewModel.AddNodeButtonText = null;
-            mAddElementViewModel.EditNodeButtonText = null;
-            mAddElementViewModel.MoveNodeButtonText = null;
-            mAddElementViewModel.CopyNodeButtonText = "Copy Selected Element";
-            mAddElementViewModel.DeleteNodeButtonText = null;
-            mAddElementViewModel.HeadingText = "Copy Selected Element (with descendants)";
-            
-            //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-            ViewModelApplication.PopupVisible = true;
-            //ViewModelApplication.SettingsMenuVisible = true;
+
+            var fileName = @"C:\Temp\Transaction Records "
+    //+
+    //    ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeStart.ToString("d_MM_yyyy")
+    //+ " TO " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeEnd.ToString("d_MM_yyyy")
+    + ".csv";
+            try
+            {
+                using (var writer = new StreamWriter(fileName))
+                {
+                    using (var csvOut = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                    {
+                        csvOut.WriteRecords(((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MPersist);
+                    }
+                }
+            }
+            catch (Exception exp)
+            {
+                Console.Write(exp.Message);
+            }
         }
-        #endregion
 
 
 
+        private void Datagrid_TargetUpdated(object sender, DataTransferEventArgs e)
+        {
 
-
-
-
+        }
     }
 }

@@ -367,8 +367,8 @@ namespace Fasetto.Word
                 {
                     KCategoryID = KCategoryID,
                     IsMonth = IsMonthOnly,
-                    Month = ((BudgetMonthViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth).BudgetMonth,
-                    KBudgetID = ((BudgetPeriodViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID,
+                    Month = ((BudgetMonthDataModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth).BudgetMonth,
+                    KBudgetID = ((BudgetPeriodDataModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID,
                     BudgetAmount = decBudg,
                     BudgetAmountTotal = decBudgTot,
                     BudgetAmountAdj = decBudgAdj,

@@ -1,5 +1,7 @@
 ﻿using Fasetto.Word.Core;
+using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
@@ -246,7 +248,10 @@ namespace Fasetto.Word
         }
 
 
-
+        ~TransactionDetailTreeViewModel()
+        {
+            Console.WriteLine("Destructor: Object Destroyed!");
+        }
 
     }
 

@@ -136,11 +136,11 @@ namespace Fasetto.Word
 
             mBudgetParameter = new ParameterBudgetApiModel
             {
-                BudgetID = ((BudgetPeriodViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID,
+                BudgetID = ((BudgetPeriodDataModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID,
 
-                BMonth =  ((BudgetMonthViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth).BudgetMonth,
+                BMonth =  ((BudgetMonthDataModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth).BudgetMonth,
 
-                BudgetName = ((BudgetPeriodViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).Name,
+                BudgetName = ((BudgetPeriodDataModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).Name,
             }; }
                 
             else
@@ -148,11 +148,11 @@ namespace Fasetto.Word
 
             mBudgetParameter = new ParameterBudgetApiModel
             {
-                BudgetID = ((BudgetPeriodViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID,
+                BudgetID = ((BudgetPeriodDataModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).KBudgetID,
 
-                BMonth = ((BudgetMonthViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth).BudgetMonth,
+                BMonth = ((BudgetMonthDataModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth).BudgetMonth,
 
-                BudgetName = ((BudgetPeriodViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).Name,
+                BudgetName = ((BudgetPeriodDataModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget).Name,
 
                 IsExpenditureReturn = true,
             };

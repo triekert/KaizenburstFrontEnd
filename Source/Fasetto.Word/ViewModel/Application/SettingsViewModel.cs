@@ -757,8 +757,10 @@ namespace Fasetto.Word
 
                     //Level = 1
                     //Always allow the user to reset the default client
+                   ClientID = "4766E825-1B58-410D-B06B-5A2639CA22C8",
+                    DateTarget = DateTime.Now,
                     RootID = "4766E825-1B58-410D-B06B-5A2639CA22C8",
-                    Level = 1
+                    Level = 100
                 };
                 ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
                 return true;

@@ -29,12 +29,12 @@ namespace Fasetto.Word
         /// <summary>
         /// A set of Budget Months for the selected budget period
         /// </summary>
-        public ObservableCollection<BudgetMonthViewModel> BudgetMonthList{ get; set; }
+        public ObservableCollection<BudgetMonthDataModel> BudgetMonthList{ get; set; }
 
         /// <summary>
         /// The selected Budget Month view model
         /// </summary>
-        public BudgetMonthViewModel MSelectedBudgetMonth{ get; set; }
+        public BudgetMonthDataModel MSelectedBudgetMonth{ get; set; }
 
         //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
 
@@ -72,7 +72,7 @@ namespace Fasetto.Word
 
         #region Data
 
-        public BudgetMonthViewModel mCHVM;
+        public BudgetMonthDataModel mCHVM;
 
 
         /// <summary>
@@ -108,9 +108,9 @@ namespace Fasetto.Word
         public BudgetMonthListViewModel()
         {
             #region Build HierarchyViewCollection
-            BudgetMonthList = new ObservableCollection<BudgetMonthViewModel> {
+            BudgetMonthList = new ObservableCollection<BudgetMonthDataModel> {
 
-             new BudgetMonthViewModel
+             new BudgetMonthDataModel
             {
 
                 BudgetMonth = 99999,
@@ -127,7 +127,7 @@ namespace Fasetto.Word
             { 
                     if ( ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel")
                 { 
-                    if ((BudgetPeriodViewModel)((BudgetPeriodListViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Budget).MSelectedBudgetPeriod == null)
+                    if ((BudgetPeriodDataModel)((BudgetPeriodListViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Budget1).MSelectedBudgetPeriod == null)
                     {
                         System.Windows.MessageBox.Show(
                                   "No Budget has been selected.",
@@ -177,12 +177,12 @@ namespace Fasetto.Word
         {
             //foreach (var item in ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).BudgetMonth)
 
-            BudgetMonthList = new ObservableCollection<BudgetMonthViewModel>();
+            BudgetMonthList = new ObservableCollection<BudgetMonthDataModel>();
             if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel")
             {
                 for (var i = 0; i < ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).BudgetMonth.Count; i++)
                 {
-                    var mTVM = new BudgetMonthViewModel
+                    var mTVM = new BudgetMonthDataModel
                     {
                         BudgetMonth = ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).BudgetMonth[i],
                     };
@@ -193,7 +193,7 @@ namespace Fasetto.Word
             {
                 for (var i = 0; i < ((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).BudgetMonth.Count; i++)
                 {
-                    var mTVM = new BudgetMonthViewModel
+                    var mTVM = new BudgetMonthDataModel
                     {
                         BudgetMonth = ((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).BudgetMonth[i],
                     };

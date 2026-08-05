@@ -179,7 +179,7 @@ namespace Fasetto.Word
         {
             mElement = element;
             mParent = parent;
-            mChildren = mChildren;
+            //mChildren = mChildren;
             var exception = default(Exception);
             try
             { 

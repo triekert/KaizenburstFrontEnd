@@ -124,6 +124,13 @@
         /// Manage hierarchical structures for the system
         /// </summary>
         Hierarchy = 24,
+
+
+        /// <summary>
+        /// Manage Lists for the system
+        /// </summary>
+        List = 25
+
     }
 
 

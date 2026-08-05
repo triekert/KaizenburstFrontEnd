@@ -120,7 +120,7 @@ namespace Fasetto.Word
 
             }).ContinueWith(t =>
             {
-                result = result;
+                //result = result;
             }
             );
 

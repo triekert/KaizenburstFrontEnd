@@ -1,6 +1,7 @@
 ﻿using Fasetto.Word.Core;
 using System;
 using System.Globalization;
+using static Fasetto.Word.DI;
 
 namespace Fasetto.Word
 {
@@ -29,6 +30,8 @@ namespace Fasetto.Word
         {
             // Get the side menu type
             var sideMenuType = (SideMenuContent)value;
+            // Kill CurrentSideMenuViewModel to immediately reduce memory consumption
+            ViewModelApplication.CurrentSideMenuViewModel = null;
 
             // Switch based on type
             switch (sideMenuType)

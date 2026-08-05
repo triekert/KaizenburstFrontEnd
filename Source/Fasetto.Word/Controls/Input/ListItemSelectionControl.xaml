@@ -1,12 +1,12 @@
-﻿<UserControl x:Class="Fasetto.Word.TextEntryControl"
+﻿<UserControl x:Class="Fasetto.Word.ListItemSelectionControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Fasetto.Word"
              xmlns:core="clr-namespace:Fasetto.Word.Core;assembly=Fasetto.Word.Core"
-             mc:Ignorable="d" >
-    <!--d:DataContext="{x:Static local:TextEntryDesignModel.Instance}">-->
+             mc:Ignorable="d" 
+             d:DataContext="{x:Static local:TextEntryDesignModel.Instance}">
     
     <!-- Grey underline -->
     <Border BorderBrush="{StaticResource ForegroundDarkBrush}"
@@ -18,7 +18,6 @@
             <!-- Double click to edit -->
             <Grid.InputBindings>
                 <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding EditCommand}" />
-                <KeyBinding Command="{Binding SaveCommand}" Key="Return"/>
             </Grid.InputBindings>
             
             <!-- Hover over to show edit button -->
@@ -62,7 +61,21 @@
                        />
 
             <!-- Edit Content -->
-            <TextBox Text="{Binding EditedText, UpdateSourceTrigger=PropertyChanged}"
+            <!--<TextBox Text="{Binding EditedName, UpdateSourceTrigger=PropertyChanged}"
+                     Grid.Column="1"
+                     Opacity="0"
+                     local:AnimateFadeInProperty.Value="{Binding Editing}"
+                     local:FocusAndSelectProperty.Value="{Binding Editing}"
+                     FontSize="{StaticResource FontSizeRegular}"
+                     Padding="2"
+                     Margin="10 10 15 8" FontFamily="Lato Heavy"
+                     />-->
+
+            <!-- Content -->
+
+
+
+            <TextBlock Text="{Binding EditedName,UpdateSourceTrigger=PropertyChanged}" 
                      Grid.Column="1"
                      Opacity="0"
                      local:AnimateFadeInProperty.Value="{Binding Editing}"
@@ -71,23 +84,32 @@
                      Padding="2"
                      TextWrapping="WrapWithOverflow"
                      Margin="10 10 15 8" FontFamily="Lato Heavy"
-                     />
-
-            <!-- Content -->
-            <TextBlock Text="{Binding OriginalText}" 
+                       />
+                <!-- Content -->
+                <TextBlock Text="{Binding OriginalName}" 
                        Grid.Column="1"
                        local:AnimateFadeInProperty.Value="{Binding Editing, Converter={local:BooleanInvertConverter}}"
                        Margin="15 8"
                        VerticalAlignment="Center"
-                       ToolTip="{Binding OriginalText}"
+                       ToolTip="{Binding OriginalName}"
                        />
+                <!--<TextBlock Text="{Binding OriginalName}" 
 
+
+                           Margin="15 8"
+                           VerticalAlignment="Center"
+                           ToolTip="{Binding OriginalName}"
+                 />-->
+
+
+                       <!--local:AnimateFadeInProperty.Value="{Binding Editing, Converter={local:BooleanInvertConverter}}"-->
             <!-- Edit button container -->
             <Grid Grid.Column="2" 
                   HorizontalAlignment="Right"
                   VerticalAlignment="Center"
-                  local:AnimateFadeInProperty.Value="{Binding Editing, Converter={local:BooleanInvertConverter}}">
-                
+
+                  >
+                  <!--local:AnimateFadeInProperty.Value="{Binding Editing, Converter={local:BooleanInvertConverter}}"-->                
                 <!-- Edit Button -->
                 <Button Content="{StaticResource FontAwesomeEllipsisIcon}"
                         FontFamily="{StaticResource FontAwesome}"
@@ -117,55 +139,55 @@
             </Grid>
 
             <StackPanel Grid.Column="2"
-                        Orientation="Horizontal"
-                        >
+             Orientation="Horizontal"
+             >
 
                 <!-- Save Button -->
                 <Button Content="{StaticResource FontAwesomeTickIcon}"
-                        FontFamily="{StaticResource FontAwesome}"
-                        local:AnimateFadeInProperty.Value="{Binding Editing}"
-                        IsDefault="True"
-                        Cursor="Hand"
-                        Command="{Binding SaveCommand}"
-                        Background="{StaticResource WordGreenBrush}"
-                        Padding="8 5"
-                        Margin="0 0 4 0"
-                        VerticalAlignment="Center"
-                        FontSize="{StaticResource FontSizeSmall}"
-                        />
+             FontFamily="{StaticResource FontAwesome}"
+             local:AnimateFadeInProperty.Value="{Binding Editing}"
+             IsDefault="True"
+             Cursor="Hand"
+             Command="{Binding SaveCommand}"
+             Background="{StaticResource WordGreenBrush}"
+             Padding="8 5"
+             Margin="0 0 4 0"
+             VerticalAlignment="Center"
+             FontSize="{StaticResource FontSizeSmall}"
+             />
 
                 <!-- Cancel Button -->
                 <Button Content="{StaticResource FontAwesomeCloseIcon}"
-                        FontFamily="{StaticResource FontAwesome}"
-                        local:AnimateFadeInProperty.Value="{Binding Editing}"
-                        IsCancel="True"
-                        Cursor="Hand"
-                        Command="{Binding CancelCommand}"
-                        Background="{StaticResource WordOrangeBrush}"
-                        Padding="8 5"
-                        Margin="0 0 4 0"
-                        VerticalAlignment="Center"
-                        FontSize="{StaticResource FontSizeSmall}"
-                        />
+             FontFamily="{StaticResource FontAwesome}"
+             local:AnimateFadeInProperty.Value="{Binding Editing}"
+             IsCancel="True"
+             Cursor="Hand"
+             Command="{Binding CancelCommand}"
+             Background="{StaticResource WordOrangeBrush}"
+             Padding="8 5"
+             Margin="0 0 4 0"
+             VerticalAlignment="Center"
+             FontSize="{StaticResource FontSizeSmall}"
+             />
 
                 <!-- NULL Button -->
                 <Button Content="{StaticResource FontAwesomeNullIcon}"
-                        FontFamily="{StaticResource FontAwesome}"
-                        local:AnimateFadeInProperty.Value="{Binding Editing}"
-                        IsCancel="True"
-                        Cursor="Hand"
-                        Command="{Binding NullifyCommand}"
-                        Background="{StaticResource WordRedBrush}"
-                        Padding="8 5"
-                        Margin="0"
-                        VerticalAlignment="Center"
-                        FontSize="{StaticResource FontSizeSmall}"
-                        />
+             FontFamily="{StaticResource FontAwesome}"
+             local:AnimateFadeInProperty.Value="{Binding Editing}"
+             IsCancel="True"
+             Cursor="Hand"
+             Command="{Binding NullifyCommand}"
+             Background="{StaticResource WordRedBrush}"
+             Padding="8 5"
+             Margin="0"
+             VerticalAlignment="Center"
+             FontSize="{StaticResource FontSizeSmall}"
+             />
 
 
 
             </StackPanel>
-            
+
         </Grid>
             
     </Border>

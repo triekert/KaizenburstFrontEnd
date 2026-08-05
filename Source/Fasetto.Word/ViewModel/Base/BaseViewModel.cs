@@ -35,6 +35,8 @@ namespace Fasetto.Word
             PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
 
+        public virtual void Dispose() { }
+
         #region Command Helpers
 
         /// <summary>

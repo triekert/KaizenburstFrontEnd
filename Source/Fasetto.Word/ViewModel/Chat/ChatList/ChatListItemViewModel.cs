@@ -72,14 +72,14 @@ namespace Fasetto.Word
 
         public void OpenMessage()
         {
-            if (Name == "Jesse")
-            {
-                ViewModelApplication.GoToPage(ApplicationPage.Login, new LoginViewModel
-                {
-                    Email = "jesse@helloworld.com"
-                });
-                return;
-            }
+            //if (Name == "Jesse")
+            //{
+            //    ViewModelApplication.GoToPage(ApplicationPage.Login, new LoginViewModel
+            //    {
+            //        Email = "jesse@helloworld.com"
+            //    });
+            //    return;
+            //}
 
             ViewModelApplication.GoToPage(ApplicationPage.Chat, new ChatMessageListViewModel
             {

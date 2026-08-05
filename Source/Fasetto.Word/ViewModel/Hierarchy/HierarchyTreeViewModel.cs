@@ -121,6 +121,7 @@ namespace Fasetto.Word
                 Children = new HierarchyListDataModel()
             };
             mHDML.Add(mHDM);
+            mHDM = null;
 
             mTableName = hierarchyTable;
             mHierarchy = new ParameterHierarchyItemSelectApiModel
@@ -422,6 +423,7 @@ namespace Fasetto.Word
                 };
                 ud1.Children = ExpandHierarchyData(results, ud1.KCategoryID, ud1.ShortName);
                 elements.Add(ud1);
+                ud1 = null;
             }
             //var matches = elements.OrderBy(x => x.DateEffective).ToList();
             //foreach(var category in matches)

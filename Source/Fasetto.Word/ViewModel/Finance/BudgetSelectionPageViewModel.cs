@@ -84,12 +84,17 @@ namespace Fasetto.Word
         /// <summary>
         /// The Budget List for financial management
         /// </summary>
-        public BudgetPeriodListViewModel Budget { get; set; }
+        public ListItemSelectionViewModel Budget { get; set; }
+
+        /// <summary>
+        /// The Budget List for financial management
+        /// </summary>
+        public BudgetPeriodListViewModel Budget1 { get; set; }
 
         /// <summary>
         /// The selected Budget for processing of budget management process
         /// </summary>
-        public BudgetPeriodViewModel SelectedBudget { get; set; }
+        public BudgetPeriodDataModel SelectedBudget { get; set; }
 
         /// <summary>
         /// The Budget MonthList for financial management
@@ -99,7 +104,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The month selected for processing
         /// </summary>
-        public BudgetMonthViewModel SelectedBudgetMonth { get; set; }
+        public BudgetMonthDataModel SelectedBudgetMonth { get; set; }
 
         /// <summary>
         /// Indicates if the email is current being saved
@@ -297,21 +302,34 @@ namespace Fasetto.Word
                 HierarchyTypeID = "64413ae7-822f-4866-9ebe-433083d699ac",
                 PrepareAction = SetCostHierarchySelectionAsync,
                 Level = 1,
-                PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
+                //PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
                 CommitAction = UpdateCostHierarchySelectionAsync,
             };
+            Budget = new ListItemSelectionViewModel 
+            {
 
+                Label = "Select Required Budget ",
+                EditedName =  "Budget Name",
+                //OriginalName = "",
+                //OriginalKid = (string)ViewModelApplication.FCostHierarchyID,
+                //EditedKid = (string)ViewModelApplication.FCostHierarchyID,
+                //HierarchyTypeID = "64413ae7-822f-4866-9ebe-433083d699ac",
+                PrepareAction = SetBudgetSelectionAsync,
+                Level = 1,
+                //PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
+                CommitAction = UpdateBudgetSelectionAsync,
+            };
             //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
             ViewModelApplication.CurrentControlViewModel = Client;
             //ViewModelApplication.CurrentControlViewModel = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
-            Budget = new BudgetPeriodListViewModel(CostHierarchy.OriginalKid);
+            Budget1 = new BudgetPeriodListViewModel(CostHierarchy.OriginalKid);
 
 
-            SelectedBudget = new BudgetPeriodViewModel();
+            SelectedBudget = new BudgetPeriodDataModel();
             BudgetMonthList = new BudgetMonthListViewModel();
-            SelectedBudgetMonth = new BudgetMonthViewModel();
+            SelectedBudgetMonth = new BudgetMonthDataModel();
 
-            Budget.MSelectedBudgetPeriod = SelectedBudget;
+            Budget1.MSelectedBudgetPeriod = SelectedBudget;
             BudgetMonth = new List<int> ();
 
             // Create commands
@@ -385,6 +403,51 @@ namespace Fasetto.Word
 
         }
 
+
+        public async Task<bool> SetBudgetSelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the First Name value on the server...
+
+                //((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.ClientID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedKid;
+                //((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.RootID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.RootID;
+
+                ViewModelApplication.CurrentPopupViewModel = new BudgetPeriodListViewModel(CostHierarchy.OriginalKid);
+                SelectedBudgetMonth = new BudgetMonthDataModel();
+                return true;
+            });
+
+        }
+
+
+
+        ///<summary>
+        /// Update Client selection for current session
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> UpdateBudgetSelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => UpdateHierarchyCompleted, async () =>
+            {
+                // Update the First Name value on the server...
+
+                //ViewModelApplication.FCostHierarchyID = CostHierarchy.EditedKid;
+                //ViewModelApplication.CostHierarchyShortName = CostHierarchy.EditedName;
+                //ViewModelApplication.PopupVisible = false;
+                //ViewModelApplication.CurrentPopupViewModel = null;
+                ViewModelApplication.CurrentPopupContent = 0;
+                CostHierarchy.OriginalName = CostHierarchy.EditedName;
+                CostHierarchy.OriginalKid = CostHierarchy.EditedKid;
+                PopulateAsync();
+                return true;
+            });
+
+        }
 
 
         /// <summary>
@@ -494,7 +557,7 @@ namespace Fasetto.Word
         /// </summary>
         public async Task PopulateAsync()
         {
-            ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Budget.mRequest
+            ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Budget1.mRequest
                 = new BudgetPeriodResultApiModel
                 {
                     CostHierarchy = ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.OriginalKid,
@@ -503,7 +566,7 @@ namespace Fasetto.Word
 
 
             //await Budget.CostHierarchyAsync();
-            Budget = new BudgetPeriodListViewModel(Client.EditedKid);
+            Budget1 = new BudgetPeriodListViewModel(Client.EditedKid);
             //{
             //    MSelectedBudgetPeriod = ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget
             //};

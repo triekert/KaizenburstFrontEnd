@@ -98,8 +98,8 @@
                                                     <Run Text="z" Foreground="{StaticResource WordGreenBrush}" />
                                                     <Run Text="e" Foreground="{StaticResource ForegroundVeryDarkBrush}" />
                                                     <Run Text="n" Foreground="{StaticResource WordLightBlueBrush}" />
-                                                </TextBlock>  
-                                                <TextBlock FontFamily="{StaticResource LatoBold}" FontSize="{StaticResource FontSizeLarge}" Margin="0,0,0,-5" TextAlignment="Center">
+                                                <!--</TextBlock>  
+                                                <TextBlock FontFamily="{StaticResource LatoBold}" FontSize="{StaticResource FontSizeLarge}" Margin="0,0,0,-5" TextAlignment="Center">-->
                                                     <Run Text="B" Foreground="{StaticResource WordRedBrush}" />
                                                     <Run Text="u" Foreground="{StaticResource WordGreenBrush}" />  
                                                     <Run Text="r" Foreground="{StaticResource WordBlueBrush}" />

@@ -106,6 +106,13 @@ namespace Fasetto.Word
                     var mHierarchyControl = new HierarchyControl();
                     return mHierarchyControl;
 
+
+                case PopupContent.List:
+                    var mListControl = new ListControl();
+                    return mListControl;
+
+
+
                 // Unknown
                 default:
                     return "No UI yet, sorry :)";

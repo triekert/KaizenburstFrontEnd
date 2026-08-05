@@ -3,10 +3,36 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"                 
              mc:Ignorable="d" 
-             xmlns:local="clr-namespace:Fasetto.Word"             
+            xmlns:local="clr-namespace:Fasetto.Word" xmlns:forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" xmlns:sys="clr-namespace:System;assembly=mscorlib" d:DataContext="{d:DesignInstance Type=local:BulkReconViewModel}"
+
              d:DesignHeight="300" d:DesignWidth="300">
 
+    <UserControl.Resources>
+        <sys:String x:Key="colName">dynamic string...</sys:String>
+        <Style x:Key="ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" >
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridColumnHeader">
+                        <Label Foreground="DarkRed" FontWeight="ExtraBlack" Background="BurlyWood" FontFamily="Lato Heavy" FontSize="20" Content="{TemplateBinding Content}"
+                               HorizontalAlignment="Stretch" HorizontalContentAlignment ="Left"  VerticalAlignment="Center"   />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--<sys:String x:Key="colCell">dynamic string...</sys:String>
+        <Style x:Key="ColumnCellStyle" TargetType="{x:Type DataGridCellsPresenter}" >
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridTextColumn">
+                        <Label Foreground="black" FontWeight="UltraBold" Background="AntiqueWhite" FontFamily="Arial" Content="{TemplateBinding Content}"
+                               HorizontalAlignment="Stretch" HorizontalContentAlignment ="Center"  VerticalAlignment="Center"  />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>-->
+    </UserControl.Resources>
     <DockPanel>
         <!-- SEARCH AREA -->
         <Border 
@@ -21,42 +47,7 @@
                 </LinearGradientBrush>
             </Border.Background>
 
-            <StackPanel 
-                HorizontalAlignment="Right" 
-                Margin="0,0,10,0" 
-                Orientation="Horizontal"
-                >
-                <TextBox 
-                      x:Name="searchTextBox"
-                      KeyDown="SearchTextBox_KeyDown"
-                      Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                      Width="200" FontSize="18" TextWrapping="Wrap" RenderTransformOrigin="0.1,0.616" AutomationProperties.HelpText="Begin entering name...."
-                    >
-                    <TextBox.InputBindings>
-                         <!--Clear text on Esc--> 
-                        <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc" />
-                         <!--Search on enter--> 
-                        <KeyBinding Command="{Binding SearchCommand}" Key="Return" />
-                        </TextBox.InputBindings>
-                </TextBox>
 
-                <Button Style="{StaticResource IconGrowButton}" 
-                        Content="{StaticResource FontAwesomeSearchIcon}"
-                        Command="{Binding SearchCommand}"
-                        Padding="4" Background="{DynamicResource WordOrangeBrush}" Height="40" Width="60" RenderTransformOrigin="1.221,0.593" AutomationProperties.HelpText="Search for items in the hierarchy" 
-                      >
-                    <Button.Foreground>
-                        <SolidColorBrush Color="{DynamicResource ForegroundLight}"/>
-                    </Button.Foreground>
-                    <!--<Button.ToolTip>
-                        <ToolTip Placement="Mouse"
-
-                             Opened="ToolTip_Opened"
-
-                             Closed="ToolTip_Closed">Login with the entered credentials</ToolTip>
-                    </Button.ToolTip>-->
-                </Button>
-            </StackPanel>
         </Border>
         <Border 
          DockPanel.Dock="Top" 
@@ -64,11 +55,6 @@
          BorderThickness="1,0,1,1">
 
             <Grid>
-
-                <!--<Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>-->
 
 
                 <!--Settings Title-->
@@ -117,60 +103,71 @@
             </Grid>
         </Border>
 
-        <ScrollViewer x:Name="scrollViewer"  Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            <TreeView 
-              ItemsSource="{Binding FirstGeneration}" 
-              TreeViewItem.Selected="TreeView_Selected"            
-              Name="tvParameters"
-               
-               >
-                <TreeView.Template>
-                    <ControlTemplate>
-                        <Border BorderBrush="{TemplateBinding BorderBrush}"  BorderThickness="{TemplateBinding BorderThickness}"  SnapsToDevicePixels="true">
-                            <ItemsPresenter/>
-                        </Border>
-                    </ControlTemplate>
-                </TreeView.Template>
-                <!--AllowDrop="True"  MouseDown="TreeView_MouseDown"  Drop="TreeView_Drop" MouseMove="TreeView_MouseMove">-->
+        <DataGrid x:Name="Transaction" Grid.Row="3"  ItemsSource="{Binding BudgetPeriodList}" 
+                  HeadersVisibility="All" RenderTransformOrigin="0.5,0.5"       GridLinesVisibility="None" 
+                    AutoGenerateColumns="False" AlternatingRowBackground="Beige" 
+                    SelectionMode="Single" SelectionUnit="FullRow"  VerticalAlignment="Center"  HorizontalAlignment="Center" HorizontalContentAlignment="Center"  CanUserAddRows="False"
+                  >
 
-                <TreeView.ItemContainerStyle>
-                    <!-- 
-            This Style binds a TreeViewItem to a HierarchyViewModel. 
-            -->
-                    <Style TargetType="{x:Type TreeViewItem}">
-                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                        <Setter Property="AllowDrop"  Value="True"/>
-                        <Setter Property="FontWeight" Value="Normal" />
-                        <!--<EventSetter Event="DragOver"  Handler="TreeView_DragOver"/>-->
-                        <!--<EventSetter Event="Drop" Handler="TreeView_Drop"/>-->
-                        <EventSetter Event= "MouseDown" Handler="TreeView_MouseDown"/>
-                        <!--<EventSetter Event="PreviewMouseLeftButtonDown" Handler="TreeView_PreviewMouseLeftButtonDown" />-->
-                        <EventSetter Event="KeyDown" Handler="TreeView_KeyBoard"/>
-                        <!--<EventSetter Event="MouseMove" Handler="TreeView_MouseMove"/>-->
-                        <EventSetter Event="MouseDoubleClick" Handler="TreeView_MouseDoubleClick"/>
-                        <!--<EventSetter Event="MouseEnter" Handler="TreeView_MouseEnter"/>
-                        <EventSetter Event="MouseLeave" Handler="TreeView_MouseLeave"/>-->
-                        <Style.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="FontWeight" Value="UltraBold" />
-                                <Setter Property="Foreground" Value="Darkred"/>
-                                <!--<Setter Property="Cursor" Value="Hand"/>-->
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </TreeView.ItemContainerStyle>
 
-                <TreeView.ItemTemplate>
-                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"  Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}">
-                            <TextBlock Text="{Binding ShortName}" HorizontalAlignment="Right"  TextWrapping="WrapWithOverflow" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                        </StackPanel>
-                    </HierarchicalDataTemplate>
-                </TreeView.ItemTemplate>
-            </TreeView>
-        </ScrollViewer>
+            <DataGrid.Resources>
+                <Style TargetType="DataGridRow">
+                    <EventSetter Event ="MouseDoubleClick"  Handler="DataGridRow_MouseDoubleClick"/>
+                    <EventSetter Event ="KeyDown"  Handler="DataGridRow_KeyDown"/>
+                    <EventSetter Event ="PreviewMouseRightButtonDown"  Handler="DataGridRow_MouseRightClick"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    <Setter Property="Background" Value ="Cyan"/>
+
+                    <!--Setting highlight-->
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding State}" Value="State1">
+                            <Setter Property="Background" Value="Red"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding State}" Value="State2">
+                            <Setter Property="Background" Value="Orange"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                    <!--Setting highlight-->
+
+                </Style>
+                <Style TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                </Style>
+
+            </DataGrid.Resources>
+
+            <DataGrid.Columns>
+                <!--<DataGridTextColumn Header ="Bulk Meter" FontWeight="Bold"
+                                    Binding="{Binding ShortName}"/>-->
+                <DataGridTemplateColumn Header="Budget Name" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="5" TextWrapping="Wrap"  Width="200" Text="{Binding Path= Name}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Month Start" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="5" Width="100" Text="{Binding Path= MonthStart }"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Month End" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="5" TextWrapping="Wrap"  Width="100" Text="{Binding Path= MonthEnd}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+    
+            </DataGrid.Columns>
+
+
+
+        </DataGrid>
 
     </DockPanel>
 </UserControl>
-

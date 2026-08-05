@@ -2,14 +2,13 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using static Fasetto.Word.DI;
 
 namespace Fasetto.Word
 {
     /// <summary>
     /// Interaction logic for TextEntryControl.xaml
     /// </summary>
-    public partial class BudgetMonthComboboxControl : UserControl
+    public partial class ListItemSelectionControl : UserControl
     {
         #region Dependency Properties
 
@@ -22,10 +21,10 @@ namespace Fasetto.Word
             set => SetValue(LabelWidthProperty, value);
         }
 
-        //public CostHierarchyListViewModel mBPVM;
+        public ListItemSelectionViewModel mHISVM;
         // Using a DependencyProperty as the backing store for LabelWidth.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty LabelWidthProperty =
-            DependencyProperty.Register("LabelWidth5", typeof(GridLength), typeof(TextEntryControl), new PropertyMetadata(GridLength.Auto, LabelWidthChangedCallback));
+            DependencyProperty.Register("LabelWidth1", typeof(GridLength), typeof(HierarchyItemSelectionControl), new PropertyMetadata(GridLength.Auto, LabelWidthChangedCallback));
 
         #endregion
 
@@ -34,11 +33,12 @@ namespace Fasetto.Word
         /// <summary>
         /// Default constructor
         /// </summary>
-        public BudgetMonthComboboxControl()
+        public ListItemSelectionControl()
         {
-            //var mBPLVM = new CostHierarchyListViewModel("8A8425E2-5766-4014-8C2F-01BD84DBC370");
-            //ViewModelApplication.CurrentControlViewModel = mBPLVM;
-            //DataContext = mBPLVM;
+            //mHISVM = new HierarchyItemSelectionViewModel();
+            //ViewModelApplication.CurrentControlViewModel = mHISVM;
+            //DataContext = mHISVM;
+
             InitializeComponent();
 
         }
@@ -57,36 +57,26 @@ namespace Fasetto.Word
             try
             {
                 // Set the column definition width to the new value
-                (d as BudgetMonthComboboxControl).LabelColumnDefinition.Width = (GridLength)e.NewValue;
+                (d as ListItemSelectionControl).LabelColumnDefinition.Width = (GridLength)e.NewValue;
             }
 
             // Making ex available for developer on break
 #pragma warning disable CS0168
             catch (Exception ex)
-            //#pragma warning restore CS0168
+#pragma warning restore CS0168
             {
                 // Make developer aware of potential issue
                 Debugger.Break();
 
-                (d as BudgetMonthComboboxControl).LabelColumnDefinition.Width = GridLength.Auto;
+                (d as ListItemSelectionControl).LabelColumnDefinition.Width = GridLength.Auto;
             }
         }
 
         #endregion
 
-        private void ComboBox1_Selected(object sender, RoutedEventArgs e)
+        private void EditButton_Click(object sender, RoutedEventArgs e)
         {
-            if ((BudgetMonthDataModel)((ComboBox)sender).SelectedItem != null)
-            {
-                if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel")
-                { ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth = (BudgetMonthDataModel)((ComboBox)sender).SelectedItem; }
-                else
-                {((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth = (BudgetMonthDataModel)((ComboBox)sender).SelectedItem;
 
-                }
-
-            }
         }
-
     }
 }

@@ -100,12 +100,12 @@ namespace Fasetto.Word
         /// <summary>
         /// A set of Bulk Meter Recon records for the selected period
         /// </summary>
-        public ObservableCollection<BudgetPeriodViewModel> BudgetPeriodList{ get; set; }
+        public ObservableCollection<BudgetPeriodDataModel> BudgetPeriodList{ get; set; }
 
         /// <summary>
         /// The selected Billing Period view model
         /// </summary>
-        public BudgetPeriodViewModel MSelectedBudgetPeriod{ get; set; }
+        public BudgetPeriodDataModel MSelectedBudgetPeriod{ get; set; }
 
         //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
 
@@ -143,7 +143,7 @@ namespace Fasetto.Word
 
         #region Data
 
-        public BudgetPeriodViewModel mCHVM;
+        public BudgetPeriodDataModel mCHVM;
         public BudgetPeriodResultApiModel mRequest;
 
 
@@ -166,9 +166,9 @@ namespace Fasetto.Word
         public BudgetPeriodListViewModel(string costHierarchy)
         {
             #region Build HierarchyViewCollection
-            BudgetPeriodList = new ObservableCollection<BudgetPeriodViewModel> {
+            BudgetPeriodList = new ObservableCollection<BudgetPeriodDataModel> {
 
-             new BudgetPeriodViewModel
+             new BudgetPeriodDataModel
             {
 
                 Name = "Loading Budgets for selected cost hierarchy...Please be patient",
@@ -206,40 +206,10 @@ namespace Fasetto.Word
                 //HierarchyTypeID = "64413ae7-822f-4866-9ebe-433083d699ac"
             };
             TaskManager.RunAndForget(BudgetPeriodAsync);
-
-
-            // Get the OptFinHierarchies currently configured - first populate 'root hierarchy' variable with all configured root hierarchy elements currently available
-
-
-            //UpdateTreeViewElements();
             CloseCommand = new RelayCommand(Close);
-            EditCommand = new RelayCommand(Edit);
-            //mSearchCommand = new SearchCategoryTreeCommand(this);
-        }
-
-        public void Edit()
-        {
-
-            var result = default(bool);
-
-            RunCommandAsync(() => Working, async () =>
-            {
-
-                // Try and do the work
-                result = PrepareAction == null ? true : await PrepareAction();
-
-            }).ContinueWith(t =>
-            {
-
-            });
-
-            ViewModelApplication.PopupVisible = true;
-            ViewModelApplication.CurrentPopupContent = 0;
-
-            ViewModelApplication.CurrentPopupContent = PopupContent.HierarchySelection;
-
 
         }
+
 
 
 
@@ -247,7 +217,6 @@ namespace Fasetto.Word
 
         #endregion // Constructor
 
-        #region Command Methods
         /// <summary>
         /// Return Hierarchy of interest from Object persistence infrastructure
         /// User credentials are used to determine access authorisation
@@ -296,7 +265,7 @@ namespace Fasetto.Word
                     //mPersist = new BulkReconResultListApiModel();
                     //mPersist.Clone(mOriginal, mPersist);
                     //BulkRecon.Clear();
-                    BudgetPeriodList = new ObservableCollection<BudgetPeriodViewModel>();
+                    BudgetPeriodList = new ObservableCollection<BudgetPeriodDataModel>();
                     //BulkRecon.Clear();
                     var matches = result.ServerResponse.Response.ToList();
 
@@ -304,7 +273,7 @@ namespace Fasetto.Word
                     foreach (var item in matches)
                     {
 
-                    var mCHVM = new BudgetPeriodViewModel
+                    var mCHVM = new BudgetPeriodDataModel
 
                         {
                             KBudgetID = item.KBudgetID,
@@ -340,7 +309,6 @@ namespace Fasetto.Word
         }
 
 
-        #endregion
 
 
     }

@@ -76,16 +76,16 @@ namespace Fasetto.Word
 
         private void ComboBox1_Selected(object sender, RoutedEventArgs e)
         {
-            if ((BudgetPeriodViewModel)((ComboBox)sender).SelectedItem != null)
+            if ((BudgetPeriodDataModel)((ComboBox)sender).SelectedItem != null)
             {
                 if (ViewModelApplication.CurrentPageViewModel.GetType().Name == "BudgetSelectionPageViewModel")
                 {
-                    ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget = (BudgetPeriodViewModel)((ComboBox)sender).SelectedItem;
+                    ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget = (BudgetPeriodDataModel)((ComboBox)sender).SelectedItem;
                     ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).AddMonthRange();
                     ((BudgetMonthListViewModel)((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).BudgetMonthList).BuildMonthList();
                 }
                 else
-                { ((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget = (BudgetPeriodViewModel)((ComboBox)sender).SelectedItem; 
+                { ((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudget = (BudgetPeriodDataModel)((ComboBox)sender).SelectedItem; 
                     ((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).AddMonthRange();
                     ((BudgetMonthListViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).BudgetMonthList).BuildMonthList();                
                 }

@@ -141,7 +141,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The selected Budget for processing of budget management process
         /// </summary>
-        public BudgetPeriodViewModel SelectedBudget { get; set; }
+        public BudgetPeriodDataModel SelectedBudget { get; set; }
 
         /// <summary>
         /// The Budget MonthList for financial management
@@ -151,7 +151,7 @@ namespace Fasetto.Word
         /// <summary>
         /// The month selected for processing
         /// </summary>
-        public BudgetMonthViewModel SelectedBudgetMonth { get; set; }
+        public BudgetMonthDataModel SelectedBudgetMonth { get; set; }
 
 
         /// <summary>
@@ -359,9 +359,9 @@ namespace Fasetto.Word
             {
                 Label = ""
             };
-            SelectedBudget = new BudgetPeriodViewModel();
+            SelectedBudget = new BudgetPeriodDataModel();
             BudgetMonthList = new BudgetMonthListViewModel();
-            SelectedBudgetMonth = new BudgetMonthViewModel();
+            SelectedBudgetMonth = new BudgetMonthDataModel();
             Budget.MSelectedBudgetPeriod = SelectedBudget;
             BudgetMonth = new List<int>();
 

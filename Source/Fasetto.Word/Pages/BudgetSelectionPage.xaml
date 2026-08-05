@@ -67,7 +67,7 @@
                     <!--Button to update-->
                             <local:HierarchyItemSelectionControl DataContext="{Binding Client}" FontWeight="ExtraBlack"  />
                             <local:HierarchyItemSelectionControl DataContext="{Binding CostHierarchy}" FontWeight="ExtraBlack"  />
-                    
+                            <local:ListItemSelectionControl DataContext="{Binding Budget}" FontWeight="ExtraBlack"  />               
                         <!--<StackPanel MouseLeave="SetHierarchySelection">
                         </StackPanel>-->
 
@@ -81,7 +81,7 @@
                         />-->
                         <!--<StackPanel MouseEnter="SetClient">
                         </StackPanel>-->
-                        <local:BudgetPeriodComboboxControl  DataContext="{Binding Budget}" FontWeight="ExtraBlack"  />
+                        <local:BudgetPeriodComboboxControl  DataContext="{Binding Budget1}" FontWeight="ExtraBlack"  />
                         <local:BudgetMonthComboboxControl  DataContext="{Binding BudgetMonthList}" FontWeight="ExtraBlack"  />
 
                         <!--<Button Style="{StaticResource IconGrowButton}"

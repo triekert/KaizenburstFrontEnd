@@ -562,8 +562,8 @@ namespace Fasetto.Word
         public void ReviewTransactions()
         {
             var duration = new TimeSpan(0, 6, 0, 0);
-            var DateStringYear = ((BudgetMonthViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth).BudgetMonth / 100;
-            var DateStringMonth = "0" +((BudgetMonthViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth).BudgetMonth % 100;
+            var DateStringYear = ((BudgetMonthDataModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth).BudgetMonth / 100;
+            var DateStringMonth = "0" +((BudgetMonthDataModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBudgetMonth).BudgetMonth % 100;
             DateStringMonth = DateStringMonth.Substring(DateStringMonth.Length - 2, 2);
             var dateString = "01/" + DateStringMonth + "/" + DateStringYear + " 08:00";
             var format = "g";

@@ -99,7 +99,7 @@ namespace Fasetto.Word
         /// <summary>
         /// Determines the currently visible side menu content
         /// </summary>
-        public SideMenuContent CurrentSideMenuContent { get; set; } = SideMenuContent.Chat;
+        public SideMenuContent CurrentSideMenuContent { get; set; } = SideMenuContent.Menu;
 
         /// <summary>
         /// Determines the currently visible popup content
