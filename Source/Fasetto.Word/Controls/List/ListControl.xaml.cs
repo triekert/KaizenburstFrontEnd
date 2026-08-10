@@ -393,7 +393,7 @@ namespace Fasetto.Word
             else
                 if (Merge.Count == 1)
                 {
-                    ((BudgetPeriodDataModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec = Transaction.SelectedIndex;
+                    //((BudgetPeriodDataModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec = Transaction.SelectedIndex;
 
                     ViewModelApplication.PopupVisible = false;
 

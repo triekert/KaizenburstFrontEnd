@@ -85,19 +85,6 @@ namespace Fasetto.Word
              mHierarchyTree.SearchCommand.Execute(null) ;
         }
 
-        //private static List<HierarchyTreeDataModel> FillRecursive(List<HierarchyDataModel> flatObjects, string parentId)
-        //{
-        //    return flatObjects.Where(x => x.ParentCategoryID.Equals(parentId)).Select(item => new HierarchyTreeDataModel
-        //    {
-        //        ShortName = item.ShortName,
-        //        Description = item.Description,
-
-        //        KCategoryID = item.KCategoryID,
-        //        Children = FillRecursive(flatObjects,
-        //                                 item.KCategoryID)
-        //    }).ToList();
-        //}
-
 
 
         /// <summary>
@@ -128,129 +115,8 @@ namespace Fasetto.Word
 
 
 
-        /// <summary>
-        /// The TreeView_MouseDown event does not cater for the left mouse button on Tree View Items
-        /// A solution is to use the PreViewMouseDown event and to allow it to bubble down to the selected treeview item
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        //private void TreeView_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        //{
-        //    //var tst = e.OriginalSource;
-        //    //if (e.ChangedButton == MouseButton.Left)
-
-        //    //{
-        //    //    if (((TreeViewItem)sender).IsSelected)
-        //    //    {
-        //    //        if (!((TreeViewItem)sender).IsExpanded)
-        //    //        {
-        //    //            ((TreeViewItem)sender).IsExpanded = true;
-        //    //            e.Handled = true;
-        //    //        }
-        //    //        else 
-        //    //        { 
-        //    //        
-        //    //        EditHierarchyElement();
-        //    //        
-        //    //    }
-        //    //}
-
-        //    //    mDraggedItem = null;
-        //    //mSource =(TreeViewItem)sender;
-        //    if (e.ChangedButton == MouseButton.Left)
-        //    {
-                
-        //        if (((TreeViewItem)sender).IsSelected  && (((TreeViewItem)sender).IsExpanded ||(((HierarchyViewModel)((TreeViewItem)sender).DataContext).Children.Count() == 0)))
-        //        {
-
-        //            //e.Handled = true;
-        //            //EditHierarchyElement();
-        //        }
-        //        //
-        //    }
-
-        //    //mDraggedItem = (HierarchyViewModel)tvParameters.SelectedItem;
-        //    //mSourceCategoryName = mDraggedItem.ShortName;
-
-        //    //e.Handled = true; This cannot be set if the correct object is to be retrieved
-        //}
 
 
-
-        /// <summary>
-        /// This method responds to the MouseDown event and evaluates for the right click event
-        /// -If the event is not handled at the treeview item level, it will pass through again at the treeview root level...
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        //private void TreeView_MouseDown(object sender, MouseButtonEventArgs e)
-        //{
-        //    if (e.ChangedButton == MouseButton.Right)
-        //    {
-        //        if (((TreeViewItem)sender).IsSelected)
-        //        {
-        //            AddHierarchyElement();
-        //        }
-        //    }
-        //    else
-        //        if (e.ChangedButton == MouseButton.Middle)
-        //    {
-        //        if (((TreeViewItem)sender).IsSelected)
-        //        {
-        //            EditHierarchyElement();
-        //        }
-        //    }
-        //    e.Handled = true;
-        //}
-        //private void TreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        //{ if (e.ChangedButton == MouseButton.Right)
-        //    {
-        //     AddHierarchyElement();                            
-        //    }
-        //    else
-        //        if (e.ChangedButton == MouseButton.Left)
-        //            {
-        //            EditHierarchyElement(); 
-        //            }
-        //    var clkcnt = e.ClickCount;
-        //    e.Handled = true;
-
-        //}
-        /// <summary>
-        /// Monitor keyboard for use of Insert key
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        //private void TreeView_KeyBoard(object sender, KeyboardEventArgs e)
-        //{
-        //    //check to determine whether user would like to add an item to the hierarchy
-            
-        //    if (ViewModelApplication.PopupVisible == false)
-        //    { 
-
-        //        if (Keyboard.IsKeyDown(Key.Insert))
-        //        {
-        //            AddHierarchyElement();                    
-        //            e.Handled= true;
-        //        }
-        //        else
-        //            if (Keyboard.IsKeyDown(Key.Enter))
-        //            {
-        //            EditHierarchyElement();
-        //            e.Handled = true;
-
-        //            }
-        //            else
-        //                if (Keyboard.IsKeyDown(Key.Delete))
-        //                {
-        //                    DeleteHierarchyElement();
-        //                e.Handled = true;
-
-        //                }
-
-
-        //    }
-        //}
 
         /// <summary>
         /// 

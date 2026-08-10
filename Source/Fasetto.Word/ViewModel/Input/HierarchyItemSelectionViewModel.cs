@@ -149,6 +149,7 @@ namespace Fasetto.Word
             //HierarchyitemSelectCommand = new RelayCommand(HierarchyitemSelect);
             //ViewModelApplication.CurrentControlViewModel = this;
             //HISVM MviewModel = new HISVM(this);    
+            //PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
 
         }
 

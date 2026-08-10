@@ -173,8 +173,12 @@ namespace Fasetto.Word
             {
                 // Perform single-click action
             ((MouseButtonEventArgs)mtmp).Handled = true;
-                if (mSelectedTreeItem.Page != "Folder") 
-                RunSelectedMenu();
+                //if (mSelectedTreeItem.Page != "Folder")
+                //{
+                    RunSelectedMenu();
+                //}
+                //else
+                //{ }
                 return;
             }
         }
@@ -1081,13 +1085,30 @@ namespace Fasetto.Word
             mtmp = tmp;
             var eventTmp = tmp.GetType().Name;
             var tmp1 = ((ContextualEventArgs)parameter).Context.GetType().Name;
+
             if (tmp1 != "String")
             {
 
                 mSelectedTreeItem = (HierarchyViewModel)(((ContextualEventArgs)parameter).Context);
+
                 if (eventTmp == "MouseButtonEventArgs")
+
                 //only look for Mouse Button events.
                 {
+                    var TmpTmp = ((MouseEventArgs)tmp).OriginalSource as UIElement;
+                    var TmpTmp2 = TmpTmp.GetType().FullName;
+                    if (TmpTmp2 == "System.Windows.Shapes.Path")
+                        return;
+
+                    if (TmpTmp2 != "System.Windows.Controls.TextBlock")
+                    {
+                        ((MouseButtonEventArgs)tmp).Handled = true;
+                        return;
+                    }
+                    //if (((MouseButtonEventArgs)tmp).OriginalSource.GetType().Name== "ExpandPath:")
+                    //    return;
+                    //    (((MouseButtonEventArgs)tmp).ClickCount == 1)
+
                     if (((MouseButtonEventArgs)tmp).ClickCount == 1)
                     {
                         _doubleClickDetected = false;
@@ -1101,11 +1122,13 @@ namespace Fasetto.Word
                         _clickTimer.Stop();
                         // deal with double click
                         ((MouseButtonEventArgs)tmp).Handled = true;
+                        if (!(ViewModelApplication.CurrentSideMenuContent == SideMenuContent.Menu))
                         EditHierarchyElement(mSelectedTreeItem);
                         return;
                     }
                 }
             }
+
             if (eventTmp == "MouseEventArgs" && ((MouseEventArgs)tmp).RoutedEvent.Name== "PreviewMouseMove" && ((MouseEventArgs)tmp).Source.GetType().Name == "TreeView")
             {
                 var TmpTmp = ((MouseEventArgs)tmp).OriginalSource as UIElement;
@@ -1161,7 +1184,9 @@ namespace Fasetto.Word
                             if ((((KeyEventArgs)tmp).Key == Key.Enter) || (((KeyEventArgs)tmp).Key == Key.Insert) || (((KeyEventArgs)tmp).Key == Key.Delete))
                             {
                                 ((KeyEventArgs)tmp).Handled = true;
-                                RunSelectedMenu();
+                                    if (!(mSelectedTreeItem == null || ((string)mSelectedTreeItem.Page).Length == 0 || mSelectedTreeItem.Page == "Folder"))
+
+                                        RunSelectedMenu();
                             }
                             ((KeyEventArgs)tmp).Handled = true;
                         }
@@ -1191,7 +1216,9 @@ namespace Fasetto.Word
                             if (((MouseButtonEventArgs)tmp).ClickCount > 1)
                             {
                                 ((MouseButtonEventArgs)tmp).Handled = true;
-                                EditHierarchyElement(mSelectedTreeItem);
+                                if (!(ViewModelApplication.CurrentSideMenuContent == SideMenuContent.Menu))
+                                    if (!(ViewModelApplication.CurrentSideMenuContent == SideMenuContent.Menu)) 
+                                        EditHierarchyElement(mSelectedTreeItem);
                             }
                         }
                         else
@@ -1202,7 +1229,8 @@ namespace Fasetto.Word
                             if (((KeyEventArgs)tmp).Key == Key.Enter)
                             {
                                 ((KeyEventArgs)tmp).Handled = true;
-                                EditHierarchyElement(mSelectedTreeItem);
+                                    if (!(ViewModelApplication.CurrentSideMenuContent == SideMenuContent.Menu) |!(mSelectedTreeItem.Page=="Hierarchy"))
+                                        EditHierarchyElement(mSelectedTreeItem);
                             }
                             else
                                 if (((KeyEventArgs)tmp).Key == Key.Insert)
@@ -1244,7 +1272,7 @@ namespace Fasetto.Word
 
         /// Use Popup View to add a Hierarchy Element
         /// </summary>
-        private void RunSelectedMenu( )
+        private void RunSelectedMenu()
         {
             //Prepopulate
             //Only allow one execution of  the function per event
@@ -1269,13 +1297,38 @@ namespace Fasetto.Word
                 }
                 else
                 {
-                    EditHierarchyElement(mSelectedTreeItem);
+                    if (!(ViewModelApplication.CurrentSideMenuContent == SideMenuContent.Menu))
+                        EditHierarchyElement(mSelectedTreeItem);
+
+
                 }
 
             }
             else
-            { ViewModelApplication.OpenMenu(mSelectedTreeItem.Root, mSelectedTreeItem.Page); }
+                //Ensure that the OpenMenu option has a valid link..
+                if (mSelectedTreeItem.Page != "" & mSelectedTreeItem.Children.Count ==0)
+                { ViewModelApplication.OpenMenu(mSelectedTreeItem.Root, mSelectedTreeItem.Page); }
+                else
+                    if (mSelectedTreeItem.Children.Count > 0 )
+                    {
+                        if (!mSelectedTreeItem.IsExpanded == true)
+                        {
+                            mSelectedTreeItem = mSelectedTreeItem.Children[0];
+                            mSelectedTreeItem.IsSelected = true;
+                            mSelectedTreeItem.mParent.IsExpanded = true;
+                        }
+                        else
+                            mSelectedTreeItem.IsExpanded = false;
+                    }
+                    else
+                    {
+                        //mSelectedTreeItem.IsExpanded = false;
+                        EditHierarchyElement(mSelectedTreeItem);
+                    }
 
+
+
+            
 
         //// Close settings menu
         //ViewModelApplication.SideMenuVisible = true;

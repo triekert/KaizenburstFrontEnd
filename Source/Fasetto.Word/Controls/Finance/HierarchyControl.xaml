@@ -141,7 +141,7 @@
 
                 </i:EventTrigger>
 
-                <i:EventTrigger EventName="PreviewMouseDoubleClick" >
+                <i:EventTrigger EventName="TteeNodeExpanded" >
                     <i:InvokeCommandAction 
                         Command="{Binding GestureHandlerCommand}"
                         EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
@@ -156,14 +156,13 @@
                         EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
 
                 </i:EventTrigger>
-
-                <!--<i:EventTrigger EventName="PreviewMouseMove" >
+                <i:EventTrigger EventName="PreviewMouseLeftButtonDown" >
                     <i:InvokeCommandAction 
                         Command="{Binding GestureHandlerCommand}"
                         EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
                         EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
 
-                </i:EventTrigger>-->
+                </i:EventTrigger>
 
             </i:Interaction.Triggers>
             <TreeView 
@@ -171,6 +170,8 @@
              ItemsSource="{Binding FirstGeneration}" 
              Name="tvParameters"
              TreeViewItem.Selected="TreeView_Selected"  
+
+                
             >
                     <TreeView.Template>
                     <ControlTemplate>
@@ -198,7 +199,6 @@
                         <!--<EventSetter Event="PreviewMouseLeftButtonDown" Handler="TreeView_PreviewMouseLeftButtonDown" />-->
                         <!--<EventSetter Event="KeyDown" Handler="TreeView_KeyBoard"/>-->
                         <EventSetter Event="MouseMove" Handler="TreeView_MouseMove"/>
-                        <!--<EventSetter Event="MouseDoubleClick" Handler="TreeView_MouseDoubleClick"/>-->
                         <!--<EventSetter Event="Selected" Handler="TreeViewSelectedItemChanged" />-->                        
                         <!--<EventSetter Event="MouseEnter" Handler="TreeView_MouseEnter"/>
                         <EventSetter Event="MouseLeave" Handler="TreeView_MouseLeave"/>-->

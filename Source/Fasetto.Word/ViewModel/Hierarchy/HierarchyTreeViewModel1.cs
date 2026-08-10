@@ -40,6 +40,12 @@ namespace Fasetto.Word
         /// </summary>
         public HierarchyViewModel mSelectedTreeItem { get; set; }
 
+        /// <summary>
+        /// The Popup View Model referencing this View Model
+        /// </summary>
+        public object PriorPopupViewModel { get; set; }
+
+
         #endregion Public Properties
 
         #region Data
@@ -142,6 +148,8 @@ namespace Fasetto.Word
             CloseCommand = new RelayCommand(async () => await CloseAsync());
             mSearchCommand = new SearchCategoryTreeCommand(this);
             GestureHandlerCommand = new DelegateCommand<ContextualEventArgs>(GestureHandler);
+            PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+
         }
 
         private void UpdateTreeViewElements()
@@ -1434,7 +1442,7 @@ namespace Fasetto.Word
                 ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ProcessSelection();
             }
 
-
+            return ;
 
         }
 

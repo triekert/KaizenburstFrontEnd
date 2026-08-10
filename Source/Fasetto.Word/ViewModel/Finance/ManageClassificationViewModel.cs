@@ -1,7 +1,6 @@
 ﻿using Dna;
 using Fasetto.Word.Core;
 using Fasetto.Word.Core.ApiModels.Controls;
-using Microsoft.VisualStudio.PlatformUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,7 +9,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.Intrinsics.X86;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
@@ -1404,6 +1402,7 @@ namespace Fasetto.Word
                 if (!(Units.EditedText == null || Units.EditedText == ""))
                 { int.TryParse(Units.EditedText, out IntUnits); }
 
+                //If transaction is being created on the fly....
                 if (Selected.KFinTranID == "00000000-0000-0000-0000-000000000001")
 
                 {
@@ -1451,6 +1450,12 @@ namespace Fasetto.Word
                     Mcategory.KCategoryID = Selected.KCategoryID;
                     Mcategory.KFinActualID = Selected.KFinActualID;
                     Mcategory.DateEffective = Selected.DateEffective;
+                    Mcategory.KPartyID = Selected.KPartyID;
+                    Mcategory.KPartyName = Selected.KPartyName;
+                    Mcategory.KProjectID = Selected.KProjectID;
+                    Mcategory.KProjectName = Selected.KProjectName;
+                    Mcategory.KAssetID = Selected.KAssetID;
+                    Mcategory.KAssetName = Selected.KAssetName;
                     Mcategory.KPersonID = Selected.KPersonID;
                     Mcategory.KPersonName = Selected.KPersonName;
                     Mcategory.IsTemplate = Selected.IsTemplate;

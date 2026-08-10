@@ -379,7 +379,7 @@ namespace Fasetto.Word
 
             TimeStart = new DateTimeViewModel
             {
-                Label = "Month Start",
+                Label = "Date Start",
                 OriginalDateTime = DateTime.Now.AddDays(-1),
                 EditedDateTime = DateTime.Now.AddDays(-1),
                 OriginalTime = new System.Windows.Controls.ComboBoxItem(),
@@ -393,7 +393,7 @@ namespace Fasetto.Word
 
             TimeEnd = new DateTimeViewModel
             {
-                Label = "Month End",
+                Label = "Date End",
                 OriginalDateTime = DateTime.Now,
                 EditedDateTime = DateTime.Now,
                 OriginalTime = new System.Windows.Controls.ComboBoxItem(),

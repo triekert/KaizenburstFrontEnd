@@ -957,6 +957,7 @@ namespace Fasetto.Word
                 KHierarchyID = ((TransactionViewModel)Transaction.SelectedItem).KHierarchyID,
                 Month = ((TransactionViewModel)Transaction.SelectedItem).Month,
                 KClientID = ((TransactionViewModel)Transaction.SelectedItem).KClientID,
+                ActualAmount = -1M,
             };
             ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).AddItem(NewTransaction);
             ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MPersist.Add(NewTransaction);
