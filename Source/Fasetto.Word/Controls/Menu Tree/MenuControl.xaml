@@ -9,7 +9,17 @@
              xmlns:conv="clr-namespace:Fasetto.Word"    
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <local:ContextualEventArgsConverter x:Key="ContextualEventArgsConverter" />
+        <ResourceDictionary>
+          <local:ContextualEventArgsConverter x:Key="ContextualEventArgsConverter" />                    
+            <ResourceDictionary.MergedDictionaries>
+
+                <ResourceDictionary Source="pack://application:,,,/Styles/Scroll.xaml" />
+
+            </ResourceDictionary.MergedDictionaries>
+
+  
+        </ResourceDictionary>
+         
     </UserControl.Resources>
 
 

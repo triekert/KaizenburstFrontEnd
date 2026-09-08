@@ -11,8 +11,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
 
@@ -35,6 +37,11 @@ namespace Fasetto.Word
         public ObservableCollection<TransactionViewModel> Trans_action { get; set; }
         public ObservableCollection<TransactionViewModel> OrgTransaction { get; set; }
         public ObservableCollection<TransactionViewModel> MPersist { get; set; }
+
+        /// <summary>
+        /// Place holder for storing selected item when calling transaction detail
+        /// </summary>
+        public int TransSelector { get; set; }
 
         public int Trans_actionRec { get; set; }
         //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
@@ -655,7 +662,7 @@ namespace Fasetto.Word
             if (eventTmp == "KeyEventArgs")
             {
                 Transaction = ((KeyEventArgs)tmp).Source as DataGrid;
-            }
+             }
             else
             if (eventTmp == "MouseEventArgs")
             {
@@ -754,33 +761,106 @@ namespace Fasetto.Word
                         {
 
 
-                            //var Transaction = ((KeyEventArgs)tmp).Source as DataGrid;
-                            //var ttype = Transaction.GetType().Name;
-                            if (((KeyEventArgs)tmp).Key == Key.Enter)
-                            {
-                                ((KeyEventArgs)tmp).Handled = true;
-                                NavigateOnAsync(Transaction);
-                                //EditHierarchyElement(mSelectedTreeItem);
+                                //var Transaction = ((KeyEventArgs)tmp).Source as DataGrid;
+                                //var ttype = Transaction.GetType().Name;
+                                if (((KeyEventArgs)tmp).Key == Key.Enter)
+                                {
+                                    ((KeyEventArgs)tmp).Handled = true;
+                                    NavigateOnAsync(Transaction);
+                                    //EditHierarchyElement(mSelectedTreeItem);
+                                }
+                                else
+                                    if (((KeyEventArgs)tmp).Key == Key.Insert)
+                                    {
+                                        ((KeyEventArgs)tmp).Handled = true;
+                                        Insert();
+                                    }
+                                    else
+                                        if (((KeyEventArgs)tmp).Key == Key.F2)
+                                        {
+                                            ((KeyEventArgs)tmp).Handled = true;
+                                            Generate();
+                                        }
+                                        else
+                                            if (((KeyEventArgs)tmp).Key == Key.F3)
+                                            {
+                                                ((KeyEventArgs)tmp).Handled = true;
+                                                LookupMain();
+                                            }
+                                            else
+                                                if (((KeyEventArgs)tmp).Key == Key.PageDown & ((KeyboardDevice)((KeyEventArgs)tmp).Device).Modifiers == ModifierKeys.Control)
+                                                {
+
+                                                    SelectRowByIndex(Transaction, Transaction.Items.Count - 1);
+                                                    ((KeyEventArgs)tmp).Handled = true;
+                                                }
+                                                else
+                                                    if (((KeyEventArgs)tmp).Key == Key.PageUp & ((KeyboardDevice)((KeyEventArgs)tmp).Device).Modifiers == ModifierKeys.Control)
+                                                    {
+
+                                                        SelectRowByIndex(Transaction, 0);
+                                                        ((KeyEventArgs)tmp).Handled = true;
+                                                    }
+                                                    else
+                                                        if ((((KeyEventArgs)tmp).Key == Key.Down))
+                                                        {
+                                                            SelectRowByIndex(Transaction, (Transaction.SelectedIndex + 1 > Transaction.Items.Count - 1) ? Transaction.Items.Count - 1 : Transaction.SelectedIndex + 1);
+                                                            ((KeyEventArgs)tmp).Handled = true;
+                                                        }
+                                                    else
+                                                        if ((((KeyEventArgs)tmp).Key == Key.Up))
+                                                        {
+                                                                SelectRowByIndex(Transaction, (Transaction.SelectedIndex - 1 < 0) ? 0 : (Transaction.SelectedIndex - 1));
+                                                                ((KeyEventArgs)tmp).Handled = true;
+                                                        }
+                                                                else
+
+
+
+
+                                                                {
+                                                                    var VisibleRows = 0;
+                                                                    foreach (var Item in Transaction.Items)
+                                                                    {
+                                                                        var Row = (DataGridRow)Transaction.ItemContainerGenerator.ContainerFromItem(Item);
+
+                                                                        if (Row != null)
+                                                                        {
+                                                                            if (Row.TransformToVisual(Transaction).Transform(new Point(0, 0)).Y + Row.ActualHeight > Transaction.ActualHeight)
+                                                                            {
+                                                                                break;
+                                                                            }
+
+                                                                            VisibleRows++;
+                                                                        }
+
+                                                                    }
+                                                                VisibleRows--;
+                                                                    if ((((KeyEventArgs)tmp).Key == Key.PageUp))
+                                                                    {
+                                                                        SelectRowByIndex(Transaction, (Transaction.SelectedIndex - VisibleRows <= 0) ? 0 : Transaction.SelectedIndex - VisibleRows);
+                                                                        ((KeyEventArgs)tmp).Handled = true;
+                                                                    }
+                                                                    else
+                                                                        if ((((KeyEventArgs)tmp).Key == Key.PageDown))
+                                                                        {
+                                                                            SelectRowByIndex(Transaction, (Transaction.SelectedIndex + VisibleRows > Transaction.Items.Count - 1) ? Transaction.Items.Count - 1 : Transaction.SelectedIndex + VisibleRows);
+                                                                            ((KeyEventArgs)tmp).Handled = true;
+                                                                        }
+
+                                                                    else
+                                                                        if (((KeyEventArgs)tmp).Key == Key.F4)
+                                                                        {
+                                                                            ((KeyEventArgs)tmp).Handled = true;
+                                                                            ViewModelApplication.CurrentPopupContent = 0;
+                                                                            ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;
+                                                                            var mSelectedIndex = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Transaction.SelectedIndex;
+                                                                            //Generate();
+                                                                        }
+                                                            }
+
+
                             }
-                            else
-                                if (((KeyEventArgs)tmp).Key == Key.Insert)
-                            {
-                                ((KeyEventArgs)tmp).Handled = true;
-                                Insert();
-                            }
-                            else
-                                    if (((KeyEventArgs)tmp).Key == Key.F2)
-                            {
-                                ((KeyEventArgs)tmp).Handled = true;
-                                Generate();
-                            }
-                            else
-                                    if (((KeyEventArgs)tmp).Key == Key.F3)
-                            {
-                                ((KeyEventArgs)tmp).Handled = true;
-                                LookupMain();
-                            }
-                        }
                         //((KeyEventArgs)tmp).Handled = true;
                     }
 
@@ -866,17 +946,26 @@ namespace Fasetto.Word
 
                 ViewModelApplication.PopupVisible = false;
 
-                ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(MKFinTranID);
+                    ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(MKFinTranID);
                 ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Allocation ";
 
-                //If only one allocation linked to the Transaction, bypass the 'detail' window...
 
-                if (((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransactionDetail.Count > 1)
+                    //If only one allocation linked to the Transaction, bypass the 'detail' window...
+
+                    if (((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransactionDetail.Count > 1)
                 {                 //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
                     ViewModelApplication.PopupVisible = false;
-                    //ViewModelApplication.CurrentPopupContent = Null;
-                    ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
-                    ViewModelApplication.PopupVisible = true;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+                        ViewModelApplication.PopupVisible = true;
+
+                        //ViewModelApplication.CurrentPopupViewModel = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+                        //ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;
+                        //ViewModelApplication.PopupVisible = true;
+                        //return;
+
+
+
+
                 }
                 else
                 {            //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
@@ -1023,6 +1112,80 @@ namespace Fasetto.Word
             {
                 Console.Write(exp.Message);
             }
+        }
+
+        public static void SelectRowByIndex(DataGrid dataGrid, int rowIndex)
+        {
+            if (!dataGrid.SelectionUnit.Equals(DataGridSelectionUnit.FullRow))
+                throw new ArgumentException("The SelectionUnit of the DataGrid must be set to FullRow.");
+
+            if (rowIndex < 0 || rowIndex > (dataGrid.Items.Count - 1))
+                throw new ArgumentException(string.Format("{0} is an invalid row index.", rowIndex));
+
+            dataGrid.SelectedItems.Clear();
+            /* set the SelectedItem property */
+            var item = dataGrid.Items[rowIndex]; // = Product X
+            dataGrid.SelectedItem = item;
+
+
+            if (!(dataGrid.ItemContainerGenerator.ContainerFromIndex(rowIndex) is DataGridRow row))
+            {
+                /* bring the data item (Product object) into view
+                 * in case it has been virtualized away */
+                dataGrid.ScrollIntoView(item);
+                row = dataGrid.ItemContainerGenerator.ContainerFromIndex(rowIndex) as DataGridRow;
+            }
+            if (row != null)
+            {
+                var cell = GetCell(dataGrid, row, 0);
+                cell?.Focus();
+            }
+            //TODO: Retrieve and focus a DataGridCell object
+        }
+
+        public static DataGridCell GetCell(DataGrid dataGrid, DataGridRow rowContainer, int column)
+        {
+            if (rowContainer != null)
+            {
+                var presenter = FindVisualChild<DataGridCellsPresenter>(rowContainer);
+                if (presenter == null)
+                {
+                    /* if the row has been virtualized away, call its ApplyTemplate() method 
+                     * to build its visual tree in order for the DataGridCellsPresenter
+                     * and the DataGridCells to be created */
+                    rowContainer.ApplyTemplate();
+                    presenter = FindVisualChild<DataGridCellsPresenter>(rowContainer);
+                }
+                if (presenter != null)
+                {
+                    if (!(presenter.ItemContainerGenerator.ContainerFromIndex(column) is DataGridCell cell))
+                    {
+                        /* bring the column into view
+                         * in case it has been virtualized away */
+                        dataGrid.ScrollIntoView(rowContainer, dataGrid.Columns[column]);
+                        cell = presenter.ItemContainerGenerator.ContainerFromIndex(column) as DataGridCell;
+                    }
+                    return cell;
+                }
+            }
+            return null;
+        }
+
+        public static T FindVisualChild<T>(DependencyObject obj) where T : DependencyObject
+        {
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+            {
+                var child = VisualTreeHelper.GetChild(obj, i);
+                if (child != null && child is T t)
+                    return t;
+                else
+                {
+                    var childOfChild = FindVisualChild<T>(child);
+                    if (childOfChild != null)
+                        return childOfChild;
+                }
+            }
+            return null;
         }
 
     }

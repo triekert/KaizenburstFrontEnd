@@ -9,6 +9,8 @@
 
              d:DesignHeight="300" d:DesignWidth="300">
 
+
+
     <UserControl.Resources>
         <sys:String x:Key="colName">dynamic string...</sys:String>
         <Style x:Key="ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" >
@@ -21,17 +23,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <!--<sys:String x:Key="colCell">dynamic string...</sys:String>
-        <Style x:Key="ColumnCellStyle" TargetType="{x:Type DataGridCellsPresenter}" >
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="DataGridTextColumn">
-                        <Label Foreground="black" FontWeight="UltraBold" Background="AntiqueWhite" FontFamily="Arial" Content="{TemplateBinding Content}"
-                               HorizontalAlignment="Stretch" HorizontalContentAlignment ="Center"  VerticalAlignment="Center"  />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>-->
+        <local:ContextualEventArgsConverter x:Key="ContextualEventArgsConverter" />
     </UserControl.Resources>
     <DockPanel>
         <!-- SEARCH AREA -->

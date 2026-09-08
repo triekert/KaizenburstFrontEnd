@@ -359,7 +359,7 @@ namespace Fasetto.Word
         {
             // Close settings menu
 
-            var CVM = ViewModelApplication.CurrentPopupViewModel.GetType().Name;
+
             if (((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel != null && ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel.GetType().Name == "HierarchyTreeViewModel")
             {
                 ViewModelApplication.CurrentPopupViewModel = (HierarchyTreeViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
@@ -370,31 +370,9 @@ namespace Fasetto.Word
             if (((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel != null && ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel.GetType().Name == "HierarchyTreeViewModel1")
             {
 
-                //ViewModelApplication.CurrentPopupViewModel = (HierarchyTreeViewModel1)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
-                //ViewModelApplication.CurrentPopupContent = PopupContent.HierarchySelection;
-                //if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Cost Category")
-                //{
-                //    ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
-                //    ViewModelApplication.ControlParameter1 = null;
-                //    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
-                //    ViewModelApplication.PopupVisible = true;
-                //}
-                //Process the selected cost category
                 ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ProcessSelection();
             }
-            //ViewModelApplication.CurrentPopupContent = null;
-            //ViewModelApplication.PopupVisible = false;
-            //var result = default(bool);
-            //RunCommandAsync(() => ExitingSaving, async () =>
-            //{
 
-            //    // Try and do the work
-            //    result = CloseAction == null ? true : await CloseAction();
-
-            //}).ContinueWith(t =>
-            //{
-
-            //});
 
 
 

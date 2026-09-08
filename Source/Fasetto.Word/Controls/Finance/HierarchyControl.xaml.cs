@@ -2,12 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using static Fasetto.Word.DI;
-
 namespace Fasetto.Word
 {
     /// <summary>
@@ -44,6 +44,8 @@ namespace Fasetto.Word
         private readonly HierarchyViewModel mTargetTest;
         //public string mControlTitle = "testing";
 
+        private ScrollViewer _treeScrollViewer;
+
         //[Obsolete]
         //public HierarchyManagementControl(HierarchyManagementTreeDataModel hierarchyManagementTreeDataModel)
         public HierarchyControl()
@@ -59,6 +61,11 @@ namespace Fasetto.Word
             //ViewModelApplication.PopupVisible = false;
             DataContext = ViewModelApplication.CurrentPopupViewModel;
             InitializeComponent();
+            // Find ScrollViewer after the TreeView template is generated
+            tvParameters.Loaded += (s, e) =>
+            {
+            _treeScrollViewer = FindScrollViewer(tvParameters as DependencyObject);
+        };
             //ViewModelApplication.CurrentPopupContent = PopupContent.Hierarchy;
             //ViewModelApplication.PopupVisible = true;
 
@@ -128,12 +135,13 @@ namespace Fasetto.Word
             try
             {
                 var item = GetNearestContainer(e.OriginalSource as UIElement);
-                mDraggedItemTest = (HierarchyViewModel)item.Header;
+                //mDraggedItemTest = (HierarchyViewModel)item.Header;
                 if (e.LeftButton == MouseButtonState.Pressed)
                 {
                     var isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
                     var isShift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
                     var currentPosition = e.GetPosition(item);
+                    //return;
 
                     //Check for dragging of treeview item
                     if ((Math.Abs(currentPosition.X - mLastMouseDown.X) > 10.0) ||
@@ -143,7 +151,6 @@ namespace Fasetto.Word
                         mDraggedItem = (HierarchyViewModel)((TreeViewItem)item).Header;
                         mSourceCategoryName = mDraggedItem.ShortName;
                         mLastMouseDown = currentPosition;
-                        //draggedItem = (TreeViewItem)tvParameters.SelectedItem;
                         mSource = (TreeViewItem)sender;
                         if (mDraggedItem != null)
                         {
@@ -220,6 +227,11 @@ namespace Fasetto.Word
         /// <param name="e"></param>
         private void TreeView_DragOver(object sender, DragEventArgs e)
         {
+
+            var child = sender as DependencyObject; ;
+
+
+            var scrollViewer = FindParent<ScrollViewer>(child);
             try
             {
                 var currentPosition = e.GetPosition(tvParameters);
@@ -256,11 +268,19 @@ namespace Fasetto.Word
             //{
 
             Mouse.SetCursor(Cursors.Wait);
+
             //CheckDropTarget(mTarget, mDraggedItem);
             e.Handled = true;
             return;
  
         }
+
+        private void TreeView_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            e.Handled = true;
+            return;
+        }
+
 
 
         private bool CheckDropTarget(HierarchyViewModel mTargetN, HierarchyViewModel mDraggedN)
@@ -310,6 +330,19 @@ namespace Fasetto.Word
         //    }
 
         //}
+
+        private T FindParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            var parent = VisualTreeHelper.GetParent(child);
+
+            while (parent != null && !(parent is T))
+            {
+                parent = VisualTreeHelper.GetParent(parent);
+            }
+
+            return parent as T;
+        }
+
 
         private static TObject FindVisualParent<TObject>(UIElement child) where TObject : UIElement
         {
@@ -365,13 +398,20 @@ namespace Fasetto.Word
             element.Focus();
         }
 
-        //public void Close()
+        public static ScrollViewer FindScrollViewer(DependencyObject element)
+        {
+            if (element == null) return null;
+            if (element is ScrollViewer viewer) return viewer;
 
-        //{
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
+            {
+                var child = VisualTreeHelper.GetChild(element, i);
+                var result = FindScrollViewer(child);
+                if (result != null) return result;
+            }
+            return null;
+        }
 
-        //    // Close settings menu
-        //    ViewModelApplication.PopupVisible = false;
-        //} 
 
         #region Search Logic //KCategoryID
         public IEnumerator<HierarchyViewModel> MatchingKCategoryEnumerator { get; private set; }

@@ -120,78 +120,78 @@ namespace Fasetto.Word
         //    if (Keyboard.IsKeyDown(Key.Escape))
         //    { }
 
-               
+
         //}
 
 
 
         private void DataGridRow_KeyDown(object sender, KeyEventArgs e)
         {
-            var VisibleRows = 0;
+            //    var VisibleRows = 0;
 
 
-            foreach (var Item in Transaction.Items)
-            {
-                var Row = (DataGridRow)Transaction.ItemContainerGenerator.ContainerFromItem(Item);
+            //    foreach (var Item in Transaction.Items)
+            //    {
+            //        var Row = (DataGridRow)Transaction.ItemContainerGenerator.ContainerFromItem(Item);
 
-                if (Row != null)
-                {
-                    if (Row.TransformToVisual(Transaction).Transform(new Point(0, 0)).Y + Row.ActualHeight >= Transaction.ActualHeight)
-                    {
-                        break;
-                    }
+            //        if (Row != null)
+            //        {
+            //            if (Row.TransformToVisual(Transaction).Transform(new Point(0, 0)).Y + Row.ActualHeight >= Transaction.ActualHeight)
+            //            {
+            //                break;
+            //            }
 
-                    VisibleRows++;
-                }
-            }
-            //var mPgSize = ((DataGridCellsPresenter)e.Source).Items.Count;
+            //            VisibleRows++;
+            //        }
+            //    }
+            //    var mPgSize = ((DataGridCellsPresenter)e.Source).Items.Count;
 
-            if (e.Key == Key.Enter)
-            {
-                NavigateOnAsync();
-            }
-            else if (e.Key == Key.F2)
-            {
-                Generate();
-            }
-            else if (e.Key == Key.F3)
-            {
-                LookupMain();
-            }
-            else if (Keyboard.IsKeyDown(Key.PageDown) && (Keyboard.IsKeyDown(Key.RightCtrl) || Keyboard.IsKeyDown(Key.LeftCtrl)))
-            {
-                SelectRowByIndex(Transaction, Transaction.Items.Count - 1);
-            }
-            else if (Keyboard.IsKeyDown(Key.PageUp) && (Keyboard.IsKeyDown(Key.RightCtrl) || Keyboard.IsKeyDown(Key.LeftCtrl)))
-            {
-                SelectRowByIndex(Transaction, 0);
-            }
-            else if (Keyboard.IsKeyDown(Key.Up))
-            {
-                SelectRowByIndex(Transaction, (Transaction.SelectedIndex - 1 < 0) ? 0 : (Transaction.SelectedIndex - 1));
-            }
-            else if (Keyboard.IsKeyDown(Key.Down))
-            {
-                SelectRowByIndex(Transaction, (Transaction.SelectedIndex + 1 > Transaction.Items.Count - 1) ? Transaction.Items.Count - 1 : Transaction.SelectedIndex + 1);
-            }
-            else if (Keyboard.IsKeyDown(Key.PageUp))
-            {
-                SelectRowByIndex(Transaction, (Transaction.SelectedIndex - VisibleRows < 0) ? 0 : Transaction.SelectedIndex - VisibleRows);
-            }
-            else if (Keyboard.IsKeyDown(Key.PageDown))
-            {
-                SelectRowByIndex(Transaction, (Transaction.SelectedIndex + VisibleRows > Transaction.Items.Count - 1) ? Transaction.Items.Count - 1 : Transaction.SelectedIndex + VisibleRows);
-            }
-            else if (Keyboard.IsKeyDown(Key.Insert))
-            {
-                Insert();
-            }
-            else if (Keyboard.IsKeyDown(Key.F2))
-            {
-                Generate();
-            }
+            //    if (e.Key == Key.Enter)
+            //    {
+            //        NavigateOnAsync();
+            //    }
+            //    else if (e.Key == Key.F2)
+            //    {
+            //        Generate();
+            //    }
+            //    else if (e.Key == Key.F3)
+            //    {
+            //        LookupMain();
+            //    }
+            //    else if (Keyboard.IsKeyDown(Key.PageDown) && (Keyboard.IsKeyDown(Key.RightCtrl) || Keyboard.IsKeyDown(Key.LeftCtrl)))
+            //    {
+            //        SelectRowByIndex(Transaction, Transaction.Items.Count - 1);
+            //    }
+            //    else if (Keyboard.IsKeyDown(Key.PageUp) && (Keyboard.IsKeyDown(Key.RightCtrl) || Keyboard.IsKeyDown(Key.LeftCtrl)))
+            //    {
+            //        SelectRowByIndex(Transaction, 0);
+            //    }
+            //    else if (Keyboard.IsKeyDown(Key.Up))
+            //    {
+            //        SelectRowByIndex(Transaction, (Transaction.SelectedIndex - 1 < 0) ? 0 : (Transaction.SelectedIndex - 1));
+            //    }
+            //    else if (Keyboard.IsKeyDown(Key.Down))
+            //    {
+            //        SelectRowByIndex(Transaction, (Transaction.SelectedIndex + 1 > Transaction.Items.Count - 1) ? Transaction.Items.Count - 1 : Transaction.SelectedIndex + 1);
+            //    }
+            //    else if (Keyboard.IsKeyDown(Key.PageUp))
+            //    {
+            //        SelectRowByIndex(Transaction, (Transaction.SelectedIndex - VisibleRows < 0) ? 0 : Transaction.SelectedIndex - VisibleRows);
+            //    }
+            //    else if (Keyboard.IsKeyDown(Key.PageDown))
+            //    {
+            //        SelectRowByIndex(Transaction, (Transaction.SelectedIndex + VisibleRows > Transaction.Items.Count - 1) ? Transaction.Items.Count - 1 : Transaction.SelectedIndex + VisibleRows);
+            //    }
+            //    else if (Keyboard.IsKeyDown(Key.Insert))
+            //    {
+            //        Insert();
+            //    }
+            //    else if (Keyboard.IsKeyDown(Key.F2))
+            //    {
+            //        Generate();
+            //    }
 
-            e.Handled = true;
+            //    e.Handled = true;
         }
         private void DataGridRow_MouseRightClick(object sender, MouseButtonEventArgs e)
         {
@@ -226,9 +226,9 @@ namespace Fasetto.Word
 
         private void DataGrid_OnUnLoaded(object sender, RoutedEventArgs e)
     {
-        var source = ((DataGrid)sender).ItemsSource;
-    var view = (IEditableCollectionView)CollectionViewSource.GetDefaultView(source);
-    view.CommitEdit();
+    //    var source = ((DataGrid)sender).ItemsSource;
+    //var view = (IEditableCollectionView)CollectionViewSource.GetDefaultView(source);
+    //view.CommitEdit();
 
 
             //var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;
@@ -238,10 +238,18 @@ namespace Fasetto.Word
 
         private void DataGrid_OnLoaded(object sender, RoutedEventArgs e)
         {
-            var source = ((DataGrid)sender).ItemsSource;
-            var view = (IEditableCollectionView)CollectionViewSource.GetDefaultView(source);
-            view.CommitEdit();
+            //var source = ((DataGrid)sender).ItemsSource;
+            var selected = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec;
+
+            if (selected == -1)
+                selected = 0;
+            Transaction.SelectedIndex = selected;
+            //Transaction.ScrollIntoView(Transaction.Items[selected]);
             SelectRowByIndex(Transaction, ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec);
+            Transaction.Focus();
+            //var view = (IEditableCollectionView)CollectionViewSource.GetDefaultView(source);
+            //view.CommitEdit();
+            //SelectRowByIndex(Transaction, ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec);
 
 
             //var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;

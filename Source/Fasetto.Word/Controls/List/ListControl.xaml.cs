@@ -216,7 +216,7 @@ namespace Fasetto.Word
             var source = ((DataGrid)sender).ItemsSource;
             var view = (IEditableCollectionView)CollectionViewSource.GetDefaultView(source);
             view.CommitEdit();
-            SelectRowByIndex(Transaction, ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec);
+            //SelectRowByIndex(Transaction, ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec);
 
 
             //var mTimeStart = tempBR.OrderBy(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart;

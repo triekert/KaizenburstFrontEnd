@@ -30,7 +30,7 @@ namespace Fasetto.Word
 
         /// <summary>
         /// A list of all registered hierarchy elements
-        /// </summary>
+        /// </summary>gestu
         public ObservableCollection<HierarchyViewModel> FirstGeneration { get; set; }
 
 

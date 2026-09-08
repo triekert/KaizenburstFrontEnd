@@ -3,6 +3,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Controls;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
 
@@ -129,8 +130,10 @@ namespace Fasetto.Word
             //    TransactionDetail.Add(mTDVM);
             //}
             RefreshTransactionList(mKFinTranID, ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MPersist);
-  
+            ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransSelector = ((DataGrid)((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Transaction).SelectedIndex;
             PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+
+            //((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Transaction.SelectedIndex
             //TaskManager.RunAndForget(TransactionDetailAsync);
 
 
@@ -224,6 +227,7 @@ namespace Fasetto.Word
             var mType = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel.GetType().Name;           
             ViewModelApplication.CurrentPopupViewModel = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
             var mTransactionDetailTreeViewModel = ViewModelApplication.CurrentPopupViewModel;
+            //((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Transaction.SelectedIndex
             ViewModelApplication.PopupVisible = false;
             //ViewModelApplication.ControlParameter1 = null;
 
@@ -243,7 +247,7 @@ namespace Fasetto.Word
             }
 
             ViewModelApplication.PopupVisible = true;
-
+            //((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Transaction.SelectedIndex
 
         }
 

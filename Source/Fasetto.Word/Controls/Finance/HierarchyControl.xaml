@@ -10,10 +10,22 @@
              xmlns:local="clr-namespace:Fasetto.Word"             
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <local:ContextualEventArgsConverter x:Key="ContextualEventArgsConverter" />
-    </UserControl.Resources>    
-    
+        <ResourceDictionary>
+            <local:ContextualEventArgsConverter x:Key="ContextualEventArgsConverter" />
+            <ResourceDictionary.MergedDictionaries>
+
+                <ResourceDictionary Source="pack://application:,,,/Styles/Scroll.xaml" />
+
+            </ResourceDictionary.MergedDictionaries>
+
+
+        </ResourceDictionary>
+
+    </UserControl.Resources>
+
     <DockPanel>
+
+
         <!-- SEARCH AREA -->
         <Border 
          DockPanel.Dock="Bottom" 
@@ -28,7 +40,7 @@
             </Border.Background>
 
             <StackPanel 
-                HorizontalAlignment="Stretch" 
+                HorizontalAlignment="Left" 
                 Margin="0,0,10,0" 
                 Orientation="Horizontal"
                 >
@@ -46,12 +58,12 @@
                       Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                       Width ="225" FontSize="18" TextWrapping="Wrap" RenderTransformOrigin="0.1,0.616" AutomationProperties.HelpText="Begin entering name...."
                     >
-                    <TextBox.InputBindings>
-                        <!--Clear text on Esc-->
+                    <!--<TextBox.InputBindings>
+                        Clear text on Esc
                         <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc" />
-                        <!--Search on enter-->
+                        Search on enter
                         <KeyBinding Command="{Binding SearchCommand}" Key="Return" />
-                    </TextBox.InputBindings>
+                    </TextBox.InputBindings>-->
                 </TextBox>
 
                 <Button Style="{StaticResource IconGrowButton}" 
@@ -72,13 +84,12 @@
                 </Button>
             </StackPanel>
         </Border>
-        <Border 
+        <Border Height=" 40"
          DockPanel.Dock="Top" 
          BorderBrush="#FF734444" 
          BorderThickness="1,0,1,1">
 
 
-            <Grid>
 
                 <!--<Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -128,55 +139,130 @@
 
 
                 </Grid>
-            </Grid>
         </Border>
 
-        <ScrollViewer x:Name="scrollViewer"  Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="PreviewKeyDown" >
-                    <i:InvokeCommandAction 
-                        Command="{Binding GestureHandlerCommand}"
-                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
-                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+        <!--<ScrollViewer x:Name="scrollViewer"  Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"  PanningMode = "Both" >-->
 
-                </i:EventTrigger>
-
-                <i:EventTrigger EventName="TteeNodeExpanded" >
-                    <i:InvokeCommandAction 
-                        Command="{Binding GestureHandlerCommand}"
-                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
-                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
-
-                </i:EventTrigger>
-
-                <i:EventTrigger EventName="PreviewMouseRightButtonDown" >
-                    <i:InvokeCommandAction 
-                        Command="{Binding GestureHandlerCommand}"
-                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
-                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
-
-                </i:EventTrigger>
-                <i:EventTrigger EventName="PreviewMouseLeftButtonDown" >
-                    <i:InvokeCommandAction 
-                        Command="{Binding GestureHandlerCommand}"
-                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
-                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
-
-                </i:EventTrigger>
-
-            </i:Interaction.Triggers>
-            <TreeView 
-
-             ItemsSource="{Binding FirstGeneration}" 
-             Name="tvParameters"
-             TreeViewItem.Selected="TreeView_Selected"  
-
-                
+        <Grid>
+            <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"   />
+                    <RowDefinition Height="*" />
+        
+            </Grid.RowDefinitions>
+            <TreeView  
+                ScrollViewer.VerticalScrollBarVisibility="Auto"               
+                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                ScrollViewer.CanContentScroll="False"
+                ItemsSource="{Binding FirstGeneration}" 
+                Name="tvParameters"
+                TreeViewItem.Selected="TreeView_Selected"  
+                Grid.Row="1"
+               
             >
-                    <TreeView.Template>
-                    <ControlTemplate>
-                        <Border BorderBrush="{TemplateBinding BorderBrush}"  BorderThickness="{TemplateBinding BorderThickness}"  SnapsToDevicePixels="true">
-                            <ItemsPresenter/>
+
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewKeyDown" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="NodeExpanded" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="PreviewMouseRightButtonDown" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="PreviewMouseLeftButtonDown" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters}" />
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="PreviewMouseLeftButtonUp" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding ElementName= tvParameters}" />
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="PreviewMouseMove" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}" 
+                        EventArgsConverterParameter="{Binding ElementName= tvParameters}" />
+                        <!--EventArgsConverterParameter="{Binding ElementName=tvParameters RelativeSource Mode=FindAncestor" />-->
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="PreviewMouseEnter" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                    EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="PreviewMouseLeave" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                    EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="PreviewDrop" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                    EventArgsConverterParameter="{Binding ElementName=tvParameters}" />
+
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="PreviewDragOver" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}" 
+                        EventArgsConverterParameter="{Binding ElementName=tvParameters}" />
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="PreviewMouseWheel" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}" 
+                    EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="ScrollChangedEvent" >
+                        <i:InvokeCommandAction 
+                        Command="{Binding GestureHandlerCommand}"
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}" 
+                    EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+
+
+                <TreeView.Template>
+                    <ControlTemplate TargetType="TreeView">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            SnapsToDevicePixels="true">
+                            <ScrollViewer x:Name="_tv_scrollviewer_"
+                                  Focusable="False"
+                                  CanContentScroll="False"
+                                  HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                  VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
+                                <ItemsPresenter/>
+                            </ScrollViewer>
                         </Border>
                     </ControlTemplate>
                 </TreeView.Template>
@@ -193,15 +279,16 @@
                         <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                         <Setter Property="AllowDrop"  Value="True"/>
                         <Setter Property="FontWeight" Value="Normal" />
-                        <EventSetter Event="DragOver"  Handler="TreeView_DragOver"/>
-                        <EventSetter Event="Drop" Handler="TreeView_Drop"/>
+                        <!--<EventSetter Event="DragOver"  Handler="TreeView_DragOver"/>-->
+                        <!--<EventSetter Event="Drop" Handler="TreeView_Drop"/>-->
                         <!--<EventSetter Event= "MouseDown" Handler="TreeView_MouseDown"/>-->
                         <!--<EventSetter Event="PreviewMouseLeftButtonDown" Handler="TreeView_PreviewMouseLeftButtonDown" />-->
                         <!--<EventSetter Event="KeyDown" Handler="TreeView_KeyBoard"/>-->
-                        <EventSetter Event="MouseMove" Handler="TreeView_MouseMove"/>
+                        <!--<EventSetter Event="MouseMove" Handler="TreeView_MouseMove"/>-->
                         <!--<EventSetter Event="Selected" Handler="TreeViewSelectedItemChanged" />-->                        
                         <!--<EventSetter Event="MouseEnter" Handler="TreeView_MouseEnter"/>
                         <EventSetter Event="MouseLeave" Handler="TreeView_MouseLeave"/>-->
+                        <!--<EventSetter Event="MouseLeave" Handler="TreeView_MouseWheel"/>--> 
                         <Style.Triggers>
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter Property="FontWeight" Value="UltraBold" />
@@ -227,7 +314,7 @@
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center"  Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}">
 
 
-                            <TextBlock Width="250"  HorizontalAlignment="Right"  TextWrapping="WrapWithOverflow" Text="{Binding ShortName}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                            <TextBlock MinWidth="250"  HorizontalAlignment="Right"  TextWrapping="WrapWithOverflow" Text="{Binding ShortName}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                             <TextBlock Text="  "/>
                             <TextBlock     TextWrapping="WrapWithOverflow" Text="{Binding Description}" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
                         </StackPanel>
@@ -235,8 +322,9 @@
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
             </TreeView>
-        </ScrollViewer>
-
+              </Grid>
+      
+        <!--</ScrollViewer>-->
     </DockPanel>
 </UserControl>
 

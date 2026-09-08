@@ -1,23 +1,19 @@
-﻿
-using Dna;
+﻿using Dna;
 using Fasetto.Word.Core;
 using Fasetto.Word.Core.ApiModels.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection.Metadata;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using System.Xml.Linq;
 using static Fasetto.Word.Core.CoreDI;
 using static Fasetto.Word.DI;
+using static Fasetto.Word.HierarchyControl;
 
 namespace Fasetto.Word
 {
@@ -49,10 +45,19 @@ namespace Fasetto.Word
         /// </summary>
         public object PriorPopupViewModel { get; set; }
 
+        /// <summary>
+        /// Link to ScrollViewer managing the hierarchy tree
+        /// </summary>
+        public ScrollViewer MScrollViewer { get; set; }
+
         private readonly DispatcherTimer _clickTimer;
         private const int DoubleClickTime = 300; // milliseconds
         private bool _doubleClickDetected;
         private object mtmp;
+
+        private readonly DispatcherTimer _scrollTimer;
+        private Point _currentMousePosition;
+        private bool _isDraggingSelection = false;
 
         #endregion
 
@@ -69,6 +74,12 @@ namespace Fasetto.Word
         public ParameterHierarchyItemSelectApiModel mHierarchy;
         public HierarchyElementViewModel mElement;
         private Point mLastMouseDown;
+        private HierarchyViewModel mDraggedItemTest, mDraggedItem, mTarget;
+        private string mSourceCategoryName;
+
+        private TreeViewItem mTargetT, mSource;
+
+        private string mDestinationCategoryID, mDestinationID, mSourceID, mParentID;
 
         //IEnumerator<HierarchyManagementViewModel> mMatchingCategoryEnumerator;
 
@@ -139,6 +150,9 @@ namespace Fasetto.Word
             {
                 PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
             }
+
+            // Find ScrollViewer after the TreeView template is generated
+
             TaskManager.RunAndForget(HierarchyAsync);
 
 
@@ -158,6 +172,16 @@ namespace Fasetto.Word
             };
             _clickTimer.Tick += ClickTimer_Tick;
 
+            ///Initialising _scrollTimer
+            ///
+
+            _scrollTimer = new DispatcherTimer
+            {
+                // Adjust interval to control scrolling speed
+                Interval = TimeSpan.FromMilliseconds(40)
+            };
+            _scrollTimer.Tick += ScrollTimer_Tick;
+
             //// Attach mouse event
             //this.MouseLeftButtonUp += OnMouseLeftButtonUp; 
 
@@ -169,7 +193,7 @@ namespace Fasetto.Word
         {
             _clickTimer.Stop();
 
-            if (!_doubleClickDetected)
+            if (!_doubleClickDetected & mtmp.GetType().Name == "MouseButtonEventArgs")
             {
                 // Perform single-click action
             ((MouseButtonEventArgs)mtmp).Handled = true;
@@ -181,6 +205,19 @@ namespace Fasetto.Word
                 //{ }
                 return;
             }
+            else
+                if (!_doubleClickDetected & mtmp.GetType().Name == "MouseEventArgs")
+                {
+                    // Perform single-click action
+                    ((MouseEventArgs)mtmp).Handled = true;
+                    //if (mSelectedTreeItem.Page != "Folder")
+                    //{
+                    RunSelectedMenu();
+                    //}
+                    //else
+                    //{ }
+                    return;
+                }
         }
 
         private void UpdateTreeViewElements()
@@ -1084,179 +1121,386 @@ namespace Fasetto.Word
             var tmp = ((ContextualEventArgs)parameter).OriginalEventArgs;
             mtmp = tmp;
             var eventTmp = tmp.GetType().Name;
-            var tmp1 = ((ContextualEventArgs)parameter).Context.GetType().Name;
+            var isDrag = false;
 
-            if (tmp1 != "String")
-            {
-
-                mSelectedTreeItem = (HierarchyViewModel)(((ContextualEventArgs)parameter).Context);
-
-                if (eventTmp == "MouseButtonEventArgs")
-
-                //only look for Mouse Button events.
-                {
-                    var TmpTmp = ((MouseEventArgs)tmp).OriginalSource as UIElement;
-                    var TmpTmp2 = TmpTmp.GetType().FullName;
-                    if (TmpTmp2 == "System.Windows.Shapes.Path")
-                        return;
-
-                    if (TmpTmp2 != "System.Windows.Controls.TextBlock")
-                    {
-                        ((MouseButtonEventArgs)tmp).Handled = true;
-                        return;
-                    }
-                    //if (((MouseButtonEventArgs)tmp).OriginalSource.GetType().Name== "ExpandPath:")
-                    //    return;
-                    //    (((MouseButtonEventArgs)tmp).ClickCount == 1)
-
-                    if (((MouseButtonEventArgs)tmp).ClickCount == 1)
-                    {
-                        _doubleClickDetected = false;
-                        _clickTimer.Stop();
-                        _clickTimer.Start();
-                        return;
-                    }
-                    if (((MouseButtonEventArgs)tmp).ClickCount > 1)
-                    {
-                        _doubleClickDetected = true;
-                        _clickTimer.Stop();
-                        // deal with double click
-                        ((MouseButtonEventArgs)tmp).Handled = true;
-                        if (!(ViewModelApplication.CurrentSideMenuContent == SideMenuContent.Menu))
-                        EditHierarchyElement(mSelectedTreeItem);
-                        return;
-                    }
-                }
-            }
-
-            if (eventTmp == "MouseEventArgs" && ((MouseEventArgs)tmp).RoutedEvent.Name== "PreviewMouseMove" && ((MouseEventArgs)tmp).Source.GetType().Name == "TreeView")
-            {
-                var TmpTmp = ((MouseEventArgs)tmp).OriginalSource as UIElement;
-
-                ((MouseEventArgs)tmp).Handled = true;
-            }
-            else
-            {
+            var tmp1 = ((ContextualEventArgs)parameter).Context ==null? "None" : ((ContextualEventArgs)parameter).Context.GetType().Name;
+            //if (!(eventTmp == "MouseButtonEventArgs" || eventTmp == "MouseEventArgs" || eventTmp == "KeyEventArgs"))
+            //    return;
 
 
 
-                if (ViewModelApplication.SideMenuVisible && ViewModelApplication.CurrentPopupViewModel == null)
-                //if (mTableName == "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0")
-
-                {
-                    //if Gesture handler is triggered from Text Search Box...               
-                    if (tmp1 == "String")
-                    {
-                        SearchText = SearchText;
-                        if (((KeyEventArgs)tmp).Key == Key.Enter)
-                        //((KeyEventArgs)tmp).Handled = true;
-                        { SearchCommand.Execute(null); }
-                    }
-                    else
-                    {
-
-                        mSelectedTreeItem = (HierarchyViewModel)(((ContextualEventArgs)parameter).Context);
-                        //ViewModelApplication.SideMenuVisible = true;
-
-                        if (eventTmp == "MouseButtonEventArgs" && ((MouseEventArgs)tmp).Source.GetType().Name == "TreeView")
-                            //Prevent action for mouse event if mouse is not over a TreeView Item
-                        {
-                            if ((((MouseButtonEventArgs)tmp).ClickCount  == 1) )
-                            {
-                                if (!(mSelectedTreeItem == null || ((string)mSelectedTreeItem.Page).Length == 0 || mSelectedTreeItem.Page == "Folder"))
-                                {
-                                    {( (MouseButtonEventArgs)tmp).Handled = true;
-                                        RunSelectedMenu(); }
-                                }
-                                //If tree item is of type folder, then expand the next level of the hierarchy
-                                if (mSelectedTreeItem.Page == "Folder")
-                                        {
-                                    mSelectedTreeItem.IsExpanded = !mSelectedTreeItem.IsExpanded;
-                                    ((MouseButtonEventArgs)tmp).Handled = true;
-                                }
-                                ;
-
-                            }
-                        }
-                        else
-                        if (eventTmp == "KeyEventArgs")
-                        {
-                            if ((((KeyEventArgs)tmp).Key == Key.Enter) || (((KeyEventArgs)tmp).Key == Key.Insert) || (((KeyEventArgs)tmp).Key == Key.Delete))
-                            {
-                                ((KeyEventArgs)tmp).Handled = true;
-                                    if (!(mSelectedTreeItem == null || ((string)mSelectedTreeItem.Page).Length == 0 || mSelectedTreeItem.Page == "Folder"))
-
-                                        RunSelectedMenu();
-                            }
-                            ((KeyEventArgs)tmp).Handled = true;
-                        }
-                        //}
-                    }
-                }
-                else
-                //enable editing of hierarchy menu structure
-                //if Gesture handler is triggered from Text Search Box...
-                //
-
+                switch (eventTmp)
                 {
 
-                    if (tmp1 == "String")
+                    case "MouseButtonEventArgs" or "MouseEventArgs" :
                     {
-                        SearchText = SearchText;
-                        if (((KeyEventArgs)tmp).Key == Key.Enter)
-                        //((KeyEventArgs)tmp).Handled = true;
-                        { SearchCommand.Execute(null); }
-                    }
-                    else
-                    {
-                        mSelectedTreeItem = (HierarchyViewModel)(((ContextualEventArgs)parameter).Context);
-                        //ViewModelApplication.SideMenuVisible = true;
+                        //if (eventTmp == "DragEventArgs")
+                        //{
+                        //    var dragEvent = (DragEventArgs)tmp;
+                        //    if (dragEvent.RoutedEvent == DragDrop.DragEnterEvent)
+                        //        isDrag = true;
+                        //    else
+                        //        isDrag = false;
+                        //    break;
+                        //    //}
+
                         if (eventTmp == "MouseButtonEventArgs")
                         {
-                            if (((MouseButtonEventArgs)tmp).ClickCount > 1)
+
+                            var mouseArgs = (MouseButtonEventArgs)tmp;
+                            var srcElement = mouseArgs.OriginalSource as UIElement;
+                            var srcType = srcElement?.GetType().FullName;
+                            if (srcType == "System.Windows.Controls.TextBlock")
+                            mSelectedTreeItem = (HierarchyViewModel)((TreeView)mouseArgs.Source).SelectedItem;
+
+
+                            //If button is clicked when the mouse is over the expander triagngle of the TreeView
+                            if (srcType == "System.Windows.Shapes.Path")
+                                return;
+
+                            if (srcType != "System.Windows.Controls.TextBlock")
                             {
-                                ((MouseButtonEventArgs)tmp).Handled = true;
-                                if (!(ViewModelApplication.CurrentSideMenuContent == SideMenuContent.Menu))
-                                    if (!(ViewModelApplication.CurrentSideMenuContent == SideMenuContent.Menu)) 
-                                        EditHierarchyElement(mSelectedTreeItem);
+                                //mouseArgs.Handled = true;
+                                return;
                             }
+                            if (mouseArgs.RoutedEvent == UIElement.PreviewMouseLeftButtonDownEvent)
+                            {
+                                //mouseEvent.Handled = true;                             
+                                //break;
+                            }
+                            if (mouseArgs.RoutedEvent == UIElement.PreviewMouseLeftButtonUpEvent)
+                            {
+                                //if (MScrollViewer == null)
+                                //{
+                                //    var item = GetNearestContainer(mouseArgs.OriginalSource as UIElement);
+
+                                //    var MTreeView = (TreeView)mouseArgs.Source;
+                                //    MScrollViewer = FindScrollViewer(MTreeView);
+                                //    //MScrollViewer.IsHitTestVisible = true;
+                                //    MScrollViewer?.ReleaseMouseCapture();
+                                //    _scrollTimer.Stop();
+                                //}
+                            }
+
+                            if (mouseArgs.ClickCount == 1)
+                            {
+                                if (!isDrag)
+                                {
+                                    _doubleClickDetected = false;
+                                    _clickTimer.Stop();
+                                    _clickTimer.Start();
+                                }
+                                mouseArgs.Handled = true;
+                                break;
+                            }
+
+                            if (mouseArgs.ClickCount > 1)
+                            {
+                                _doubleClickDetected = true;
+                                _clickTimer.Stop();
+                                mouseArgs.Handled = true;
+                                if (!(ViewModelApplication.CurrentSideMenuContent != SideMenuContent.Menu))
+                                    EditHierarchyElement(mSelectedTreeItem);
+                                return;
+                            }
+
+                            break;
+                        }
+                        else // MouseEventArgs
+                            if (eventTmp == "MouseEventArgs")
+                            {
+                                var mouseEvent = (MouseEventArgs)tmp;
+                                mSource = (TreeViewItem)((ContextualEventArgs)parameter).Context;
+                                // check left button pressed AND mouse move routed event
+
+                                if (mouseEvent.RoutedEvent == Mouse.MouseEnterEvent)
+                                {
+                                    mouseEvent.Handled = true;
+                                    break;
+                                }
+
+                                if (mouseEvent.RoutedEvent == Mouse.MouseLeaveEvent)
+                                {
+                                    mouseEvent.Handled = true;
+                                    break;
+                                }
+
+                                if (mouseEvent.RoutedEvent == Mouse.MouseDownEvent)
+                                {
+                                    //mouseEvent.Handled = true;                             
+                                    break;
+                                }
+
+                                if ((mouseEvent.RoutedEvent == Mouse.PreviewMouseMoveEvent) & mouseEvent.LeftButton == MouseButtonState.Pressed)
+                                {
+                                    //{
+                                    //    try
+                                    //    {
+                                    var item = GetNearestContainer(mouseEvent.OriginalSource as UIElement);
+
+                                    if (item != null)
+                                    {
+                                        if (mouseEvent.LeftButton == MouseButtonState.Pressed & item != null)
+                                        {
+                                            var isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                                            var isShift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+                                            var currentPosition = mouseEvent.GetPosition(item);
+                                            mDraggedItem = (HierarchyViewModel)((TreeViewItem)item).Header;
+
+                                            //            //return;
+
+                                            //Check for dragging of treeview item
+                                            if ((Math.Abs(currentPosition.X - mLastMouseDown.X) > 10.0) ||
+                                                (Math.Abs(currentPosition.Y - mLastMouseDown.Y) > 10.0))
+                                            {
+
+                                                mSourceCategoryName = mDraggedItem.ShortName;
+                                                mLastMouseDown = currentPosition;
+
+                                                if (mDraggedItem != null)
+
+                                                {
+                                                    isDrag = true;
+                                                    mTarget = null;//ensure target is reset
+                                                    if (!isCtrl & !isShift)
+                                                    {
+
+                                                        var finalDropEffect = DragDrop.DoDragDrop(item, mDraggedItem,
+                                                            DragDropEffects.Move);
+
+                                                        //Checking target is not null and item is dragging(moving)
+                                                        if ((finalDropEffect == DragDropEffects.Move) && (mTarget != null))
+                                                        {
+                                                            // A Move drop was accepted
+                                                            if (mTarget != null & mDraggedItem != null)
+                                                            {
+                                                                if (CheckDropTarget(mTarget,mDraggedItem))
+                                                                    ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MoveHierarchyElement(mDraggedItem, mTarget);// MoveItem();
+
+                                                                mTargetT = null;
+                                                                //mSource = null;
+                                                            }
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        var finalDropEffect = DragDrop.DoDragDrop(item, mDraggedItem, DragDropEffects.Copy);
+                                                        if ((finalDropEffect == DragDropEffects.Copy) && (mTarget != null) && isCtrl)
+                                                        {
+                                                            // A Copy drop was accepted
+                                                            if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
+                                                            {
+                                                                if (CheckDropTarget(mTarget, mDraggedItem))
+                                                                    ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).CopyHierarchyElement(mDraggedItem, mTarget);// MoveItem();
+                                                                mTargetT = null;
+                                                                //mSource = null;
+                                                            }
+
+
+                                                        }
+                                                        }
+
+                                                    }
+
+                                                }
+
+                                            }
+                                        }
+
+
+
+
+
+                                        break;
+                                    }
+
+                                }                       // if we reach here (eventTmp != "MouseButtonEventArgs") we must still break
+                                break;
+                            }
+                    
+
+
+                case  "DragEventArgs":
+                    {
+                        var dragEvent = (DragEventArgs)tmp;
+
+                        var item = GetNearestContainer(dragEvent.OriginalSource as UIElement);
+
+                        //if (MScrollViewer == null)
+                        //{
+                        //    var MTreeView = (TreeView)dragEvent.Source;
+                        //    MScrollViewer = FindScrollViewer(MTreeView);
+                        //}
+                        ////MScrollViewer = FindScrollViewer(dragEvent.OriginalSource as DependencyObject);
+
+                        //if (dragEvent.RoutedEvent ==DragDrop.PreviewDragOverEvent & MScrollViewer !=null)
+
+                        //{
+
+
+                        //    //MTreeview.IsHitTestVisible = false;
+                        //     var MTreeView = (TreeView)dragEvent.Source;
+                        //   var mouseCaptured = MScrollViewer.IsMouseCaptured;
+                        //    MScrollViewer?.CaptureMouse();
+                        //    _scrollTimer.Start();
+
+                        if (dragEvent.Source is not TreeView treeView) return;
+
+                        // Retrieve the internal ScrollViewer using VisualTreeHelper
+                        var scrollViewer = FindVisualChild<ScrollViewer>(treeView);
+                        if (scrollViewer == null) return;
+
+                        // Get position of mouse relative to TreeView
+                        var currentPosition = dragEvent.GetPosition(treeView);
+
+                        double tolerance = 20; // Distance in pixels from edge to start scrolling
+                        double offset = 10;    // Scroll speed/step size
+
+                        if (currentPosition.Y < tolerance)
+                        {
+                            // Near top edge - scroll up
+                            scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - offset);
+                        }
+                        else if (currentPosition.Y > treeView.ActualHeight - tolerance)
+                        {
+                            // Near bottom edge - scroll down
+                            scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + offset);
+                        }
+
+
+                        if (dragEvent.RoutedEvent == DragDrop.PreviewDragOverEvent)
+
+                        {
+
+                            currentPosition = dragEvent.GetPosition(item);
+
+                            if ((Math.Abs(currentPosition.X - mLastMouseDown.X) > 10.0) ||
+                               (Math.Abs(currentPosition.Y - mLastMouseDown.Y) > 10.0))
+                            {
+                                // Verify that this is a valid drop and then store the drop target
+                                item = GetNearestContainer(dragEvent.OriginalSource as UIElement);
+
+                                if (item == null)
+                                { dragEvent.Effects = DragDropEffects.None; }
+                                //else
+                                //{
+                                    mTargetT = item;
+                                    mTarget = (HierarchyViewModel)item.GetType().GetProperties().Single(c => c.Name == "DataContext").GetValue(item);
+                                    //if (mSourceID == mDestinationID)
+                                    //{ }
+                                    if (dragEvent.Effects == DragDropEffects.Move)
+                                    { dragEvent.Effects = CheckDropTarget(mTarget, mDraggedItem) ? DragDropEffects.Move : DragDropEffects.None; }
+                                    else
+                                    { dragEvent.Effects = DragDropEffects.Copy; }
+                                //}
+                            }
+                            dragEvent.Handled = true;
                         }
                         else
-                        if (eventTmp == "KeyEventArgs")
 
-                        //Edit element
                         {
-                            if (((KeyEventArgs)tmp).Key == Key.Enter)
-                            {
-                                ((KeyEventArgs)tmp).Handled = true;
-                                    if (!(ViewModelApplication.CurrentSideMenuContent == SideMenuContent.Menu) |!(mSelectedTreeItem.Page=="Hierarchy"))
-                                        EditHierarchyElement(mSelectedTreeItem);
-                            }
-                            else
-                                if (((KeyEventArgs)tmp).Key == Key.Insert)
-                            {
-                                ((KeyEventArgs)tmp).Handled = true;
-                                AddHierarchyElement(mSelectedTreeItem);
-                            }
-                            else
-                                    if (((KeyEventArgs)tmp).Key == Key.Delete)
-                            {
-                                ((KeyEventArgs)tmp).Handled = true;
-                                DeleteHierarchyElement(mSelectedTreeItem);
-                            }
-                            else
-                                    if (((KeyEventArgs)tmp).Key == Key.F2)
-                            {
-                                ((KeyEventArgs)tmp).Handled = true;
-                                NavigateElement(mSelectedTreeItem);
-                            }
+                            //if (dragEvent.RoutedEvent == DragDrop.PreviewDropEvent)
+                            //    item = GetNearestContainer(dragEvent.OriginalSource as UIElement);
+
+                            //if (item != null)
+                            //{
+                            //    mTargetT = item;
+                            //    mTarget = (HierarchyViewModel)item.GetType().GetProperties().Single(c => c.Name == "DataContext").GetValue(item);
+                            //    //if (CheckDropTarget(mTarget, mDraggedItem))
+                            //    _ = (mTarget.KCategoryID == mDraggedItem.KCategoryID);
+
+                            //    {
+
+                            //        var isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                            //        var isShift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+
+                            //        if (!isCtrl & !isShift)
+                            //        {
+                            //            //dragEvent.Effects = CheckDropTarget(mTarget, mDraggedItem) ? DragDropEffects.Move : DragDropEffects.None;
+                            //            if (CheckDropTarget(mTarget, mDraggedItem))
+                            //                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MoveHierarchyElement(mDraggedItem, mTarget);// MoveItem();
+                            //        }
+                            //        else
+                            //        {
+                            //            //dragEvent.Effects = CheckDropTarget(mTarget, mDraggedItem) ? DragDropEffects.Copy : DragDropEffects.None;
+
+
+                            //            if (CheckDropTarget(mTarget, mDraggedItem))
+
+                            //                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).CopyHierarchyElement(mDraggedItem, mTarget);// CopyItem();
+
+                            //        }
+                            //    }
+                            //    dragEvent.Handled = true;
+                            //    return;
+                            //}
+                            //return;
                         }
-                        //((KeyEventArgs)tmp).Handled = true;
+                        break;
                     }
 
+                case "MouseWheelEventArgs":
+                {
+                        return;
+                    }
+
+                case "ScrollChangedEventArgs":
+                {
+                        return;
+                    }
+
+                case "KeyEventArgs":
+                        {
+                            if (tmp1 == "String")
+                            {
+                                SearchText = SearchText;
+                                if (((KeyEventArgs)tmp).Key == Key.Enter)
+                                //((KeyEventArgs)tmp).Handled = true;
+                                { SearchCommand.Execute(null); }
+                                break;
+                            }
+                            else
+                            {
+                                mSelectedTreeItem = (HierarchyViewModel)(((ContextualEventArgs)parameter).Context);
+                                if (((KeyEventArgs)tmp).Key == Key.Enter)
+                                {
+                                    ((KeyEventArgs)tmp).Handled = true;
+                                if ((ViewModelApplication.CurrentSideMenuContent != SideMenuContent.Menu) & (mSelectedTreeItem.Page != "Hierarchy") & ViewModelApplication.CurrentPopupContent != 0 & (mSelectedTreeItem.Page != "Folder")) 
+                                    EditHierarchyElement(mSelectedTreeItem);
+                                    else
+                                    {
+                                            RunSelectedMenu();
+                                    }
+                                    break;
+                                }
+                                else
+                                    if (((KeyEventArgs)tmp).Key == Key.Insert)
+                                    {
+                                        ((KeyEventArgs)tmp).Handled = true;
+                                        AddHierarchyElement(mSelectedTreeItem);
+                                    }
+                                    else
+                                        if (((KeyEventArgs)tmp).Key == Key.Delete)
+                                        {
+                                            ((KeyEventArgs)tmp).Handled = true;
+                                            DeleteHierarchyElement(mSelectedTreeItem);
+                                        }
+                                        else
+                                            if (((KeyEventArgs)tmp).Key == Key.F2)
+                                            {
+                                                ((KeyEventArgs)tmp).Handled = true;
+                                                NavigateElement(mSelectedTreeItem);
+                                            }
+                                break;
+                            }
+                        }
+
+                    // Unknown
+                    default:
+                        return;
                 }
             }
-        }
+
 
         private TreeViewItem GetNearestContainer(UIElement element)
         {
@@ -1269,6 +1513,38 @@ namespace Fasetto.Word
             }
             return container;
         }
+
+
+        private bool CheckDropTarget(HierarchyViewModel mTargetN, HierarchyViewModel mDraggedN)
+        {
+            //Check whether the target item is meeting your condition
+
+
+            //TO DO:
+
+            //Check that move will not cause infinite loop(Ancestor-descendant - Ancestor)
+            //Check that the item being moved is not an Ancestor of the item being moved to
+            //the KCategoryID attribute of the item being moved may not be an ancestor of the
+            //item being moved too.
+            //If this constraint is met, the boolean is set to TRUE
+
+            mDestinationID = mTargetN.KCategoryID;
+            mSourceID = mDraggedN.KCategoryID;
+            mParentID = mDraggedN.ParentCategoryID;
+            //mSourceCategoryName = (string)res.GetType().GetProperties().Single(c => c.Name == "ShortName").GetValue(res);
+            if (mSourceID == mDestinationID
+                || mParentID == mDestinationID || TreeViewHelper.GetChildTreeViewItems(mDraggedN, mTargetN)
+            { return false; }
+            //var mDestinationID = (string)res.GetType().GetProperties().Single(c => c.Name == "KId").GetValue(res);
+
+            MatchingKCategoryEnumerator = null;
+
+            //return PerformKIdSearch();
+            return true;
+
+        }
+
+
 
         /// Use Popup View to add a Hierarchy Element
         /// </summary>
@@ -1609,7 +1885,7 @@ namespace Fasetto.Word
                 //Log($"Done work on inner thread for ");
 
 
-                // Store single transcient instance of client data store
+                // Store single transient instance of client data store
                 //await Task.Delay(1);
                 var matches = mPersist.Where(x => x.IsUnderReview  == true).OrderByDescending(x => x.DateEffective).ToList();
                 var category = matches.FirstOrDefault();
@@ -1657,11 +1933,130 @@ namespace Fasetto.Word
         /// Output a message with the current thread ID appended
         /// </summary>
         /// <param name="message"></param>
-        private static void Log(string message)
+        //private static void Log(string message)
+        //{
+        //    // Write line
+        //    Debug.WriteLine($"{message} [{Thread.CurrentThread.ManagedThreadId}]");
+        //}
+
+        private T FindParent<T>(DependencyObject child) where T : DependencyObject
         {
-            // Write line
-            Debug.WriteLine($"{message} [{Thread.CurrentThread.ManagedThreadId}]");
+            var parent = VisualTreeHelper.GetParent(child);
+
+            while (parent != null && !(parent is T))
+            {
+                parent = VisualTreeHelper.GetParent(parent);
+            }
+
+            return parent as T;
         }
+
+
+        /// <summary>
+        /// Finds the first ScrollViewer in the visual tree of the given element.
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns></returns>
+        public static ScrollViewer FindScrollViewer(DependencyObject element)
+        {
+            if (element == null) return null;
+            if (element is ScrollViewer viewer) return viewer;
+
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
+            {
+                var child = VisualTreeHelper.GetChild(element, i);
+                var result = FindScrollViewer(child);
+                if (result != null) return result;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Finds the first ScrollViewer in the visual tree of the given element.
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns></returns>
+        public static TreeView FindTreeView(DependencyObject element)
+        {
+            if (element == null) return null;
+            if (element is TreeView viewer) return viewer;
+
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
+            {
+                var child = VisualTreeHelper.GetChild(element, i);
+                var result = FindTreeView(child);
+                if (result != null) return result;
+            }
+            return null;
+        }
+        private static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            for ( var i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T typedChild) return typedChild;
+
+                var childOfChild = FindVisualChild<T>(child);
+                if (childOfChild != null) return childOfChild;
+            }
+            return null;
+        }
+
+
+
+        private void ScrollTimer_Tick(object sender, EventArgs e)
+        {
+            // Check if mouse is above the ScrollViewer
+            if (MScrollViewer == null)
+                return;
+            if (_currentMousePosition.Y < 0)
+            {
+                 MScrollViewer.LineUp();
+            }
+            // Check if mouse is below the ScrollViewer
+            else if (_currentMousePosition.Y >  MScrollViewer.ActualHeight)
+            {
+                 MScrollViewer.LineDown();
+            }
+        }
+
+        public static class TreeViewHelper
+        {
+            public static bool GetChildTreeViewItems(FrameworkElement parent, FrameworkElement target)
+            {
+                var childItems = new List<FrameworkElement>();
+                var childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+                //if (childrenCount ==0)
+                //    return false;
+
+                for (var i = 0; i < childrenCount;)
+                {
+                    var child = VisualTreeHelper.GetChild(parent, i) as FrameworkElement;
+                    i++;
+                    var typeName = child.GetType().Name;
+                    var parentType = parent.GetType().Name;
+
+                    if (child != null && child.GetType().Name == "TreeViewItem" && child == target)
+                    {
+                        return true;
+                    }
+                    else
+                        if (i == childrenCount)
+                        {
+                            if (GetChildTreeViewItems(child, target))
+                                return true;
+                        }
+
+
+
+                }
+                return false;
+
+            }
+
+        }
+
+
 
         #endregion
 
