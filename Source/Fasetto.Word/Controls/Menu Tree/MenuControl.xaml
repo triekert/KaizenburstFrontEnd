@@ -140,14 +140,39 @@
             </Grid>
         </Border>
 
-        <ScrollViewer x:Name="scrollViewer"  Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
+        <!--<ScrollViewer x:Name="scrollViewer"  Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >-->
+
+            
+            <TreeView 
+              Grid.IsSharedSizeScope="True"
+              ItemsSource="{Binding FirstGeneration}" 
+              Name="tvParameters"
+              TreeViewItem.Selected="TreeView_Selected"  
+             >
+                <TreeView.Template>
+                    <ControlTemplate TargetType="TreeView">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            SnapsToDevicePixels="true">
+                            <ScrollViewer x:Name="_tv_scrollviewer_"
+                                  Focusable="False"
+                                  CanContentScroll="False"
+                                  HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                  VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
+                                <ItemsPresenter/>
+                            </ScrollViewer>
+                        </Border>
+                    </ControlTemplate>
+                </TreeView.Template>
+                <!--AllowDrop="True"  MouseDown="TreeView_MouseDown"  Drop="TreeView_Drop" MouseMove="TreeView_MouseMove">-->
+
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="PreviewKeyDown" >
                     <i:InvokeCommandAction 
                         Command="{Binding GestureHandlerCommand}"
                         EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
                         EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
-                    
+
                 </i:EventTrigger>
 
                 <i:EventTrigger EventName="PreviewMouseDoubleClick" >
@@ -175,31 +200,18 @@
                 </i:EventTrigger>
 
 
-                <!--<i:EventTrigger EventName="PreviewMouseLeftButtonUp" >
+                <!--<i:EventTrigger EventName="PreviewMouseMove" >
                     <i:InvokeCommandAction 
                         Command="{Binding GestureHandlerCommand}"
-                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
-                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
-
+                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}" 
+                        EventArgsConverterParameter="{Binding ElementName= tvParameters}" />
                 </i:EventTrigger>-->
 
 
             </i:Interaction.Triggers>
-            <TreeView 
-              ItemsSource="{Binding FirstGeneration}" 
-              Name="tvParameters"
-              TreeViewItem.Selected="TreeView_Selected"  
-             >
-                <TreeView.Template>
-                    <ControlTemplate>
-                        <Border BorderBrush="{TemplateBinding BorderBrush}"  BorderThickness="{TemplateBinding BorderThickness}"  SnapsToDevicePixels="true">
-                            <ItemsPresenter/>
-                        </Border>
-                    </ControlTemplate>
-                </TreeView.Template>
-                <!--AllowDrop="True"  MouseDown="TreeView_MouseDown"  Drop="TreeView_Drop" MouseMove="TreeView_MouseMove">-->
 
-                <TreeView.ItemContainerStyle>
+
+            <TreeView.ItemContainerStyle>
                     <!-- 
             This Style binds a TreeViewItem to a HierarchyViewModel. 
             -->
@@ -221,31 +233,50 @@
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter Property="FontWeight" Value="UltraBold" />
                                 <Setter Property="Foreground" Value="Darkred"/>
-                                <!--<Setter Property="Cursor" Value="Hand"/>-->
-                            </Trigger>
+                                <Setter Property="Cursor" Value="Hand"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                        </Trigger>
 
-                            <Trigger Property="local:MyTreeViewHelper.IsMouseDirectlyOverItem" Value="True">
+                            <!--<Trigger Property="local:MyTreeViewHelper.IsMouseDirectlyOverItem" Value="True">
                                 <Setter Property="FontWeight" Value="Black" />
-                                <!--<Setter Property="Background" Value="Blue" />
-                                <Setter Property="Foreground" Value="Blue"/>-->
-                            </Trigger>
+                                --><!--<Setter Property="Background" Value="Blue" />
+                                <Setter Property="Foreground" Value="Blue"/>--><!--
+                            </Trigger>-->
                         </Style.Triggers>
                     </Style>
                 </TreeView.ItemContainerStyle>
-        
-                
 
-                <TreeView.ItemTemplate>
+                <TreeView.Resources>
+                    <!-- Background when TreeView has focus -->
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="White" />
+
+                    <!-- Background when TreeView loses focus -->
+                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="DarkRed" />
+
+                    <!-- Text color when selected -->
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="DarkRed" />
+                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="White" />
+                </TreeView.Resources>
+
+
+
+            <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"  Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}">
-                            <TextBlock Text="{Binding ShortName}" HorizontalAlignment="Right"  TextWrapping="WrapWithOverflow" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200" SharedSizeGroup="Col1Name" />
+                               
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="{Binding ShortName}" HorizontalAlignment="Left"  TextWrapping="Wrap" FontFamily="Lato Medium" Foreground="{Binding TextColor, Converter={local:StringRGBToBrushConverter}}"/>
+                        </Grid>
+
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
 
 
             </TreeView>
-        </ScrollViewer>
+        <!--</ScrollViewer>-->
 
     </DockPanel>
 </UserControl>
