@@ -77,7 +77,7 @@ namespace Fasetto.Word
         private HierarchyViewModel mDraggedItemTest, mDraggedItem, mTarget;
         private string mSourceCategoryName;
 
-        private TreeViewItem mTargetT, mSource;
+        private TreeViewItem mTargetT, mDraggedT;
 
         private string mDestinationCategoryID, mDestinationID, mSourceID, mParentID;
 
@@ -1210,7 +1210,7 @@ namespace Fasetto.Word
                             if (eventTmp == "MouseEventArgs")
                             {
                                 var mouseEvent = (MouseEventArgs)tmp;
-                                mSource = (TreeViewItem)((ContextualEventArgs)parameter).Context;
+                                //mSource = (TreeViewItem)((ContextualEventArgs)parameter).Context;
                                 // check left button pressed AND mouse move routed event
 
                                 if (mouseEvent.RoutedEvent == Mouse.MouseEnterEvent)
@@ -1246,6 +1246,7 @@ namespace Fasetto.Word
                                             var isShift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
                                             var currentPosition = mouseEvent.GetPosition(item);
                                             mDraggedItem = (HierarchyViewModel)((TreeViewItem)item).Header;
+                                            mDraggedT = item;
 
                                             //            //return;
 
@@ -1274,7 +1275,7 @@ namespace Fasetto.Word
                                                             // A Move drop was accepted
                                                             if (mTarget != null & mDraggedItem != null)
                                                             {
-                                                                if (CheckDropTarget(mTarget,mDraggedItem))
+                                                                if (CheckDropTarget(mTargetT,mDraggedT))
                                                                     ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MoveHierarchyElement(mDraggedItem, mTarget);// MoveItem();
 
                                                                 mTargetT = null;
@@ -1288,9 +1289,9 @@ namespace Fasetto.Word
                                                         if ((finalDropEffect == DragDropEffects.Copy) && (mTarget != null) && isCtrl)
                                                         {
                                                             // A Copy drop was accepted
-                                                            if (!mSource.Header.ToString().Equals(mTargetT.Header.ToString()))
+                                                            if (!mDraggedT.Header.ToString().Equals(mTargetT.Header.ToString()))
                                                             {
-                                                                if (CheckDropTarget(mTarget, mDraggedItem))
+                                                                if (CheckDropTarget(mTargetT, mDraggedT))
                                                                     ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).CopyHierarchyElement(mDraggedItem, mTarget);// MoveItem();
                                                                 mTargetT = null;
                                                                 //mSource = null;
@@ -1325,6 +1326,7 @@ namespace Fasetto.Word
                         var dragEvent = (DragEventArgs)tmp;
 
                         var item = GetNearestContainer(dragEvent.OriginalSource as UIElement);
+                        //mDraggedT = item;
 
                         //if (MScrollViewer == null)
                         //{
@@ -1385,11 +1387,11 @@ namespace Fasetto.Word
                                 //else
                                 //{
                                     mTargetT = item;
-                                    mTarget = (HierarchyViewModel)item.GetType().GetProperties().Single(c => c.Name == "DataContext").GetValue(item);
+                                    mTarget = (HierarchyViewModel)mTargetT.GetType().GetProperties().Single(c => c.Name == "DataContext").GetValue(mTargetT);
                                     //if (mSourceID == mDestinationID)
                                     //{ }
                                     if (dragEvent.Effects == DragDropEffects.Move)
-                                    { dragEvent.Effects = CheckDropTarget(mTarget, mDraggedItem) ? DragDropEffects.Move : DragDropEffects.None; }
+                                    { dragEvent.Effects = CheckDropTarget(mTargetT, mDraggedT) ? DragDropEffects.Move : DragDropEffects.None; }
                                     else
                                     { dragEvent.Effects = DragDropEffects.Copy; }
                                 //}
@@ -1515,7 +1517,7 @@ namespace Fasetto.Word
         }
 
 
-        private bool CheckDropTarget(HierarchyViewModel mTargetN, HierarchyViewModel mDraggedN)
+        private bool CheckDropTarget(FrameworkElement  TargetT, FrameworkElement DraggedT)
         {
             //Check whether the target item is meeting your condition
 
@@ -1528,12 +1530,11 @@ namespace Fasetto.Word
             //item being moved too.
             //If this constraint is met, the boolean is set to TRUE
 
-            mDestinationID = mTargetN.KCategoryID;
-            mSourceID = mDraggedN.KCategoryID;
-            mParentID = mDraggedN.ParentCategoryID;
+            var targetID = ((HierarchyViewModel)TargetT.GetType().GetProperties().Single(c => c.Name == "DataContext").GetValue(TargetT)).KCategoryID;
+            var draggedID = ((HierarchyViewModel)DraggedT.GetType().GetProperties().Single(c => c.Name == "DataContext").GetValue(DraggedT)).KCategoryID;
+
             //mSourceCategoryName = (string)res.GetType().GetProperties().Single(c => c.Name == "ShortName").GetValue(res);
-            if (mSourceID == mDestinationID
-                || mParentID == mDestinationID || TreeViewHelper.GetChildTreeViewItems(mDraggedN, mTargetN)
+            if (targetID == draggedID  || TreeViewHelper.GetChildTreeViewItems(DraggedT,TargetT))
             { return false; }
             //var mDestinationID = (string)res.GetType().GetProperties().Single(c => c.Name == "KId").GetValue(res);
 
