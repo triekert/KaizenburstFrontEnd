@@ -188,7 +188,7 @@
                         <!--<EventSetter Event="Drop" Handler="TreeView_Drop"/>-->
                         <!--<EventSetter Event= "MouseLeftButtonDown" Handler="TreeView_MouseLeftButtonDown"/>-->
                         <!--<EventSetter Event="PreviewMouseLeftButtonDown" Handler="TreeView_MouseLeftButtonDown" />-->
-                        <EventSetter Event="KeyDown" Handler="TreeView_KeyBoard"/>
+                        <!--<EventSetter Event="KeyDown" Handler="TreeView_KeyBoard"/>-->
                         <!--<EventSetter Event="MouseMove" Handler="TreeView_MouseMove"/>-->
                         <!--<EventSetter Event="PreviewMouseDoubleClick" Handler="TreeView_MouseDoubleClick"/>-->
                         <!--<EventSetter Event="PreviewMouseDown" Handler="TreeView_MouseLeftButtonDown"/>-->                        
