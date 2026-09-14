@@ -237,12 +237,11 @@
                             <Setter Property="Background" Value="Transparent"/>
                         </Trigger>
 
-                            <!--<Trigger Property="local:MyTreeViewHelper.IsMouseDirectlyOverItem" Value="True">
-                                <Setter Property="FontWeight" Value="Black" />
-                                --><!--<Setter Property="Background" Value="Blue" />
-                                <Setter Property="Foreground" Value="Blue"/>--><!--
-                            </Trigger>-->
-                        </Style.Triggers>
+                        <Trigger Property="local:MyTreeViewHelper.IsMouseDirectlyOverItem" Value="True">
+                            <Setter Property="FontWeight" Value="Black" />
+
+                        </Trigger>
+                    </Style.Triggers>
                     </Style>
                 </TreeView.ItemContainerStyle>
 

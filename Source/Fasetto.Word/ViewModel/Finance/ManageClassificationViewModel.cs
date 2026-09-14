@@ -1323,7 +1323,11 @@ namespace Fasetto.Word
             //set flag to allow template update
             IsTemplate = true;
             //new RelayCommand(async () => await AddClassificationAsync());
-            AddClassificationAsync();
+           var test = ( (TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).TransactionDetail.Count();
+            if (test == 1)
+            { AddClassificationAsync(); }
+            else
+            { System.Windows.MessageBox.Show($"Template change is only available before transaction splitting.... "); }
         }
 
 
