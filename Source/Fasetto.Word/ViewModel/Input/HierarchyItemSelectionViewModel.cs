@@ -170,7 +170,7 @@ namespace Fasetto.Word
 
             var result = default(bool);
 
-            RunCommandAsync(() => Working, async () =>
+            _ = RunCommandAsync(() => Working, async () =>
             {
 
                 // Try and do the work

@@ -362,6 +362,7 @@ namespace Fasetto.Word
 
             if (((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel != null && ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel.GetType().Name == "HierarchyTreeViewModel")
             {
+                //Kill the hierarchyElement control...
                 ViewModelApplication.CurrentPopupViewModel = (HierarchyTreeViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
                 ViewModelApplication.CurrentPopupContent = PopupContent.Hierarchy;
             }

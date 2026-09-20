@@ -1428,7 +1428,7 @@ namespace Fasetto.Word
                     ViewModelApplication.PopupVisible = true;
                 }
 
-                //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Save();
+                //
                 ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ProcessSelection();
 
             }
