@@ -89,7 +89,7 @@ namespace Fasetto.Word
                     //root.FHierarchyID = "NULL"; 
                 }
             //}
-            mHierarchyTree = new HierarchyTreeViewModel1(root);//root);
+            mHierarchyTree = new HierarchyTreeViewModel(root,true);//root);
             //PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
             //ViewModelApplication.CurrentPopupViewModel = this;
 
@@ -107,7 +107,7 @@ namespace Fasetto.Word
         /// <param name="root"></param>
         public HierarchySelectionControl(ParameterHierarchyItemSelectApiModel root)
         {
-            mHierarchyTree = new HierarchyTreeViewModel1(root);//root);
+            mHierarchyTree = new HierarchyTreeViewModel(root,true);//root);
 
             DataContext = mHierarchyTree;
             InitializeComponent();

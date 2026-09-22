@@ -66,6 +66,8 @@ namespace Fasetto.Word
         private Point _currentMousePosition;
         private bool _isDraggingSelection = false;
 
+        private bool MisLookup = false;
+
         #endregion
 
         #region Data
@@ -116,6 +118,8 @@ namespace Fasetto.Word
 
 
         #region Constructor
+
+
         /// <summary>
         /// The HierarchyTreeViewModel is a visual interface for interacting with hierarchical
         /// Structures persisted on the database linked to the application
@@ -125,11 +129,16 @@ namespace Fasetto.Word
         /// <param name="hierarchyTable"></param>
         /// The hierarchyTable passed through as a paremeter identifies the specific hierarchy set to be retrieved
         /// from persistent s
-        public HierarchyTreeViewModel(string hierarchyTable)
+
+
+       public  HierarchyTreeViewModel(ParameterHierarchyItemSelectApiModel MHierarchy, bool isLookup)
         {
-            #region Dummy Root HierarchyListDataModel
-            //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
-            mHDML = new HierarchyListDataModel();
+            mHierarchy = MHierarchy;
+            MisLookup = isLookup;
+
+        #region Dummy Root HierarchyListDataModel
+        //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+        mHDML = new HierarchyListDataModel();
             mHDM = new HierarchyDataModel
             {
                 KCategoryID = new Guid().ToString(),
@@ -141,13 +150,7 @@ namespace Fasetto.Word
             mHDML.Add(mHDM);
             mHDM = null;
 
-            mTableName = hierarchyTable;
-            mHierarchy = new ParameterHierarchyItemSelectApiModel
-            {
-                FHierarchyID = hierarchyTable,
-                ClientID = ViewModelApplication.FClientID,
-                DateTarget = DateTime.Now
-            };
+
             #endregion
             //retrieve hierarchy from persistent storage on server
             //To Do: Add mTableName as parameter when calling HierarchyAsync to populate hierarchy
@@ -191,6 +194,28 @@ namespace Fasetto.Word
 
             //// Attach mouse event
             //this.MouseLeftButtonUp += OnMouseLeftButtonUp; 
+
+        }
+        /// <summary>
+        /// Overload for HierarchyTreeViewModel where the FHIerarchyID is known. 
+        /// this is never called by the HierarchyItem selection control
+        /// </summary>
+        /// <param name="hierarchyTable"></param>
+        public HierarchyTreeViewModel(string hierarchyTable)
+          : this(ConvertRootToParameter(hierarchyTable),false)
+        {
+        }
+
+    private static ParameterHierarchyItemSelectApiModel ConvertRootToParameter(string hierarchyTable)
+        {var MHierarchy =
+
+            new ParameterHierarchyItemSelectApiModel
+            {
+                FHierarchyID = hierarchyTable,
+                ClientID = ViewModelApplication.FClientID,
+                DateTarget = DateTime.Now
+            };
+            return MHierarchy;
 
         }
 
@@ -566,7 +591,7 @@ namespace Fasetto.Word
 
         #endregion // SearchKCategoryID
         #region Search Logic //KCategoryID
-        private void PerformKIdSearch()
+        public void PerformKIdSearch()
         {
 
             if (MatchingKCategoryEnumerator == null || !MatchingKCategoryEnumerator.MoveNext())
@@ -1075,7 +1100,7 @@ namespace Fasetto.Word
             // Close settings menu
             //Log($"Done work on calling thread *****");
 
-            if (mTableName == "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0")
+            if (mHierarchy.FHierarchyID == "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0")
                 {
                     ViewModelApplication.SideMenuVisible = true;
                 }
@@ -1098,10 +1123,34 @@ namespace Fasetto.Word
                     }
                 else
                     {
-                        ViewModelApplication.CurrentPopupViewModel = null;
+                    if (ViewModelApplication.CurrentPageViewModel != null)
+                    {
+                        //If user escapes from window whilst processing hierarchy control calls on the manage classification window, return to transaction detail
+                        var Pgtype = ViewModelApplication.CurrentPageViewModel.GetType().Name;
+                        if (((string)Pgtype == "TransactionSelectionPageViewModel" || (string)Pgtype == "BudgetSelectionPageViewModel") && ViewModelApplication.ControlParameter1 != null)
+
+                        {
+                            //ViewModelApplication.CurrentPopupViewModel = (ManageClassificationViewModel)ViewModelApplication.ControlParameter1;
+                            var mViewModel = (HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel;
+                            //var mViewModel = (ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel;
+
+                            await mViewModel.ProcessSelectionAction();
+
+                        }
+                        else
+                        {
+
+                            ViewModelApplication.PopupVisible = false;
+                            ViewModelApplication.CurrentPopupContent = 0;
+                        }
+                    }
+                    else
+                    {
+
                         ViewModelApplication.PopupVisible = false;
                         ViewModelApplication.CurrentPopupContent = 0;
                     }
+                }
                 }
 
 
@@ -1536,6 +1585,108 @@ namespace Fasetto.Word
             //    return;
             //((KeyEventArgs)tmp).Handled = true;
             //If the item selected is part of a hierarchy structure, navigate to the next level
+
+            if (MisLookup)
+            {
+
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid = mSelectedTreeItem.KCategoryID;
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName = mSelectedTreeItem.ShortName;
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID = mSelectedTreeItem.FClientID;
+
+                if (ViewModelApplication.CurrentPageViewModel != null)
+                {
+
+                    if ((ViewModelApplication.CurrentPageViewModel.GetType().Name == "SWBillingPageViewModel"))
+                    {
+                        ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod.mRequest = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedKid;
+                        ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).PopulateAsync();
+                    }
+                    var Pgtype = ViewModelApplication.CurrentPageViewModel.GetType().Name;
+                    if (ViewModelApplication.CurrentPopupViewModel == null || (ViewModelApplication.CurrentPopupViewModel.GetType().Name != "ManageClassificationViewModel"))
+                    {
+                        if ((string)Pgtype == "TransactionSelectionPageViewModel")
+                        {
+                            //if (ViewModelApplication.ControlParameter1 != null)
+                            //{
+                            //    ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter1;
+                            //    ViewModelApplication.ControlParameter1 = null;
+                            //    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                            //    ViewModelApplication.PopupVisible = true;
+                            //}   
+                            //else
+                            //{
+                            //    //if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Client")
+                            //    //{
+                            //    //    if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid != 
+                            //    //        ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).ClientID
+                            //    //        //If client selection has changed, nullify cost hierarchy selection
+                            //    //        )
+                            //    //        {
+                            //    //        ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid = null;
+                            //    //        ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedName = null;
+
+                            //    //    }
+                            //    //}
+                            //    //ViewModelApplication.PopupVisible = false;
+                            //    //ViewModelApplication.CurrentPopupViewModel = null;
+                            //    //ViewModelApplication.CurrentPopupContent = 0;
+
+                            //}
+                            //ViewModelApplication.CurrentPopupViewModel = null;
+                        }
+                        else
+                        {
+                            if ((string)Pgtype == "HierarchyPageViewModel")
+                            //If the control is being called from the Hierarchy Page view model (and this is a hierarchy element of type hierarchy, then return to the element editing page after selection of hierarchy type
+                            {
+                                //((HierarchyItemSelectionViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).Type).EditedKid = mSelectedTreeItem.KCategoryID;
+                                ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).HierarchyType = mSelectedTreeItem.ShortName;
+                                //((HierarchyItemSelectionViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).Type).ClientID = mSelectedTreeItem.FClientID;
+                                ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).HierarchyTypeID = mSelectedTreeItem.KCategoryID;
+                                //var TempViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
+                                ViewModelApplication.CurrentPopupContent = 0;
+                                ViewModelApplication.CurrentControlViewModel = ViewModelApplication.ControlParameter5;
+
+                                ViewModelApplication.PopupVisible = true;
+                                //ViewModelApplication.AddElementViewModel = TempViewModel;
+                            }
+                            else
+                            {
+                                ViewModelApplication.PopupVisible = false;
+
+                                ViewModelApplication.CurrentPopupContent = 0;
+                            }
+
+
+                        }
+
+
+                    }
+                    else
+                    {
+                        ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                        ViewModelApplication.PopupVisible = true;
+                    }
+
+                    //
+                    ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ProcessSelection();
+
+                }
+                else
+                {
+                    ViewModelApplication.PopupVisible = false;
+
+                    ViewModelApplication.CurrentPopupContent = 0;
+
+                    //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Save();
+                    ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ProcessSelection();
+                }
+
+                return;
+
+            }
+
+
             if (mSelectedTreeItem.Page == "Hierarchy")
             {
                 if (mSelectedTreeItem.Root != "")

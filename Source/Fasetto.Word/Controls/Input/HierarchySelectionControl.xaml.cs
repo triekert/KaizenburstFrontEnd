@@ -44,7 +44,7 @@ namespace Fasetto.Word
         #endregion//Public Commands
 
 
-        private readonly HierarchyTreeViewModel1 mHierarchyTree;
+        private readonly HierarchyTreeViewModel mHierarchyTree;
         private string mSourceCategory;
         private string mSourceCategoryName;
         private string mDestinationCategoryID, mDestinationID,mSourceID,mParentID,mFHierarchyID;
@@ -69,8 +69,8 @@ namespace Fasetto.Word
             //var root = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
             //Use the root of Clients
 
-            if (ViewModelApplication.CurrentPopupViewModel!= null && ViewModelApplication.CurrentPopupViewModel.GetType().Name == "HierarchyTreeViewModel1")
-            { mHierarchyTree = (HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel; }
+            if (ViewModelApplication.CurrentPopupViewModel!= null && ViewModelApplication.CurrentPopupViewModel.GetType().Name == "HierarchyTreeViewModel")
+            { mHierarchyTree = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel; }
             else
             { 
                 root = new ParameterHierarchyItemSelectApiModel();
@@ -112,7 +112,7 @@ namespace Fasetto.Word
                 switch (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label)
                 {
                     case "Select Client":
-                        mHierarchyTree = new HierarchyTreeViewModel1(root);//root);
+                        mHierarchyTree = new HierarchyTreeViewModel(root,true);//root);
 
                         break;
 
@@ -120,16 +120,16 @@ namespace Fasetto.Word
                         if (
                             (ViewModelApplication.ControlPopupCostCategory != null)
                              &&
-                             ((ParameterHierarchyItemSelectApiModel)((HierarchyTreeViewModel1)ViewModelApplication.ControlPopupCostCategory).mHierarchy).ClientID == root.ClientID
+                             ((ParameterHierarchyItemSelectApiModel)((HierarchyTreeViewModel)ViewModelApplication.ControlPopupCostCategory).mHierarchy).ClientID == root.ClientID
                              &&
-                             ((ParameterHierarchyItemSelectApiModel)((HierarchyTreeViewModel1)ViewModelApplication.ControlPopupCostCategory).mHierarchy).HierarchyTypeID == root.HierarchyTypeID
+                             ((ParameterHierarchyItemSelectApiModel)((HierarchyTreeViewModel)ViewModelApplication.ControlPopupCostCategory).mHierarchy).HierarchyTypeID == root.HierarchyTypeID
                              )
                         {
-                            mHierarchyTree = (HierarchyTreeViewModel1)ViewModelApplication.ControlPopupCostCategory;
+                            mHierarchyTree = (HierarchyTreeViewModel)ViewModelApplication.ControlPopupCostCategory;
                         }
                         else
 
-                        mHierarchyTree = new HierarchyTreeViewModel1(root);
+                        mHierarchyTree = new HierarchyTreeViewModel(root,true);
                         ViewModelApplication.ControlPopupCostCategory = mHierarchyTree;
                         break;
 
@@ -138,17 +138,17 @@ namespace Fasetto.Word
                         if (
                             (ViewModelApplication.ControlPopupParty != null)
                              &&
-                             ((ParameterHierarchyItemSelectApiModel)((HierarchyTreeViewModel1)ViewModelApplication.ControlPopupParty).mHierarchy).ClientID == root.ClientID
+                             ((ParameterHierarchyItemSelectApiModel)((HierarchyTreeViewModel)ViewModelApplication.ControlPopupParty).mHierarchy).ClientID == root.ClientID
                              &&
-                             ((ParameterHierarchyItemSelectApiModel)((HierarchyTreeViewModel1)ViewModelApplication.ControlPopupParty).mHierarchy).HierarchyTypeID == root.HierarchyTypeID
+                             ((ParameterHierarchyItemSelectApiModel)((HierarchyTreeViewModel)ViewModelApplication.ControlPopupParty).mHierarchy).HierarchyTypeID == root.HierarchyTypeID
                              )
                         {
-                            mHierarchyTree = (HierarchyTreeViewModel1)ViewModelApplication.ControlPopupParty;
+                            mHierarchyTree = (HierarchyTreeViewModel)ViewModelApplication.ControlPopupParty;
 
                         }
                         else
 
-                            mHierarchyTree = new HierarchyTreeViewModel1(root);
+                            mHierarchyTree = new HierarchyTreeViewModel(root,true);
                         ViewModelApplication.ControlPopupParty = mHierarchyTree;
                         break;
 
@@ -157,22 +157,22 @@ namespace Fasetto.Word
                         if (
                             (ViewModelApplication.ControlPopupCostHierarchy != null)
                              &&
-                             ((ParameterHierarchyItemSelectApiModel)((HierarchyTreeViewModel1)ViewModelApplication.ControlPopupCostHierarchy).mHierarchy).ClientID == root.ClientID
+                             ((ParameterHierarchyItemSelectApiModel)((HierarchyTreeViewModel)ViewModelApplication.ControlPopupCostHierarchy).mHierarchy).ClientID == root.ClientID
                              &&
-                             ((ParameterHierarchyItemSelectApiModel)((HierarchyTreeViewModel1)ViewModelApplication.ControlPopupCostHierarchy).mHierarchy).HierarchyTypeID == root.HierarchyTypeID
+                             ((ParameterHierarchyItemSelectApiModel)((HierarchyTreeViewModel)ViewModelApplication.ControlPopupCostHierarchy).mHierarchy).HierarchyTypeID == root.HierarchyTypeID
                              )
                         {
-                            mHierarchyTree = (HierarchyTreeViewModel1)ViewModelApplication.ControlPopupCostHierarchy;
+                            mHierarchyTree = (HierarchyTreeViewModel)ViewModelApplication.ControlPopupCostHierarchy;
 
                         }
                         else
 
-                            mHierarchyTree = new HierarchyTreeViewModel1(root);
+                            mHierarchyTree = new HierarchyTreeViewModel(root,true);
                         ViewModelApplication.ControlPopupCostHierarchy = mHierarchyTree;
                         break;
 
                     default:
-                        mHierarchyTree = new HierarchyTreeViewModel1(root);//root);
+                        mHierarchyTree = new HierarchyTreeViewModel(root,true);//root);
                         break;
                 }
 
@@ -201,7 +201,7 @@ namespace Fasetto.Word
         /// <param name="root"></param>
         public HierarchySelectionControl(ParameterHierarchyItemSelectApiModel root)
         {
-            mHierarchyTree = new HierarchyTreeViewModel1(root);//root);
+            mHierarchyTree = new HierarchyTreeViewModel(root,true);//root);
 
             DataContext = mHierarchyTree;
             InitializeComponent();
