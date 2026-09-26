@@ -286,10 +286,10 @@ namespace Fasetto.Word
 
             Type = new HierarchyItemSelectionViewModel
             {
-                Label = "Select Hierarchy Type",
+                Label = "Select Financial Category",
                 //EditedName = mLoadingText,
                 //,
-                EditedName = "Selected Hierarchy Type",
+                EditedName = "Selected Financial Category",
                 OriginalName = HierarchyType,
                 OriginalKid = HierarchyTypeID,
                 EditedKid = null,
@@ -393,7 +393,7 @@ namespace Fasetto.Word
 
                 if (CVM == "HierarchyItemSelectionViewModel")
                 {
-                    var mViewModel = (HierarchyTreeViewModel1)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+                    var mViewModel = (HierarchyTreeViewModel)((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
                     var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
                     if (mElementViewModel.Description.OriginalText == null && mElementViewModel.Description.EditedText == "Description of New Element")
                     {

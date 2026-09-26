@@ -141,7 +141,13 @@ namespace Fasetto.Word
 
 
             };
-            Trans_action.Add(mTVM);
+
+// C#
+Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+{
+    lock (mStocksLock)
+        Trans_action.Add(mTVM); // or Trans_action.Clear(); Trans_action.AddRange(...);
+}));
 
             //mRequest = new ParameterTransactionApiModel
             //{
@@ -600,6 +606,10 @@ namespace Fasetto.Word
 
         public void RefreshTransactionList()
         {
+
+
+
+
             lock (mStocksLock)
             {
                 Trans_action.Clear();
@@ -609,48 +619,61 @@ namespace Fasetto.Word
             var matches = mTest.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
             //mPersist = result.ServerResponse.Response;
             //if (matches.Count>0)
+            // C#
 
-            foreach (var item in matches)
+
+            Application.Current.Dispatcher.Invoke(() =>
             {
-
-                var mTVM = new TransactionViewModel
-
+                lock (mStocksLock)
                 {
-                    Posted_Date = item.Posted_Date,
-                    Month = item.Month,
-                    Description = item.Description,
-                    TransAmount = item.TransAmount,
-                    ActualAmount = item.ActualAmount,
-                    ShortName = item.ShortName,
-                    KCategoryID = item.KCategoryID,
-                    KFinActualID = item.KFinActualID,
-                    KFinTranID = item.KFinTranID,
-                    KPartyID = item.KPartyID,
-                    KPartyName = item.KPartyName,
-                    IsChanged = false,
-                    FCatSrchID = item.FCatSrchID,
-                    KHierarchyID = item.KHierarchyID,
-                    IsDocLinked = item.IsDocLinked,
-                    Notes = item.Notes,
-                    KAccountID = item.KAccountID,
-                    KAccountName = item.KAccountName,
-                    Units = item.Units,
-                    KClientID = item.KClientID,
-                    KPersonID = item.KPersonID,
-                    KPersonName = item.KPersonName,
-                    KAssetID = item.KAssetID,
-                    KAssetName = item.KAssetName,
-                    KProjectID = item.KProjectID,
-                    KProjectName = item.KProjectName,
-                };
-
-                //Lock collection to prevent contention with UI
+                    Trans_action.Clear();
 
 
-                AddItem(mTVM);
+                    foreach (var item in matches)
+                    {
 
-            }
+                        var mTVM = new TransactionViewModel
+
+                        {
+                            Posted_Date = item.Posted_Date,
+                            Month = item.Month,
+                            Description = item.Description,
+                            TransAmount = item.TransAmount,
+                            ActualAmount = item.ActualAmount,
+                            ShortName = item.ShortName,
+                            KCategoryID = item.KCategoryID,
+                            KFinActualID = item.KFinActualID,
+                            KFinTranID = item.KFinTranID,
+                            KPartyID = item.KPartyID,
+                            KPartyName = item.KPartyName,
+                            IsChanged = false,
+                            FCatSrchID = item.FCatSrchID,
+                            KHierarchyID = item.KHierarchyID,
+                            IsDocLinked = item.IsDocLinked,
+                            Notes = item.Notes,
+                            KAccountID = item.KAccountID,
+                            KAccountName = item.KAccountName,
+                            Units = item.Units,
+                            KClientID = item.KClientID,
+                            KPersonID = item.KPersonID,
+                            KPersonName = item.KPersonName,
+                            KAssetID = item.KAssetID,
+                            KAssetName = item.KAssetName,
+                            KProjectID = item.KProjectID,
+                            KProjectName = item.KProjectName,
+                        };
+
+                        //Lock collection to prevent contention with UI
+
+
+                        AddItem(mTVM);
+                    }
+                }
+            });
         }
+
+
+
 
 
         //Interpret Keyboard Gestures

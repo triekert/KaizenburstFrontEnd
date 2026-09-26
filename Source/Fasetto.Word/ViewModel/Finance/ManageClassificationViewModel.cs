@@ -920,8 +920,9 @@ namespace Fasetto.Word
                 };
 
                 //var TypeName = (ViewModelApplication.ControlPopupCostCategory.GetType().Name) ?? "";
-                if (ViewModelApplication.ControlPopupCostCategory == null||ViewModelApplication.ControlPopupCostCategory.GetType().Name== "HierarchyTreeViewModel")
-                { ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel(HierarchyParam,true);
+                if (ViewModelApplication.ControlPopupCostCategory == null||ViewModelApplication.ControlPopupCostCategory.GetType().Name!= "HierarchyTreeViewModel")
+                {
+                    ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel(HierarchyParam, true);
                     ViewModelApplication.ControlPopupCostCategory = ViewModelApplication.CurrentPopupViewModel;
                 }
                 else
@@ -1032,7 +1033,7 @@ namespace Fasetto.Word
                 ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel(HierarchyParam,true);
                 ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).SearchText = Asset.OriginalKid;
                 ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
-                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
+                //((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
                 //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
                 return true;
             });

@@ -80,7 +80,15 @@ namespace Fasetto.Word
             //mBulkMeter = "Tre Donne Estate Main Feed";
             DataContext = mTransactionTreeView;
             //((TransactionPageViewModel)ViewModelApplication.CurrentPageViewModel).DisplayTitle = ((TransactionPageViewModel)ViewModelApplication.CurrentPageViewModel).DisplayTitle + mBulkMeter;
-
+// C#
+var view = System.Windows.Data.CollectionViewSource.GetDefaultView(mTransactionTreeView.Trans_action);
+if (view is System.ComponentModel.IEditableCollectionView iev)
+{
+    if (iev.IsAddingNew)
+        iev.CommitNew(); // or iev.CancelNew() if the new item is invalid
+    if (iev.IsEditingItem)
+        iev.CommitEdit(); // or iev.CancelEdit()
+}
             InitializeComponent();
             //mTransactionTreeView.mBulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
             //ViewModelApplication.CurrentControlViewModel = mTransactionTreeView;

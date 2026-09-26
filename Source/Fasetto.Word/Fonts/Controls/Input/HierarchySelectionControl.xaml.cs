@@ -39,7 +39,7 @@ namespace Fasetto.Word
         #endregion//Public Commands
 
 
-        private readonly HierarchyTreeViewModel1 mHierarchyTree;
+        private readonly HierarchyTreeViewModel mHierarchyTree;
         private string mSourceCategory;
         private string mSourceCategoryName;
         private string mDestinationCategoryID, mDestinationID,mSourceID,mParentID;

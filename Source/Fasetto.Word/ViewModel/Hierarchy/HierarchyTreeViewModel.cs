@@ -161,16 +161,28 @@ namespace Fasetto.Word
                 PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
             }
 
-            // Find ScrollViewer after the TreeView template is generated
+
+
+            // 2. Queue search execution after UI layout pass completes
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                PerformKIdSearch();
+                //mSearchText = "";
+
+            }), DispatcherPriority.Loaded);
 
             TaskManager.RunAndForget(HierarchyAsync);
 
 
-            // Get the OptFinHierarchies currently configured - first populate 'root hierarchy' variable with all configured root hierarchy elements currently available
+            ////});
+            //AsyncAwaiter() await HierarchyAsync().ConfigureAwait(true);
 
 
             UpdateTreeViewElements();
-            CloseCommand = new RelayCommand(async () => await CloseAsync());
+            CloseCommand = new RelayCommand(async () =>
+            {
+                await CloseAsync();
+            });
             GestureHandlerCommand = new DelegateCommand<ContextualEventArgs>(GestureHandler);
             //GestureHandlerCommand= new RelayParameterizedCommand<ContextualEventArgs>(ExecuteItemModeSelectionChanged);
             mSearchCommand = new SearchCategoryTreeCommand(this);
@@ -434,13 +446,19 @@ namespace Fasetto.Word
             //Update the viewModel with the returned values
 
             UpdateTreeViewElements();
-
+            PerformKIdSearch();
 
             //}
         }
 
 
-
+        //private HierarchyListDataModel ExpandHierarchyData(.HierarchyResultListApiModel results:string KCategoryID, string mParentShortName, HashSet<string> visited)
+        //{
+        //    if (!visited.Add(KCategoryID)) return new HierarchyListDataModel(); // cycle detected
+        //    ...
+        //    ud1.Children = ExpandHierarchyData(results, ud1.KCategoryID, ud1.ShortName, visited);
+        //    ...
+        //}
         /// <summary>
         /// This funtion builds a hierarchy of elements based on a
         /// a Hierarchy result returned when querying a database structure
@@ -461,6 +479,7 @@ namespace Fasetto.Word
             //var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Today && x.DateDiscontinued >  DateTime.Today && !x.IsDeleteElement).OrderBy(x => x.ShortName).ToList();//
             var children = results.Where(x => x.ParentCategoryID == KCategoryID && x.DateEffective <= DateTime.Now && x.DateDiscontinued > DateTime.Now && !x.IsDeleteElement).OrderBy(x => (x.ShortName.ParseInt())).ThenBy(x => x.ShortName).ToList();//
             // Hierarchy cannot be expanded
+
             if (children.Count() == 0)
                 return new HierarchyListDataModel();
             //...otherwise, return all descendants recursively
@@ -605,6 +624,8 @@ namespace Fasetto.Word
                 KCategory.mParent.IsExpanded = true;
 
             KCategory.IsSelected = true;
+            mSearchText = "";
+            SearchText = "";
         }
 
         private void VerifyMatchingKCategoryEnumerator()
@@ -717,6 +738,7 @@ namespace Fasetto.Word
                 }
                 RefreshHierarchy();
                 PerformKIdSearch();
+                mSearchText = "";
 
             return;
 
@@ -1015,6 +1037,7 @@ namespace Fasetto.Word
 
             RefreshHierarchy();
             PerformKIdSearch();
+            PersistHierarchyAsync();
             //TO DO: Add code to create root element of hierarchy when creating a new hierarchy type menu item
             //if page == 'Hierarchy', create new element guid(), use hierarchy name +description, parent = 00000000
 
@@ -1160,7 +1183,7 @@ namespace Fasetto.Word
                 ////ViewModelApplication.CurrentSideMenuViewModel = null;
                 ////TaskManager.RunAndForget(HierarchyAsync);
 
-                ViewModelApplication.GoToPage(ApplicationPage.Chat);
+                //ViewModelApplication.GoToPage(ApplicationPage.Chat);
             //});
 
         }
@@ -1476,16 +1499,16 @@ namespace Fasetto.Word
                 case "KeyEventArgs":
                         {
                             if (tmp1 == "String")
-                            {
+                        {
                                 SearchText = SearchText;
                                 if (((KeyEventArgs)tmp).Key == Key.Enter)
                                 //((KeyEventArgs)tmp).Handled = true;
                                 { SearchCommand.Execute(null); }
                                 break;
-                            }
-                            else
+                        }
+                        else
                             {
-                                mSelectedTreeItem = (HierarchyViewModel)(((ContextualEventArgs)parameter).Context);
+                            mSelectedTreeItem = (HierarchyViewModel)((ContextualEventArgs)parameter).Context;
                             if (((KeyEventArgs)tmp).Key == Key.Enter)
                             {
                                 ((KeyEventArgs)tmp).Handled = true;
@@ -1753,7 +1776,7 @@ namespace Fasetto.Word
             }
             //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
 
-            //RunSelectedMenu();
+            //Run SelectedMenu();
 
         }
 
@@ -1828,9 +1851,9 @@ namespace Fasetto.Word
             MHierarchyElementViewModel .Root.OriginalText = "Element Root";
             MHierarchyElementViewModel .Root.EditedText = "Element Root";
             //MHierarchyElementViewModel .IsMenuItem = mDraggedItem.IsMenuItem;
-            //MHierarchyElementViewModel .ParentShortName = mDraggedItem.ShortName;
-            //MHierarchyElementViewModel .ParentCategoryID = mDraggedItem.KCategoryID;
-            //MHierarchyElementViewModel .KCategoryID = Guid.NewGuid().ToString().ToUpper();
+            MHierarchyElementViewModel.ParentShortName = mDraggedItem.ShortName;
+            MHierarchyElementViewModel.ParentCategoryID = mDraggedItem.KCategoryID;
+            MHierarchyElementViewModel.KCategoryID = Guid.NewGuid().ToString().ToUpper(System.Globalization.CultureInfo.CurrentCulture);
             //MHierarchyElementViewModel .DateEffective = DateTime.Today;
             //MHierarchyElementViewModel .DateDiscontinued = new DateTime(9999, 12, 31);
             MHierarchyElementViewModel .AddNodeButtonText = "Add new Hierarchy Element";
@@ -1842,9 +1865,9 @@ namespace Fasetto.Word
             //MHierarchyElementViewModel .HierarchyTypeID = mDraggedItem.HierarchyTypeID;
             //MHierarchyElementViewModel .Type.OriginalKid = mDraggedItem.HierarchyTypeID;
             //MHierarchyElementViewModel .Type.OriginalName = mDraggedItem.HierarchyType;
-            ////MHierarchyElementViewModel .FClientID = ViewModelApplication.FClientID;
-            MHierarchyElementViewModel .HeadingText = "Add new Hierarchy Element";
-            //MHierarchyElementViewModel .FHierarchyID = mDraggedItem.FHierarchyID;
+            MHierarchyElementViewModel.FClientID = ViewModelApplication.FClientID;
+            MHierarchyElementViewModel.HeadingText = "Add new Hierarchy Element";
+            MHierarchyElementViewModel.FHierarchyID = mDraggedItem.FHierarchyID;
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
             ViewModelApplication.PopupVisible = true;
             //ViewModelApplication.SettingsMenuVisible = true;
@@ -1927,7 +1950,7 @@ namespace Fasetto.Word
             //MHierarchyElementViewModel .HierarchyType = mDraggedItem.HierarchyType;
             //MHierarchyElementViewModel .HierarchyTypeID = mDraggedItem.HierarchyTypeID;
             MHierarchyElementViewModel .HeadingText = "Move Selected Element (with descendants)";
-            //MHierarchyElementViewModel .FHierarchyID = mDraggedItem.HierarchyTypeID;
+            MHierarchyElementViewModel.FHierarchyID = mDraggedItem.FHierarchyID;
             //MHierarchyElementViewModel .Type.OriginalKid = mDraggedItem.HierarchyTypeID;
             //MHierarchyElementViewModel .Type.OriginalName = mDraggedItem.HierarchyType;
 
@@ -2147,6 +2170,8 @@ namespace Fasetto.Word
             }
             return null;
         }
+
+
         private static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
         {
             for ( var i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
