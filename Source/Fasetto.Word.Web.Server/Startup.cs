@@ -5,12 +5,15 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
 
 namespace Fasetto.Word.Web.Server
 {
@@ -31,6 +34,10 @@ namespace Fasetto.Word.Web.Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc(options =>
+            {
+                options.EnableEndpointRouting = false;
+            });
             // Add proper cookie request to follow GDPR 
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -93,8 +100,9 @@ namespace Fasetto.Word.Web.Server
                     };
                 });
 
-            // Change password policy
-            services.Configure<IdentityOptions>(options =>
+
+        // Change password policy
+        services.Configure<IdentityOptions>(options =>
             {
                 // Make really weak passwords possible
                 options.Password.RequireDigit = false;
@@ -127,12 +135,41 @@ namespace Fasetto.Word.Web.Server
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_1); ;
         }
 
+
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
+            if (env.IsDevelopment()) // Works with Microsoft.Extensions.Hosting
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+
+                // Optional: Set up a default route for MVC views
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                // Optional: Return simple status text on root GET
+                endpoints.MapGet("/", async context =>
+                {
+                    await context.Response.WriteAsync("API is running...");
+                });
+            });
+
             // Use Dna Framework
             app.UseDnaFramework();
-            
+
             // Setup Identity
             app.UseAuthentication();
 
@@ -142,7 +179,8 @@ namespace Fasetto.Word.Web.Server
                 // Show any exceptions in browser when they crash
                 app.UseDeveloperExceptionPage();
             }
-            // Otherwise...
+            // Otherw
+
             else
             {
                 // Just show generic error page
