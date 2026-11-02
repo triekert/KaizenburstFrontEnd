@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -8,8 +9,9 @@ using System.Windows.Input;
 namespace Fasetto.Word
 {
     /// <summary>
-    /// The view model for a dateTime entry to edit a dateTime value
-    /// <summary>
+    /// The view model for a datetime entry, accepting an OriginalDateTime 
+    /// and consolidating the edits into a single EditedDateTime output.
+    /// </summary>
     public class DateTimeViewModel : BaseViewModel
     {
         #region Public Properties
@@ -20,24 +22,24 @@ namespace Fasetto.Word
         public string Label { get; set; }
 
         /// <summary>
-        /// The current saved value
+        /// The initial/original saved datetime value passed into the control
         /// </summary>
         public DateTime OriginalDateTime { get; set; }
 
         /// <summary>
-        /// The current non-commit edited datetime
+        /// The single unified result of the edited date and time
         /// </summary>
         public DateTime EditedDateTime { get; set; }
 
         /// <summary>
-        /// String representatio of timestamp
+        /// Currently selected time string option from the dropdown
         /// </summary>
-        public ComboBoxItem EditedTime { get; set; }
+        public string SelectedTime { get; set; }
 
         /// <summary>
-        /// String representatio of timestamp
+        /// Available time blocks in 30-minute increments for the ComboBox dropdown
         /// </summary>
-        public ComboBoxItem OriginalTime { get; set; }
+        public ObservableCollection<string> AvailableTimes { get; set; }
 
         /// <summary>
         /// Indicates if the current datetime is in edit mode
@@ -50,7 +52,7 @@ namespace Fasetto.Word
         public bool Working { get; set; }
 
         /// <summary>
-        /// The action to run when saving the text.
+        /// The action to run when saving the value.
         /// Returns true if the commit was successful, or false otherwise.
         /// </summary>
         public Func<Task<bool>> CommitAction { get; set; }
@@ -59,109 +61,110 @@ namespace Fasetto.Word
 
         #region Public Commands
 
-        /// <summary>
-        /// Puts the control into edit mode
-        /// </summary>
         public ICommand EditCommand { get; set; }
-
-        /// <summary>
-        /// Cancels out of edit mode
-        /// </summary>
         public ICommand CancelCommand { get; set; }
-
-        /// <summary>
-        /// Commits the edits and saves the value
-        /// as well as goes back to non-edit mode
-        /// </summary>
         public ICommand SaveCommand { get; set; }
 
         #endregion
 
         #region Constructor 
 
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public DateTimeViewModel()
         {
-            // Create commands
             EditCommand = new RelayCommand(Edit);
             CancelCommand = new RelayCommand(Cancel);
             SaveCommand = new RelayCommand(Save);
+
+            // Initialize 30-minute increment collection as strings
+            AvailableTimes = new ObservableCollection<string>();
+            for (var hour = 0; hour < 24; hour++)
+            {
+                for (var minute = 0; minute < 60; minute += 30)
+                {
+                    var timeString = $"{hour:D2}:{minute:D2}";
+                    AvailableTimes.Add(timeString);
+                }
+            }
         }
 
         #endregion
 
         #region Command Methods
 
-        /// <summary>
-        /// Puts the control into edit mode
-        /// </summary>
         public void Edit()
         {
-            // Set the edited text to the current value
+            // Set the working EditedDateTime to match the original starting point
             EditedDateTime = OriginalDateTime;
-            EditedTime = OriginalTime;
 
-            // Go into edit mode
+            // Pre-select the closest matching time block string
+            MatchClosestTimeBlock(EditedDateTime);
+
             Editing = true;
         }
 
-        /// <summary>
-        /// Cancels out of edit mode
-        /// </summary>
         public void Cancel()
         {
             Editing = false;
         }
 
-        /// <summary>
-        /// Commits the content and exits out of edit mode
-        /// </summary>
         public void Save()
         {
-            // Store the result of a commit call
             var result = default(bool);
-            //Fasetto.Word.DI.ViewModelApplication.CurrentPopupContent = Fasetto.Word.DI.ViewModelApplication.CurrentPopupContent;
-           // Save currently saved value
-           var currentSavedValue = OriginalDateTime;
-            var currentSavedValue1 = OriginalTime;
+            var previousDateTime = OriginalDateTime;
 
             RunCommandAsync(() => Working, async () =>
             {
-                // While working, come out of edit mode
                 Editing = false;
 
-                // Commit the changed text
-                // So we can see it while it is working
-                var mDate = EditedDateTime.ToShortDateString();
-                mDate = mDate +" "+ EditedTime.Content;
-                EditedDateTime=DateTime.Parse(mDate);
-                OriginalDateTime = EditedDateTime;
-                OriginalTime = EditedTime;
-                
+                // Extract date part from EditedDateTime and combine it with the selected time string
+                var datePart = EditedDateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                var timePart = SelectedTime ?? EditedDateTime.ToString("HH:mm", CultureInfo.InvariantCulture);
 
-                // Try and do the work
+                if (DateTime.TryParse($"{datePart} {timePart}", CultureInfo.InvariantCulture, DateTimeStyles.None, out var finalParsedDateTime))
+                {
+                    EditedDateTime = finalParsedDateTime;
+                }
+
+                // Update original to match the newly committed single datetime output
+                OriginalDateTime = EditedDateTime;
+
+                // Execute commit action if provided
                 result = CommitAction == null ? true : await CommitAction();
 
             }).ContinueWith(t =>
             {
-                // If we succeeded...
-                // Nothing to do
-                // If we fail...
                 if (!result)
                 {
-                    // Restore original value
-                    OriginalDateTime = currentSavedValue;
-                    OriginalTime = currentSavedValue1;
-                    // Go back into edit mode
+                    // Revert back if commit failed
+                    OriginalDateTime = previousDateTime;
+                    EditedDateTime = previousDateTime;
                     Editing = true;
                 }
             });
         }
 
+        private void MatchClosestTimeBlock(DateTime targetTime)
+        {
+            var totalMinutes = targetTime.Hour * 60 + targetTime.Minute;
+            var remainder = totalMinutes % 30;
 
+            if (remainder >= 15) totalMinutes += (30 - remainder);
+            else totalMinutes -= remainder;
 
+            if (totalMinutes >= 1440) totalMinutes = 0;
+
+            var targetString = $"{totalMinutes / 60:D2}:{totalMinutes % 60:D2}";
+
+            // Since AvailableTimes contains strings, loop directly through strings
+            foreach (var timeString in AvailableTimes)
+            {
+                if (timeString == targetString)
+                {
+                    SelectedTime = timeString;
+                    break;
+                }
+            }
+        }
 
         #endregion
     }

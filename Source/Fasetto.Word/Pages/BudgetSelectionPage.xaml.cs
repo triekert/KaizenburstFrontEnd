@@ -31,7 +31,7 @@ namespace Fasetto.Word
         public BudgetSelectionPage(BudgetSelectionPageViewModel specificViewModel) : base(specificViewModel)
         {
             ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
-            ViewModelApplication.CurrentControlViewModel = ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
+            ViewModelApplication.CurrentPopupViewModel = ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
             InitializeComponent();
         }
 
@@ -113,7 +113,7 @@ namespace Fasetto.Word
             //((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod.MSelectedBillingPeriod = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod;
             if (((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedName != "Selected Client")
             { 
-                ViewModelApplication.CurrentControlViewModel = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod;
+                ViewModelApplication.CurrentPopupViewModel = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod;
                 ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod.mRequest = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedKid;
                 ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).PopulateAsync();
             }
@@ -121,7 +121,7 @@ namespace Fasetto.Word
 
         //private void SetHierarchySelection(object sender, System.Windows.RoutedEventArgs e)
         //{
-        //    ViewModelApplication.CurrentControlViewModel =  ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
+        //    ViewModelApplication.CurrentPopupViewModel =  ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
 
         //}
 

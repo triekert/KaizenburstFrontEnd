@@ -303,7 +303,7 @@ namespace Fasetto.Word
 
                 UpdateTreeViewElements();
 
-                ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
+                ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
 
 
             });

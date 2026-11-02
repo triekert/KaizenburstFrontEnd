@@ -2789,6 +2789,8 @@ namespace Fasetto.Word.Web.Server
 
             #endregion //Get User
 
+            if (model.DateTarget == Convert.ToDateTime("0001/01/01 00:00:00"))
+                model.DateTarget = Convert.ToDateTime("1753/01/01 12:01:00");
 
             var para = new SqlParameter[7];
             para[0] = new SqlParameter("@fHierarchyID", SqlDbType.UniqueIdentifier);
@@ -2810,8 +2812,7 @@ namespace Fasetto.Word.Web.Server
 
             #region sql query
 
-            if (model.DateTarget == Convert.ToDateTime("0001/01/01 00:00:00"))
-                model.DateTarget = Convert.ToDateTime("1753/01/01 00:00:00");
+
 
 
 

@@ -398,7 +398,7 @@ namespace Fasetto.Word
                     ViewModelApplication.PopupVisible = false;
 
                     ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(MKFinTranID);
-                    ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Allocation ";
+                    ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Transaction Breakdown ";
 
                     //If only one allocation linked to the Transaction, bypass the 'detail' window...
 

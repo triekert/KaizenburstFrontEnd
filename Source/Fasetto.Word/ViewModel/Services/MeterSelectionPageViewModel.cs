@@ -247,7 +247,7 @@ namespace Fasetto.Word
         public MeterSelectionPageViewModel()
         {
             //Populate screen title
-            //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
             DisplayTitle = "Bulk Meter Management";
             BulkMeter = "5249FFEB-6907-46AA-9204-D4527E11F9CE";
@@ -265,7 +265,7 @@ namespace Fasetto.Word
 
                 //CommitAction = SaveFirstNameAsync
             };
-            ViewModelApplication.CurrentControlViewModel = Root;
+            ViewModelApplication.CurrentPopupViewModel = Root;
 
             Meter = new HierarchyItemSelectionViewModel
             {
@@ -286,13 +286,13 @@ namespace Fasetto.Word
                 Label = "Period Start",
                 OriginalDateTime = DateTime.Now.AddDays(-1),
                 EditedDateTime = DateTime.Now.AddDays(-1),
-                OriginalTime = new System.Windows.Controls.ComboBoxItem(),
-                EditedTime = new System.Windows.Controls.ComboBoxItem(),
+                //OriginalTime = new System.Windows.Controls.ComboBoxItem(),
+                //EditedTime = new System.Windows.Controls.ComboBoxItem(),
                 //(DateTime.Now.AddHours(-1)).ToShortTimeString(),
                 //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
             };
-            TimeStart.OriginalTime.Content = "00:00";
-            TimeStart.EditedTime.Content = "00:00";
+            //TimeStart.OriginalTime.Content = "00:00";
+            //TimeStart.EditedTime.Content = "00:00";
 
 
             TimeEnd = new DateTimeViewModel
@@ -300,26 +300,26 @@ namespace Fasetto.Word
                 Label = "Period End",
                 OriginalDateTime = DateTime.Now,
                 EditedDateTime = DateTime.Now,
-                OriginalTime = new System.Windows.Controls.ComboBoxItem(),
-                EditedTime = new System.Windows.Controls.ComboBoxItem(),
+                //OriginalTime = new System.Windows.Controls.ComboBoxItem(),
+                //EditedTime = new System.Windows.Controls.ComboBoxItem(),
                 //(DateTime.Now.AddHours(-1)).ToShortTimeString(),
                 //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
             };
-            TimeEnd.OriginalTime.Content = "00:00";
-            TimeEnd.EditedTime.Content = "00:00";
+            //TimeEnd.OriginalTime.Content = "00:00";
+            //TimeEnd.EditedTime.Content = "00:00";
 
             DateReference = new DateTimeViewModel
             {
                 Label = "Calculation reference date",
                 OriginalDateTime = DateTime.Now,
                 EditedDateTime = DateTime.Now,
-                OriginalTime = new System.Windows.Controls.ComboBoxItem(),
-                EditedTime = new System.Windows.Controls.ComboBoxItem(),
+                //OriginalTime = new System.Windows.Controls.ComboBoxItem(),
+                //EditedTime = new System.Windows.Controls.ComboBoxItem(),
                 //(DateTime.Now.AddHours(-1)).ToShortTimeString(),
                 //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
             };
-            TimeEnd.OriginalTime.Content = "00:00";
-            TimeEnd.EditedTime.Content = "00:00";
+            //TimeEnd.OriginalTime.Content = "00:00";
+            //TimeEnd.EditedTime.Content = "00:00";
 
             //ViewModelApplication.ControlParameter =  null;
             ViewModelApplication.ControlParameter1 = null;
@@ -337,7 +337,7 @@ namespace Fasetto.Word
             OpenSearchCommand = new RelayCommand(OpenSearch);
             CloseCommand = new RelayCommand(Close);
             ClearSearchCommand = new RelayCommand(ClearSearch);
-            //ViewModelApplication.CurrentControlViewModel = null;
+            //ViewModelApplication.CurrentPopupViewModel = null;
 
             // Make a default menu
             //AttachmentMenu = new ChatAttachmentPopupMenuViewModel();
@@ -443,7 +443,7 @@ namespace Fasetto.Word
             Meter.ClientID = Root.EditedKid;
             Meter.RootID = Root.RootID;
 
-            ViewModelApplication.CurrentControlViewModel = Meter;
+            ViewModelApplication.CurrentPopupViewModel = Meter;
             ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
             //ViewModelApplication.CurrentPageViewModel = Meter;
         }
@@ -457,7 +457,7 @@ namespace Fasetto.Word
             {
                 // Update the First Name value on the server...
 
-                ViewModelApplication.CurrentControlViewModel = ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
+                ViewModelApplication.CurrentPopupViewModel = ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
                 return true;
             });
 
@@ -473,7 +473,7 @@ namespace Fasetto.Word
 
                 ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Meter.ClientID = ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root.EditedKid;
                 ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Meter.RootID = ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root.RootID;
-                ViewModelApplication.CurrentControlViewModel = ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Meter;
+                ViewModelApplication.CurrentPopupViewModel = ((MeterSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Meter;
             return true;
             });
         }
@@ -506,7 +506,7 @@ namespace Fasetto.Word
             //    Items.Where(item => item.Message.ToLower().Contains(SearchText)));
 
             // Set last search text
-            mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             mViewModel.SearchText = SearchText;
             mViewModel.PerformSearch();
             //mViewModel.RefreshHierarchy();           
@@ -542,7 +542,7 @@ namespace Fasetto.Word
         ViewModelApplication.SideMenuVisible = true;
         //ViewModelApplication.CurrentSideMenuViewModel = null;
         ViewModelApplication.GoToPage(ApplicationPage.Chat);
-        ViewModelApplication.CurrentControlViewModel = null;
+        ViewModelApplication.CurrentPopupViewModel = null;
         ViewModelApplication.CurrentPopupViewModel = null;
             ViewModelApplication.CurrentPopupContent = 0;
         }

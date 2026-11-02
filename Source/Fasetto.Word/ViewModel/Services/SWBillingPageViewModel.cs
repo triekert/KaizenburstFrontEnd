@@ -242,7 +242,7 @@ namespace Fasetto.Word
         public SWBillingPageViewModel()
         {
             //Populate screen title
-            //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
             DisplayTitle = "Water & Sewerage Billing";
             BulkMeter = "5249FFEB-6907-46AA-9204-D4527E11F9CE";
@@ -259,7 +259,7 @@ namespace Fasetto.Word
 
                 //CommitAction = SaveFirstNameAsync
             };
-            //ViewModelApplication.CurrentControlViewModel = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
+            //ViewModelApplication.CurrentPopupViewModel = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
             BillingPeriod = new BillingPeriodListViewModel(Client.OriginalKid);
             SelectedBillingPeriod = new BillingPeriodViewModel();
             BillingPeriod.MSelectedBillingPeriod = SelectedBillingPeriod;
@@ -385,7 +385,7 @@ namespace Fasetto.Word
             //    Items.Where(item => item.Message.ToLower().Contains(SearchText)));
 
             // Set last search text
-            mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             mViewModel.SearchText = SearchText;
             mViewModel.PerformSearch();
             //mViewModel.RefreshHierarchy();           
@@ -419,7 +419,7 @@ namespace Fasetto.Word
         {
             // Close settings menu
             ViewModelApplication.GoToPage(ApplicationPage.Chat);
-            ViewModelApplication.CurrentControlViewModel = null;
+            ViewModelApplication.CurrentPopupViewModel = null;
             ViewModelApplication.CurrentPopupViewModel = null;
             ViewModelApplication.CurrentPopupContent = 0; 
         }

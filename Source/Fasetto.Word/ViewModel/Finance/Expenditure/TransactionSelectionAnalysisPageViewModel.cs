@@ -340,11 +340,11 @@ namespace Fasetto.Word
             //Manually turn side menu on
             //ViewModelApplication.SideMenuVisible = true;
             //Populate screen title
-            //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
             DisplayTitle = "Financial Transaction Management";
             BulkMeter = "5249FFEB-6907-46AA-9204-D4527E11F9CE";
-            ViewModelApplication.CurrentControlViewModel=ViewModelApplication.CurrentControlViewModel;
+            ViewModelApplication.CurrentPopupViewModel=ViewModelApplication.CurrentPopupViewModel;
 
             mRequest = new ParameterTransactionApiModel()
             {
@@ -368,8 +368,8 @@ namespace Fasetto.Word
 
             };
 
-            //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
-            ViewModelApplication.CurrentControlViewModel = Client;
+            //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            ViewModelApplication.CurrentPopupViewModel = Client;
 
 
             CostHierarchy = new HierarchyItemSelectionViewModel
@@ -387,8 +387,8 @@ namespace Fasetto.Word
                 CommitAction = UpdateCostHierarchySelectionAsync,
             };
 
-            //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
-            ViewModelApplication.CurrentControlViewModel = Client;
+            //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            ViewModelApplication.CurrentPopupViewModel = Client;
             Category = new HierarchyItemSelectionViewModel
             {
                 Label = "Cost Category",
@@ -494,13 +494,13 @@ namespace Fasetto.Word
                 Label = "Date Start",
                 OriginalDateTime = DateTime.Now.AddDays(-1),
                 EditedDateTime = DateTime.Now.AddDays(-1),
-                OriginalTime = new System.Windows.Controls.ComboBoxItem(),
-                EditedTime = new System.Windows.Controls.ComboBoxItem(),
+                //OriginalTime = new System.Windows.Controls.ComboBoxItem(),
+                //EditedTime = new System.Windows.Controls.ComboBoxItem(),
                 //(DateTime.Now.AddHours(-1)).ToShortTimeString(),
                 //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
             };
-            TimeStart.OriginalTime.Content = "00:00";
-            TimeStart.EditedTime.Content = "00:00";
+            //TimeStart.OriginalTime.Content = "00:00";
+            //TimeStart.EditedTime.Content = "00:00";
 
 
             TimeEnd = new DateTimeViewModel
@@ -508,13 +508,13 @@ namespace Fasetto.Word
                 Label = "Date End",
                 OriginalDateTime = DateTime.Now,
                 EditedDateTime = DateTime.Now,
-                OriginalTime = new System.Windows.Controls.ComboBoxItem(),
-                EditedTime = new System.Windows.Controls.ComboBoxItem(),
+                //OriginalTime = new System.Windows.Controls.ComboBoxItem(),
+                //EditedTime = new System.Windows.Controls.ComboBoxItem(),
                 //(DateTime.Now.AddHours(-1)).ToShortTimeString(),
                 //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
             };
-            TimeEnd.OriginalTime.Content = "00:00";
-            TimeEnd.EditedTime.Content = "00:00";
+            //TimeEnd.OriginalTime.Content = "00:00";
+            //TimeEnd.EditedTime.Content = "00:00";
 
 
 
@@ -548,7 +548,7 @@ namespace Fasetto.Word
             InitialiseCostHCommand = new RelayCommand(async () => await InitialiseCostHAsync());
             InitialiseClientSrchCommand = new RelayCommand(async () => await ClientSrchAsync());
             ReconcileCommand = new RelayCommand(async () => await ReconcileAsync());
-            //ViewModelApplication.CurrentControlViewModel = null;
+            //ViewModelApplication.CurrentPopupViewModel = null;
 
             // Make a default menu
             //AttachmentMenu = new ChatAttachmentPopupMenuViewModel();
@@ -593,10 +593,10 @@ namespace Fasetto.Word
             //ViewModelApplication.CurrentPopupContent = 0;
             //To do: Lookup to be user rights and available options driven
             //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
-            if (ViewModelApplication.CurrentControlViewModel ==null)
+            if (ViewModelApplication.CurrentPopupViewModel ==null)
             { return; }
 
-            //if ((ViewModelApplication.CurrentControlViewModel).GetType().Name != "CostHierarchyListViewModel")
+            //if ((ViewModelApplication.CurrentPopupViewModel).GetType().Name != "CostHierarchyListViewModel")
             //{ return; }
 
             var Test3 = ((HierarchyItemSelectionViewModel)((TransactionSelectionAnalysisPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid;
@@ -610,7 +610,7 @@ namespace Fasetto.Word
 
                 return;
             }
-            //if (((CostHierarchyListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedCostHierarchy.KCategoryID == null)
+            //if (((CostHierarchyListViewModel)ViewModelApplication.CurrentPopupViewModel).MSelectedCostHierarchy.KCategoryID == null)
 
             ////To DO - message user
             //{
@@ -661,8 +661,8 @@ namespace Fasetto.Word
                 //ViewModelApplication.CurrentPopupContent = 0;
                 //To do: Lookup to be user rights and available options driven
                 //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
-                if (ViewModelApplication.CurrentControlViewModel != null)
-                {                 //if ((ViewModelApplication.CurrentControlViewModel).GetType().Name != "CostHierarchyListViewModel")
+                if (ViewModelApplication.CurrentPopupViewModel != null)
+                {                 //if ((ViewModelApplication.CurrentPopupViewModel).GetType().Name != "CostHierarchyListViewModel")
                                   //{ return; }
 
                     var Test3 = ((HierarchyItemSelectionViewModel)((TransactionSelectionAnalysisPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid;
@@ -676,7 +676,7 @@ namespace Fasetto.Word
 
                         return false;
                     }
-                    //if (((CostHierarchyListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedCostHierarchy.KCategoryID == null)
+                    //if (((CostHierarchyListViewModel)ViewModelApplication.CurrentPopupViewModel).MSelectedCostHierarchy.KCategoryID == null)
 
                     ////To DO - message user
                     //{
@@ -734,7 +734,10 @@ namespace Fasetto.Word
                     Level = 1,
                     HierarchyTypeID = CostHierarchy.HierarchyTypeID
                 };
-                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
+
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupContent = ViewModelApplication.CurrentPopupContent;
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel(HierarchyParam,true);
                 return true;
             });
 
@@ -757,7 +760,10 @@ namespace Fasetto.Word
                     RootID = ViewModelApplication.FClientID ?? "4766E825-1B58-410D-B06B-5A2639CA22C8",
                     Level = 1
                 };
-                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
+
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupContent = ViewModelApplication.CurrentPopupContent;
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel(HierarchyParam,true);
                 return true;
             });
 
@@ -772,7 +778,7 @@ namespace Fasetto.Word
             {
                 // Update the Category Classification value on the server...
 
-                ViewModelApplication.CurrentControlViewModel =Category;
+                ViewModelApplication.CurrentPopupViewModel =Category;
                 //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Category;
                 HierarchyParam = new ParameterHierarchyItemSelectApiModel
                 {
@@ -783,16 +789,16 @@ namespace Fasetto.Word
                 };
 
                 //var TypeName = (ViewModelApplication.ControlPopupCostCategory.GetType().Name) ?? "";
-                if (ViewModelApplication.ControlPopupCostCategory == null || ViewModelApplication.ControlPopupCostCategory.GetType().Name != "HierarchyTreeViewModel1")
+                if (ViewModelApplication.ControlPopupCostCategory == null || ViewModelApplication.ControlPopupCostCategory.GetType().Name != "HierarchyTreeViewModel")
                 {
-                    ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
+                    ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel(HierarchyParam,true);
                     ViewModelApplication.ControlPopupCostCategory = ViewModelApplication.CurrentPopupViewModel;
                 }
                 else
                 { ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlPopupCostCategory; }
-                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Category.OriginalKid;
-                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
-                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
+                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).SearchText = Category.OriginalKid;
+                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
+                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
                 return true;
             });
 
@@ -807,7 +813,7 @@ namespace Fasetto.Word
             {
                 // Update the Party value on the server...
 
-                ViewModelApplication.CurrentControlViewModel = Account;
+                ViewModelApplication.CurrentPopupViewModel = Account;
                 HierarchyParam = new ParameterHierarchyItemSelectApiModel
                 {
                     Level = 0,
@@ -815,8 +821,8 @@ namespace Fasetto.Word
                     ClientID = ViewModelApplication.FClientID,
                     DateTarget = TimeStart.EditedDateTime,
                 };
-                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
-                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Account.OriginalKid;
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel(HierarchyParam,true);
+                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).SearchText = Account.OriginalKid;
 
                 //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
                 return true;
@@ -831,7 +837,7 @@ namespace Fasetto.Word
             {
                 // Update the Party value on the server...
 
-                ViewModelApplication.CurrentControlViewModel = Party;
+                ViewModelApplication.CurrentPopupViewModel = Party;
                 HierarchyParam = new ParameterHierarchyItemSelectApiModel
                 {
                     DateTarget = TimeStart.EditedDateTime,
@@ -840,12 +846,15 @@ namespace Fasetto.Word
                     HierarchyTypeID = Party.HierarchyTypeID,
                 };
                 //if (ViewModelApplication.ControlPopupParty == null)
-                { ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam); }
+
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupContent = ViewModelApplication.CurrentPopupContent;
+                { ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel(HierarchyParam,true); }
                 //else
                 //{ ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlPopupParty; }
-                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Party.OriginalKid;
-                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
-                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
+                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).SearchText = Party.OriginalKid;
+                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
+                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
                 //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
                 return true;
             });
@@ -860,7 +869,7 @@ namespace Fasetto.Word
             {
                 // Update the Party value on the server...
 
-                ViewModelApplication.CurrentControlViewModel = Person;
+                ViewModelApplication.CurrentPopupViewModel = Person;
                 HierarchyParam = new ParameterHierarchyItemSelectApiModel
                 {
 
@@ -869,11 +878,13 @@ namespace Fasetto.Word
                     ClientID = ViewModelApplication.FClientID,
                     HierarchyTypeID = Party.HierarchyTypeID,
                 };
-                { ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam); }
 
-                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Party.OriginalKid;
-                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
-                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupContent = ViewModelApplication.CurrentPopupContent;
+                 ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel(HierarchyParam,true); 
+                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).SearchText = Party.OriginalKid;
+                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
+                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
                 //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
                 return true;
             });
@@ -888,7 +899,7 @@ namespace Fasetto.Word
             {
                 // Update the Party value on the server...
 
-                ViewModelApplication.CurrentControlViewModel = Project;
+                ViewModelApplication.CurrentPopupViewModel = Project;
                 HierarchyParam = new ParameterHierarchyItemSelectApiModel
                 {
                     Level = 0,
@@ -896,8 +907,10 @@ namespace Fasetto.Word
                     DateTarget = TimeStart.EditedDateTime,
                     ClientID = ViewModelApplication.FClientID,
                 };
-                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
-                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Project.OriginalKid;
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupContent = ViewModelApplication.CurrentPopupContent;
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel(HierarchyParam,true);
+                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).SearchText = Project.OriginalKid;
 
                 //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
                 return true;
@@ -1067,7 +1080,7 @@ namespace Fasetto.Word
                 //{
                 //    MSelectedCostHierarchy = new CostHierarchyViewModel()
                 //};
-                //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                //ViewModelApplication.CurrentPopupViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
                 return true;
             });
         }
@@ -1098,7 +1111,7 @@ namespace Fasetto.Word
                 //{
                 //    MSelectedCostHierarchy = new CostHierarchyViewModel()
                 //};
-                //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                //ViewModelApplication.CurrentPopupViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
                 return true;
             });
         }
@@ -1113,7 +1126,7 @@ namespace Fasetto.Word
             {
                 // Update the Party value on the server...
 
-                ViewModelApplication.CurrentControlViewModel = Asset;
+                ViewModelApplication.CurrentPopupViewModel = Asset;
                 HierarchyParam = new ParameterHierarchyItemSelectApiModel
                 {
                     Level = 0,
@@ -1121,10 +1134,12 @@ namespace Fasetto.Word
                     DateTarget = TimeStart.EditedDateTime,
                     ClientID = ViewModelApplication.FClientID,
                 };
-                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
-                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = Asset.OriginalKid;
-                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
-                ((HierarchyTreeViewModel1)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupContent = ViewModelApplication.CurrentPopupContent;
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel(HierarchyParam,true);
+                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).SearchText = Asset.OriginalKid;
+                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
+                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).SearchText = "";
                 //ViewModelApplication.ControlParameter1 = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).Party;
                 return true;
             });
@@ -1157,7 +1172,7 @@ namespace Fasetto.Word
                 //{
                 //    MSelectedCostHierarchy = new CostHierarchyViewModel()
                 //};
-                //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                //ViewModelApplication.CurrentPopupViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
                 return true;
             });
         }
@@ -1190,7 +1205,7 @@ namespace Fasetto.Word
             //    Items.Where(item => item.Message.ToLower().Contains(SearchText)));
 
             // Set last search text
-            mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             mViewModel.SearchText = SearchText;
             mViewModel.PerformSearch();
             //mViewModel.RefreshHierarchy();           
@@ -1232,7 +1247,7 @@ namespace Fasetto.Word
             //    {
             //        MSelectedCostHierarchy = new CostHierarchyViewModel()
             //    };
-            //    ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionAnalysisPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+            //    ViewModelApplication.CurrentPopupViewModel = ((TransactionSelectionAnalysisPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
             return true;
             //});
         }
@@ -1248,7 +1263,7 @@ namespace Fasetto.Word
             return await RunCommandAsync(() => CostHierarchySrchIsSaving, async () =>
             {
 
-                ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionAnalysisPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
+                ViewModelApplication.CurrentPopupViewModel = ((TransactionSelectionAnalysisPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
                 return true;
             });
         }
@@ -1275,7 +1290,7 @@ namespace Fasetto.Word
                 //{
                 //    MSelectedCostHierarchy = new CostHierarchyViewModel()
                 //};
-                //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                //ViewModelApplication.CurrentPopupViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
                 return true;
             }
             );
@@ -1296,7 +1311,7 @@ namespace Fasetto.Word
             ViewModelApplication.ClientShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionAnalysisPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedName;
             ViewModelApplication.FCostHierarchyID = ((HierarchyItemSelectionViewModel)((TransactionSelectionAnalysisPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid;
             ViewModelApplication.CostHierarchyShortName = ((HierarchyItemSelectionViewModel)((TransactionSelectionAnalysisPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedName;
-            ViewModelApplication.CurrentControlViewModel = null;
+            ViewModelApplication.CurrentPopupViewModel = null;
             ViewModelApplication.CurrentPopupViewModel = null;
             ViewModelApplication.CurrentPopupContent = 0; 
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement; ;

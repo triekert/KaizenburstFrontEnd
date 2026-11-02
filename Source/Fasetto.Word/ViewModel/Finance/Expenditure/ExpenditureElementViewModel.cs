@@ -270,7 +270,7 @@ namespace Fasetto.Word {
         {
             // Close settings menu
 
-            var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             if (mElementViewModel.Description.OriginalText == "Description of New Element" || mElementViewModel.Description.EditedText == "Description of New Element") 
                 { mElementViewModel.Description.OriginalText = null;
@@ -287,7 +287,7 @@ namespace Fasetto.Word {
         {
             // Close settings menu
             //var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel;
-            var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mViewModel.EditElement(mElementViewModel);
             ViewModelApplication.PopupVisible = false;
@@ -300,7 +300,7 @@ namespace Fasetto.Word {
         public void DeleteNode()
         {
             // Close settings menu
-            var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             //Set discontinuation time to time of deletion
             mElementViewModel.DateDiscontinued = DateTime.Today; 
@@ -315,7 +315,7 @@ namespace Fasetto.Word {
         public void MoveNode()
         {
             // Close settings menu
-            var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mViewModel.MoveElement(mElementViewModel);
             if (mElementViewModel.Description.OriginalText == "Description of New Element" && mElementViewModel.Description.EditedText == "Description of New Element")
@@ -333,7 +333,7 @@ namespace Fasetto.Word {
         public void CopyNode()
         {
             // Close settings menu
-            var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
             mViewModel.CopyElement(mElementViewModel);
             ViewModelApplication.PopupVisible = false;

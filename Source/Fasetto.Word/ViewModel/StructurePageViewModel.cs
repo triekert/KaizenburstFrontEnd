@@ -203,7 +203,7 @@ namespace Fasetto.Word
         public StructurePageViewModel()
         {
             //Populate screen title
-            //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
             DisplayTitle = "Select relevant Client";
             //BulkMeter = "5249FFEB-6907-46AA-9204-D4527E11F9CE";
@@ -239,7 +239,7 @@ namespace Fasetto.Word
 
                 //((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.ClientID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.EditedKid;
                 //((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.RootID = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client.RootID;
-                ViewModelApplication.CurrentControlViewModel = ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
+                ViewModelApplication.CurrentPopupViewModel = ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
                 HierarchyParam = new ParameterHierarchyItemSelectApiModel
                 {
 
@@ -247,7 +247,7 @@ namespace Fasetto.Word
                     //Level = 1,
                     //HierarchyTypeID = CostHierarchy.HierarchyTypeID
                 };
-                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel(HierarchyParam,true);
                 return true;
             });
 
@@ -294,7 +294,7 @@ namespace Fasetto.Word
         /// </summary>
         public void Send()
         {
-            mViewModel = (FinanceTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            mViewModel = (FinanceTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             var results = mViewModel.mPersist.Where(x => x.IsUnderReview || x.IsDeleteElement).ToList();
             var mPersistElement = new HierarchyResultApiModel();
             //var results = mViewModel.mPersist.OrderBy(x => x.ShortName).ToList();
@@ -353,7 +353,7 @@ namespace Fasetto.Word
             //    Items.Where(item => item.Message.ToLower().Contains(SearchText)));
 
             // Set last search text
-            mViewModel = (FinanceTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            mViewModel = (FinanceTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             mViewModel.SearchText = SearchText;
             mViewModel.PerformSearch();
             //mViewModel.RefreshHierarchy();           

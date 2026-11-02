@@ -1,7 +1,10 @@
-﻿using System.Windows.Controls;
+﻿using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using static Fasetto.Word.DI;
-using System.Collections.ObjectModel;
 
 namespace Fasetto.Word
 {
@@ -36,7 +39,7 @@ namespace Fasetto.Word
 
         }
 
-        //private void HandleEsc(object sender, KeyEventArgs e)
+            //private void HandleEsc(object sender, KeyEventArgs e)
         //{
         //    if (e.Key == Key.Escape)
         //        ((HierarchyElementViewModel)DataContext).Close();
@@ -44,48 +47,85 @@ namespace Fasetto.Word
         //}
 
 
-        private void TreeView_KeyBoard(object sender, KeyboardEventArgs e)
+
+        private void ScrollViewer_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            //check to determine whether user would like to add an item to the hierarchy
+            // Check if user pressed Ctrl + Enter (Return)
+            if ((e.Key == Key.Return || e.Key == Key.Enter) &&
+                (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                if (DataContext is ManageClassificationViewModel vm && vm.FocusAddClassificationCommand != null)
+                {
+                    if (vm.FocusAddClassificationCommand.CanExecute(null))
+                    {
+                        vm.FocusAddClassificationCommand.Execute(null);
+                    }
+                }
 
-           if (Keyboard.IsKeyDown(Key.Escape))
+                // CRITICAL: Mark the event as fully handled so it stops bubbling 
+                // and doesn't trigger parent window shortcuts or default commands (like closing)
+                e.Handled = true;
+            }
+        }
+            
+            
+            
+            
+            //private void HandleEsc(object sender, KeyEventArgs e)
+        //{
+        //    if (e.Key == Key.Escape)
+        //        ((HierarchyElementViewModel)DataContext).Close();
+        //    e.Handled = true;   
+        //}
 
 
-            { ((ManageClassificationViewModel)DataContext).Close();
-            e.Handled = true;}
-                //ImagePath
 
-           //else
-           //     if (Keyboard.IsKeyDown(Key.F2))
-           //         ((ManageClassificationViewModel)DataContext).OpenDocument();
- 
-           //      else
-           //         if (Keyboard.IsKeyDown(Key.Insert))
-           //             ((ManageClassificationViewModel)DataContext).BrowseImage();
-           //         e.Handled = true;
+        private void TreeView_KeyBoard(object sender, KeyEventArgs e)
+        {
+            // Check if user pressed Ctrl + Enter (Return)
+            //if ((e.Key == Key.Return || e.Key == Key.Enter) &&
+            //    (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            //{
+            //    if (DataContext is ManageClassificationViewModel vm && vm.FocusAddClassificationCommand != null)
+            //    {
+            //        if (vm.FocusAddClassificationCommand.CanExecute(null))
+            //        {
+            //            vm.FocusAddClassificationCommand.Execute(null);
+            //        }
+            //    }
+
+            //    // CRITICAL: Mark the event as fully handled so it stops bubbling 
+            //    // and doesn't trigger parent window shortcuts or default commands (like closing)
+            //    e.Handled = true;
+            //}
         }
 
         private void DataGridRow_KeyDown(object sender, KeyEventArgs e)
         {
-            if (Keyboard.IsKeyDown(Key.F2) && ((DocDataViewModel)Transaction.SelectedItem).DocURL != "\\somepath\\filename.jpg")
+            if (Keyboard.IsKeyDown(Key.F2) && ((DocDataViewModel)Transaction.CurrentItem).DocURL != "\\somepath\\filename.jpg")
 
             {
-                ((ManageClassificationViewModel)DataContext).OpenDocument((DocDataViewModel)Transaction.SelectedItem);
+                ((ManageClassificationViewModel)DataContext).OpenDocument((DocDataViewModel)Transaction.CurrentItem);
+                e.Handled = true;
             }
 
             else
                 if (Keyboard.IsKeyDown(Key.Insert))
-            //link a new document if the placeholder is still not used, otherwise, create a new placeholder and fill
+                //link a new document if the placeholder is still not used, otherwise, create a new placeholder and fill
                 {
-                ((ManageClassificationViewModel)DataContext).BrowseImage();
+                    ((ManageClassificationViewModel)DataContext).BrowseImage();
+                    e.Handled = true;
                 }
 
                 else
                     if (Keyboard.IsKeyDown(Key.Delete))
-                //link a new document if the placeholder is still not used, otherwise, create a new placeholder and fill
-                //((ManageClassificationViewModel)DataContext).RemoveImage((DocDataViewModel)Transaction.SelectedItem);
-                ((ManageClassificationViewModel)DataContext).RemoveDocument((DocDataViewModel)Transaction.SelectedItem);
-            e.Handled = true;
+                    //link a new document if the placeholder is still not used, otherwise, create a new placeholder and fill
+                    //((ManageClassificationViewModel)DataContext).RemoveImage((DocDataViewModel)Transaction.SelectedItem);
+                    {
+                        ((ManageClassificationViewModel)DataContext).RemoveDocument((DocDataViewModel)Transaction.SelectedItem);
+                        e.Handled = true;
+                    }
+
             //if (e.Key == Key.Enter)
             //{
             //    NavigateOn();
@@ -95,8 +135,8 @@ namespace Fasetto.Word
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             //if no document has been linked to the dummy placeholder yet, adda document into the placeholder...
-            if (((DocDataViewModel)Transaction.SelectedItem).DocURL != "\\somepath\\filename.jpg")
-                ((ManageClassificationViewModel)DataContext).OpenDocument((DocDataViewModel)Transaction.SelectedItem);
+            if (((DocDataViewModel)Transaction.CurrentItem).DocURL != "\\somepath\\filename.jpg")
+                ((ManageClassificationViewModel)DataContext).OpenDocument((DocDataViewModel)Transaction.CurrentItem);
             else
                 ((ManageClassificationViewModel)DataContext).BrowseImage();
 
@@ -105,14 +145,44 @@ namespace Fasetto.Word
         }
 
         private void DataGridRow_MouseRightClick(object sender, MouseButtonEventArgs e)
-        {
-            //var tempT = new ObservableCollection<TransactionViewModel>();
-            //foreach (var tT in Transaction.ItemsSource)
-            //    tempT.Add((TransactionViewModel)tT);
 
-            //var mTimeStart = tempBR.OrderBy(x => x.TimeSotStart).ToList().FirstOrDefault().TimeSlotStart;
-            //var mTimeEnd = tempBR.OrderByDescending(x => x.TimeSlotStart).ToList().FirstOrDefault().TimeSlotStart.AddMinutes(30);
-            //MessageBox.Show($" timeslot ends at {mTimeEnd}", $" The timeslot selected starts at {mTimeStart}");
+        {
+            // Find the cell or row clicked
+            var dep = (DependencyObject)e.OriginalSource;
+            while ((dep != null) && !(dep is DataGridCell) && !(dep is DataGridColumnHeadersPresenter))
+            {
+                dep = VisualTreeHelper.GetParent(dep);
+            }
+
+            if (dep is DataGridCell cell && !cell.IsEditing && !cell.IsReadOnly)
+            {
+                if (!cell.IsFocused)
+                {
+                    cell.Focus();
+                }
+
+                var dataGrid = FindVisualParent<DataGrid>(cell);
+                // Begin editing on the single right click
+                dataGrid?.BeginEdit(e);
+            }
+        }
+
+        private void TextBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is TextBox textBox)
+            {
+                textBox.Focus();
+                textBox.SelectAll(); // Optional: highlights existing text for quick replacement
+            }
+        }
+
+        // Helper method to traverse the visual tree
+        private static T FindVisualParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            var parentObject = VisualTreeHelper.GetParent(child);
+            if (parentObject == null) return null;
+            if (parentObject is T parent) return parent;
+            return FindVisualParent<T>(parentObject);
         }
         private void NavigateOn()
         { }
@@ -120,3 +190,5 @@ namespace Fasetto.Word
 
         }
 }
+
+

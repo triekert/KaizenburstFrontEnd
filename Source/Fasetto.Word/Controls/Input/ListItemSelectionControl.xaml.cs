@@ -36,7 +36,7 @@ namespace Fasetto.Word
         public ListItemSelectionControl()
         {
             //mHISVM = new HierarchyItemSelectionViewModel();
-            //ViewModelApplication.CurrentControlViewModel = mHISVM;
+            //ViewModelApplication.CurrentPopupViewModel = mHISVM;
             //DataContext = mHISVM;
 
             InitializeComponent();

@@ -37,7 +37,7 @@ namespace Fasetto.Word
         public BillingPeriodComboboxControl()
         {
             //var mBPLVM = new BillingPeriodListViewModel("8A8425E2-5766-4014-8C2F-01BD84DBC370");
-            //ViewModelApplication.CurrentControlViewModel = mBPLVM;
+            //ViewModelApplication.CurrentPopupViewModel = mBPLVM;
             //DataContext = mBPLVM;
             InitializeComponent();
         }
@@ -77,7 +77,7 @@ namespace Fasetto.Word
         {
             if ((BillingPeriodViewModel)((ComboBox)sender).SelectedItem != null)
             {
-            //((BillingPeriodListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedBillingPeriod = (BillingPeriodViewModel)((ComboBox)sender).SelectedItem;
+            //((BillingPeriodListViewModel)ViewModelApplication.CurrentPopupViewModel).MSelectedBillingPeriod = (BillingPeriodViewModel)((ComboBox)sender).SelectedItem;
             ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod = (BillingPeriodViewModel)((ComboBox)sender).SelectedItem; 
             }
             ((BillingPeriodListViewModel)((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod).MSelectedBillingPeriod = ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod;

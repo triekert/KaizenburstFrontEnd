@@ -63,10 +63,12 @@ namespace Fasetto.Word
         public TransactionDetailControl()
         {
 
-            //var root = "1C225789-3938-4480-86CB-071863DC5D33";
-            var mReturnTransactionDetail = (TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
+            if (ViewModelApplication.CurrentPopupViewModel != null && ViewModelApplication.CurrentPopupViewModel.GetType().Name == "TransactionDetailTreeViewModel")
+             DataContext = (TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel; 
+            else
+                DataContext   = (TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             //mTransactionDetailTreeView = new TransactionDetailTreeViewModel("5249FFEB-6907-46AA-9204-D4527E11F9CE", mReturnTransactionDetail.TimeStart, mReturnTransactionDetail.TimeEnd);
-            DataContext = mReturnTransactionDetail;
+
             //ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel();
 
             InitializeComponent();
@@ -88,7 +90,7 @@ namespace Fasetto.Word
 
         //    DataContext = mHierarchyTree;
         //    InitializeComponent();
-        //    ViewModelApplication.CurrentControlViewModel = mHierarchyTree;   
+        //    ViewModelApplication.CurrentPopupViewModel = mHierarchyTree;   
         //}
 
 

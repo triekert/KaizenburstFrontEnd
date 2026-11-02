@@ -81,17 +81,20 @@ namespace Fasetto.Word
             DataContext = mTransactionTreeView;
             //((TransactionPageViewModel)ViewModelApplication.CurrentPageViewModel).DisplayTitle = ((TransactionPageViewModel)ViewModelApplication.CurrentPageViewModel).DisplayTitle + mBulkMeter;
 // C#
-var view = System.Windows.Data.CollectionViewSource.GetDefaultView(mTransactionTreeView.Trans_action);
-if (view is System.ComponentModel.IEditableCollectionView iev)
-{
-    if (iev.IsAddingNew)
-        iev.CommitNew(); // or iev.CancelNew() if the new item is invalid
-    if (iev.IsEditingItem)
-        iev.CommitEdit(); // or iev.CancelEdit()
-}
+        var view = System.Windows.Data.CollectionViewSource.GetDefaultView(mTransactionTreeView.Trans_action);
+        if (view is System.ComponentModel.IEditableCollectionView iev)
+        {
+            if (iev.IsAddingNew)
+                iev.CommitNew(); // or iev.CancelNew() if the new item is invalid
+            if (iev.IsEditingItem)
+                iev.CommitEdit(); // or iev.CancelEdit()
+        }
             InitializeComponent();
+            DataContextChanged += TransactionControl_DataContextChanged;
+            Loaded += (s, e) => HookViewModel(DataContext);
+            Unloaded += (s, e) => UnhookViewModel(DataContext);
             //mTransactionTreeView.mBulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
-            //ViewModelApplication.CurrentControlViewModel = mTransactionTreeView;
+            //ViewModelApplication.CurrentPopupViewModel = mTransactionTreeView;
 
             //Create dependency property
             //"ItemsSource is a dependency property, so it's easy enough to be notified when the property is changed to something else"
@@ -101,6 +104,25 @@ if (view is System.ComponentModel.IEditableCollectionView iev)
             //dpd?.AddValueChanged(Transaction, ItemsPropertyIsChanged);
 
         }
+
+        private void HookViewModel(object context)
+        {
+            if (context is TransactionTreeViewModel vm)
+            {
+                // Always unhook first to avoid duplicate subscriptions
+                vm.DataRefreshed -= OnDataRefreshed;
+                vm.DataRefreshed += OnDataRefreshed;
+            }
+        }
+
+        private void UnhookViewModel(object context)
+        {
+            if (context is TransactionTreeViewModel vm)
+            {
+                vm.DataRefreshed -= OnDataRefreshed;
+            }
+        }
+
 
         private void ItemsPropertyIsChanged(object sender, EventArgs e)
         {
@@ -439,7 +461,7 @@ if (view is System.ComponentModel.IEditableCollectionView iev)
                  ViewModelApplication.PopupVisible = false;
 
                 ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(MKFinTranID);
-                ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Allocation ";
+                ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Transaction Breakdown ";
 
                 //If only one allocation linked to the Transaction, bypass the 'detail' window...
 
@@ -623,7 +645,39 @@ if (view is System.ComponentModel.IEditableCollectionView iev)
 
         private void Datagrid_TargetUpdated(object sender, DataTransferEventArgs e)
         {
-
+            // Runs automatically whenever Trans_action updates on the UI thread
+            if (sender is DataGrid dg)
+            {
+                dg.Items.Refresh();
+            }
         }
+        /// <summary>
+        /// Force DataGrid Visual Refresh via UI Event or Code-Behind
+        ///If MPersist is an ObservableCollection or direct field that doesn't trigger property notifications on inner updates, you can explicitly force the DataGrid 
+        ///to refresh its item containers when the update completes:
+        /// </summary>
+        //public void RefreshDataGridRows()
+        //{
+        //    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+        //    {
+        //        // Invalidates visual rendering for containers and forces DataTriggers to re-run
+        //        Transaction.Items.Refresh();
+        //    }), System.Windows.Threading.DispatcherPriority.Render);
+        //}
+        private void TransactionControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            UnhookViewModel(e.OldValue);
+            HookViewModel(e.NewValue);
+        }
+
+        private void OnDataRefreshed(object sender, EventArgs e)
+        {
+            // Ensure UI updates run on the UI thread
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                Transaction.Items.Refresh();
+            }));
+        }
+
     }
 }

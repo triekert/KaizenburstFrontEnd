@@ -34,7 +34,8 @@
                 <TextBox 
                       x:Name="searchTextBox"
                       KeyDown="SearchTextBox_KeyDown"
-                     Text="{Binding SearchText, BindsDirectlyToSource=True, IsAsync=True}"
+                       Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  
                       Width="200" FontSize="18" TextWrapping="Wrap" RenderTransformOrigin="0.1,0.616" AutomationProperties.HelpText="Begin entering name...."
                     >
                     <TextBox.InputBindings>

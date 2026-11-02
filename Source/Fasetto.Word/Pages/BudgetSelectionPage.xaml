@@ -8,7 +8,6 @@
                 mc:Ignorable="d" 
       x:Name="Page"
       d:DesignHeight="700" d:DesignWidth="700"
-      d:DataContext="{x:Static local:ChatMessageListDesignModel.Instance}"
       >
     <!-- -->
     <Border>

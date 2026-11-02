@@ -53,7 +53,7 @@ namespace Fasetto.Word
 
             DataContext = mHierarchyTree;
             InitializeComponent();
-            ViewModelApplication.CurrentControlViewModel = mHierarchyTree;
+            ViewModelApplication.CurrentPopupViewModel = mHierarchyTree;
             //CloseCommand = new RelayCommand(Close);
 
 

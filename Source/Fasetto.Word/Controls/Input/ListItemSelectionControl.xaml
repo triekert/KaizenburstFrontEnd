@@ -18,6 +18,7 @@
             <!-- Double click to edit -->
             <Grid.InputBindings>
                 <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding EditCommand}" />
+                <KeyBinding Command="{Binding SaveCommand}" Key="Return"/>
             </Grid.InputBindings>
             
             <!-- Hover over to show edit button -->

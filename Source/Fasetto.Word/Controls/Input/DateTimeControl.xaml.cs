@@ -6,7 +6,7 @@ using System.Windows.Controls;
 namespace Fasetto.Word
 {
     /// <summary>
-    /// Interaction logic for TextEntryControl.xaml
+    /// Interaction logic for DateTimeControl.xaml
     /// </summary>
     public partial class DateTimeControl : UserControl
     {
@@ -21,53 +21,43 @@ namespace Fasetto.Word
             set => SetValue(LabelWidthProperty, value);
         }
 
-        // Using a DependencyProperty as the backing store for LabelWidth.  This enables animation, styling, binding, etc...
+        // Using a DependencyProperty as the backing store for LabelWidth.
         public static readonly DependencyProperty LabelWidthProperty =
-            DependencyProperty.Register("LabelWidth1", typeof(GridLength), typeof(TextEntryControl), new PropertyMetadata(GridLength.Auto, LabelWidthChangedCallback));
+            DependencyProperty.Register(
+                nameof(LabelWidth),
+                typeof(GridLength),
+                typeof(DateTimeControl),
+                new PropertyMetadata(GridLength.Auto, LabelWidthChangedCallback));
 
         #endregion
 
         #region Constructor
 
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public DateTimeControl()
         {
-            InitializeComponent(); 
-            //DataContext = this;
-            //var cboTp = TP.SelectedValue as ComboBoxItem;
-            //cboTp.Content = cboTp.Content;
-           
+            InitializeComponent();
         }
 
         #endregion
 
         #region Dependency Callbacks
 
-        /// <summary>
-        /// Called when the label width has changed
-        /// </summary>
-        /// <param name="d"></param>
-        /// <param name="e"></param>
         public static void LabelWidthChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             try
             {
-                // Set the column definition width to the new value
-                (d as DateTimeControl).LabelColumnDefinition.Width = (GridLength)e.NewValue;
-               
+                if (d is DateTimeControl control && e.NewValue is GridLength newLength)
+                {
+                    control.LabelColumnDefinition.Width = newLength;
+                }
             }
-
-// Making ex available for developer on break
-#pragma warning disable CS0168
             catch (Exception ex)
-#pragma warning restore CS0168
             {
-                // Make developer aware of potential issue
                 Debugger.Break();
-
-                (d as DateTimeControl).LabelColumnDefinition.Width = GridLength.Auto;
+                if (d is DateTimeControl control)
+                {
+                    control.LabelColumnDefinition.Width = GridLength.Auto;
+                }
             }
         }
 
@@ -75,15 +65,20 @@ namespace Fasetto.Word
 
         private void TP_Selected(object sender, RoutedEventArgs e)
         {
-            var cboTp = TP.SelectedValue as ComboBoxItem;
-            cboTp.Content = cboTp.Content;
+            if (TP.SelectedValue is string timeString)
+            {
+                // Access or process the selected time string directly
+                var selectedTime = timeString;
+            }
         }
 
         private void TP_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var cboTp = TP.SelectedValue as ComboBoxItem;
-            //var mContent = cboTp.Content;
-            
+            if (TP.SelectedValue is string timeString)
+            {
+                // Handle selection change logic using the time string
+                var selectedTime = timeString;
+            }
         }
     }
 }

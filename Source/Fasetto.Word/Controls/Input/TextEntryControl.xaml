@@ -19,6 +19,7 @@
             <Grid.InputBindings>
                 <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding EditCommand}" />
                 <KeyBinding Command="{Binding SaveCommand}" Key="Return"/>
+                <KeyBinding Command="{Binding CancelCommand}" Key="Escape"/>
             </Grid.InputBindings>
             
             <!-- Hover over to show edit button -->
@@ -64,20 +65,24 @@
             <!-- Edit Content -->
             <TextBox Text="{Binding EditedText, UpdateSourceTrigger=PropertyChanged}"
                      Grid.Column="1"
-                     Opacity="0"
+
                      local:AnimateFadeInProperty.Value="{Binding Editing}"
                      local:FocusAndSelectProperty.Value="{Binding Editing}"
                      FontSize="{StaticResource FontSizeRegular}"
                      Padding="2"
                      TextWrapping="WrapWithOverflow"
-                     Margin="10 10 15 8" FontFamily="Lato Heavy"
+                     Margin="15 8" FontFamily="Lato Heavy"
+                     VerticalAlignment="Center"                     
                      />
 
             <!-- Content -->
             <TextBlock Text="{Binding OriginalText}" 
                        Grid.Column="1"
                        local:AnimateFadeInProperty.Value="{Binding Editing, Converter={local:BooleanInvertConverter}}"
-                       Margin="15 8"
+                       Padding="2"
+                       TextWrapping="WrapWithOverflow"           
+                      FontSize="{StaticResource FontSizeRegular}"                      
+                       Margin="15 8" 
                        VerticalAlignment="Center"
                        ToolTip="{Binding OriginalText}"
                        />

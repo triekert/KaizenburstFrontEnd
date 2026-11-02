@@ -63,7 +63,7 @@ namespace Fasetto.Word
             else
             { mHierarchyTree = (BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel; }
             ViewModelApplication.CurrentPopupViewModel = mHierarchyTree; 
-            ViewModelApplication.CurrentControlViewModel = mHierarchyTree;
+            ViewModelApplication.CurrentPopupViewModel = mHierarchyTree;
             ViewModelApplication.PopupVisible = false;
             DataContext = mHierarchyTree;
             InitializeComponent();
@@ -76,7 +76,7 @@ namespace Fasetto.Word
 
             //DataContext = mHierarchyTree;
             //InitializeComponent();
-            //ViewModelApplication.CurrentControlViewModel = mHierarchyTree;   
+            //ViewModelApplication.CurrentPopupViewModel = mHierarchyTree;   
         }
 
         private void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -154,7 +154,7 @@ namespace Fasetto.Word
         /// <param name="e"></param>
         private void TreeView_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            ((BudgetTreeViewModel)ViewModelApplication.CurrentControlViewModel).mRootHierarchyElement1 = (BudgetViewModel)tvParameters.SelectedItem;
+            ((BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mRootHierarchyElement1 = (BudgetViewModel)tvParameters.SelectedItem;
             if (e.ChangedButton == MouseButton.Right)
             {
                 if (((TreeViewItem)sender).IsSelected)
@@ -174,7 +174,7 @@ namespace Fasetto.Word
         }
         private void TreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            ((BudgetTreeViewModel)ViewModelApplication.CurrentControlViewModel).mRootHierarchyElement1 = (BudgetViewModel)tvParameters.SelectedItem;
+            ((BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mRootHierarchyElement1 = (BudgetViewModel)tvParameters.SelectedItem;
 
             mTargetTest = (BudgetViewModel)tvParameters.SelectedItem;
             if (e.ChangedButton == MouseButton.Right)
@@ -203,7 +203,7 @@ namespace Fasetto.Word
             //if (ViewModelApplication.PopupVisible == false)
             //{ 
             //Pass  keyboard event args through 
-            ((BudgetTreeViewModel)ViewModelApplication.CurrentControlViewModel).mRootHierarchyElement1 = (BudgetViewModel)tvParameters.SelectedItem;
+            ((BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mRootHierarchyElement1 = (BudgetViewModel)tvParameters.SelectedItem;
 
             mTargetTest = (BudgetViewModel)tvParameters.SelectedItem;
             mDraggedItem = (BudgetViewModel)tvParameters.SelectedItem;

@@ -155,13 +155,13 @@ namespace Fasetto.Word
             // Set the edited text to the current value
 
             //Go into edit mode
-            ViewModelApplication.CurrentControlViewModel = ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+            ViewModelApplication.CurrentPopupViewModel = ((BudgetSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
             //((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Populate();
             //MSelectedCostHierarchy = MSelectedCostHierarchy;
             //((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy.MSelectedCostHierarchy = MSelectedCostHierarchy;
             //((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedCostHierarchy = MSelectedCostHierarchy;
             Editing = true;
-            //ViewModelApplication.CurrentControlViewModel
+            //ViewModelApplication.CurrentPopupViewModel
         }
 
 

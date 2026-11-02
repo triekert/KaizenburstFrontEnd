@@ -56,7 +56,7 @@ namespace Fasetto.Word
 
             DataContext = mHierarchyTree;
             InitializeComponent();
-            ViewModelApplication.CurrentControlViewModel = mHierarchyTree;
+            ViewModelApplication.CurrentPopupViewModel = mHierarchyTree;
             //CloseCommand = new RelayCommand(Close);
 
 
@@ -68,7 +68,7 @@ namespace Fasetto.Word
 
             DataContext = mHierarchyTree;
             InitializeComponent();
-            ViewModelApplication.CurrentControlViewModel = mHierarchyTree;   
+            ViewModelApplication.CurrentPopupViewModel = mHierarchyTree;   
         }
 
         private void SearchTextBox_KeyDown(object sender, KeyEventArgs e)

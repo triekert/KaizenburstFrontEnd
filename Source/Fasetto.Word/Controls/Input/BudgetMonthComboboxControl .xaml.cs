@@ -37,7 +37,7 @@ namespace Fasetto.Word
         public BudgetMonthComboboxControl()
         {
             //var mBPLVM = new CostHierarchyListViewModel("8A8425E2-5766-4014-8C2F-01BD84DBC370");
-            //ViewModelApplication.CurrentControlViewModel = mBPLVM;
+            //ViewModelApplication.CurrentPopupViewModel = mBPLVM;
             //DataContext = mBPLVM;
             InitializeComponent();
 

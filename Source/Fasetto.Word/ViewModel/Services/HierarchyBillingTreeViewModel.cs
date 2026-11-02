@@ -358,7 +358,7 @@ namespace Fasetto.Word
 
 
 
-                //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentControlViewModel;
+                //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPopupViewModel;
 
 
             });
@@ -375,7 +375,7 @@ namespace Fasetto.Word
             //build a tree view, always starting with the root element, which is also the classification for the hierarchy
             mHDML.AddRange(ExpandHierarchyData(mPersist, "00000000-0000-0000-0000-000000000000", "Root"));
             //Refresh the tree view title with the current name of the root element
-            ControlTitle = ((HierarchyBillingTreeViewModel)ViewModelApplication.CurrentControlViewModel).ControlTitle = "Water & Sewerage Billing : FROM " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeStart.ToString("d/MM/yyyy")
+            ControlTitle = ((HierarchyBillingTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Water & Sewerage Billing : FROM " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeStart.ToString("d/MM/yyyy")
             + " TO " + ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod.TimeEnd.ToString("d/MM/yyyy") + " FOR " +
             (mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ShortName;
 

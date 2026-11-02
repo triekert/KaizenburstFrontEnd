@@ -124,7 +124,7 @@ namespace Fasetto.Word
             //((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).BillingPeriod.MSelectedBillingPeriod = MSelectedBillingPeriod;
             ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).SelectedBillingPeriod = MSelectedBillingPeriod;
             Editing = true;
-            //ViewModelApplication.CurrentControlViewModel
+            //ViewModelApplication.CurrentPopupViewModel
         }
 
 

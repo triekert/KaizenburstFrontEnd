@@ -68,6 +68,12 @@ namespace Fasetto.Word
         public ParameterTransactionApiModel mRequest { get; set; }
 
 
+        /// <summary>
+        /// Store enum of current popup view
+        /// </summary>
+        public PopupContent PriorPopupContent { get; set; }
+
+
         #endregion
 
         #region Data
@@ -167,10 +173,11 @@ Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             //mTODStart = TODStart;
             //mTODEnd = TODEnd;
             PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            PriorPopupContent = ViewModelApplication.CurrentPopupContent;
             TaskManager.RunAndForget(TransactionAsync);
 
 
-            // Get the OptFinHierarchies currently configured - first populate 'root hierarchy' variable with all configured root hierarchy elements currently available
+            // Get the Hierarchies currently configured - first populate 'root hierarchy' variable with all configured root hierarchy elements currently available
 
             Transaction = new DataGrid();
             //UpdateTreeViewElements();
@@ -478,11 +485,11 @@ Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                                           .FirstOrDefault();
 
 
+                //ViewModelApplication.CurrentPopupViewModel = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+                ViewModelApplication.CurrentPopupViewModel = null;
+                ViewModelApplication.CurrentControlViewModel= null;
 
-                ViewModelApplication.CurrentPopupViewModel = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
-
-            }
-
+            } 
 
         }
 
@@ -606,34 +613,24 @@ Application.Current.Dispatcher.BeginInvoke(new Action(() =>
 
         public void RefreshTransactionList()
         {
-
-
-
-
-            lock (mStocksLock)
-            {
-                Trans_action.Clear();
-            }
             var mTest = MPersist.GroupBy(x => x.KFinTranID)
-            .Select(g => g.First()).ToList();
-            var matches = mTest.OrderByDescending(x => x.Posted_Date).ThenBy(x => x.KFinTranID).ThenBy(x => x.ShortName).ToList();
-            //mPersist = result.ServerResponse.Response;
-            //if (matches.Count>0)
-            // C#
+                               .Select(g => g.First())
+                               .ToList();
 
+            var matches = mTest.OrderByDescending(x => x.Posted_Date)
+                               .ThenBy(x => x.KFinTranID)
+                               .ThenBy(x => x.ShortName)
+                               .ToList();
 
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
                 lock (mStocksLock)
                 {
                     Trans_action.Clear();
 
-
                     foreach (var item in matches)
                     {
-
                         var mTVM = new TransactionViewModel
-
                         {
                             Posted_Date = item.Posted_Date,
                             Month = item.Month,
@@ -663,22 +660,31 @@ Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                             KProjectName = item.KProjectName,
                         };
 
-                        //Lock collection to prevent contention with UI
-
-
-                        AddItem(mTVM);
+                        Trans_action.Add(mTVM);
                     }
+
+                    // Force DataGrid container refresh on row 0
+                    if (Trans_action.Count > 0)
+                    {
+                        var item0 = Trans_action[0];
+                        Trans_action[0] = item0;
+                    }
+
                 }
-            });
+            }));
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                DataRefreshed?.Invoke(this, EventArgs.Empty);
+            }));
+
         }
-
-
-
 
 
         //Interpret Keyboard Gestures
         public void GestureHandler(object parameter)
         {
+            if (MPersist.Count() == 1 && MPersist.First().ShortName == "Loading...Please be patient")
+                return;
             var tmp = ((ContextualEventArgs)parameter).OriginalEventArgs;
             var eventTmp = tmp.GetType().Name;
             //Get datagrid from relevent event args
@@ -920,34 +926,7 @@ Application.Current.Dispatcher.BeginInvoke(new Action(() =>
 
                     foreach (var item in Merge)
                     {
-                        var u = new TransactionResultApiModel
-                        {
-                            Posted_Date = ((TransactionViewModel)item).Posted_Date,
-                            Month = ((TransactionViewModel)item).Month,
-                            Description = ((TransactionViewModel)item).Description,
-                            TransAmount = ((TransactionViewModel)item).TransAmount,
-                            ActualAmount = ((TransactionViewModel)item).ActualAmount,
-                            ShortName = ((TransactionViewModel)item).ShortName,
-                            KCategoryID = ((TransactionViewModel)item).KCategoryID,
-                            KFinActualID = ((TransactionViewModel)item).KFinActualID,
-                            KFinTranID = ((TransactionViewModel)item).KFinTranID,
-                            KPartyName = ((TransactionViewModel)item).KPartyName,
-                            KPartyID = ((TransactionViewModel)item).KPartyID,
-                            FCatSrchID = ((TransactionViewModel)item).FCatSrchID,
-                            KHierarchyID = ((TransactionViewModel)item).KHierarchyID,
-                            KAccountID = ((TransactionViewModel)item).KAccountID,
-                            KAccountName = ((TransactionViewModel)item).KAccountName,
-                            KProjectName = ((TransactionViewModel)item).KProjectName,
-                            KProjectID = ((TransactionViewModel)item).KProjectID,
-                            KAssetName = ((TransactionViewModel)item).KAssetName,
-                            KAssetID = ((TransactionViewModel)item).KAssetID,
-                            KPersonName = ((TransactionViewModel)item).KPersonName,
-                            KPersonID = ((TransactionViewModel)item).KPersonID,
-                            Notes = ((TransactionViewModel)item).Notes,
-                            Units = ((TransactionViewModel)item).Units,
-                            ChangeType = "m",
-                            KClientID = ((TransactionViewModel)item).KClientID,
-                        };
+                        var u = new TransactionResultApiModel { Posted_Date = ((TransactionViewModel)item).Posted_Date, Month = ((TransactionViewModel)item).Month, Description = ((TransactionViewModel)item).Description, TransAmount = ((TransactionViewModel)item).TransAmount, ActualAmount = ((TransactionViewModel)item).ActualAmount, ShortName = ((TransactionViewModel)item).ShortName, KCategoryID = ((TransactionViewModel)item).KCategoryID, KFinActualID = ((TransactionViewModel)item).KFinActualID, KFinTranID = ((TransactionViewModel)item).KFinTranID, KPartyName = ((TransactionViewModel)item).KPartyName, KPartyID = ((TransactionViewModel)item).KPartyID, FCatSrchID = ((TransactionViewModel)item).FCatSrchID, KHierarchyID = ((TransactionViewModel)item).KHierarchyID, KAccountID = ((TransactionViewModel)item).KAccountID, KAccountName = ((TransactionViewModel)item).KAccountName, KProjectName = ((TransactionViewModel)item).KProjectName, KProjectID = ((TransactionViewModel)item).KProjectID, KAssetName = ((TransactionViewModel)item).KAssetName, KAssetID = ((TransactionViewModel)item).KAssetID, KPersonName = ((TransactionViewModel)item).KPersonName, KPersonID = ((TransactionViewModel)item).KPersonID, Notes = ((TransactionViewModel)item).Notes, Units = ((TransactionViewModel)item).Units, ChangeType = "m", KClientID = ((TransactionViewModel)item).KClientID, };
 
                         ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mChange.Add(u);
                     }
@@ -970,7 +949,7 @@ Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                 ViewModelApplication.PopupVisible = false;
 
                     ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(MKFinTranID);
-                ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Allocation ";
+                ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Transaction Breakdown ";
 
 
                     //If only one allocation linked to the Transaction, bypass the 'detail' window...
@@ -1210,6 +1189,13 @@ Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             }
             return null;
         }
+
+
+        // Define an event for list refreshes
+        public event EventHandler DataRefreshed;
+
+
+
 
     }
 }

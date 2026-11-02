@@ -32,8 +32,16 @@ namespace Fasetto.Word
             // Log it
             Logger.LogDebugSource("Application starting...");
 
+        //    var CurrentPage = (await ClientDataStore.HasCredentialsAsync() ?
+        // Go to chat page
+
+        //ApplicationPage.Chat :
+        //     Otherwise, go to login page
+        //    ApplicationPage.Login);
+        //    Go to chat page
+
             // Setup the application view model based on if we are logged in
-            ViewModelApplication.GoToPage(
+           ViewModelApplication.GoToPage(
                 // If we are logged in...
                 await ClientDataStore.HasCredentialsAsync() ?
                 // Go to chat page

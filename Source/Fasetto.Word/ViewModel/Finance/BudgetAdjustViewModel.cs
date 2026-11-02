@@ -345,7 +345,7 @@ namespace Fasetto.Word
 
              await RunCommandAsync(() => BudgetAdjustCompleted, async () =>
             {
-                //var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+                //var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
                 ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
                 //var MDateAdj = ((BudgetAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateAdjustment;
                 var decBudg = BudgetAmountDec;

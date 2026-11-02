@@ -65,7 +65,7 @@ namespace Fasetto.Word
 
             InitializeComponent();
             //mBulkReconTreeView.mBulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
-            //ViewModelApplication.CurrentControlViewModel = mBulkReconTreeView;
+            //ViewModelApplication.CurrentPopupViewModel = mBulkReconTreeView;
 
             //CloseCommand = new RelayCommand(Close);
 
@@ -78,7 +78,7 @@ namespace Fasetto.Word
 
         //    DataContext = mHierarchyTree;
         //    InitializeComponent();
-        //    ViewModelApplication.CurrentControlViewModel = mHierarchyTree;   
+        //    ViewModelApplication.CurrentPopupViewModel = mHierarchyTree;   
         //}
 
 

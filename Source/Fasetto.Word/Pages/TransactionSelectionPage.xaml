@@ -170,7 +170,6 @@
                 <!--Select reconciliation data/ full day-->
                 <Button Content="Manage Transactions"
                             Padding="8"
-                            IsDefault="True"
                             Focusable="False"
                             Command="{Binding ReconcileCommand}"
                             Background="{StaticResource WordGreenBrush}"

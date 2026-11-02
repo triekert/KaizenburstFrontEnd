@@ -29,6 +29,8 @@ namespace Fasetto.Word
         /// </summary>
         public object PriorPopupViewModel { get; set; }
 
+
+
         /// <summary>
         /// Populate parameters for retrieval of required hierarchy tree
         /// </summary>
@@ -566,7 +568,7 @@ namespace Fasetto.Word
                 ViewModelApplication.PopupVisible = true;
             }
 
-            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Save();
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).SaveAsync();
 
 
 

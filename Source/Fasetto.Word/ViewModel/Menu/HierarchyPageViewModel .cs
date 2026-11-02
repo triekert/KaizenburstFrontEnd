@@ -204,7 +204,7 @@ namespace Fasetto.Word
         public HierarchyPageViewModel()
         {
             //Populate screen title
-            //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
             DisplayTitle = "Hierarchy Tree Management";
 
@@ -233,7 +233,6 @@ namespace Fasetto.Word
             CloseSearchCommand = new RelayCommand(CloseSearch);
             ClearSearchCommand = new RelayCommand(ClearSearch);
 
-    //        ViewModelApplication.CurrentPopupViewModel = new TransactionTreeViewModel(Test3, TimeStart.EditedDateTime,
     //TimeEnd.EditedDateTime, "", "");
     //        ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Financial Transaction Detail: " + ShortName;
     //        //force a reload of the BulkRecon Control
@@ -297,7 +296,7 @@ namespace Fasetto.Word
         /// </summary>
         public void Send()
         {
-            mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             if (mViewModel.mPersist == null)
             {
                 return;
@@ -361,7 +360,7 @@ namespace Fasetto.Word
             //    Items.Where(item => item.Message.ToLower().Contains(SearchText)));
 
             // Set last search text
-                mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+                mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
                 mViewModel.SearchText = SearchText;
                 mViewModel.PerformSearch();
                 //mViewModel.RefreshHierarchy();           

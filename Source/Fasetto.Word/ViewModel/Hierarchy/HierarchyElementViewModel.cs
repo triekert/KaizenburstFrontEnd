@@ -106,6 +106,11 @@ namespace Fasetto.Word
         /// </summary>
         public object PriorPopupViewModel { get; set; }
 
+        /// <summary>
+        /// Store enum of current popup view
+        /// </summary>
+        public PopupContent PriorPopupContent { get; set; }
+
 
         /// <summary>
         /// The text for the add Node button
@@ -249,6 +254,7 @@ namespace Fasetto.Word
             if (ViewModelApplication.CurrentPopupViewModel != null && ViewModelApplication.CurrentPopupViewModel.GetType().Name != "HierarchyElementViewModel")
             { 
                 PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                PriorPopupContent = ViewModelApplication.CurrentPopupContent;
             }
             // Create Node Name
             ShortName = new TextEntryViewModel
@@ -371,7 +377,7 @@ namespace Fasetto.Word
             if (((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel != null && ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel.GetType().Name == "HierarchyTreeViewModel1")
             {
 
-                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ProcessSelection();
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ProcessSelectionAsync();
             }
 
 
@@ -601,7 +607,7 @@ namespace Fasetto.Word
                 //{
                 //    MSelectedCostHierarchy = new CostHierarchyViewModel()
                 //};
-                //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                //ViewModelApplication.CurrentPopupViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
                 return true;
             });
         }

@@ -99,7 +99,8 @@ namespace Fasetto.Word
         /// <summary>
         /// Determines the currently visible side menu content
         /// </summary>
-        public SideMenuContent CurrentSideMenuContent { get; set; } = SideMenuContent.Menu;
+        public SideMenuContent CurrentSideMenuContent { get; set; } 
+            //= SideMenuContent.Menu;
 
         /// <summary>
         /// Determines the currently visible popup content
@@ -262,7 +263,12 @@ namespace Fasetto.Word
             OpenActualsCommand = new RelayCommand(OpenActuals);
             OpenLoadMetersCommand = new RelayCommand(OpenLoadMeters);
             OpenBulkReconCommand = new RelayCommand(OpenBulkRecon);
+            //if (ViewModelApplication.CurrentCredential != null)
+                CurrentSideMenuContent = SideMenuContent.Menu;
+
+
         }
+
 
         #endregion
 
@@ -326,7 +332,9 @@ namespace Fasetto.Word
         public void OpenMenu()
         {
             // Set the current side menu to KaizenBurst Menu
-            ViewModelApplication.ControlParameter = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
+            //if (ViewModelApplication.CurrentCredential == null)
+            //    return;
+                ViewModelApplication.ControlParameter = "2D7E4A7D-6F19-496E-8709-47E6A9ADDFA0";
             //ViewModelApplication.GoToPage(ApplicationPage.Hierarchy);
             CurrentSideMenuContent = SideMenuContent.Menu;
 
@@ -409,7 +417,7 @@ namespace Fasetto.Word
 
             // Show side menu or not?
             //SideMenuVisible = page == ApplicationPage.Chat || page == ApplicationPage.Finance || page == ApplicationPage.Hierarchy;
-            SideMenuVisible = page == ApplicationPage.Chat ||page == ApplicationPage.Hierarchy;
+            SideMenuVisible = ((page == ApplicationPage.Chat ||page == ApplicationPage.Hierarchy)& ViewModelApplication.CurrentCredential != null);
         }
 
         /// <summary>

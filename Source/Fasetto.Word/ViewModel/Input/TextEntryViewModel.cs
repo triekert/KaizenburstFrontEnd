@@ -134,6 +134,7 @@ namespace Fasetto.Word
         /// </summary>
         public void Cancel()
         {
+            OriginalText = EditedText;
             Editing = false;
         }
 

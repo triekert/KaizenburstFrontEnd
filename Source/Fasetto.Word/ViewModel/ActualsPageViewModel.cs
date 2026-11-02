@@ -185,7 +185,7 @@ namespace Fasetto.Word
         public ActualsPageViewModel()
         {
             //Populate screen title
-            //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            //mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             //var results = mViewModel.mHDML.FirstOrDefault(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000");
             DisplayTitle = "Transaction Management";
             // Create commands
@@ -228,7 +228,7 @@ namespace Fasetto.Word
         /// </summary>
         public void Send()
         {
-            mViewModel = (ExpenditureTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            mViewModel = (ExpenditureTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             var results = mViewModel.mPersist.Where(x => x.IsUnderReview || x.IsDeleteElement).ToList();
             var mPersistElement = new HierarchyResultApiModel();
             //var results = mViewModel.mPersist.OrderBy(x => x.ShortName).ToList();
@@ -287,7 +287,7 @@ namespace Fasetto.Word
             //    Items.Where(item => item.Message.ToLower().Contains(SearchText)));
 
             // Set last search text
-            mViewModel = (ExpenditureTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            mViewModel = (ExpenditureTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             mViewModel.SearchText = SearchText;
             mViewModel.PerformSearch();
             //mViewModel.RefreshHierarchy();           

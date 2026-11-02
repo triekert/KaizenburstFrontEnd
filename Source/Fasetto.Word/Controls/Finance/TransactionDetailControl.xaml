@@ -4,7 +4,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" 
-             xmlns:local="clr-namespace:Fasetto.Word" xmlns:forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" xmlns:sys="clr-namespace:System;assembly=mscorlib" d:DataContext="{d:DesignInstance Type=local:BulkReconViewModel}"
+             xmlns:local="clr-namespace:Fasetto.Word" xmlns:forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" xmlns:sys="clr-namespace:System;assembly=mscorlib" d:DataContext="{d:DesignInstance Type=local:TransactionDetailViewModel}"
              d:DesignHeight="300" d:DesignWidth="300">
 
     <UserControl.Resources>
@@ -19,17 +19,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <!--<sys:String x:Key="colCell">dynamic string...</sys:String>
-        <Style x:Key="ColumnCellStyle" TargetType="{x:Type DataGridCellsPresenter}" >
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="DataGridTextColumn">
-                        <Label Foreground="black" FontWeight="UltraBold" Background="AntiqueWhite" FontFamily="Arial" Content="{TemplateBinding Content}"
-                               HorizontalAlignment="Stretch" HorizontalContentAlignment ="Center"  VerticalAlignment="Center"  />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>-->
     </UserControl.Resources>
     <DockPanel>
         <!-- SEARCH AREA -->
@@ -48,71 +37,84 @@
 
         </Border>
         <Border 
-         DockPanel.Dock="Top" 
-         BorderBrush="#FF734444" 
-         BorderThickness="1,0,1,1">
+             DockPanel.Dock="Top" 
+             BorderBrush="#FF734444" 
+             BorderThickness="2,1,2,1">
 
-            <Grid>
+            <StackPanel>
 
-
-                <!--Settings Title-->
-
-                <Grid Height="20" Margin="0 0 0 2">
-
-
-                    <!--Back button-->
-
+                <Grid Height="40" Margin="0,5,0,5">
                     <Button Style="{StaticResource IconGrowButton}"
-                    Height="40"
-                    Content="{StaticResource FontAwesomeArrowLeftIcon}"
-                    FontFamily="{StaticResource FontAwesome}"
-                    Foreground="{StaticResource ForegroundDarkBrush}"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Command="{Binding CloseCommand}" IsCancel="True"
-                    />
+                                Width="40"
+                                Height="40"
+                                Content="{StaticResource FontAwesomeArrowLeftIcon}"
+                                FontFamily="{StaticResource FontAwesome}"
+                                Foreground="{StaticResource ForegroundDarkBrush}"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Command="{Binding CloseCommand}"/>
+                    <TextBlock FontSize="{StaticResource FontSizeLarge}"
+                                   Foreground="{StaticResource ForegroundVeryDarkBrush}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center">
+                            <Run FontFamily="{StaticResource FontAwesome}"
+                                 Text="{StaticResource FontAwesomeProjectIcon}"                     
+                                 Foreground="{StaticResource WordOrangeBrush}" />
+                            <Run Text="{Binding ControlTitle}"
+                                 Foreground="{DynamicResource WordDarkBlueBrush}"
+                                 FontFamily="{DynamicResource LatoBold}" 
+                                 Background="{DynamicResource BackgroundVeryLightBrush}" />
+                        </TextBlock>
+                </Grid>
+                <!-- First StackPanel for the input controls, stacked vertically -->
+                <StackPanel Margin="5" Height=" 270" local:TextEntryWidthMatcherProperty.Value="True">
+                    <local:DateTimeControl DataContext="{Binding TransactionDate}" FontWeight="ExtraBlack" Margin="0,2" />
+                    <local:TextEntryControl DataContext="{Binding TransactionDescription}" FontWeight="ExtraBlack" Margin="0,2" />
+                    <local:TextEntryControl DataContext="{Binding Amount}" FontWeight="ExtraBlack" Margin="0,2" />
+                    <local:HierarchyItemSelectionControl DataContext="{Binding Party}" FontWeight="ExtraBlack" Margin="0,2" />
+                    <local:HierarchyItemSelectionControl DataContext="{Binding Account}" FontWeight="ExtraBlack" Margin="0,2" />
 
+                </StackPanel>
+                <!--</StackPanel>-->
+                <!--</Border>-->
+                <!--<StackPanel>-->
+                <!-- Second Grid for the Back Button and Title Header -->
+                <Grid Height="40" Margin="0,5,0,5">
+                    <!--Back button-->
+                    <!--<Button Style="{StaticResource IconGrowButton}"
+                            Width="40"
+                            Height="40"
+                            Content="{StaticResource FontAwesomeArrowLeftIcon}"
+                            FontFamily="{StaticResource FontAwesome}"
+                            Foreground="{StaticResource ForegroundDarkBrush}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Command="{Binding CloseCommand}" 
+                            IsCancel="True" />-->
 
                     <!--Settings header-->
-
                     <TextBlock FontSize="{StaticResource FontSizeLarge}"
-
-                       Foreground="{StaticResource ForegroundVeryDarkBrush}"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center">
-                
-             <!--Tree icon--> 
-            
-                <Run FontFamily="{StaticResource FontAwesome}"
-                     Text="{StaticResource FontAwesomeProjectIcon}"                     
-                     Foreground="{StaticResource WordOrangeBrush}" />
-                
-             <!--Settings text--> 
-            
-                <Run Text="{Binding ControlTitle}"
-                     Foreground="{DynamicResource WordDarkBlueBrush}"
-                     FontFamily="{DynamicResource LatoBold}" Background="{DynamicResource BackgroundVeryLightBrush}" />
+                               Foreground="{StaticResource ForegroundVeryDarkBrush}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center">
+                        <Run FontFamily="{StaticResource FontAwesome}"
+                             Text="{StaticResource FontAwesomeProjectIcon}"                     
+                             Foreground="{StaticResource WordOrangeBrush}" />
+                        <Run Text="Transaction Detail"
+                             Foreground="{DynamicResource WordDarkBlueBrush}"
+                             FontFamily="{DynamicResource LatoBold}" 
+                             Background="{DynamicResource BackgroundVeryLightBrush}" />
                     </TextBlock>
-
-
-                    <!--FAMILY TREE-->
-
                 </Grid>
-            </Grid>
+            </StackPanel>
         </Border>
 
-        <DataGrid x:Name="TransactionDetail" Grid.Row="3"  ItemsSource="{Binding TransactionDetail}" 
+        <DataGrid x:Name="TransactionDetail"   ItemsSource="{Binding TransactionDetail}" 
                   HeadersVisibility="All" RenderTransformOrigin="0.5,0.5"       GridLinesVisibility="None" 
                     AutoGenerateColumns="False" AlternatingRowBackground="Beige" 
                     SelectionMode="Single" SelectionUnit="FullRow"  VerticalAlignment="Center"  HorizontalAlignment="Center" HorizontalContentAlignment="Center"  CanUserAddRows="False"
                   >
-            <!--<DataGrid.ColumnHeaderStyle>
-                <Style TargetType="{x:Type DataGridColumnHeader}">
-                    <Setter Property="FontWeight"  Value="ExtraBold" />
-                    <Setter Property="HorizontalAlignment" Value="Center" />
-                    <Setter Property="HorizontalContentAlignment" Value="Center" />
-                </Style>
-            </DataGrid.ColumnHeaderStyle>-->
+
 
             <DataGrid.Resources>
                 <Style TargetType="DataGridRow">
@@ -143,7 +145,7 @@
             <DataGrid.Columns>
                 <!--<DataGridTextColumn Header ="Bulk Meter" FontWeight="Bold"
                                     Binding="{Binding ShortName}"/>-->
-                <DataGridTemplateColumn Header="Trans Date" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                <!--<DataGridTemplateColumn Header="Trans Date" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Path=Posted_Date,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
@@ -164,7 +166,7 @@
                             <TextBlock Margin="5" Width="100" Text="{Binding Path= TransAmount,StringFormat=C,ConverterCulture='en-ZA'}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                </DataGridTemplateColumn>-->
                 <DataGridTemplateColumn Header="Transaction Category" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -173,14 +175,14 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Linked Party" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                <!--<DataGridTemplateColumn Header="Linked Party" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Margin="5" TextWrapping="Wrap"  Width="200" Text="{Binding Path= KPartyName}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                
+                </DataGridTemplateColumn>-->
+
                 <DataGridTemplateColumn Header="Units" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -208,4 +210,3 @@
 
     </DockPanel>
 </UserControl>
-

@@ -336,7 +336,7 @@ namespace Fasetto.Word
                 PerformKIdSearch();
                 //UpdateTreeViewElements();
 
-                ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
+                ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
 
 
             });
@@ -639,7 +639,7 @@ namespace Fasetto.Word
         public void GestureHandler(object parameter)
         {
 
-            var treeViewModel = ViewModelApplication.CurrentControlViewModel;
+            var treeViewModel = ViewModelApplication.CurrentPopupViewModel;
             var tmp = ((ContextualEventArgs)parameter).OriginalEventArgs;
 
             var eventTmp = tmp.GetType().Name;

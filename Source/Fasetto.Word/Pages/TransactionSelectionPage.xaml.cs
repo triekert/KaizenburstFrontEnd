@@ -108,16 +108,16 @@ namespace Fasetto.Word
         //private void SetClient(object sender, System.Windows.RoutedEventArgs e)
         //{
 
-        //    ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+        //    ViewModelApplication.CurrentPopupViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
         //    ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Populate();
         //}
 
         //private void SetHierarchySelection(object sender, System.Windows.RoutedEventArgs e)
         //{
-        //    ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
-        //    ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
-        //    //ViewModelApplication.CurrentControlViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
-        //    //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
+        //    ViewModelApplication.CurrentPopupViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).Root;
+        //    ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+        //    //ViewModelApplication.CurrentPopupViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+        //    //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
 
 
         //}

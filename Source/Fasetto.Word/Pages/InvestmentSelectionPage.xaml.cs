@@ -121,7 +121,7 @@ namespace Fasetto.Word
 
         //private void SetHierarchySelection(object sender, System.Windows.RoutedEventArgs e)
         //{
-        //    ViewModelApplication.CurrentControlViewModel =  ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
+        //    ViewModelApplication.CurrentPopupViewModel =  ((SWBillingPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
 
         //}
 

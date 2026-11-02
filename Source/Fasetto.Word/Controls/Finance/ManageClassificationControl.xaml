@@ -7,6 +7,12 @@
              xmlns:core="clr-namespace:Fasetto.Word.Core;assembly=Fasetto.Word.Core"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"                
              mc:Ignorable="d" >
+
+    <!-- Global Key Binding for Ctrl + Enter -->
+    <!--<UserControl.InputBindings>
+        <KeyBinding Key="Return" Modifiers="Control" Command="{Binding FocusAddClassificationCommand}" />
+    </UserControl.InputBindings>-->
+
     <UserControl.Resources>
         <sys:String x:Key="colName">dynamic string...</sys:String>
         <Style x:Key="ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" >
@@ -23,260 +29,155 @@
         <local:ContextualEventArgsConverter x:Key="ContextualEventArgsConverter" />
 
     </UserControl.Resources>
-    <Border Background="{DynamicResource BackgroundLightBrush}" 
-            Padding="15">
 
+    <Border Background="{DynamicResource BackgroundLightBrush}" Padding="15" PreviewKeyDown="ScrollViewer_PreviewKeyDown">
+        <ScrollViewer x:Name="scrollViewer" Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="0,5"
+                      >
+            <Grid Keyboard.PreviewKeyDown="TreeView_KeyBoard" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-    <ScrollViewer x:Name="scrollViewer"  Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="0,5">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="PreviewKeyDown" >
-                    <i:InvokeCommandAction 
-                        Command="{Binding GestureHandlerCommand}"
-                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
-                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+                <!-- Settings Title -->
+                <Grid Height="30" Margin="0 0 0 20">
+                    <!-- Back button -->
+                    <Button Style="{StaticResource IconGrowButton}"
+                            Height="50"
+                            Content="{StaticResource FontAwesomeArrowLeftIcon}"
+                            FontFamily="{StaticResource FontAwesome}"
+                            Foreground="{StaticResource  WordOrangeBrush}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Command="{Binding CloseCommand}"/>
 
-                </i:EventTrigger>
+                    <!-- Settings header -->
+                    <TextBlock FontSize="{StaticResource FontSizeLarge}"
+                               Foreground="{StaticResource ForegroundVeryDarkBrush}"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center" Margin="0,0,281,0">
+                        <Run FontFamily="{StaticResource FontAwesome}"
+                             Text="{StaticResource FontAwesomeCogIcon}"
+                             Foreground="{StaticResource WordOrangeBrush}" />
+                        <Run Text="{Binding HeadingText}" 
+                             FontFamily="{StaticResource LatoRegular}" 
+                             FontWeight="Bold"/>
+                    </TextBlock>
+                </Grid>
 
-                <i:EventTrigger EventName="PreviewMouseDoubleClick" >
-                    <i:InvokeCommandAction 
-                        Command="{Binding GestureHandlerCommand}"
-                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
-                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
+                <!-- Main Content -->
+                <Grid Grid.Row="1" Width="800" VerticalAlignment="Top">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="260" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-                </i:EventTrigger>
-
-                <i:EventTrigger EventName="PreviewMouseRightButtonClick" >
-                    <i:InvokeCommandAction 
-                        Command="{Binding GestureHandlerCommand}"
-                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
-                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
-
-                </i:EventTrigger>
-
-                <!--<i:EventTrigger EventName="PreviewMouseMove" >
-                    <i:InvokeCommandAction 
-                        Command="{Binding GestureHandlerCommand}"
-                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
-                        EventArgsConverterParameter="{Binding ElementName=tvParameters,Path=SelectedItem}" />
-
-                </i:EventTrigger>-->
-
-            </i:Interaction.Triggers>
-        <Grid   Keyboard.PreviewKeyDown="TreeView_KeyBoard" ForceCursor="True">
-
-
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <!-- Settings Title -->
-            <Grid Height="30" Margin="0 0 0 20">
-
-                <!-- Back button -->
-                <Button  
-
-                    Style="{StaticResource IconGrowButton}"
-                    Height="50"
-                    Content="{StaticResource FontAwesomeArrowLeftIcon}"
-                    FontFamily="{StaticResource FontAwesome}"
-                    Foreground="{StaticResource  WordOrangeBrush}"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Command="{Binding CloseCommand}" IsCancel="True" IsDefault="True"/>
-                <!--Keyboard.KeyDown="TreeView_KeyBoard"-->
-
-                <!-- Settings header -->
-                <TextBlock FontSize="{StaticResource FontSizeLarge}"
-                       Foreground="{StaticResource ForegroundVeryDarkBrush}"
-                       HorizontalAlignment="Right"
-                       VerticalAlignment="Center" Margin="0,0,281,0">
-                <!-- Cog icon -->
-                <Run FontFamily="{StaticResource FontAwesome}"
-                     Text="{StaticResource FontAwesomeCogIcon}"
-                     Foreground="{StaticResource WordOrangeBrush}" />
-                <!-- Settings text -->
-                <Run Text="{Binding HeadingText}" 
-                     FontFamily="{StaticResource LatoRegular}" 
-                     FontWeight="Bold"
-                     />
-                </TextBlock>
-
-            </Grid>
-
-            <!-- Main Content -->
-            <Grid Grid.Row="1"
-                  Width="800"
-                  VerticalAlignment="Top"
-                  >
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="260" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-
-                <!-- Profile Picture -->
-                <Grid Margin="0 0 30 0"
-                      VerticalAlignment="Top"
-                      Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}}">
-
-                    <!-- Mask for rounded corners-->
-                    <Border CornerRadius="8"
-                            Name="Mask"
-                            Background="White"
-                            />
-
-                    <!-- Image -->
+                    <!-- Profile Picture -->
+                    <Grid Margin="0 0 30 0" VerticalAlignment="Top" Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}}">
+                        <Border CornerRadius="8" Name="Mask" Background="White"/>
                         <Grid>
-
                             <Grid.OpacityMask>
-                            <VisualBrush Visual="{Binding ElementName=Mask}" />
-                        </Grid.OpacityMask>
-
-                        <Image Source="/Images/Logo/KaizenPNG.PNG" Stretch="UniformToFill" />
+                                <VisualBrush Visual="{Binding ElementName=Mask}" />
+                            </Grid.OpacityMask>
+                            <Image Source="/Images/Logo/KaizenPNG.PNG" Stretch="UniformToFill" />
+                        </Grid>
                     </Grid>
 
-                </Grid>
                     <!-- Profile details -->
-                    <StackPanel Grid.Column="1"
-                                local:TextEntryWidthMatcherProperty.Value="True">
+                    <StackPanel Grid.Column="1" local:TextEntryWidthMatcherProperty.Value="True">
+                        <StackPanel Orientation="Horizontal" Grid.Column="1" local:TextEntryWidthMatcherProperty.Value="True" RenderTransformOrigin="0.525,0.565">
+                            <TextBlock Text ="Transaction Date" FontFamily="{StaticResource LatoRegular}" Padding="10 10 13 10" FontWeight="Bold"/>
+                            <DatePicker x:Name="dateTransaction" SelectedDate="{Binding TransactionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="20 10 20 10" SelectedDateFormat="Short"/>
+                        </StackPanel>
 
-                        
-                            <!--<StackPanel Orientation="Horizontal" Grid.Column="1" 
-                                        local:TextEntryWidthMatcherProperty.Value="True" d:IsHidden="True">
-                                <TextBlock  Text ="Date of Transaction : " FontFamily="{StaticResource LatoRegular}" 
-                                               Padding="10 10 10 10" FontWeight="Bold"/>
-                                <TextBlock  Text ="{Binding TransactionDate}" FontFamily="{StaticResource LatoRegular}" 
-                                        Padding="10 10 10 10" FontWeight="Bold"/>                    
-                            </StackPanel>
-                            <StackPanel Orientation="Vertical" Grid.Column="1" 
-                                        local:TextEntryWidthMatcherProperty.Value="True" d:IsHidden="True">
-                                <TextBlock  Text ="Transaction Description: " FontFamily="{StaticResource LatoRegular}" 
-                                               Padding="10 10 10 10" FontWeight="Bold"/>
-                                <TextBlock  Text ="{Binding TransactionDetail}" FontFamily="{StaticResource LatoRegular}" 
-                                        Padding="10 10 10 10" FontWeight="Bold"/>
-                            </StackPanel>-->
-                            <StackPanel Orientation="Horizontal" Grid.Column="1"
-                                        local:TextEntryWidthMatcherProperty.Value="True" RenderTransformOrigin="0.525,0.565">
-                                    <TextBlock  Text ="Transaction Date" FontFamily="{StaticResource LatoRegular}" 
-                                               Padding="10 10 13 10" FontWeight="Bold"/>
-                                    <DatePicker x:Name="dateTransaction"  SelectedDate="{Binding TransactionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="20 10 20 10"
-                                                    SelectedDateFormat="Short"  />
+                        <local:TextEntryControl DataContext="{Binding TransactionDescription}" FontWeight="ExtraBlack" />
+                        <local:TextEntryControl DataContext="{Binding TransactionNotes}" FontWeight="ExtraBlack" />
+                        <local:TextEntryControl DataContext="{Binding Allocation}" FontWeight="ExtraBlack" />
+                        <local:HierarchyItemSelectionControl DataContext="{Binding Category}" FontWeight="ExtraBlack" />
+                        <local:TextEntryControl DataContext="{Binding Units}" FontWeight="ExtraBlack" />
+                        <local:HierarchyItemSelectionControl DataContext="{Binding Party}" FontWeight="ExtraBlack" />
+                        <local:HierarchyItemSelectionControl DataContext="{Binding Account}" FontWeight="ExtraBlack" />
+                        <local:HierarchyItemSelectionControl DataContext="{Binding RelatedAccount}" FontWeight="ExtraBlack" />
+                        <local:HierarchyItemSelectionControl DataContext="{Binding Asset}" FontWeight="ExtraBlack" />
+                        <local:HierarchyItemSelectionControl DataContext="{Binding Project}" FontWeight="ExtraBlack" />
+                        <local:HierarchyItemSelectionControl DataContext="{Binding Person}" FontWeight="ExtraBlack" />
 
-                            </StackPanel>
-                            <local:TextEntryControl DataContext="{Binding TransactionDescription}" FontWeight="ExtraBlack"  />
-                            <local:TextEntryControl DataContext="{Binding TransactionNotes}" FontWeight="ExtraBlack"  />
-                            <local:TextEntryControl DataContext="{Binding Allocation}" FontWeight="ExtraBlack"  />
-                            <!--<StackPanel MouseEnter="SetHierarchySelection">-->
-                            <local:HierarchyItemSelectionControl DataContext="{Binding Category}" FontWeight="ExtraBlack"  />
-                            <local:TextEntryControl DataContext="{Binding Units}" FontWeight="ExtraBlack"  />                            
-                            <!--<StackPanel MouseEnter="SetHierarchySelection">-->
-                            <local:HierarchyItemSelectionControl DataContext="{Binding Party}" FontWeight="ExtraBlack"  /> 
-                            <local:HierarchyItemSelectionControl DataContext="{Binding Account}" FontWeight="ExtraBlack"  />
-                            <local:HierarchyItemSelectionControl DataContext="{Binding RelatedAccount}" FontWeight="ExtraBlack"  />
-                            <local:HierarchyItemSelectionControl DataContext="{Binding Asset}" FontWeight="ExtraBlack"  />
-                            <local:HierarchyItemSelectionControl DataContext="{Binding Project}" FontWeight="ExtraBlack"  />
-                            <local:HierarchyItemSelectionControl DataContext="{Binding Person}" FontWeight="ExtraBlack"  />
+                        <!-- DataGrid -->
+                        <DataGrid x:Name="Transaction" Grid.Row="3" ItemsSource="{Binding DocumentList}" 
+                                  HeadersVisibility="All" RenderTransformOrigin="0.5,0.5" GridLinesVisibility="None" 
+                                  AutoGenerateColumns="False" AlternationCount="2"
+                                  SelectionMode="Single" SelectionUnit="Cell" VerticalAlignment="Center" HorizontalAlignment="Center" HorizontalContentAlignment="Center" CanUserAddRows="False"
+                                  CanUserSortColumns="True" CanUserResizeColumns="True" CanUserResizeRows="True" AllowDrop="True">
 
-
-
-                        <DataGrid x:Name="Transaction" Grid.Row="3"  ItemsSource="{Binding DocumentList}" 
-                 HeadersVisibility="All" RenderTransformOrigin="0.5,0.5"       GridLinesVisibility="None" 
-                   AutoGenerateColumns="False" AlternationCount="2"
-                   SelectionMode="Single" SelectionUnit="FullRow"  VerticalAlignment="Center"  HorizontalAlignment="Center" HorizontalContentAlignment="Center"  CanUserAddRows="False"
-                                  AllowDrop="True"
-                 >
                             <DataGrid.ColumnHeaderStyle>
-                               <Style TargetType="{x:Type DataGridColumnHeader}">
-                                   <Setter Property="FontWeight"  Value="ExtraBold" />
-                                   <Setter Property="HorizontalAlignment" Value="Center" />
-                                   <Setter Property="HorizontalContentAlignment" Value="Center" />
-                               </Style>
-                           </DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="{x:Type DataGridColumnHeader}">
+                                    <Setter Property="FontWeight" Value="ExtraBold" />
+                                    <Setter Property="HorizontalAlignment" Value="Center" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
 
                             <DataGrid.Resources>
                                 <Style TargetType="DataGridRow">
-                                    <EventSetter Event ="MouseDoubleClick"  Handler="DataGridRow_MouseDoubleClick"/>
-                                    <EventSetter Event ="KeyDown"  Handler="DataGridRow_KeyDown"/>
-                                    <EventSetter Event ="PreviewMouseRightButtonDown"  Handler="DataGridRow_MouseRightClick"/>
+                                    <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick"/>
+                                    <EventSetter Event="PreviewKeyDown" Handler="DataGridRow_KeyDown"/>
+                                    <EventSetter Event="PreviewMouseRightButtonDown" Handler="DataGridRow_MouseRightClick"/>
                                     <Setter Property="HorizontalContentAlignment" Value="Center" />
-                                    <Setter Property="Background" Value ="AliceBlue"/>
+                                    <Setter Property="Background" Value="AliceBlue"/>
 
-                                    <!--Setting highlight-->
                                     <Style.Triggers>
                                         <Trigger Property="AlternationIndex" Value="1">
-                                            <Setter Property="Background" Value="{StaticResource  WordOrangeBrush}"/>
-                                            <Setter Property="Foreground" Value="DarkGray"></Setter>
+                                            <Setter Property="Background" Value="{StaticResource WordOrangeBrush}"/>
+                                            <Setter Property="Foreground" Value="DarkGray"/>
                                         </Trigger>
-                                        <DataTrigger Binding="{Binding ShortName}" Value ="">
-                                            <Setter Property="Background" Value="Crimson"></Setter>
-                                            <Setter Property="Foreground" Value="Beige"></Setter>
+                                        <DataTrigger Binding="{Binding ShortName}" Value="">
+                                            <Setter Property="Background" Value="Crimson"/>
+                                            <Setter Property="Foreground" Value="Beige"/>
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding KPartyName}" Value ="">
-                                            <Setter Property="Background" Value="Crimson"></Setter>
-                                            <Setter Property="Foreground" Value="Beige"></Setter>
+                                        <DataTrigger Binding="{Binding KPartyName}" Value="">
+                                            <Setter Property="Background" Value="Crimson"/>
+                                            <Setter Property="Foreground" Value="Beige"/>
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding IsRemove}" Value = "true">
-                                            <Setter Property="Background" Value="{StaticResource  WordOrangeBrush}"></Setter>
-                                            <Setter Property="Foreground" Value="DarkCyan"></Setter>
+                                        <DataTrigger Binding="{Binding IsRemove}" Value="true">
+                                            <Setter Property="Background" Value="{StaticResource WordOrangeBrush}"/>
+                                            <Setter Property="Foreground" Value="DarkCyan"/>
                                         </DataTrigger>
                                     </Style.Triggers>
-                                    <!--Setting highlight-->
-
                                 </Style>
                                 <Style TargetType="{x:Type DataGridColumnHeader}">
                                     <Setter Property="HorizontalContentAlignment" Value="Center" />
                                 </Style>
-
                             </DataGrid.Resources>
 
                             <DataGrid.Columns>
-                                <!--<DataGridTextColumn Header ="Bulk Meter" FontWeight="Bold"
-                                   Binding="{Binding ShortName}"/>-->
-
                                 <DataGridTemplateColumn Header="Document Description" HeaderStyle="{StaticResource ColumnHeaderStyle}" SortDirection="Descending">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Margin="5" TextWrapping="Wrap"  Width="200" Text="{Binding Path= DocDescription}"  FontSize="12" FontWeight="Normal" FontFamily="Lato Heavy"  VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                            <TextBlock Margin="5" TextWrapping="Wrap" Width="200" Text="{Binding Path=DocDescription}" FontSize="12" FontWeight="Normal" FontFamily="Lato Heavy" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-
-                                <DataGridTemplateColumn Header="Unique Identifier" HeaderStyle="{StaticResource ColumnHeaderStyle}">
-                                    <DataGridTemplateColumn.CellTemplate>
+                                    <DataGridTemplateColumn.CellEditingTemplate>
                                         <DataTemplate>
-                                            <TextBlock Margin="5" Width="100" Text="{Binding Path= KDocID}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                            <TextBox Margin="5" Width="200" 
+                                                 Text="{Binding Path=DocDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                 FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Left"
+                                                 Loaded="TextBox_Loaded"/>
                                         </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn.CellEditingTemplate>
                                 </DataGridTemplateColumn>
 
                                 <DataGridTemplateColumn Header="Linked Document" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Image  Source="{Binding DocImage}"
-                                               MaxWidth="100"      
-                                                    />
-                                            <!--<Border CornerRadius="10"
-                                Margin="0 0 0 15">-->
-
-                                                <!--<Image--> 
-
-                                   <!--local:ClipFromBorderProperty.Value="True"
-                                   local:FadeInImageOnLoadProperty.Value="True"
-                                 
-                                  
-                                   />-->
-
-                                            <!--</Border>-->
-                                            <!--<TextBlock Margin="5" TextWrapping="Wrap"  Width="200" Text="{Binding Path= ShortName}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>-->
+                                            <Image Source="{Binding DocImage}" MaxWidth="100" MaxHeight="130"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
+
                                 <DataGridTemplateColumn Header="Linked Party" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Margin="5" TextWrapping="Wrap"  Width="200" Text="{Binding Path= KPartyName}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                            <TextBlock Margin="5" TextWrapping="Wrap" Width="200" Text="{Binding Path=KPartyName}" FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
@@ -284,68 +185,33 @@
                                 <DataGridTemplateColumn Header="Assigned Value" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Margin="5" Width="100" Text="{Binding Path=ActualAmount,StringFormat=C,ConverterCulture='en-ZA'}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-
+                                            <TextBlock Margin="5" Width="100" Text="{Binding Path=ActualAmount, StringFormat=C, ConverterCulture='en-ZA'}" FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-
-
                             </DataGrid.Columns>
-
-
-
                         </DataGrid>
 
+                        <!-- Action Buttons StackPanel with Named Target Button -->
+                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                            <!-- Add a classification to a transaction -->
+                            <Button x:Name="AddClassificationButton"
+                                    Content="{Binding AddClassificationButtonText}"
+                                    Command="{Binding AddClassificationCommand}"
+                                    FontSize="{StaticResource FontSizeRegular}"
+                                    Visibility="{Binding AddClassificationButtonText, ConverterParameter=True, Converter={local:TextToVisiblityConverter}}" 
+                                    Margin="0,10,0,10" d:IsHidden="True"/>
 
-
-
-
-
-
-
-                        <StackPanel    Grid.Column="0"
-                            Orientation="Horizontal">
-                        
-                        
-                        
-                            <!--Add a classifcation to a transaction-->
-
-                            <Button  Content="{Binding AddClassificationButtonText}"
-                                Command="{Binding AddClassificationCommand}"
-                                FontSize="{StaticResource FontSizeRegular}"
-                                Visibility="{Binding AddClassificationButtonText, ConverterParameter=True, Converter={local:TextToVisiblityConverter}}" Margin="-0,10,0,10" d:IsHidden="True" 
-                                />
-
-                            <!--Change a classification for a transaction -classifcation type or allocation amount-->
-
-                            <Button  Content="{Binding AlterTemplateButtonText}"
-                                Command="{Binding AlterTemplateCommand}"
-                                FontSize="{StaticResource FontSizeRegular}"
-                                Visibility="{Binding AlterTemplateButtonText, ConverterParameter=True, Converter={local:TextToVisiblityConverter}}" Margin="-0,10,0,10" d:IsHidden="True" 
-                                />
-                            <!--Remove a clasification for a transaction-->
-                            <!--<Button Content="{Binding DeleteClassificationButtonText}"
-                                Command="{Binding BrowseImageCommand}"
-                                FontSize="{StaticResource FontSizeRegular}"
-                             
-                                />-->
-
+                            <!-- Change a classification for a transaction -->
+                            <Button Content="{Binding AlterTemplateButtonText}"
+                                    Command="{Binding AlterTemplateCommand}"
+                                    FontSize="{StaticResource FontSizeRegular}"
+                                    Visibility="{Binding AlterTemplateButtonText, ConverterParameter=True, Converter={local:TextToVisiblityConverter}}" 
+                                    Margin="0,10,0,10" d:IsHidden="True"/>
                         </StackPanel>
-
-                        <!--<StackPanel Grid.Column="0"                    
-                    
-                    <TextBox x:Name="ImagePath" />
-
-                                
-                        </StackPanel>-->
                     </StackPanel>
-
+                </Grid>
             </Grid>
-
-
-            </Grid>
-      </ScrollViewer>
-     
+        </ScrollViewer>
     </Border>
 </UserControl>

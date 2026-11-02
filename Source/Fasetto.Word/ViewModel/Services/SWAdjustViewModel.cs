@@ -305,7 +305,7 @@ namespace Fasetto.Word
             // Update billing record on database
             //TO DO: Integrate with change management, requiring approval of adjustment before committing...
 
-            //var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            //var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
             var MDateAdj = ((SWAdjustViewModel)ViewModelApplication.CurrentPopupViewModel).DateAdjustment;
             MAPI = new ParameterBillingAdjustmentApiModel
@@ -379,7 +379,7 @@ namespace Fasetto.Word
 
 
 
-                ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
+                ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
 
 
             });
@@ -391,7 +391,7 @@ namespace Fasetto.Word
         //{
         //    // Close settings menu
 
-        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
         //    var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
         //    if (mElementViewModel.Description.OriginalText == "Description of New Element" || mElementViewModel.Description.EditedText == "Description of New Element") 
         //        { mElementViewModel.Description.OriginalText = null;
@@ -408,7 +408,7 @@ namespace Fasetto.Word
         //{
         //    // Close settings menu
         //    //var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentSideMenuViewModel;
-        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
         //    var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
         //    mViewModel.EditElement(mElementViewModel);
         //    ViewModelApplication.PopupVisible = false;
@@ -421,7 +421,7 @@ namespace Fasetto.Word
         //public void DeleteNode()
         //{
         //    // Close settings menu
-        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
         //    var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
         //    //Set discontinuation time to time of deletion
         //    mElementViewModel.DateDiscontinued = DateTime.Today; 
@@ -436,7 +436,7 @@ namespace Fasetto.Word
         //public void MoveNode()
         //{
         //    // Close settings menu
-        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
         //    var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
         //    mViewModel.MoveElement(mElementViewModel);
         //    if (mElementViewModel.Description.OriginalText == "Description of New Element" && mElementViewModel.Description.EditedText == "Description of New Element")
@@ -454,7 +454,7 @@ namespace Fasetto.Word
         //public void CopyNode()
         //{
         //    // Close settings menu
-        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+        //    var mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
         //    var mElementViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
         //    mViewModel.CopyElement(mElementViewModel);
         //    ViewModelApplication.PopupVisible = false;

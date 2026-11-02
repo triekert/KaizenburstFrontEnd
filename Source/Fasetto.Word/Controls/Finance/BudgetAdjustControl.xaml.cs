@@ -19,7 +19,7 @@ namespace Fasetto.Word
 
             // Set data context to settings view model
    
-            ViewModelApplication.CurrentPopupViewModel = new BudgetAdjustViewModel(((BudgetTreeViewModel)ViewModelApplication.CurrentControlViewModel).mSelectedTreeItem);
+            ViewModelApplication.CurrentPopupViewModel = new BudgetAdjustViewModel(((BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mSelectedTreeItem);
             //if (ViewModelApplication.AddElementViewModel == null)
             //    DataContext = new HierarchyElementViewModel();
             //else

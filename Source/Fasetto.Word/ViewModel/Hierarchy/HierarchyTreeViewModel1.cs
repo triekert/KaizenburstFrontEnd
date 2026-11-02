@@ -108,8 +108,8 @@ namespace Fasetto.Word
             mHDML = new HierarchyListDataModel();
             mHDM = new HierarchyDataModel
             {
-                KCategoryID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid,
-                ParentCategoryID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid,
+                KCategoryID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentPopupViewModel).OriginalKid,
+                ParentCategoryID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentPopupViewModel).OriginalKid,
                 Description = "...Loading hierarchy data...",
                 ShortName = "Loading...Please be patient",
                 Children = new HierarchyListDataModel()
@@ -121,8 +121,8 @@ namespace Fasetto.Word
 
             var mPM = new HierarchyResultApiModel
             {
-                KCategoryID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid,
-                ParentCategoryID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid,
+                KCategoryID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentPopupViewModel).OriginalKid,
+                ParentCategoryID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentPopupViewModel).OriginalKid,
                 Description = "...Loading hierarchy data...",
                 ShortName = "Loading...Please be patient",
                 //Children = new HierarchyListDataModel()
@@ -136,7 +136,7 @@ namespace Fasetto.Word
             //To Do: Add mTableName as parameter when calling HierarchyAsync to populate hierarchy
             //ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
             //ViewModelApplication.PopupVisible = false;
-            mSearchKCategoryID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid;
+            mSearchKCategoryID = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentPopupViewModel).OriginalKid;
             TaskManager.RunAndForget(HierarchyAsync);
             mTableName = hierarchyparam.FHierarchyID;
 
@@ -169,7 +169,7 @@ namespace Fasetto.Word
 
    
             ///
-            var MRoot1 = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid ?? MRoot0;
+            var MRoot1 = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentPopupViewModel).OriginalKid ?? MRoot0;
 
             ////MRoot = "00000000-0000-0000-0000-000000000000";
             //4766E825 - 1B58 - 410D - B06B - 5A2639CA22C8
@@ -332,7 +332,7 @@ namespace Fasetto.Word
                 PerformKIdSearch();
                 SearchText = "";
 
-                ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
+                ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
 
 
             });
@@ -359,7 +359,7 @@ namespace Fasetto.Word
 
             //var MRoot0 = (mPersist.Where(x => x.ParentCategoryID == "00000000-0000-0000-0000-000000000000").OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).KCategoryID;          
             ///
-            var MRoot1 = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid ?? MRoot0;
+            var MRoot1 = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentPopupViewModel).OriginalKid ?? MRoot0;
 
             ////MRoot = "00000000-0000-0000-0000-000000000000";
             var MRoot = (mPersist.Where(x => x.Level == 0).OrderByDescending(x => x.DateEffective).ToList().FirstOrDefault()).ParentCategoryID;
@@ -1068,7 +1068,7 @@ namespace Fasetto.Word
 
                         {
                             //ViewModelApplication.CurrentPopupViewModel = (ManageClassificationViewModel)ViewModelApplication.ControlParameter1;
-                            var mViewModel = (HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel;
+                            var mViewModel = (HierarchyItemSelectionViewModel)ViewModelApplication.CurrentPopupViewModel;
                             //var mViewModel = (ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel;
 
                             mViewModel.ProcessSelectionAction();
@@ -1349,9 +1349,9 @@ namespace Fasetto.Word
             //    return;
 
 
-            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid = mSelectedTreeItem.KCategoryID;
-            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedName = mSelectedTreeItem.ShortName;
-            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ClientID = mSelectedTreeItem.FClientID;
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentPopupViewModel).EditedKid = mSelectedTreeItem.KCategoryID;
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentPopupViewModel).EditedName = mSelectedTreeItem.ShortName;
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentPopupViewModel).ClientID = mSelectedTreeItem.FClientID;
 
             if (ViewModelApplication.CurrentPageViewModel != null)
             {
@@ -1375,9 +1375,9 @@ namespace Fasetto.Word
                         //}   
                         //else
                         //{
-                        //    //if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Label == "Select Client")
+                        //    //if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentPopupViewModel).Label == "Select Client")
                         //    //{
-                        //    //    if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid != 
+                        //    //    if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentPopupViewModel).EditedKid != 
                         //    //        ((HierarchyItemSelectionViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).ClientID
                         //    //        //If client selection has changed, nullify cost hierarchy selection
                         //    //        )
@@ -1405,7 +1405,7 @@ namespace Fasetto.Word
                             ((HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel).HierarchyTypeID = mSelectedTreeItem.KCategoryID;
                             //var TempViewModel = (HierarchyElementViewModel)ViewModelApplication.CurrentPopupViewModel;
                             ViewModelApplication.CurrentPopupContent = 0;
-                            ViewModelApplication.CurrentControlViewModel = ViewModelApplication.ControlParameter5;
+                            ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.ControlParameter5;
 
                             ViewModelApplication.PopupVisible = true;
                             //ViewModelApplication.AddElementViewModel = TempViewModel;
@@ -1429,7 +1429,7 @@ namespace Fasetto.Word
                 }
 
                 //
-                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ProcessSelection();
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentPopupViewModel).ProcessSelectionAsync();
 
             }
             else
@@ -1438,8 +1438,8 @@ namespace Fasetto.Word
 
                 ViewModelApplication.CurrentPopupContent = 0;
 
-                //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Save();
-                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).ProcessSelection();
+                //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentPopupViewModel).Save();
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentPopupViewModel).ProcessSelectionAsync();
             }
 
             return ;

@@ -5,269 +5,275 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"              
              mc:Ignorable="d" 
-             xmlns:local="clr-namespace:Fasetto.Word" xmlns:forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" xmlns:sys="clr-namespace:System;assembly=mscorlib" d:DataContext="{d:DesignInstance Type=local:BulkReconViewModel}"
-             
+             xmlns:local="clr-namespace:Fasetto.Word" 
+             xmlns:forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" 
+             xmlns:sys="clr-namespace:System;assembly=mscorlib" 
+             d:DataContext="{d:DesignInstance Type=local:BulkReconViewModel}"
              d:DesignHeight="300" d:DesignWidth="300">
 
     <UserControl.Resources>
         <sys:String x:Key="colName">dynamic string...</sys:String>
+
         <Style x:Key="ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" >
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridColumnHeader">
-                        <Label Foreground="{StaticResource ForegroundVeryDarkBrush}" FontWeight="UltraBold" Background="{StaticResource WordLightBlueBrush}" FontFamily="Lato Heavy" FontSize="20" Content="{TemplateBinding Content}"
-                               HorizontalAlignment="Stretch" HorizontalContentAlignment ="Left"  VerticalAlignment="Center"  />
+                        <Label Foreground="{StaticResource ForegroundVeryDarkBrush}" 
+                               FontWeight="UltraBold" 
+                               Background="{StaticResource WordLightBlueBrush}" 
+                               FontFamily="Lato Heavy" 
+                               FontSize="20" 
+                               Content="{TemplateBinding Content}"
+                               HorizontalAlignment="Stretch" 
+                               HorizontalContentAlignment="Left"  
+                               VerticalAlignment="Center" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <local:ContextualEventArgsConverter x:Key="ContextualEventArgsConverter" />        
-        <!--<sys:String x:Key="colCell">dynamic string...</sys:String>
-        <Style x:Key="ColumnCellStyle" TargetType="{x:Type DataGridCellsPresenter}" >
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="DataGridTextColumn">
-                        <Label Foreground="black" FontWeight="UltraBold" Background="AntiqueWhite" FontFamily="Arial" Content="{TemplateBinding Content}"
-                               HorizontalAlignment="Stretch" HorizontalContentAlignment ="Center"  VerticalAlignment="Center"  />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>-->
+
+        <local:ContextualEventArgsConverter x:Key="ContextualEventArgsConverter" />
+        <local:TransactionMultiSumConverter x:Key="TransactionMultiSumConverter" />
+        <local:TransactionCompleteMultiSumConverter x:Key="TransactionCompleteMultiSumConverter" />
     </UserControl.Resources>
+
     <DockPanel>
         <!-- SEARCH AREA -->
-        <Border 
-         DockPanel.Dock="Bottom" 
-         BorderBrush="#FFE22626" 
-         BorderThickness="2,0,2,2">
-
+        <Border DockPanel.Dock="Bottom" 
+                BorderBrush="#FFE22626" 
+                BorderThickness="2,0,2,2">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                     <GradientStop Color="#33000000" Offset="0" />
                     <GradientStop Color="#11A49090" Offset="1" />
                 </LinearGradientBrush>
             </Border.Background>
-
-
         </Border>
-        <Border 
-         DockPanel.Dock="Top" 
-         BorderBrush="#FF734444" 
-         BorderThickness="1,0,1,1">
 
+        <Border DockPanel.Dock="Top" 
+                BorderBrush="#FF734444" 
+                BorderThickness="1,0,1,1">
             <Grid>
-
-
                 <!--Settings Title-->
-
                 <Grid Height="20" Margin="0 0 0 2">
-
-
                     <!--Back button-->
-
                     <Button Style="{StaticResource IconGrowButton}"
-                    Height="40"
-                    Content="{StaticResource FontAwesomeArrowLeftIcon}"
-                    FontFamily="{StaticResource FontAwesome}"
-                    Foreground="{StaticResource ForegroundDarkBrush}"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Command="{Binding CloseCommand}" IsCancel="True"
-                    />
-
+                            Height="40"
+                            Content="{StaticResource FontAwesomeArrowLeftIcon}"
+                            FontFamily="{StaticResource FontAwesome}"
+                            Foreground="{StaticResource ForegroundDarkBrush}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Command="{Binding CloseCommand}" 
+                            IsCancel="True" />
 
                     <!--Settings header-->
-
                     <TextBlock FontSize="{StaticResource FontSizeLarge}"
-
-                       Foreground="{StaticResource ForegroundVeryDarkBrush}"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center">
-                
-             <!--Tree icon--> 
-            
-                <Run FontFamily="{StaticResource FontAwesome}"
-                     Text="{StaticResource FontAwesomeProjectIcon}"                     
-                     Foreground="{StaticResource WordOrangeBrush}" />
-                
-             <!--Settings text--> 
-            
-                <Run Text="{Binding ControlTitle}"
-                     Foreground="{DynamicResource WordDarkBlueBrush}"
-                     FontFamily="{DynamicResource LatoBold}" Background="{DynamicResource BackgroundVeryLightBrush}" />
+                               Foreground="{StaticResource ForegroundVeryDarkBrush}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center">
+                        <!--Tree icon--> 
+                        <Run FontFamily="{StaticResource FontAwesome}"
+                             Text="{StaticResource FontAwesomeProjectIcon}"                     
+                             Foreground="{StaticResource WordOrangeBrush}" />
+                        
+                        <!--Settings text--> 
+                        <Run Text="{Binding ControlTitle}"
+                             Foreground="{DynamicResource WordDarkBlueBrush}"
+                             FontFamily="{DynamicResource LatoBold}" 
+                             Background="{DynamicResource BackgroundVeryLightBrush}" />
                     </TextBlock>
-
-
-                    <!--FAMILY TREE-->
-
                 </Grid>
+
                 <StackPanel>
                     <StackPanel.Resources>
                         <ControlTemplate x:Key="ButtonTemplate" TargetType="{x:Type Button}">
-                            <Border Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" 
-                                     BorderBrush="{TemplateBinding BorderBrush}">
+                            <Border Background="{TemplateBinding Background}" 
+                                    BorderThickness="{TemplateBinding BorderThickness}" 
+                                    BorderBrush="{TemplateBinding BorderBrush}">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                         </ControlTemplate>
                     </StackPanel.Resources>
-
                 </StackPanel>
             </Grid>
         </Border>
 
-        <DataGrid x:Name="Transaction" Grid.Row="3"  ItemsSource="{Binding Trans_action}" 
-            HeadersVisibility="All" RenderTransformOrigin="0.5,0.5"       GridLinesVisibility="None" 
-            AutoGenerateColumns="False" AlternationCount="2"
-            SelectionUnit="FullRow"  VerticalAlignment="Center"  HorizontalAlignment="Center" HorizontalContentAlignment="Center"  CanUserAddRows="False" 
-            IsSynchronizedWithCurrentItem="True" SelectedItem="{Binding Trans_actionRec}" SelectionMode="Extended" TargetUpdated="Datagrid_TargetUpdated"
-            Loaded="DataGrid_OnLoaded" Unloaded="DataGrid_OnUnLoaded"
-        >
+        <DataGrid x:Name="Transaction" 
+                  Grid.Row="3"  
+                  ItemsSource="{Binding Trans_action, NotifyOnTargetUpdated=True}"
+                  HeadersVisibility="All" 
+                  RenderTransformOrigin="0.5,0.5"       
+                  GridLinesVisibility="None" 
+                  AutoGenerateColumns="False" 
+                  AlternationCount="2"
+                  SelectionUnit="FullRow"  
+                  VerticalAlignment="Center"  
+                  HorizontalAlignment="Center" 
+                  HorizontalContentAlignment="Center"  
+                  CanUserAddRows="False" 
+                  SelectionMode="Extended" 
+                  TargetUpdated="Datagrid_TargetUpdated"
+                  Loaded="DataGrid_OnLoaded" 
+                  Unloaded="DataGrid_OnUnLoaded">
+
             <i:Interaction.Triggers>
-                <i:EventTrigger EventName="PreviewKeyDown" >
-                    <i:InvokeCommandAction 
-                        Command="{Binding GestureHandlerCommand}"
-                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
-                        EventArgsConverterParameter="{Binding ElementName=Transaction}" />
-
+                <i:EventTrigger EventName="PreviewKeyDown">
+                    <i:InvokeCommandAction Command="{Binding GestureHandlerCommand}"
+                                           EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                                           EventArgsConverterParameter="{Binding ElementName=Transaction}" />
                 </i:EventTrigger>
 
-                <i:EventTrigger EventName="PreviewMouseDoubleClick" >
-                    <i:InvokeCommandAction 
-                        Command="{Binding GestureHandlerCommand}"
-                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
-                        EventArgsConverterParameter="{Binding ElementName=Transaction}" />
-
+                <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding GestureHandlerCommand}"
+                                           EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                                           EventArgsConverterParameter="{Binding ElementName=Transaction}" />
                 </i:EventTrigger>
 
-                <i:EventTrigger EventName="PreviewMouseRightButtonClick" >
-                    <i:InvokeCommandAction 
-                        Command="{Binding GestureHandlerCommand}"
-                        EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
-                        EventArgsConverterParameter="{Binding ElementName=Transaction}" />
-
+                <i:EventTrigger EventName="PreviewMouseRightButtonClick">
+                    <i:InvokeCommandAction Command="{Binding GestureHandlerCommand}"
+                                           EventArgsConverter="{StaticResource ContextualEventArgsConverter}"
+                                           EventArgsConverterParameter="{Binding ElementName=Transaction}" />
                 </i:EventTrigger>
-
-
             </i:Interaction.Triggers>
-            <!--<DataGrid.ColumnHeaderStyle>
-                <Style TargetType="{x:Type DataGridColumnHeader}">
-                    <Setter Property="FontWeight"  Value="ExtraBold" />
-                    <Setter Property="HorizontalAlignment" Value="Center" />
-                    <Setter Property="HorizontalContentAlignment" Value="Center" />
-                </Style>
-            </DataGrid.ColumnHeaderStyle>-->
-            
+
             <DataGrid.Resources>
                 <Style TargetType="DataGrid">
-                     <EventSetter Event ="Unloaded"  Handler="DataGrid_OnUnLoaded"/>                   
-                      <EventSetter Event ="Loaded"  Handler="DataGrid_OnLoaded"/>   
-                  
+                    <EventSetter Event="Unloaded" Handler="DataGrid_OnUnLoaded"/>
+                    <EventSetter Event="Loaded" Handler="DataGrid_OnLoaded"/>
                 </Style>
-                <Style TargetType="DataGridRow">
-                    <EventSetter Event ="MouseDoubleClick"  Handler="DataGridRow_MouseDoubleClick"/>
-                    <EventSetter Event ="KeyDown"  Handler="DataGridRow_KeyDown"/>
-                    <EventSetter Event ="PreviewMouseRightButtonDown"  Handler="DataGridRow_MouseRightClick"/>
-                    <!--<EventSetter Event ="PreviewKeyDown"  Handler="DataGridRow_PreviewKeyDown"/>-->                    
-                    <!--<EventSetter Event ="Loaded"  Handler="DataGridRow_OnLoaded"/>-->
-                    <Setter Property="HorizontalContentAlignment" Value="Center" />
-                    <Setter Property="Background" Value ="AliceBlue"/>
- 
-                    <!--Setting highlight-->
-                        <Style.Triggers>
-                            <Trigger Property="AlternationIndex" Value="1">
-                                <Setter Property="Background" Value="Beige"/>
-                                       <Setter Property="Foreground" Value="Black"></Setter>                                
-                            </Trigger>
-                        <DataTrigger Binding="{Binding ShortName}" Value ="">
-                                <Setter Property="Background" Value="Crimson"></Setter>
-                                      <Setter Property="Foreground" Value="Beige"></Setter>                              
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding KPartyName}" Value ="">
-                                <Setter Property="Background" Value="DarkCyan"></Setter>
-                                <Setter Property="Foreground" Value="Beige"></Setter>
-                            </DataTrigger>
-                        <DataTrigger Binding="{Binding IsDocLinked}" Value = "true">
-                            <Setter Property="Background" Value="Beige"></Setter>
-                            <Setter Property="Foreground" Value="DarkCyan"></Setter>
-                        </DataTrigger>
-                        </Style.Triggers>
-                    <!--Setting highlight-->
 
+                <Style TargetType="DataGridRow">
+                    <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick"/>
+                    <EventSetter Event="KeyDown" Handler="DataGridRow_KeyDown"/>
+                    <EventSetter Event="PreviewMouseRightButtonDown" Handler="DataGridRow_MouseRightClick"/>
+
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    <Setter Property="Background" Value="AliceBlue"/>
+
+                    <Style.Triggers>
+                        <Trigger Property="AlternationIndex" Value="1">
+                            <Setter Property="Background" Value="Beige"/>
+                        </Trigger>
+
+                        <DataTrigger Value="True">
+                            <DataTrigger.Binding>
+                                <MultiBinding Converter="{StaticResource TransactionCompleteMultiSumConverter}"
+                              FallbackValue="False"
+                              TargetNullValue="False">
+                                    <!-- Binding 0: Main collection from parent DataGrid DataContext -->
+                                    <Binding Path="DataContext.MPersist" RelativeSource="{RelativeSource AncestorType={x:Type DataGrid}}" />
+
+                                    <!-- Binding 1: Key ID from row item -->
+                                    <Binding Path="KFinTranID" />
+
+                                    <!-- Binding 2: Direct reference to row item (Forces re-evaluation on DataContext update) -->
+                                    <Binding Path="." />
+                                </MultiBinding>
+                            </DataTrigger.Binding>
+                            <Setter Property="Background" Value="OrangeRed" />
+                        </DataTrigger>
+
+                        <!--<DataTrigger Binding="{Binding ShortName}" Value="">
+                            <Setter Property="Foreground" Value="Crimson" />
+                        </DataTrigger>-->
+
+                        <DataTrigger Binding="{Binding KPartyName}" Value="">
+                            <Setter Property="Foreground" Value="DarkCyan" />
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding IsDocLinked}" Value="false">
+                            <Setter Property="Foreground" Value="BlueViolet" />
+                            <Setter Property="FontStyle" Value="Italic" />
+                            <Setter Property="FontWeight" Value="UltraBold" />
+                        </DataTrigger>
+                    </Style.Triggers>
                 </Style>
+
                 <Style TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
                 </Style>
-                
             </DataGrid.Resources>
 
             <DataGrid.Columns>
-                <!--<DataGridTextColumn Header ="Bulk Meter" FontWeight="Bold"
-                                    Binding="{Binding ShortName}"/>-->
-                <DataGridTemplateColumn Header="Trans Date" HeaderStyle="{StaticResource ColumnHeaderStyle}" >
+                <!-- Trans Date -->
+                <DataGridTemplateColumn Header="Trans Date" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=Posted_Date,StringFormat=dd/MM/yyyy HH:mm}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Path=Posted_Date, StringFormat=dd/MM/yyyy}"  
+                                       FontSize="12" FontWeight="Normal" FontFamily="Arial" VerticalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                
-                <!--<DataGridTextColumn Header="Posted Date" Binding= "{Binding Path=Posted_Date}"  FontSize="12" FontWeight="Normal" FontFamily="arial" />-->
 
+                <!-- Transaction Description -->
                 <DataGridTemplateColumn Header="Transaction Description" HeaderStyle="{StaticResource ColumnHeaderStyle}" SortDirection="Descending">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Margin="5" TextWrapping="Wrap"  Width="200" Text="{Binding Path= Description}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBlock Margin="5" TextWrapping="Wrap" Width="200" 
+                                       Text="{Binding Path=Description}" 
+                                       FontSize="12" FontWeight="Normal" FontFamily="Arial" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Left"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>                
-             
+                </DataGridTemplateColumn>
+
+                <!-- Column 1: Transaction Value -->
                 <DataGridTemplateColumn Header="Transaction Value" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Margin="5" Width="100" Text="{Binding Path= TransAmount,StringFormat=C,ConverterCulture='en-ZA'}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Transaction Category" HeaderStyle="{StaticResource ColumnHeaderStyle}">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Margin="5" TextWrapping="Wrap"  Width="200" Text="{Binding Path= ShortName}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Linked Party" HeaderStyle="{StaticResource ColumnHeaderStyle}">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Margin="5" TextWrapping="Wrap"  Width="200" Text="{Binding Path= KPartyName}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>                
-                
-                <DataGridTemplateColumn Header="Assigned Value" HeaderStyle="{StaticResource ColumnHeaderStyle}">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Margin="5" Width="100" Text="{Binding Path=ActualAmount,StringFormat=C,ConverterCulture='en-ZA'}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
- 
+                            <TextBlock Margin="5" Width="100" 
+                                       Text="{Binding Path=TransAmount, StringFormat={}{0:C}, ConverterCulture='en-ZA'}"
+                                       FontSize="12" FontWeight="Normal" FontFamily="Arial" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Right" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Units" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                <!-- Column 2: Total Assigned -->
+                <DataGridTemplateColumn Header="Total Assigned" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Margin="5" Width="100" Text="{Binding Path=Units,ConverterCulture='en-ZA'}"  FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-
+                            <TextBlock HorizontalAlignment="Right" TextAlignment="Right" VerticalAlignment="Center"
+                                       FontSize="12" FontWeight="Normal" FontFamily="Arial">
+                                <TextBlock.Text>
+                                    <MultiBinding Converter="{StaticResource TransactionMultiSumConverter}" 
+                                                 StringFormat="{}{0:C}" 
+                                                 ConverterCulture="en-ZA">
+                                        <!-- 1. Triggers evaluation when row finishes loading -->
+                                        <Binding Path="DataContext.MPersist" RelativeSource="{RelativeSource AncestorType={x:Type DataGrid}}" />
+                                        <Binding Path="KFinTranID" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
+                <!-- Transacting Party -->
+                <DataGridTemplateColumn Header="Transacting Party" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="5" TextWrapping="Wrap" Width="100" 
+                                       Text="{Binding Path=KPartyName}"  
+                                       FontSize="12" FontWeight="Normal" FontFamily="Arial" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Account -->
+                <DataGridTemplateColumn Header="Account" HeaderStyle="{StaticResource ColumnHeaderStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="5" TextWrapping="Wrap" Width="100" 
+                                       Text="{Binding Path=KAccountName}"  
+                                       FontSize="12" FontWeight="Normal" FontFamily="Arial" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
-            
-
-
         </DataGrid>
-
-
     </DockPanel>
 </UserControl>
-

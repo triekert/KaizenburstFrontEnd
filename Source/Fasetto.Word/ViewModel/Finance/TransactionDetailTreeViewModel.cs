@@ -1,14 +1,18 @@
 ﻿using Fasetto.Word.Core;
+using Fasetto.Word.Core.ApiModels.Controls;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static Fasetto.Word.DI;
 
 namespace Fasetto.Word
 {
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     /// <summary>
     /// This is the view-model of the UI.  It provides a data source
     /// for the TreeView (the FirstGeneration property), a bindable
@@ -21,11 +25,73 @@ namespace Fasetto.Word
         #region Public Properties
 
         /// <summary>
-        /// A set of Bulk Meter Recon records for the selected period
+        /// Field containing description of the transaction
+        /// </summary>
+        public TextEntryViewModel TransactionDescription { get; set; }
+
+        /// <summary>
+        /// Field containing actual allocation  of the total transaction to the selected cost category
+        /// </summary>
+        public TextEntryViewModel Amount { get; set; }
+
+        /// <summary>
+        /// The Party to be linked for the allocation
+        /// </summary>
+        public HierarchyItemSelectionViewModel Party { get; set; }
+
+        /// <summary>
+        /// The Account linked to the transaction
+        /// </summary>
+        public HierarchyItemSelectionViewModel Account { get; set; }
+
+
+        /// <summary>
+        /// The start time for analysis of readings
+        /// </summary>
+        public DateTimeViewModel TransactionDate { get; set; }
+
+        /// <summary>
+        /// A flag indicating if the account selection is complete
+        /// </summary>
+        public bool SelectAccountCompleted { get; set; }
+
+        /// <summary>
+        /// A flag indicating if the account selection is complete
+        /// </summary>
+        public bool SelectPartyCompleted { get; set; }
+
+        /// <summary>
+        /// True to show the hierarchy retrieval command is running
+        /// </summary>
+        public bool SetHierarchyCompleted { get; set; }
+
+
+        /// <summary>
+        /// Populate parameters for retrieval of required hierarchy tree
+        /// </summary>
+        public ParameterHierarchyItemSelectApiModel HierarchyParam { get; set; }
+
+
+
+        /// <summary>
+        /// Transaction data for the selected transaction being processsed
+        /// </summary>
+        public TransactionViewModel MSelected  { get; set; }
+            /// <summary>
+        /// A set of TransactionDetail  records for the selected transaction
         /// </summary>
         public ObservableCollection<TransactionViewModel>TransactionDetail{ get; set; }
+
+
         private object mStocksLock = new object();
         public string ControlTitle { get; set; }
+
+
+
+        /// <summary>
+        /// Store enum of current popup view
+        /// </summary>
+        public PopupContent PriorPopupContent { get; set; }
         //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
 
         #endregion
@@ -83,64 +149,92 @@ namespace Fasetto.Word
         {
             #region Build TransactionDetailCollection
 
+
+ 
+
+
             TransactionDetail = new ObservableCollection<TransactionViewModel>();
 
 
-            //var TDVM = new TransactionDetailViewModel
-            //{
-
-            //    ShortName = "Loading...Please be patient",
-            //    //TimeSlotStart = new DateTime(2023, 1, 22, 0, 0, 0),
-            //    //Missing = 3,
-            //    //ChildMeters = 87,
-            //    //VolumeIn = 3145.342F,
-            //    //VolumeOut = 3215.124F
+            MSelected = new TransactionViewModel();
+            MSelected = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_action.FirstOrDefault(x => x.KFinTranID == mKFinTranID);
 
 
-            //};
-            //TransactionDetail.Add(TDVM);
-
-            //var matches = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_action.Where(x => x.KFinTranID == mKFinTranID).ToList();
-            //var matches = ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mPersist.Where(x => x.KFinTranID == mKFinTranID).ToList();
-
-            //foreach (var item in matches)
-            //{
-
-            //    var mTDVM = new TransactionViewModel
-
-            //    {
-            //        Posted_Date = item.Posted_Date,
-            //        Month = item.Month,
-            //        Description = item.Description,
-            //        TransAmount = item.TransAmount,
-            //        ActualAmount = item.ActualAmount,
-            //        ShortName = item.ShortName,
-            //        KCategoryID = item.KCategoryID,
-            //        KFinActualID = item.KFinActualID,
-            //        KFinTranID = item.KFinTranID,
-            //        KPartyName = item.KPartyName,
-            //        KPartyID = item.KPartyID,
-            //        FCatSrchID = item.FCatSrchID,
-            //        KHierarchyID = item.KHierarchyID,
-            //        Notes = item.Notes,
-            //        Units = item.Units,
-
-
-            //    };
-            //    TransactionDetail.Add(mTDVM);
-            //}
             RefreshTransactionList(mKFinTranID, ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MPersist);
             ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransSelector = ((DataGrid)((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Transaction).SelectedIndex;
             PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            PriorPopupContent = ViewModelApplication.CurrentPopupContent;
 
-            //((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Transaction.SelectedIndex
-            //TaskManager.RunAndForget(TransactionDetailAsync);
 
+            TransactionDate = new DateTimeViewModel
+            {
+                Label = "Transaction Date",
+                OriginalDateTime = MSelected.Posted_Date,
+                EditedDateTime = MSelected.Posted_Date,
+                //OriginalTime = new System.Windows.Controls.ComboBoxItem(),
+                //EditedTime = new System.Windows.Controls.ComboBoxItem(),
+                //(DateTime.Now.AddHours(-1)).ToShortTimeString(),
+                //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
+            };
+
+
+
+            TransactionDescription = new TextEntryViewModel
+            {
+                Label = "Transaction Description",
+                OriginalText = MSelected.Description,
+            };
+
+
+            // Create Node Name
+            Amount = new TextEntryViewModel
+            {
+                Label = "Transaction Amount",
+                OriginalText = MSelected.TransAmount.ToString("C", CultureInfo.CurrentCulture),
+                //PrepareAction = PrepareAllocationAsync,
+                //CommitAction = UpdateAllocationAsync,
+            };
+            Party = new HierarchyItemSelectionViewModel
+            {
+                Label = "Transacting Party",
+                //EditedName = mLoadingText,
+                OriginalKid = MSelected.KPartyID,
+                OriginalName = MSelected.KPartyName,
+                EditedKid = MSelected.KPartyID,
+                EditedName = MSelected.KPartyName,
+                HierarchyTypeID = "ADEEBB16-F553-48F8-955F-663227A4886C",
+                PrepareAction = SetPartyHierarchySelectionAsync,
+                //HierarchyTypeID = ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).f,
+                //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                CommitAction = SelectPartyAsync,
+                ProcessSelectionAction = ProcessSelectionActionAsync,
+            };
+            Account = new HierarchyItemSelectionViewModel
+            {
+                Label = "Transacting Account",
+                //EditedName = mLoadingText,
+                OriginalKid = MSelected.KAccountID,
+                OriginalName = MSelected.KAccountName,
+                EditedKid = MSelected.KAccountID,
+                EditedName = MSelected.KAccountName,
+
+
+                //ClientID = Selected.KClientID,
+                HierarchyTypeID = "A806FD4A-8F02-4CA0-BFCE-51A8587D9CC8",
+                PrepareAction = SetAccountHierarchySelectionAsync,
+                //HierarchyTypeID = ((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).f,
+                //HierarchyID = ((CostHierarchyViewModel)((CostHierarchyListViewModel)((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).MSelectedCostHierarchy).KCategoryID,
+                CommitAction = SelectAccountAsync,
+                ProcessSelectionAction = ProcessSelectionActionAsync,
+            };
 
 
             // Get the OptFinHierarchies currently configured - first populate 'root hierarchy' variable with all configured root hierarchy elements currently available
 
-
+            ((HierarchyItemSelectionViewModel)Account).PriorPopupViewModel = this;
+            ((HierarchyItemSelectionViewModel)Account).PriorPopupContent = PopupContent.TransactionDetail;
+            ((HierarchyItemSelectionViewModel)Party).PriorPopupViewModel = this;
+            ((HierarchyItemSelectionViewModel)Account).PriorPopupContent = PopupContent.TransactionDetail;
             //UpdateTreeViewElements();
             CloseCommand = new RelayCommand(Close);
             //mSearchCommand = new SearchCategoryTreeCommand(this);
@@ -224,35 +318,178 @@ namespace Fasetto.Word
 
         public void Close()
         {
-            var mType = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel.GetType().Name;           
+            var mType = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel.GetType().Name;        
+            var mPopup = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupContent;
             ViewModelApplication.CurrentPopupViewModel = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
-            var mTransactionDetailTreeViewModel = ViewModelApplication.CurrentPopupViewModel;
-            //((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Transaction.SelectedIndex
-            ViewModelApplication.PopupVisible = false;
-            //ViewModelApplication.ControlParameter1 = null;
-
-            //Give control back to parent 'Popup view model'
-
-
-            if (mType == "TransactionDetailTreeViewModel")
-            {
-                ViewModelApplication.CurrentPopupContent = PopupContent.AddElement;
-                ViewModelApplication.CurrentPopupViewModel = mTransactionDetailTreeViewModel;
-                ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
-            }
-            else
-            {
-
-                ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;
-            }
-
+            ViewModelApplication.CurrentPopupContent = mPopup;
             ViewModelApplication.PopupVisible = true;
-            //((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Transaction.SelectedIndex
+            //var mTransactionDetailTreeViewModel = ViewModelApplication.CurrentPopupViewModel;
+            ////((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Transaction.SelectedIndex
+            //ViewModelApplication.PopupVisible = false;
+            ////ViewModelApplication.ControlParameter1 = null;
+
+            ////Give control back to parent 'Popup view model'
+
+
+            //if (mType == "TransactionDetailTreeViewModel")
+            //{
+            //    ViewModelApplication.CurrentPopupContent = 0;
+            //    ViewModelApplication.CurrentPopupViewModel = mTransactionDetailTreeViewModel;
+            //    ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+            //}
+            //else
+            //{
+
+            //    ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;
+            //}
+
+            //ViewModelApplication.PopupVisible = true;
+            ////((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Transaction.SelectedIndex
+
+        }
+        public async Task<bool> SetPartyHierarchySelectionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+            // Update the Party value on the server...
+            ViewModelApplication.CurrentControlViewModel = Party;
+            HierarchyParam = new ParameterHierarchyItemSelectApiModel
+            {
+
+                Level = 0,
+                ClientID = ViewModelApplication.FClientID,
+                HierarchyTypeID = Party.HierarchyTypeID,
+                DateTarget = TransactionDate.EditedDateTime,
+            };
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupContent= ViewModelApplication.CurrentPopupContent;
+            ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel(HierarchyParam, true); 
+
+
+                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).SearchText = Party.OriginalKid;
+                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
+
+
+                return true;
+            });
 
         }
 
 
-        ~TransactionDetailTreeViewModel()
+
+        public async Task<bool> SetAccountHierarchySelectionAsync() =>
+            // Lock this command to ignore any other requests while processing
+
+            await RunCommandAsync(() => SetHierarchyCompleted, async () =>
+            {
+                // Update the Party value on the server...
+
+                ViewModelApplication.CurrentControlViewModel = Account;
+                HierarchyParam = new ParameterHierarchyItemSelectApiModel
+                {
+                    Level = 0,
+                    HierarchyTypeID = Account.HierarchyTypeID,
+                    ClientID = ViewModelApplication.FClientID,
+                    DateTarget = TransactionDate.EditedDateTime,
+                };
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupContent = ViewModelApplication.CurrentPopupContent;
+
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel(HierarchyParam, true);
+                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).SearchText = Account.OriginalKid;
+                ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PerformKIdSearch();
+                return true;
+            }).ConfigureAwait(false);
+
+
+        /// <summary>
+        /// Initialises the Cost Hierarchy Search
+        /// </summary>
+        /// <returns>Returns true if successful, false otherwise</returns>
+        public async Task<bool> SelectPartyAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+
+            return await RunCommandAsync(() => SelectPartyCompleted, async () =>
+            {
+
+                //ViewModelApplication.ControlPopupParty = ViewModelApplication.CurrentPopupViewModel;
+
+
+
+                    ViewModelApplication.PopupVisible = true;
+               
+
+
+                return true;
+            });
+        }
+
+
+
+
+
+        public async Task<bool> SelectAccountAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SelectAccountCompleted, async () =>
+            {
+                if (Account.EditedName != "Selected Account")
+                    //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                    Account.OriginalName = Account.EditedName;
+                if (ViewModelApplication.ControlParameter1 != null)
+                {
+                    if (ViewModelApplication.CurrentPopupContent != PopupContent.Classify)
+                    {
+                        ViewModelApplication.ControlParameter1 = null;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    }
+                    ViewModelApplication.PopupVisible = true;
+                }
+                //((ManageClassificationViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
+                //{
+                //    MSelectedCostHierarchy = new CostHierarchyViewModel()
+                //};
+                //ViewModelApplication.CurrentPopupViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                return true;
+            });
+        }
+
+
+        /// <summary>
+        /// Used tp insert a new node with the currently selected node as parent
+        /// </summary>
+
+        public async Task<bool> ProcessSelectionActionAsync()
+        {
+            // Lock this command to ignore any other requests while processing
+
+            return await RunCommandAsync(() => SelectAccountCompleted, async () =>
+            {
+
+                //if (ViewModelApplication.ControlParameter1 != null)
+                //{
+                ViewModelApplication.CurrentPopupViewModel = ((HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
+
+                ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+
+                ViewModelApplication.PopupVisible = true;
+                //}
+                //((ManageClassificationViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy = new CostHierarchyListViewModel(Root.EditedKid)
+                //{
+                //    MSelectedCostHierarchy = new CostHierarchyViewModel()
+                //};
+                //ViewModelApplication.CurrentPopupViewModel = ((TransactionSelectionPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+                return true;
+            }).ConfigureAwait(false);
+
+        }
+
+            ~TransactionDetailTreeViewModel()
         {
             Console.WriteLine("Destructor: Object Destroyed!");
         }

@@ -301,7 +301,7 @@ namespace Fasetto.Word
 
             DisplayTitle = "Compare Actuals against Budget";
             BulkMeter = "5249FFEB-6907-46AA-9204-D4527E11F9CE";
-            ViewModelApplication.CurrentControlViewModel=ViewModelApplication.CurrentControlViewModel;
+            ViewModelApplication.CurrentPopupViewModel=ViewModelApplication.CurrentPopupViewModel;
 
             Client = new HierarchyItemSelectionViewModel
             {
@@ -319,8 +319,8 @@ namespace Fasetto.Word
 
             };
 
-            //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
-            ViewModelApplication.CurrentControlViewModel = Client;
+            //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            ViewModelApplication.CurrentPopupViewModel = Client;
 
 
             CostHierarchy = new HierarchyItemSelectionViewModel
@@ -338,8 +338,8 @@ namespace Fasetto.Word
                 CommitAction = UpdateCostHierarchySelectionAsync,
             };
 
-            //ViewModelApplication.CurrentControlViewModel = ViewModelApplication.CurrentControlViewModel;
-            ViewModelApplication.CurrentControlViewModel = Client;
+            //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            ViewModelApplication.CurrentPopupViewModel = Client;
 
 
             TimeStart = new DateTimeViewModel
@@ -347,13 +347,13 @@ namespace Fasetto.Word
                 Label = "Month Start",
                 OriginalDateTime = DateTime.Now.AddDays(-1),
                 EditedDateTime = DateTime.Now.AddDays(-1),
-                OriginalTime = new System.Windows.Controls.ComboBoxItem(),
-                EditedTime = new System.Windows.Controls.ComboBoxItem(),
+                //OriginalTime = new System.Windows.Controls.ComboBoxItem(),
+                //EditedTime = new System.Windows.Controls.ComboBoxItem(),
                 //(DateTime.Now.AddHours(-1)).ToShortTimeString(),
                 //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
             };
-            TimeStart.OriginalTime.Content = "00:00";
-            TimeStart.EditedTime.Content = "00:00";
+            //TimeStart.OriginalTime.Content = "00:00";
+            //TimeStart.EditedTime.Content = "00:00";
 
             Budget = new BudgetPeriodListViewModel(CostHierarchy.OriginalKid)
             {
@@ -370,13 +370,13 @@ namespace Fasetto.Word
                 Label = "Month End",
                 OriginalDateTime = DateTime.Now,
                 EditedDateTime = DateTime.Now,
-                OriginalTime = new System.Windows.Controls.ComboBoxItem(),
-                EditedTime = new System.Windows.Controls.ComboBoxItem(),
+                //OriginalTime = new System.Windows.Controls.ComboBoxItem(),
+                //EditedTime = new System.Windows.Controls.ComboBoxItem(),
                 //(DateTime.Now.AddHours(-1)).ToShortTimeString(),
                 //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
             };
-            TimeEnd.OriginalTime.Content = "00:00";
-            TimeEnd.EditedTime.Content = "00:00";
+            //TimeEnd.OriginalTime.Content = "00:00";
+            //TimeEnd.EditedTime.Content = "00:00";
 
 
             // Create commands
@@ -391,7 +391,7 @@ namespace Fasetto.Word
             InitialiseCostHCommand = new RelayCommand(async () => await InitialiseCostHAsync());
             InitialiseClientSrchCommand = new RelayCommand(async () => await ClientSrchAsync());
             ReconcileCommand =  new RelayCommand(BudgetDetail);
-            //ViewModelApplication.CurrentControlViewModel = null;
+            //ViewModelApplication.CurrentPopupViewModel = null;
 
             // Make a default menu
             //AttachmentMenu = new ChatAttachmentPopupMenuViewModel();
@@ -435,10 +435,10 @@ namespace Fasetto.Word
             //ViewModelApplication.CurrentPopupContent = 0;
             //To do: Lookup to be user rights and available options driven
             //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
-            if (ViewModelApplication.CurrentControlViewModel ==null)
+            if (ViewModelApplication.CurrentPopupViewModel ==null)
             { return; }
 
-            //if ((ViewModelApplication.CurrentControlViewModel).GetType().Name != "CostHierarchyListViewModel")
+            //if ((ViewModelApplication.CurrentPopupViewModel).GetType().Name != "CostHierarchyListViewModel")
             //{ return; }
 
             var Test3 = ((HierarchyItemSelectionViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid;
@@ -511,8 +511,8 @@ namespace Fasetto.Word
                 //ViewModelApplication.CurrentPopupContent = 0;
                 //To do: Lookup to be user rights and available options driven
                 //BulkMeter = "5249ffeb-6907-46aa-9204-d4527e11f9ce";
-                if (ViewModelApplication.CurrentControlViewModel != null)
-                {                 //if ((ViewModelApplication.CurrentControlViewModel).GetType().Name != "CostHierarchyListViewModel")
+                if (ViewModelApplication.CurrentPopupViewModel != null)
+                {                 //if ((ViewModelApplication.CurrentPopupViewModel).GetType().Name != "CostHierarchyListViewModel")
                                   //{ return; }
 
                     var Test3 = ((HierarchyItemSelectionViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid;
@@ -526,7 +526,7 @@ namespace Fasetto.Word
 
                         return false;
                     }
-                    //if (((CostHierarchyListViewModel)ViewModelApplication.CurrentControlViewModel).MSelectedCostHierarchy.KCategoryID == null)
+                    //if (((CostHierarchyListViewModel)ViewModelApplication.CurrentPopupViewModel).MSelectedCostHierarchy.KCategoryID == null)
 
                     ////To DO - message user
                     //{
@@ -578,7 +578,10 @@ namespace Fasetto.Word
                     Level = 1,
                     HierarchyTypeID = CostHierarchy.HierarchyTypeID
                 };
-                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
+
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupContent = ViewModelApplication.CurrentPopupContent;
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel(HierarchyParam,true);
                 return true;
             });
 
@@ -603,7 +606,10 @@ namespace Fasetto.Word
                     RootID = ViewModelApplication.FClientID ?? "4766E825-1B58-410D-B06B-5A2639CA22C8",
                     Level = 1
                 };
-                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel1(HierarchyParam);
+
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+                ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupContent = ViewModelApplication.CurrentPopupContent;
+                ViewModelApplication.CurrentPopupViewModel = new HierarchyTreeViewModel(HierarchyParam,true);
                 return true;
             });
 
@@ -690,7 +696,7 @@ namespace Fasetto.Word
             //    Items.Where(item => item.Message.ToLower().Contains(SearchText)));
 
             // Set last search text
-            mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentControlViewModel;
+            mViewModel = (HierarchyTreeViewModel)ViewModelApplication.CurrentPopupViewModel;
             mViewModel.SearchText = SearchText;
             mViewModel.PerformSearch();
             //mViewModel.RefreshHierarchy();           
@@ -732,7 +738,7 @@ namespace Fasetto.Word
             //    {
             //        MSelectedCostHierarchy = new CostHierarchyViewModel()
             //    };
-            //    ViewModelApplication.CurrentControlViewModel = ((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
+            //    ViewModelApplication.CurrentPopupViewModel = ((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy;
             return true;
             //});
         }
@@ -748,7 +754,7 @@ namespace Fasetto.Word
             return await RunCommandAsync(() => CostHierarchySrchIsSaving, async () =>
             {
 
-                ViewModelApplication.CurrentControlViewModel = ((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
+                ViewModelApplication.CurrentPopupViewModel = ((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).Client;
                 return true;
             });
         }
@@ -766,7 +772,7 @@ namespace Fasetto.Word
             ViewModelApplication.ClientShortName = ((HierarchyItemSelectionViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).Client).EditedName;
             ViewModelApplication.FCostHierarchyID = ((HierarchyItemSelectionViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedKid;
             ViewModelApplication.CostHierarchyShortName = ((HierarchyItemSelectionViewModel)((ExpenditureVSBudgetPageViewModel)ViewModelApplication.CurrentPageViewModel).CostHierarchy).EditedName;
-            ViewModelApplication.CurrentControlViewModel = null;
+            ViewModelApplication.CurrentPopupViewModel = null;
             ViewModelApplication.CurrentPopupViewModel = null;
             ViewModelApplication.CurrentPopupContent = 0; 
             //ViewModelApplication.CurrentPopupContent = PopupContent.AddElement; ;

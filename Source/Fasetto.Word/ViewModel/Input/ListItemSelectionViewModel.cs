@@ -147,7 +147,7 @@ namespace Fasetto.Word
            NullifyCommand = new RelayCommand(Nullify);
 
             //HierarchyitemSelectCommand = new RelayCommand(HierarchyitemSelect);
-            //ViewModelApplication.CurrentControlViewModel = this;
+            //ViewModelApplication.CurrentPopupViewModel = this;
             //HISVM MviewModel = new HISVM(this);    
 
         }

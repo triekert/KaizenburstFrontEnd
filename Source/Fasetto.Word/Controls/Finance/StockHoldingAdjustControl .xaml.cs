@@ -19,7 +19,7 @@ namespace Fasetto.Word
             // Set data context to settings view model
             if (ViewModelApplication.CurrentPopupViewModel.GetType().Name != "StockHoldingAdjustViewModel")
 
-            { ViewModelApplication.CurrentPopupViewModel = new StockHoldingAdjustViewModel(((BudgetTreeViewModel)ViewModelApplication.CurrentControlViewModel).mRootHierarchyElement1);}
+            { ViewModelApplication.CurrentPopupViewModel = new StockHoldingAdjustViewModel(((BudgetTreeViewModel)ViewModelApplication.CurrentPopupViewModel).mRootHierarchyElement1);}
             //if (ViewModelApplication.AddElementViewModel == null)
             //    DataContext = new HierarchyElementViewModel();
             //else
