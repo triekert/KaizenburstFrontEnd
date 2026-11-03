@@ -313,7 +313,7 @@ namespace Fasetto.Word
                 EditedKid = (string)ViewModelApplication.FClientID ,
                 HierarchyTypeID = "1A8CCEE0-52D1-454B-8165-23EDB2241058",
                 PrepareAction = SetClientHierarchySelectionAsync,
-                PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
+                //PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel,
                 CommitAction = UpdateClientSelectionAsync,
                 //OriginalKid = (await ClientDataStore.GetLoginCredentialsAsync() ?).ClientID,
 
@@ -334,7 +334,7 @@ namespace Fasetto.Word
                 HierarchyTypeID = "64413ae7-822f-4866-9ebe-433083d699ac",
                 PrepareAction = SetCostHierarchySelectionAsync,
                 Level = 1,
-                PriorPopupViewModel =ViewModelApplication.CurrentPopupViewModel,
+                //PriorPopupViewModel =ViewModelApplication.CurrentPopupViewModel,
                 CommitAction = UpdateCostHierarchySelectionAsync,
             };
 

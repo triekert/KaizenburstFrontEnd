@@ -195,6 +195,8 @@ namespace Fasetto.Word
 
             // Toggle editing off and back on to re-trigger focus attached property cleanly
             Editing = false;
+            if (OriginalKid != EditedKid)
+                //if the selection has changed, continue editng options..
             Editing = true;
         }
 

@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Fasetto.Word
@@ -29,8 +30,8 @@ namespace Fasetto.Word
         /// <summary>
         /// Call this to fire a <see cref="PropertyChanged"/> event
         /// </summary>
-        /// <param name="name"></param>
-        public void OnPropertyChanged(string name)
+        /// <param name="name">The name of the property that changed</param>
+        public void OnPropertyChanged([CallerMemberName] string name = "")
         {
             PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
@@ -81,7 +82,7 @@ namespace Fasetto.Word
         /// </summary>
         /// <param name="updatingFlag">The boolean property flag defining if the command is already running</param>
         /// <param name="action">The action to run if the command is not already running</param>
-        /// <typeparam name="T">The type the action returns</typeparam>72
+        /// <typeparam name="T">The type the action returns</typeparam>
         /// <returns></returns>
         protected async Task<T> RunCommandAsync<T>(Expression<Func<bool>> updatingFlag, Func<Task<T>> action, T defaultValue = default)
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Markup;
 
 namespace Fasetto.Word
 {
@@ -9,7 +10,7 @@ namespace Fasetto.Word
     /// </summary>
     /// <typeparam name="Parent">The parent class to be the attached property</typeparam>
     /// <typeparam name="Property">The type of this attached property</typeparam>
-    public abstract class BaseAttachedProperty<Parent, Property>
+    public abstract class BaseAttachedProperty<Parent, Property> : MarkupExtension
         where Parent : new()
     {
         #region Public Events
@@ -41,9 +42,9 @@ namespace Fasetto.Word
         /// The attached property for this class
         /// </summary>
         public static readonly DependencyProperty ValueProperty = DependencyProperty.RegisterAttached(
-            "Value", 
-            typeof(Property), 
-            typeof(BaseAttachedProperty<Parent, Property>), 
+            "Value",
+            typeof(Property),
+            typeof(BaseAttachedProperty<Parent, Property>),
             new UIPropertyMetadata(
                 default(Property),
                 new PropertyChangedCallback(OnValuePropertyChanged),
@@ -94,6 +95,14 @@ namespace Fasetto.Word
         /// <param name="d">The element to get the property from</param>
         /// <param name="value">The value to set the property to</param>
         public static void SetValue(DependencyObject d, Property value) => d.SetValue(ValueProperty, value);
+
+        /// <summary>
+        /// Return the singleton instance when used as a markup extension in XAML
+        /// </summary>
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return Instance;
+        }
 
         #endregion
 

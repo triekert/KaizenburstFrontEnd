@@ -171,10 +171,8 @@ namespace Fasetto.Word
                 Label = "Transaction Date",
                 OriginalDateTime = MSelected.Posted_Date,
                 EditedDateTime = MSelected.Posted_Date,
-                //OriginalTime = new System.Windows.Controls.ComboBoxItem(),
-                //EditedTime = new System.Windows.Controls.ComboBoxItem(),
-                //(DateTime.Now.AddHours(-1)).ToShortTimeString(),
-                //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
+                IsDateOnly = true,
+                IsReadOnly = false,
             };
 
 

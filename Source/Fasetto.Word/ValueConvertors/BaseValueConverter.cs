@@ -30,6 +30,8 @@ namespace Fasetto.Word
         /// <returns></returns>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
+            // MarkupExtension.ProvideValue is abstract, so do NOT call base.ProvideValue.
+            // Simply return the singleton converter instance for both runtime and design-time.
             return Converter ?? (Converter = new T());
         }
 
@@ -40,21 +42,11 @@ namespace Fasetto.Word
         /// <summary>
         /// The method to convert one type to another
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
         public abstract object Convert(object value, Type targetType, object parameter, CultureInfo culture);
 
         /// <summary>
-        /// The method to convert a value back to it's source type
+        /// The method to convert a value back to its source type
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
         public abstract object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture);
 
         #endregion

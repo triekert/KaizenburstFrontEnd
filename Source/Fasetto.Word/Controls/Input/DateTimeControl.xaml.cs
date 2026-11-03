@@ -21,7 +21,6 @@ namespace Fasetto.Word
             set => SetValue(LabelWidthProperty, value);
         }
 
-        // Using a DependencyProperty as the backing store for LabelWidth.
         public static readonly DependencyProperty LabelWidthProperty =
             DependencyProperty.Register(
                 nameof(LabelWidth),
@@ -63,11 +62,12 @@ namespace Fasetto.Word
 
         #endregion
 
+        #region Event Handlers
+
         private void TP_Selected(object sender, RoutedEventArgs e)
         {
             if (TP.SelectedValue is string timeString)
             {
-                // Access or process the selected time string directly
                 var selectedTime = timeString;
             }
         }
@@ -76,9 +76,10 @@ namespace Fasetto.Word
         {
             if (TP.SelectedValue is string timeString)
             {
-                // Handle selection change logic using the time string
                 var selectedTime = timeString;
             }
         }
+
+        #endregion
     }
 }

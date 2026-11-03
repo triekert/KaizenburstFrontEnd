@@ -1325,15 +1325,17 @@ namespace Fasetto.Word
             {
 
                 //if (ViewModelApplication.ControlParameter1 != null)
-                //{
+               //{
                 ViewModelApplication.CurrentPopupViewModel = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupViewModel;
                 ViewModelApplication.CurrentPopupContent = ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).PriorPopupContent; 
                 ViewModelApplication.PopupVisible = true;
-
+                //if (((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).OriginalKid == ((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).EditedKid)
+                    //remobe HierarchyItemselectionViewModel from stack 
+                    //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Editing = false;
                 //await Task.Delay(50);
                 //((HierarchyItemSelectionViewModel)ViewModelApplication.CurrentControlViewModel).Editing = true;
 
-                // Inside your asynchronous method or command handler:
+                    // Inside your asynchronous method or command handler:
 
 
 
@@ -3353,8 +3355,8 @@ namespace Fasetto.Word
         {
             if (parent == null) return null;
             T foundChild = null;
-            int childrenCount = System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent);
-            for (int i = 0; i < childrenCount; i++)
+            var childrenCount = System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent);
+            for (var i = 0; i < childrenCount; i++)
             {
                 var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
                 if (!(child is T))

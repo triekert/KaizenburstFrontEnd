@@ -380,7 +380,8 @@ namespace Fasetto.Word
                 Label = "Date Start",
                 OriginalDateTime = DateTime.Now.AddDays(-1),
                 EditedDateTime = DateTime.Now.AddDays(-1),
-
+                IsDateOnly = true,              
+                IsReadOnly = false,
                 //(DateTime.Now.AddHours(-1)).ToShortTimeString(),
                 //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
             };
@@ -393,6 +394,8 @@ namespace Fasetto.Word
                 Label = "Date End",
                 OriginalDateTime = DateTime.Now,
                 EditedDateTime = DateTime.Now,
+                IsDateOnly = true,
+                IsReadOnly = false,
                 //(DateTime.Now.AddHours(-1)).ToShortTimeString(),
                 //EditedTime. = "System.Windows.Controls.ComboBoxItem: 00:30",//(DateTime.Now.AddHours(-1)).ToShortTimeString(),
             };
