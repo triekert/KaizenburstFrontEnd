@@ -3,37 +3,32 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Fasetto.Word" xmlns:forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" xmlns:sys="clr-namespace:System;assembly=mscorlib" d:DataContext="{d:DesignInstance Type=local:BulkReconViewModel}"
+             xmlns:local="clr-namespace:Fasetto.Word" 
+             xmlns:sys="clr-namespace:System;assembly=mscorlib" 
+             d:DataContext="{d:DesignInstance Type=local:BulkReconViewModel}"
              xmlns:core="clr-namespace:Fasetto.Word.Core;assembly=Fasetto.Word.Core"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"                
-             mc:Ignorable="d" >
-
-    <!-- Global Key Binding for Ctrl + Enter -->
-    <!--<UserControl.InputBindings>
-        <KeyBinding Key="Return" Modifiers="Control" Command="{Binding FocusAddClassificationCommand}" />
-    </UserControl.InputBindings>-->
+             mc:Ignorable="d">
 
     <UserControl.Resources>
         <sys:String x:Key="colName">dynamic string...</sys:String>
-        <Style x:Key="ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" >
+        <Style x:Key="ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridColumnHeader">
                         <Label Foreground="{StaticResource ForegroundVeryDarkBrush}" FontWeight="UltraBold" Background="{StaticResource WordLightBlueBrush}" FontFamily="Lato Heavy" FontSize="20" Content="{TemplateBinding Content}"
-                               HorizontalAlignment="Stretch" HorizontalContentAlignment ="Left"  VerticalAlignment="Center"  />
+                               HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" VerticalAlignment="Center" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
 
         <local:ContextualEventArgsConverter x:Key="ContextualEventArgsConverter" />
-
     </UserControl.Resources>
 
     <Border Background="{DynamicResource BackgroundLightBrush}" Padding="15" PreviewKeyDown="ScrollViewer_PreviewKeyDown">
-        <ScrollViewer x:Name="scrollViewer" Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="0,5"
-                      >
-            <Grid Keyboard.PreviewKeyDown="TreeView_KeyBoard" >
+        <ScrollViewer x:Name="scrollViewer" Focusable="True" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="0,5">
+            <Grid Keyboard.PreviewKeyDown="TreeView_KeyBoard">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
@@ -41,17 +36,15 @@
 
                 <!-- Settings Title -->
                 <Grid Height="30" Margin="0 0 0 20">
-                    <!-- Back button -->
                     <Button Style="{StaticResource IconGrowButton}"
                             Height="50"
                             Content="{StaticResource FontAwesomeArrowLeftIcon}"
                             FontFamily="{StaticResource FontAwesome}"
-                            Foreground="{StaticResource  WordOrangeBrush}"
+                            Foreground="{StaticResource WordOrangeBrush}"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             Command="{Binding CloseCommand}"/>
 
-                    <!-- Settings header -->
                     <TextBlock FontSize="{StaticResource FontSizeLarge}"
                                Foreground="{StaticResource ForegroundVeryDarkBrush}"
                                HorizontalAlignment="Right"
@@ -83,10 +76,10 @@
                         </Grid>
                     </Grid>
 
-                    <!-- Profile details -->
+                    <!-- Profile details and DataGrid inside a proper container layout -->
                     <StackPanel Grid.Column="1" local:TextEntryWidthMatcherProperty.Value="True">
-                        <StackPanel Orientation="Horizontal" Grid.Column="1" local:TextEntryWidthMatcherProperty.Value="True" RenderTransformOrigin="0.525,0.565">
-                            <TextBlock Text ="Transaction Date" FontFamily="{StaticResource LatoRegular}" Padding="10 10 13 10" FontWeight="Bold"/>
+                        <StackPanel Orientation="Horizontal" local:TextEntryWidthMatcherProperty.Value="True">
+                            <TextBlock Text="Transaction Date" FontFamily="{StaticResource LatoRegular}" Padding="10 10 13 10" FontWeight="Bold"/>
                             <DatePicker x:Name="dateTransaction" SelectedDate="{Binding TransactionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="20 10 20 10" SelectedDateFormat="Short"/>
                         </StackPanel>
 
@@ -102,12 +95,15 @@
                         <local:HierarchyItemSelectionControl DataContext="{Binding Project}" FontWeight="ExtraBlack" />
                         <local:HierarchyItemSelectionControl DataContext="{Binding Person}" FontWeight="ExtraBlack" />
 
-                        <!-- DataGrid -->
-                        <DataGrid x:Name="Transaction" Grid.Row="3" ItemsSource="{Binding DocumentList}" 
-                                  HeadersVisibility="All" RenderTransformOrigin="0.5,0.5" GridLinesVisibility="None" 
+                        <!-- DataGrid bound to DocumentList -->
+                        <DataGrid x:Name="Transaction" ItemsSource="{Binding DocumentList}" 
+                                  HeadersVisibility="All" GridLinesVisibility="None" 
                                   AutoGenerateColumns="False" AlternationCount="2"
-                                  SelectionMode="Single" SelectionUnit="Cell" VerticalAlignment="Center" HorizontalAlignment="Center" HorizontalContentAlignment="Center" CanUserAddRows="False"
-                                  CanUserSortColumns="True" CanUserResizeColumns="True" CanUserResizeRows="True" AllowDrop="True">
+                                  SelectionMode="Single" SelectionUnit="Cell" 
+                                  VerticalAlignment="Center" HorizontalAlignment="Stretch" 
+                                  CanUserAddRows="False" CanUserSortColumns="True" 
+                                  CanUserResizeColumns="True" CanUserResizeRows="True" AllowDrop="True"
+                                  Margin="0,15,0,15">
 
                             <DataGrid.ColumnHeaderStyle>
                                 <Style TargetType="{x:Type DataGridColumnHeader}">
@@ -144,13 +140,10 @@
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
-                                <Style TargetType="{x:Type DataGridColumnHeader}">
-                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
-                                </Style>
                             </DataGrid.Resources>
 
                             <DataGrid.Columns>
-                                <DataGridTemplateColumn Header="Document Description" HeaderStyle="{StaticResource ColumnHeaderStyle}" SortDirection="Descending">
+                                <DataGridTemplateColumn Header="Document Description" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Margin="5" TextWrapping="Wrap" Width="200" Text="{Binding Path=DocDescription}" FontSize="12" FontWeight="Normal" FontFamily="Lato Heavy" VerticalAlignment="Center" HorizontalAlignment="Left"/>
@@ -159,9 +152,9 @@
                                     <DataGridTemplateColumn.CellEditingTemplate>
                                         <DataTemplate>
                                             <TextBox Margin="5" Width="200" 
-                                                 Text="{Binding Path=DocDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                                 FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Left"
-                                                 Loaded="TextBox_Loaded"/>
+                                                     Text="{Binding Path=DocDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                     FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Left"
+                                                     Loaded="TextBox_Loaded"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellEditingTemplate>
                                 </DataGridTemplateColumn>
@@ -177,7 +170,7 @@
                                 <DataGridTemplateColumn Header="Linked Party" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Margin="5" TextWrapping="Wrap" Width="200" Text="{Binding Path=KPartyName}" FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                            <TextBlock Margin="5" TextWrapping="Wrap" Width="200" Text="{Binding Path=KPartyName}" FontSize="12" FontWeight="Normal" FontFamily="Arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
@@ -185,24 +178,22 @@
                                 <DataGridTemplateColumn Header="Assigned Value" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Margin="5" Width="100" Text="{Binding Path=ActualAmount, StringFormat=C, ConverterCulture='en-ZA'}" FontSize="12" FontWeight="Normal" FontFamily="arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                            <TextBlock Margin="5" Width="100" Text="{Binding Path=ActualAmount, StringFormat=C, ConverterCulture='en-ZA'}" FontSize="12" FontWeight="Normal" FontFamily="Arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
 
-                        <!-- Action Buttons StackPanel with Named Target Button -->
-                        <StackPanel Grid.Column="0" Orientation="Horizontal">
-                            <!-- Add a classification to a transaction -->
+                        <!-- Action Buttons StackPanel -->
+                        <StackPanel Orientation="Horizontal">
                             <Button x:Name="AddClassificationButton"
                                     Content="{Binding AddClassificationButtonText}"
                                     Command="{Binding AddClassificationCommand}"
                                     FontSize="{StaticResource FontSizeRegular}"
                                     Visibility="{Binding AddClassificationButtonText, ConverterParameter=True, Converter={local:TextToVisiblityConverter}}" 
-                                    Margin="0,10,0,10" d:IsHidden="True"/>
+                                    Margin="0,10,10,10" d:IsHidden="True"/>
 
-                            <!-- Change a classification for a transaction -->
                             <Button Content="{Binding AlterTemplateButtonText}"
                                     Command="{Binding AlterTemplateCommand}"
                                     FontSize="{StaticResource FontSizeRegular}"

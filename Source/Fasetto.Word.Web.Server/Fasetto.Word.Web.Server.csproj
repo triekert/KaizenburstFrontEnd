@@ -3,7 +3,8 @@
 
 	<PropertyGroup>
 		<TargetFramework>net8.0-windows</TargetFramework>
-	</PropertyGroup>
+	  <UserSecretsId>45f3168c-14ec-4dba-a8b0-5fbb9e0c0a9e</UserSecretsId>
+  </PropertyGroup>
 
 	<ItemGroup>
 		<None Remove="Email\Templates\GeneralTemplate.htm" />

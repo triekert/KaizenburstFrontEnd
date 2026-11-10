@@ -225,6 +225,7 @@ namespace Fasetto.Word
         /// True to show the hierarchy retrieval command is running
         /// </summary>
         public bool UpdateAllocationCompleted { get; set; }
+
         /// <summary>
         /// Indicates if the current control is pending an update (in progress)
         /// </summary>
@@ -295,6 +296,12 @@ namespace Fasetto.Word
         /// Store View Model of current popup to allow reverse navigation
         /// </summary>
         public object PriorPopupViewModel { get; set; }
+
+        /// <summary>
+        /// Store enum of current popup view
+        /// </summary>
+        public object PriorPopupContent{ get; set; }
+
 
         /// <summary>
         /// All allocations linked to the selected transaction
@@ -438,6 +445,8 @@ namespace Fasetto.Word
             //{
 
             //}
+            PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
+            PriorPopupContent = ViewModelApplication.CurrentPopupContent;
             Selected = selected;
             Selected.Document = new DocDataViewModel()
 
@@ -805,57 +814,45 @@ namespace Fasetto.Word
 
         #region Command Methods
 
-        /// <summary>
-        /// Open the settings menu
-        /// </summary>
-        //public void Open()
-        //{
-        //    // Close settings menu
-        //    ViewModelApplication.PopupVisible = true;
-        //}
+
 
         /// <summary>
-        /// Closes the settings menu
+        /// Close Classification Window, passing control back to transaction detail windows
+        ///  If a transaction has been split amongst different cost categories, first navigate to the "split" level before progressing further
+        ///  var mHierarchyBillingTreeViewModel = ViewModelApplication.CurrentPopupViewModel
         /// </summary>
+
         public void Close()
         {
-            // Close Classification Window, passing control back to transaction detail windows
-            // If a transaction has been split amongst different cost categories, first navigate to the "split" level before progressing further
-            //var mHierarchyBillingTreeViewModel = ViewModelApplication.CurrentPopupViewModel;
-            //
+            ViewModelApplication.CurrentPopupViewModel = PriorPopupViewModel;
 
-
-
-            ViewModelApplication.CurrentPopupViewModel = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
-            var mKFinTranID = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransactionDetail[0].KFinTranID;
-
-             Mmatches = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).MPersist.Where(x => x.KFinTranID == mKFinTranID).ToList();
-            var Cnt = Mmatches.Count;
-            ViewModelApplication.ControlParameter1 = null;
-
-
-            if (Cnt ==1)
+            if (ViewModelApplication.CurrentPopupViewModel is TransactionDetailTreeViewModel detailVm)
             {
-                ViewModelApplication.CurrentPopupViewModel = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
-                //ViewModelApplication.CurrentPopupViewModel = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
-                ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;
-            }
-            else
-            {
-                ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).RefreshTransactionList(mKFinTranID, ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).MPersist);
+                var mKFinTranID = detailVm.TransactionDetail.FirstOrDefault()?.KFinTranID;
+                if (detailVm.PriorPopupViewModel is TransactionTreeViewModel treeVm && mKFinTranID != null)
+                {
+                    var matches = treeVm.MPersist?.Where(x => x.KFinTranID == mKFinTranID).ToList() ?? new List<TransactionViewModel>();
+                    ViewModelApplication.ControlParameter1 = null;
 
-
-                    ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+                    if (matches.Count == 1)
+                    {
+                        ViewModelApplication.CurrentPopupViewModel = detailVm.PriorPopupViewModel;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;
+                    }
+                    else
+                    {
+                        // RESTORED: Ensures the transaction list is properly refreshed before displaying detail content
+                        detailVm.RefreshTransactionList(mKFinTranID, treeVm.MPersist);
+                        ViewModelApplication.CurrentPopupViewModel = detailVm;
+                        ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+                    }
+                }
             }
+
+            // RESTORED: Ensures popup visibility state triggers correctly
             ViewModelApplication.PopupVisible = true;
-
         }
-
-
-        /// <summary>
-        /// Update the total budget for the selected category hierarchy
-        /// </summary>
-        /// <returns></returns>
+ 
         public async Task<bool> UpdateAllocationAsync()
         {
             // Lock this command to ignore any other requests while processing
@@ -1369,10 +1366,13 @@ namespace Fasetto.Word
 
                 var docs = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).DocumentList.Where(x => (x.IsNew || x.IsRemove) && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
                 var tmp0 = ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel;
-                var tmp = ((ObservableCollection<TransactionViewModel>)((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel).MPersist);
-                Mtmp = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel).MPersist;
+                var tmp = ((ObservableCollection<TransactionViewModel>)((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.
+                CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel).MPersist);
+                Mtmp = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).
+                PriorPopupViewModel).PriorPopupViewModel).MPersist;
                 Mtmp1 = ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).TransactionDetail;
-                Mtmp2 = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel).mChange;
+                Mtmp2 = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).
+                PriorPopupViewModel).mChange;
                 Mtmp3 = ((TransactionTreeViewModel)tmp0).Trans_actionRec;
                 var rec = Mtmp[Mtmp3];
                 rec.IsDocLinked = true;
@@ -1386,7 +1386,6 @@ namespace Fasetto.Word
 
 
                 Selected1.Posted_Date = Selected.Posted_Date;
-
                 Selected1.Month = Selected.Month;
                 Selected1.Description = Selected.Description;
                 Selected1.TransAmount = Selected.TransAmount;
@@ -1738,101 +1737,7 @@ namespace Fasetto.Word
                                                         break;
                                                     case MessageBoxResult.No:
                                                         {
-                                                            //{
-                                                            //    Mcategory1.ActualAmount = IntAmnt;
-                                                            //    Mcategory1.KCategoryID = Selected.KCategoryID;
-                                                            //    Mcategory.ActualAmount = IntAmnt;
-                                                            //    Mcategory.ShortName = Selected.ShortName;
-                                                            //    Mcategory.KCategoryID = Selected.KCategoryID;
-                                                            //    Mcategory.Units = IntUnits;
-                                                            //    Selected1.ActualAmount = IntAmnt;
-                                                            //    Selected.ActualAmount = IntAmnt;
-                                                            //    Selected1.ShortName = Selected.ShortName;
-                                                            //    Selected1.KCategoryID = Selected.KCategoryID;
-
-                                                            //    Selected1.KProjectID = Selected.KProjectID;
-                                                            //    Selected1.KProjectName = Selected.KProjectName;
-                                                            //    Selected1.KAssetID = Selected.KAssetID; 
-                                                            //    Selected1.KAssetName = Selected.KAssetName;
-                                                            //    Selected1.KPersonID = Selected.KPersonID;
-                                                            //    Selected1.KPersonName = Selected.KPersonName;
-                                                            //    Selected.Units = IntUnits;
-                                                            //    Selected1.KFinActualID =Mcategory.KFinActualID;
-                                                            //    Selected.KFinActualID = Selected1.KFinActualID;
-                                                            //}
-
-
-                                                            //var u = new TransactionResultApiModel
-                                                            //{
-                                                            //    Posted_Date = DateTime.Parse(TransactionDate),
-                                                            //    Month = Selected1.Month,
-                                                            //    Description = TransactionDescription.EditedText ?? Selected.Description,
-                                                            //    TransAmount = Selected1.TransAmount,
-                                                            //    ActualAmount = Selected1.ActualAmount,
-                                                            //    ShortName = (Category.EditedKid == null) ? Selected.ShortName : (Category.EditedName ?? Selected.ShortName),
-                                                            //    KCategoryID = Category.EditedKid ?? Selected.KCategoryID,
-                                                            //    KFinActualID = Selected1.KFinActualID,
-                                                            //    KFinTranID = Selected1.KFinTranID,
-                                                            //    ChangeType = "c",
-                                                            //    DateEffective = DateTime.Now,
-                                                            //    KHierarchyID = Selected1.KHierarchyID,
-                                                            //    KClientID = Selected.KClientID,
-                                                            //    KPartyID = Party.EditedKid ?? Selected.KPartyID,
-                                                            //    KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
-                                                            //    IsTemplate = IsTemplate,
-                                                            //    FCatSrchID = Selected1.FCatSrchID,
-                                                            //    Notes = TransactionNotes.EditedText,
-                                                            //    KAccountID = Account.EditedKid ?? Selected.KAccountID,
-                                                            //    KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
-                                                            //    KProjectID = Project.EditedKid ?? Selected.KProjectID,
-                                                            //    KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
-                                                            //    KAssetID = Asset.EditedKid ?? Selected.KAssetID,
-                                                            //    KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
-                                                            //    KPersonID = Person.EditedKid ?? Selected.KPersonID,
-                                                            //    KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
-                                                            //    Units = IntUnits,
-
-                                                            //};
-                                                            //Mtmp2.Add(u);
-
-
-                                                            //{
-                                                            //    Mexxist2.ActualAmount = Mexxist2.ActualAmount + (OrgActual - IntAmnt);
-                                                            //    Mexxist1.ActualAmount = Mexxist1.ActualAmount + (OrgActual - IntAmnt);
-                                                            //}
-                                                            //u = new TransactionResultApiModel
-                                                            //{
-                                                            //    Posted_Date = DateTime.Parse(TransactionDate),
-                                                            //    Month = Selected1.Month,
-                                                            //    Description = TransactionDescription.EditedText ?? Selected.Description,
-                                                            //    TransAmount = Selected1.TransAmount,
-                                                            //    ActualAmount = Selected1.ActualAmount,
-                                                            //    ShortName = (Category.EditedKid == null) ? Selected.ShortName : (Category.EditedName ?? Selected.ShortName),
-                                                            //    KCategoryID = Category.EditedKid ?? Selected.KCategoryID,
-                                                            //    KFinActualID = Selected1.KFinActualID,
-                                                            //    KFinTranID = Selected1.KFinTranID,
-                                                            //    ChangeType = "c",
-                                                            //    DateEffective = DateTime.Now,
-                                                            //    KHierarchyID = Selected1.KHierarchyID,
-                                                            //    KClientID = Selected.KClientID,
-                                                            //    KPartyID = Party.EditedKid ?? Selected.KPartyID,
-                                                            //    KPartyName = (Party.EditedKid == null) ? Selected.KPartyName : (Party.EditedName ?? Selected.KPartyName),
-                                                            //    IsTemplate = IsTemplate,
-                                                            //    FCatSrchID = Selected1.FCatSrchID,
-                                                            //    Notes = TransactionNotes.EditedText,
-                                                            //    KAccountID = Account.EditedKid ?? Selected.KAccountID,
-                                                            //    KAccountName = (Account.EditedKid == null) ? Selected.KAccountName : (Account.EditedName ?? Selected.KAccountName),
-                                                            //    KProjectID = Project.EditedKid ?? Selected.KProjectID,
-                                                            //    KProjectName = (Project.EditedKid == null) ? Selected.KProjectName : (Project.EditedName ?? Selected.KProjectName),
-                                                            //    KAssetID = Asset.EditedKid ?? Selected.KAssetID,
-                                                            //    KAssetName = (Asset.EditedKid == null) ? Selected.KAssetName : (Asset.EditedName ?? Selected.KAssetName),
-                                                            //    KPersonID = Person.EditedKid ?? Selected.KPersonID,
-                                                            //    KPersonName = (Person.EditedKid == null) ? Selected.KPersonName : (Person.EditedName ?? Selected.KPersonName),
-                                                            //    Units = IntUnits,
-
-
-                                                            //};
-                                                            //Mtmp2.Add(u);
+                                                            
                                                         }
                                                         break;
                                                     default:
@@ -2585,7 +2490,8 @@ namespace Fasetto.Word
             //Refresh UI for Transaction List
             ((TransactionTreeViewModel)tmp0).RefreshTransactionList();
                 //Refresh UI for Transaction Detail List
-                ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).RefreshTransactionList(Selected.KFinTranID, Mtmp);
+                ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).RefreshTransactionList(Selected.KFinTranID, 
+                    Mtmp);
                 await ((TransactionTreeViewModel)tmp0).PersistTransClassAsync();
                 Close();
                 return true;
@@ -3351,15 +3257,25 @@ namespace Fasetto.Word
             });
         }
 
+        /// <summary>
+        /// Finds a visual child of type T, optionally matching the specified name.
+        /// </summary>
+        /// <typeparam name="T">The type of the visual child to find.</typeparam>
+        /// <param name="parent">The dependency object whose visual children are searched.</param>
+        /// <param name="childName">The name to match, or null or empty to find the first child of type T.</param>
+        /// <returns>The matching visual child, or null if no match is found.</returns>
         private static T FindVisualChild<T>(DependencyObject parent, string childName) where T : DependencyObject
         {
             if (parent == null) return null;
             T foundChild = null;
             var childrenCount = System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent);
+
             for (var i = 0; i < childrenCount; i++)
             {
                 var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
-                if (!(child is T))
+
+                // Refactored using pattern matching (is not T) to resolve IDE0038
+                if (child is not T)
                 {
                     foundChild = FindVisualChild<T>(child, childName);
                     if (foundChild != null) break;

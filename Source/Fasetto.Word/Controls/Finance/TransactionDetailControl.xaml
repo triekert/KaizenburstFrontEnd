@@ -79,26 +79,54 @@
                 </Grid>
 
                 <!-- Input Controls StackPanel -->
-                <StackPanel Margin="5" local:TextEntryWidthMatcherProperty.Value="True">
-                    <!-- 1. First control on its own on top -->
-                    <local:DateTimeControl DataContext="{Binding TransactionDate}" FontWeight="ExtraBlack" Margin="0,2" />
+                <!-- Input Controls Grid -->
+                <Grid Margin="5" local:TextEntryWidthMatcherProperty.Value="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                    <!-- 2. Next 4 controls side by side in pairs (2x2 UniformGrid) -->
-                    <UniformGrid Columns="2" Margin="0,2,0,0">
-                        <local:TextEntryControl DataContext="{Binding TransactionDescription}" FontWeight="ExtraBlack" Margin="0,2,2,2" />
-                        <local:TextEntryControl DataContext="{Binding Amount}" FontWeight="ExtraBlack" Margin="2,2,0,2" />
-                        <local:HierarchyItemSelectionControl DataContext="{Binding Party}" FontWeight="ExtraBlack" Margin="0,2,2,2" />
-                        <local:HierarchyItemSelectionControl DataContext="{Binding Account}" FontWeight="ExtraBlack" Margin="2,2,0,2" />
-                    </UniformGrid>
-                </StackPanel>
+                    <!-- 1. First control spans across both columns on top -->
+                    <local:DateTimeControl Grid.Row="0" Grid.ColumnSpan="2" 
+                           DataContext="{Binding TransactionDate}" 
+                           FontWeight="ExtraBlack" 
+                           Margin="0,2" />
+
+                    <!-- 2. Row 1: Description (Left) & Amount (Right) -->
+                    <local:TextEntryControl Grid.Row="1" Grid.Column="0" 
+                            DataContext="{Binding TransactionDescription}" 
+                            FontWeight="ExtraBlack" 
+                            Margin="0,2,2,2" />
+                    <local:TextEntryControl Grid.Row="1" Grid.Column="1" 
+                            DataContext="{Binding Amount}" 
+                            FontWeight="ExtraBlack" 
+                            Margin="2,2,0,2" />
+
+                    <!-- 3. Row 2: Party (Left) & Account (Right) -->
+                    <local:HierarchyItemSelectionControl Grid.Row="2" Grid.Column="0" 
+                                         DataContext="{Binding Party}" 
+                                         FontWeight="ExtraBlack" 
+                                         Margin="0,2,2,2" />
+                    <local:HierarchyItemSelectionControl Grid.Row="2" Grid.Column="1" 
+                                         DataContext="{Binding Account}" 
+                                         FontWeight="ExtraBlack" 
+                                         Margin="2,2,0,2" />
+                </Grid>
 
                 <!-- Add Classification Button -->
-                <Button x:Name="AddClassificationButton"
-                        Content="{Binding AddClassificationButtonText}"
-                        Command="{Binding AddClassificationCommand}"
-                        FontSize="{StaticResource FontSizeRegular}"
-                        Visibility="{Binding AddClassificationButtonText, ConverterParameter=True, Converter={local:TextToVisiblityConverter}}" 
-                        Margin="0,10,0,10" d:IsHidden="True"/>
+                <Button x:Name="TransactionEditButton"
+                    Content="{Binding TransactionEditButtonText}"
+                    Command="{Binding TransactionEditCommand}"
+                    FontSize="{StaticResource FontSizeRegular}"
+                    HorizontalAlignment="Center"
+                    Padding="15,5"
+                    Visibility="{Binding TransactionEditButtonText, ConverterParameter=True, Converter={local:TextToVisiblityConverter}}" 
+                    Margin="0,10,0,10" d:IsHidden="True"/>
             </StackPanel>
         </Border>
 

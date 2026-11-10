@@ -954,80 +954,72 @@ Application.Current.Dispatcher.BeginInvoke(new Action(() =>
 
                     //If only one allocation linked to the Transaction, bypass the 'detail' window...
 
-                    if (((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransactionDetail.Count > 1)
-                {                 //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
-                    ViewModelApplication.PopupVisible = false;
-                        ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
-                        ViewModelApplication.PopupVisible = true;
+                    //if (((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransactionDetail.Count > 1)
+                    //{                 //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+                        ViewModelApplication.PopupVisible = false;
+                            ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+                            ViewModelApplication.PopupVisible = true;
 
-                        //ViewModelApplication.CurrentPopupViewModel = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel;
-                        //ViewModelApplication.CurrentPopupContent = PopupContent.Transaction;
-                        //ViewModelApplication.PopupVisible = true;
-                        //return;
+                    //}
+                    //else
+                    //{            //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+                    //    ViewModelApplication.PopupVisible = false;
+                    //    //ViewModelApplication.CurrentPopupContent = Null;
+                    //    ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
 
+                    //    var MSelected = new TransactionViewModel();
 
+                    //    var TransactionDetail = new ObservableCollection<TransactionViewModel>();
+                    //    //(TransactionViewModel)(TransactionDetail.SelectedItem;
+                    //    var matches = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).Trans_action.Where(x => x.KFinTranID == MKFinTranID).ToList();
 
+                    //    foreach (var item in matches)
+                    //    {
 
-                }
-                else
-                {            //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
-                    ViewModelApplication.PopupVisible = false;
-                    //ViewModelApplication.CurrentPopupContent = Null;
-                    ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
+                    //        var mTDVM = new TransactionViewModel
 
-                    var MSelected = new TransactionViewModel();
-
-                    var TransactionDetail = new ObservableCollection<TransactionViewModel>();
-                    //(TransactionViewModel)(TransactionDetail.SelectedItem;
-                    var matches = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).Trans_action.Where(x => x.KFinTranID == MKFinTranID).ToList();
-
-                    foreach (var item in matches)
-                    {
-
-                        var mTDVM = new TransactionViewModel
-
-                        {
-                            Posted_Date = item.Posted_Date,
-                            Month = item.Month,
-                            Description = item.Description,
-                            TransAmount = item.TransAmount,
-                            ActualAmount = item.ActualAmount,
-                            ShortName = item.ShortName,
-                            KCategoryID = item.KCategoryID,
-                            KFinActualID = item.KFinActualID,
-                            KFinTranID = item.KFinTranID,
-                            KPartyName = item.KPartyName,
-                            KPartyID = item.KPartyID,
-                            FCatSrchID = item.FCatSrchID,
-                            KHierarchyID = item.KHierarchyID,
-                            KAccountID = item.KAccountID,
-                            KAccountName = item.KAccountName,
-                            Notes = item.Notes,
-                            Units = item.Units,
-                            KClientID = item.KClientID,
-                            KPersonID = item.KPersonID,
-                            KPersonName = item.KPersonName,
-                            KAssetID = item.KAssetID,
-                            KAssetName = item.KAssetName,
-                            KProjectID = item.KProjectID,
-                            KProjectName = item.KProjectName,
-                        };
-                        TransactionDetail.Add(mTDVM);
-                    }
+                    //        {
+                    //            Posted_Date = item.Posted_Date,
+                    //            Month = item.Month,
+                    //            Description = item.Description,
+                    //            TransAmount = item.TransAmount,
+                    //            ActualAmount = item.ActualAmount,
+                    //            ShortName = item.ShortName,
+                    //            KCategoryID = item.KCategoryID,
+                    //            KFinActualID = item.KFinActualID,
+                    //            KFinTranID = item.KFinTranID,
+                    //            KPartyName = item.KPartyName,
+                    //            KPartyID = item.KPartyID,
+                    //            FCatSrchID = item.FCatSrchID,
+                    //            KHierarchyID = item.KHierarchyID,
+                    //            KAccountID = item.KAccountID,
+                    //            KAccountName = item.KAccountName,
+                    //            Notes = item.Notes,
+                    //            Units = item.Units,
+                    //            KClientID = item.KClientID,
+                    //            KPersonID = item.KPersonID,
+                    //            KPersonName = item.KPersonName,
+                    //            KAssetID = item.KAssetID,
+                    //            KAssetName = item.KAssetName,
+                    //            KProjectID = item.KProjectID,
+                    //            KProjectName = item.KProjectName,
+                    //        };
+                    //        TransactionDetail.Add(mTDVM);
+                    //    }
 
 
-                    //var RawTable = ((ObservableCollection<TransactionViewModel>)((TransactionDetailTreeViewModel)(ViewModelApplication.CurrentPopupViewModel)).TransactionDetail).Items;
-                    var tempTDList = new ObservableCollection<TransactionViewModel>();
-                    foreach (var tBR in RawTable)
-                        tempTDList.Add((TransactionViewModel)tBR);
-                    ViewModelApplication.CurrentPopupViewModel = new ManageClassificationViewModel(TransactionDetail, TransactionDetail[0]);
+                    //    //var RawTable = ((ObservableCollection<TransactionViewModel>)((TransactionDetailTreeViewModel)(ViewModelApplication.CurrentPopupViewModel)).TransactionDetail).Items;
+                    //    var tempTDList = new ObservableCollection<TransactionViewModel>();
+                    //    foreach (var tBR in RawTable)
+                    //        tempTDList.Add((TransactionViewModel)tBR);
+                    //    ViewModelApplication.CurrentPopupViewModel = new ManageClassificationViewModel(TransactionDetail, TransactionDetail[0]);
 
-                    //ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
-                    ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
-                    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
-                    ViewModelApplication.PopupVisible = true;
+                    //    //ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    //    ViewModelApplication.CurrentPageViewModel = ViewModelApplication.CurrentPageViewModel;
+                    //    ViewModelApplication.CurrentPopupContent = PopupContent.Classify;
+                    //    ViewModelApplication.PopupVisible = true;
 
-                }
+                    //}
             }
         }
 

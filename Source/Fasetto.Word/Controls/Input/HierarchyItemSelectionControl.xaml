@@ -20,7 +20,7 @@
             IsEnabled="{Binding Working, Converter={local:BooleanInvertConverter}}"
             BorderThickness="0 0 0 0.5">
 
-        <Grid Background="{StaticResource ForegroundLightBrush}">
+        <Grid x:Name="LayoutGrid" Background="Transparent" Height="60" VerticalAlignment="Center">
 
             <!-- Double click to edit -->
             <Grid.InputBindings>
@@ -61,16 +61,27 @@
             </Grid.ColumnDefinitions>
 
             <!-- Label -->
+            <!-- Label -->
             <TextBlock Text="{Binding Label}"
-                       Name="Label"
-                       Margin="15 12"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Center"
-                       FontFamily="{StaticResource LatoRegular}"
-                       IsEnabled="True"
-                      Focusable="True"
-
-                       />
+            Name="Label"
+            Margin="15 0"
+            Grid.RowSpan="2"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            FontSize="14">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="FontFamily" Value="{StaticResource LatoRegular}" />
+                        <Setter Property="Foreground" Value="{StaticResource ForegroundVeryDarkBrush}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsMouseOver, ElementName=LayoutGrid}" Value="True">
+                                <!-- Change color or darken on hover instead of swapping font families to prevent shifting -->
+                                <Setter Property="Foreground" Value="{StaticResource WordDarkBlueBrush}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
 
             <TextBox  x:Name="ActiveEditTextBox"
                     Text="{Binding EditedName, UpdateSourceTrigger=PropertyChanged}"

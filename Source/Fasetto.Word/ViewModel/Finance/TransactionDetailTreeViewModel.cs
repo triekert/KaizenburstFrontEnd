@@ -94,6 +94,20 @@ namespace Fasetto.Word
         public PopupContent PriorPopupContent { get; set; }
         //public ObservableCollection<HierarchyViewModel> FirstGeneration1 { get; set; }
 
+
+        /// <summary>
+        /// Indicates if the current control is pending an update (in progress)
+        /// </summary>
+        public bool Working { get; set; }
+
+
+        /// <summary>
+        /// The text for the Edit transaction level properties
+        /// </summary>
+        public string TransactionEditButtonText { get; set; }
+
+
+
         #endregion
 
         #region Data
@@ -129,11 +143,29 @@ namespace Fasetto.Word
 
         #endregion // Data
         #region Public Commands
+
+
         /// <summary>
         /// The command to close the settings menu
         /// </summary>
         public ICommand CloseCommand { get; set; }
-        #endregion//Public Commands
+
+        /// <summary>
+        /// Edit attributes set at transaction level
+        /// </summary>
+        public ICommand TransactionEditCommand { get; set; }
+ 
+
+        /// <summary>
+        /// The command to search a new image for loading into the image window
+        /// </summary>
+        public ICommand BrowseImageCommand { get; set; }
+
+
+
+
+
+#endregion Public Commands
 
         #region Constructor
         /// <summary>
@@ -181,6 +213,7 @@ namespace Fasetto.Word
             {
                 Label = "Transaction Description",
                 OriginalText = MSelected.Description,
+                EditedText = MSelected.Description,
             };
 
 
@@ -189,6 +222,7 @@ namespace Fasetto.Word
             {
                 Label = "Transaction Amount",
                 OriginalText = MSelected.TransAmount.ToString("C", CultureInfo.CurrentCulture),
+                EditedText = MSelected.TransAmount.ToString("C", CultureInfo.CurrentCulture)
                 //PrepareAction = PrepareAllocationAsync,
                 //CommitAction = UpdateAllocationAsync,
             };
@@ -228,13 +262,15 @@ namespace Fasetto.Word
 
 
             // Get the OptFinHierarchies currently configured - first populate 'root hierarchy' variable with all configured root hierarchy elements currently available
-
+            TransactionEditButtonText = "Update Transaction level data";
             ((HierarchyItemSelectionViewModel)Account).PriorPopupViewModel = this;
             ((HierarchyItemSelectionViewModel)Account).PriorPopupContent = PopupContent.TransactionDetail;
             ((HierarchyItemSelectionViewModel)Party).PriorPopupViewModel = this;
             ((HierarchyItemSelectionViewModel)Account).PriorPopupContent = PopupContent.TransactionDetail;
-            //UpdateTreeViewElements();
+            // Create commands
             CloseCommand = new RelayCommand(Close);
+            TransactionEditCommand = new RelayCommand(async () => await TransactionEditAsync());
+
             //mSearchCommand = new SearchCategoryTreeCommand(this);
         }
 
@@ -375,6 +411,62 @@ namespace Fasetto.Word
 
         }
 
+        public async Task<bool>TransactionEditAsync()
+        {
+            return await RunCommandAsync(() => Working, async () =>
+            {
+
+                var tmp0 = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).
+                PriorPopupViewModel;
+                var Selected = ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).MSelected;
+                var Mtmp2 = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)(ViewModelApplication.CurrentPopupViewModel)).PriorPopupViewModel).mChange;
+                var Mtmp = ((TransactionTreeViewModel)((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).
+                PriorPopupViewModel).MPersist;
+                var IntAmnt = Selected.ActualAmount;
+                decimal.TryParse(Amount.EditedText, NumberStyles.Currency, CultureInfo.CurrentCulture, out IntAmnt);
+                if (!(Selected.TransAmount != IntAmnt || Selected.Description != TransactionDescription.EditedText || TransactionDate.EditedDateTime != Selected.Posted_Date ||
+                Party.EditedKid != Selected.KPartyID || Account.EditedKid != Selected.KAccountID))
+                    //if no changes, do nothing
+                    return true;
+                //Else Modify the Selected Transaction with updated values 
+                var Selected1 = new TransactionViewModel();
+                Selected1?.CopyPropertiesFrom(Selected);
+                Selected1.TransAmount = IntAmnt;
+                Selected1.Posted_Date = TransactionDate.EditedDateTime;
+                Selected1.Description = TransactionDescription.EditedText;
+                Selected1.KAccountID = Account.EditedKid;
+                Selected1.KAccountName = Account.EditedName;
+                Selected1.KPartyID = Party.EditedKid;
+                Selected1.KPartyName = Party.EditedName;
+                Selected1.DateEffective = DateTime.Now;
+                //Create a Change record to Persist Changes on the datapase
+                Mtmp2.Add(Selected1.ToApiModel("c"));
+                //Update changes on all transaction allocations for the same transaction
+                // Update all matching transaction records in Mtmp using LINQ
+                Mtmp.Where(x => x.KFinTranID == Selected1.KFinTranID).ToList().ForEach(item =>
+                {
+                    item.TransAmount = Selected1.TransAmount;
+                    item.Posted_Date = Selected1.Posted_Date;
+                    item.Description = Selected1.Description;
+                    item.KAccountID = Selected1.KAccountID;
+                    item.KAccountName = Selected1.KAccountName;
+                    item.KPartyID = Selected1.KPartyID;
+                    item.KPartyName = Selected1.KPartyName;
+                    item.DateEffective = Selected1.DateEffective;
+                });
+
+                ((TransactionTreeViewModel)tmp0).RefreshTransactionList();
+                //Refresh UI for Transaction Detail List
+                //((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).RefreshTransactionList(Selected.KFinTranID,
+                //    Mtmp);
+
+
+                await ((TransactionTreeViewModel)tmp0).PersistTransClassAsync();
+                Close();
+                return true;
+            }).ConfigureAwait(false);
+
+        }
 
 
         public async Task<bool> SetAccountHierarchySelectionAsync() =>

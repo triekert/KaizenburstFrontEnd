@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              x:Name="ControlRoot"
              d:DataContext="{x:Static local:TextEntryDesignModel.Instance}">
-    
+
     <UserControl.Resources>
         <local:TimeToClosestComboBoxItemConverter x:Key="TimeToClosestConverter" />
     </UserControl.Resources>
@@ -19,8 +19,8 @@
             Margin="5 5 10 5"            
             BorderThickness="2">
 
-        <Grid Background="{StaticResource ForegroundLightBrush}" Height="80">
-
+        <!-- Removed fixed height so it flexes to fill parent space -->
+        <Grid x:Name="LayoutGrid" Background="Transparent" VerticalAlignment="Center">
             <!-- Double click to edit -->
             <Grid.InputBindings>
                 <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding EditCommand}" />
@@ -30,33 +30,45 @@
             <!-- Row Definitions -->
             <Grid.RowDefinitions>
                 <RowDefinition Height="30" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <!-- Column Definitions -->
+            <!-- Column Definitions (Balanced with Auto / Star distribution) -->
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Name="LabelColumnDefinition" Width="130" />
+                <ColumnDefinition Name="LabelColumnDefinition" Width="100" />
                 <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="200" />
-                <ColumnDefinition Width="230" />
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="50" />
             </Grid.ColumnDefinitions>
+
 
             <!-- Label -->
             <TextBlock Text="{Binding Label}"
-                       Grid.Column="0"       
+                       Name="Label"
+                       Margin="15 0"
                        Grid.RowSpan="2"
-                       Name="Heading"
-                       Margin="5 5"
-                       HorizontalAlignment="Center"
+                       HorizontalAlignment="Left"
                        VerticalAlignment="Center"
-                       FontFamily="{StaticResource LatoRegular}" />
+                       FontSize="14">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="FontFamily" Value="{StaticResource LatoRegular}" />
+                        <Setter Property="Foreground" Value="{StaticResource ForegroundVeryDarkBrush}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsMouseOver, ElementName=LayoutGrid}" Value="True">
+                                <Setter Property="Foreground" Value="{StaticResource WordDarkBlueBrush}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
 
             <!-- Date Label -->
             <TextBlock Text="Date"  
                        Grid.Row="0"
                        Grid.Column="1"
-                       Name="Label"
+                       Name="Date"
                        Margin="5"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"
@@ -70,10 +82,9 @@
                         SelectedDate="{Binding EditedDateTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                         Padding="5" 
                         SelectedDateFormat="Short" 
-                        HorizontalAlignment="Center" 
+                        HorizontalAlignment="Stretch" 
                         Grid.Row="0"  
                         Grid.Column="2" 
-                        Width="200"
                         IsEnabled="{Binding Editing}"
                         local:AnimateFadeInProperty.Value="{Binding Editing}"
                         local:FocusAndSelectProperty.Value="{Binding Editing}" />
@@ -83,7 +94,8 @@
                        VerticalAlignment="Center" 
                        HorizontalAlignment="Right" 
                        Grid.RowSpan="2"  
-                       Grid.Column="3" 
+                       Grid.Column="2" 
+                       Grid.ColumnSpan="2"
                        Padding="20 10 20 10" 
                        FontFamily="{StaticResource LatoRegular}"   
                        FontWeight="ExtraBold" 
@@ -91,35 +103,35 @@
 
             <!-- Time Label (Hidden when IsDateOnly is true) -->
             <TextBlock Text="Time"  
-           Grid.Row="1"
-           Grid.Column="1"
-           Margin="5"
-           HorizontalAlignment="Left"
-           VerticalAlignment="Center"
-           FontFamily="{StaticResource LatoRegular}"   
-           FontWeight="ExtraBlack"
-           IsEnabled="{Binding Editing}"      
-           Visibility="{Binding ShowTime, Converter={local:BooleanToVisiblityConverter}, ConverterParameter=True}" />
+                       Grid.Row="1"
+                       Grid.Column="1"
+                       Margin="5"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       FontFamily="{StaticResource LatoRegular}"   
+                       FontWeight="ExtraBlack"
+                       IsEnabled="{Binding Editing}"      
+                       Visibility="{Binding ShowTime, Converter={local:BooleanToVisiblityConverter}, ConverterParameter=True}" />
 
             <!-- Time StackPanel / ComboBox TP (Hidden when IsDateOnly is true) -->
             <StackPanel Grid.Column="2"       
-            Grid.Row="1"
-            Orientation="Vertical"
-            Visibility="{Binding ShowTime, Converter={local:BooleanToVisiblityConverter}, ConverterParameter=True}">
+                        Grid.Row="1"
+                        Orientation="Vertical"
+                        Visibility="{Binding ShowTime, Converter={local:BooleanToVisiblityConverter}, ConverterParameter=True}">
 
                 <ComboBox x:Name="TP" 
-              Height="20"
-              VerticalAlignment="Center"
-              MaxDropDownHeight="300"
-              ScrollViewer.VerticalScrollBarVisibility="Auto"
-              IsEnabled="{Binding Editing}"
-              Width="100"
-              IsEditable="True"
-              SelectionChanged="TP_SelectionChanged"   
-              Margin="5"                       
-              ItemsSource="{Binding AvailableTimes}"
-              SelectedItem="{Binding EditedDateTime, Converter={StaticResource TimeToClosestConverter}, Mode=TwoWay}"       
-              IsDropDownOpen="False">
+                          Height="20"
+                          VerticalAlignment="Center"
+                          MaxDropDownHeight="300"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto"
+                          IsEnabled="{Binding Editing}"
+                          HorizontalAlignment="Stretch"
+                          IsEditable="True"
+                          SelectionChanged="TP_SelectionChanged"   
+                          Margin="5"                       
+                          ItemsSource="{Binding AvailableTimes}"
+                          SelectedItem="{Binding EditedDateTime, Converter={StaticResource TimeToClosestConverter}, Mode=TwoWay}"       
+                          IsDropDownOpen="False">
 
                     <ComboBox.ItemContainerStyle>
                         <Style TargetType="ComboBoxItem">
@@ -132,21 +144,22 @@
                     </ComboBox.ItemContainerStyle>
                 </ComboBox>
             </StackPanel>
+
             <!-- Edit Button Container -->
             <Grid Grid.Column="4"
                   Grid.RowSpan="2"
                   HorizontalAlignment="Right"
-                  VerticalAlignment="Center"
+                  VerticalAlignment="Bottom"
                   local:AnimateFadeInProperty.Value="{Binding Editing, Converter={local:BooleanInvertConverter}}">
 
                 <!-- Edit Button -->
                 <Button Content="{StaticResource FontAwesomeEllipsisIcon}"
                         FontFamily="{StaticResource FontAwesome}"
                         x:Name="EditButton"
+                        Opacity="0"                        
                         Padding="8 5"
                         Cursor="Hand"
                         Command="{Binding EditCommand}"
-                        IsEnabled="{Binding IsReadOnly, Converter={local:BooleanInvertConverter}}"
                         Background="{StaticResource ForegroundDarkBrush}"
                         FontSize="{StaticResource FontSizeSmall}"
                         VerticalAlignment="Center" />

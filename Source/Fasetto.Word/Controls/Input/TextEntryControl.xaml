@@ -13,7 +13,8 @@
             IsEnabled="{Binding Working, Converter={local:BooleanInvertConverter}}"
             BorderThickness="0 0 0 0.5">
 
-        <Grid Background="{StaticResource ForegroundLightBrush}">
+        <!-- Give the grid an explicit height so mouse tracking covers the entire row -->
+        <Grid x:Name="LayoutGrid" Background="Transparent" Height="60" VerticalAlignment="Center">
 
             <!-- Double click to edit -->
             <Grid.InputBindings>
@@ -21,7 +22,7 @@
                 <KeyBinding Command="{Binding SaveCommand}" Key="Return"/>
                 <KeyBinding Command="{Binding CancelCommand}" Key="Escape"/>
             </Grid.InputBindings>
-            
+
             <!-- Hover over to show edit button -->
             <Grid.Triggers>
                 <EventTrigger RoutedEvent="MouseEnter">
@@ -45,8 +46,8 @@
                     </BeginStoryboard>
                 </EventTrigger>
             </Grid.Triggers>
-            
-            <!-- Label -> Name* -> Buttons -->
+
+            <!-- Column Definitions -->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Name="LabelColumnDefinition" Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -56,24 +57,39 @@
             <!-- Label -->
             <TextBlock Text="{Binding Label}"
                        Name="Label"
-                       Margin="15 12"
+                       Margin="15 0"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"
-                       FontFamily="{StaticResource LatoRegular}"
-                       />
+                       FontSize="14">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="FontFamily" Value="{StaticResource LatoRegular}" />
+                        <Setter Property="Foreground" Value="{StaticResource ForegroundVeryDarkBrush}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsMouseOver, ElementName=LayoutGrid}" Value="True">
+                                <!-- Change color or darken on hover instead of swapping font families to prevent shifting -->
+                                <Setter Property="Foreground" Value="{StaticResource WordDarkBlueBrush}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+
+
 
             <!-- Edit Content -->
-            <TextBox Text="{Binding EditedText, UpdateSourceTrigger=PropertyChanged}"
+<TextBox Text="{Binding EditedText, UpdateSourceTrigger=PropertyChanged}"
                      Grid.Column="1"
-
                      local:AnimateFadeInProperty.Value="{Binding Editing}"
                      local:FocusAndSelectProperty.Value="{Binding Editing}"
+                     FontFamily="{StaticResource LatoRegular}"
                      FontSize="{StaticResource FontSizeRegular}"
+                     FontWeight="Normal"
                      Padding="2"
                      TextWrapping="WrapWithOverflow"
-                     Margin="15 8" FontFamily="Lato Heavy"
-                     VerticalAlignment="Center"                     
-                     />
+                     Margin="15 8"
+                     VerticalAlignment="Center" />
 
             <!-- Content -->
             <TextBlock Text="{Binding OriginalText}" 

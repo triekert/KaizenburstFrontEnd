@@ -111,7 +111,6 @@ namespace Fasetto.Word
         public string TextColor => "FF8B0000";
 
 
-
         /// <summary>
         /// Indicates if this item can be expanded
         /// </summary>
@@ -131,6 +130,7 @@ namespace Fasetto.Word
 
         #endregion
         #region Constructors
+
 
         public TransactionDetailViewModel()
 
