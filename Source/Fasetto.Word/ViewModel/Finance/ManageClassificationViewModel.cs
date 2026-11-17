@@ -436,40 +436,41 @@ namespace Fasetto.Word
         /// </summary>
         public ManageClassificationViewModel(ObservableCollection<TransactionViewModel> source, TransactionViewModel selected)
         {
-            //Retrieve any documents from file server on the web server
-            //If no documents linked previously, add dummy fields to facilitate selection
-            //mRequest = new DocDataResultListApiModel();
-            //var matches = selected.Document.ToList();
+            // 1. Assign and validate the selected transaction first
+            Selected = selected ?? throw new ArgumentNullException(nameof(selected));
 
-            //foreach (var item in selected.Document)
-            //{
-
-            //}
             PriorPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
             PriorPopupContent = ViewModelApplication.CurrentPopupContent;
-            Selected = selected;
-            Selected.Document = new DocDataViewModel()
 
+            // 2. Ensure Selected.Document exists (initialize if null)
+            if (Selected.Document?.Model == null)
             {
-            DocURL = "\\somepath\\filename.jpg",
-            KDocID = "00000000 - 0000 - 0000 - 0000 - 000000000000",
-            DocName = "Name of Document.",
-            DocDescription = "Name of Document in plain language"
-            };
-            //Document = selected.Document;
-            //if (selected.Document !=null)
-            //{ 
+                Selected.Document = new DocDataViewModel(new DocDataModel
+                {
+                    DocURL = @"\\somepath\filename.jpg",
+                    KDocID = "00000000-0000-0000-0000-000000000000",
+                    DocName = "Name of Document.",
+                    DocDescription = "Name of Document in plain language"
+                });
+            }
+            else
+            {
+                // If document already exists, update its model properties safely
+                Selected.Document.Model.DocURL = @"\\somepath\filename.jpg";
+                Selected.Document.Model.KDocID = "00000000-0000-0000-0000-000000000000";
+                Selected.Document.Model.DocName = "Name of Document.";
+                Selected.Document.Model.DocDescription = "Name of Document in plain language";
+            }
             mRequest = new DocDataResultListApiModel();
-            var mRqst = new DocDataResultApiModel
+            var mRqst = new DocDataResultApiModel(new DocDataModel
             {
-                FFintranID = selected.Document.FFintranID,
-                DocImage = selected.Document.DocImage,
-                DocName = selected.Document.DocName,
-                DocURL = selected.Document.DocURL,
-                KDocID = selected.Document.KDocID,
-                DocDescription = selected.Document.DocDescription
-            };
-            mRequest.Add(mRqst);
+                FFintranID = selected.Document.Model.FFintranID,
+                DocImage = selected.Document.Model.DocImage,
+                DocName = selected.Document.Model.DocName,
+                DocURL = selected.Document.Model.DocURL,
+                KDocID = selected.Document.Model.KDocID,
+                DocDescription = selected.Document.Model.DocDescription
+            });
 
             TaskManager.RunAndForget(DocumentRetrievalAsync);
             DocumentList = new ObservableCollection<DocDataViewModel>()
@@ -725,39 +726,42 @@ namespace Fasetto.Word
                 // OK successfully registered (and logged in)... 
                 //If data returned, modify data on classification view model
 
-                if (result.ServerResponse.Response.Count > 0)
+                if (result.ServerResponse?.Response != null && result.ServerResponse.Response.Count > 0)
                 {
-
                     try
                     {
                         DocumentList = new ObservableCollection<DocDataViewModel>();
+
                         foreach (var doc in result.ServerResponse.Response)
                         {
-                            var mRqst = new DocDataViewModel
+                            var mRqst = new DocDataViewModel(new DocDataModel
                             {
-                                DocImage = doc.DocImage,
-                                DocName = doc.DocName,
-                                DocURL = doc.DocURL,
-                                KDocID = doc.KDocID,
-                                DocDescription = doc.DocDescription,
-                                FFintranID = doc.FFintranID
-                            };
+                                DocImage = doc.Model.DocImage,
+                                DocName = doc.Model.DocName,
+                                DocURL = doc.Model.DocURL,
+                                KDocID = doc.Model.KDocID,
+                                DocDescription = doc.Model.DocDescription,
+                                FFintranID = doc.Model.FFintranID,
+                                DateCreated = doc.Model.DateCreated,
+                                DocCreator = doc.Model.DocCreator,
+                            });
 
-                            Selected.Document = mRqst;
-                            Document = mRqst;
                             DocumentList.Add(mRqst);
-
                         }
 
-
-                     }
-                    catch (Exception e)
+                        // Set the default selected document *after* the loop (e.g., pick the first one)
+                        if (DocumentList.Count > 0)
+                        {
+                            Selected.Document = DocumentList[0];
+                            Document = DocumentList[0];
+                        }
+                    }
+                    catch (Exception ex)
                     {
-                        throw e;
+                        // Handle or log exception
                     }
                 }
-
-            });
+            }).ConfigureAwait(false);
         }
 
 
@@ -1364,7 +1368,7 @@ namespace Fasetto.Word
             {
 
 
-                var docs = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).DocumentList.Where(x => (x.IsNew || x.IsRemove) && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
+                var docs = ((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).DocumentList.Where(x => (x.Model.IsNew || x.IsRemove) && x.Model.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
                 var tmp0 = ((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel;
                 var tmp = ((ObservableCollection<TransactionViewModel>)((TransactionTreeViewModel)((TransactionDetailTreeViewModel)((ManageClassificationViewModel)ViewModelApplication.
                 CurrentPopupViewModel).PriorPopupViewModel).PriorPopupViewModel).MPersist);
@@ -1555,20 +1559,17 @@ namespace Fasetto.Word
 
                         foreach (var item in docs)
                         {
-                            var mRqst = new DocDataResultApiModel
+                            var mRqst = new DocDataResultApiModel(new DocDataModel
                             {
-                                DocImage = item.DocImage,
-                                DocName = item.DocName,
-                                DocURL = item.DocURL,
-                                KDocID = item.KDocID,
-                                DocDescription = item.DocDescription,
-                                FFintranID = Selected.KFinTranID,
-                                IsNew = item.IsNew,
-                                IsRemove = item.IsRemove,
-                            };
-                            mRequest.Add(mRqst);
+                                FFintranID =item.Model.FFintranID,
+                                DocImage =item.Model.DocImage,
+                                DocName =item.Model.DocName,
+                                DocURL =item.Model.DocURL,
+                                KDocID =item.Model.KDocID,
+                                DocDescription =item.Model.DocDescription
+                            });
                         }
-                        var docsl = mRequest.Where(x => (x.IsNew || x.IsRemove) && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
+                        var docsl = mRequest.Where(x => (x.Model.IsNew || x.IsRemove) && x.Model.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
                         if (docsl.Count > 0)
                         {
                             Selected.IsDocLinked = true;
@@ -1585,20 +1586,17 @@ namespace Fasetto.Word
                         mRequest = new DocDataResultListApiModel();
                         foreach (var item in docs)
                         {
-                            var mRqst = new DocDataResultApiModel
+                            var mRqst = new DocDataResultApiModel(new DocDataModel
                             {
-                                DocImage = item.DocImage,
-                                DocName = item.DocName,
-                                DocURL = item.DocURL,
-                                KDocID = item.KDocID,
-                                DocDescription = item.DocDescription,
-                                FFintranID = item.FFintranID,
-                                IsNew = item.IsNew,
-                                IsRemove = item.IsRemove,
-                            };
-                            mRequest.Add(mRqst);
+                                FFintranID =item.Model.FFintranID,
+                                DocImage =item.Model.DocImage,
+                                DocName =item.Model.DocName,
+                                DocURL =item.Model.DocURL,
+                                KDocID =item.Model.KDocID,
+                                DocDescription =item.Model.DocDescription
+                            });
                         }
-                        var docsl = mRequest.Where(x => (x.IsNew || x.IsRemove) && x.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
+                        var docsl = mRequest.Where(x => (x.Model.IsNew || x.IsRemove) && x.Model.KDocID != "00000000-0000-0000-0000-000000000000").ToList();
 
                         if (docsl.Count > 0)
                         {
@@ -2984,8 +2982,8 @@ namespace Fasetto.Word
             //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
             //First check for any document holders not filled with a document
 
-            var exists = DocumentList.Where(x => x.DocURL == "\\somepath\\filename.jpg").ToList();
-            if (exists.Count > 0 && exists.FirstOrDefault().DocURL == "\\somepath\\filename.jpg")
+            var exists = DocumentList.Where(x => x.Model.DocURL == "\\somepath\\filename.jpg").ToList();
+            if (exists.Count > 0 && exists.FirstOrDefault().Model. DocURL == "\\somepath\\filename.jpg")
             {  
                 Document = exists.FirstOrDefault(); 
             }
@@ -2996,7 +2994,7 @@ namespace Fasetto.Word
                 DocumentList.Add(Document);
             }
 
-            Document.KDocID = Guid.NewGuid().ToString();
+            Document.Model.KDocID = Guid.NewGuid().ToString();
             using (var openFileDialog = new OpenFileDialog())
             {
                  //openFileDialog.Filter = "PDF Files|*.pdf";
@@ -3008,23 +3006,25 @@ namespace Fasetto.Word
                 {
                     //var filePath = openFileDialog.FileName;
                     var filePath = openFileDialog.FileName;
-                    Document.DocURL = filePath;
-
-                    Document.DocName = GetFileFolderName(Document.DocURL);
-                    Document.DocDescription = GetFileFolderName(Document.DocURL);
-                    Selected.Document.DocName = Selected.Document.KDocID + GetFileExtension(Document.DocDescription);
+                    Document.Model.DocURL = filePath;
+                    var (created, owner) = FileMetadataExtractor.GetFileMetadata(filePath);
+                    Document.Model.DateCreated = created;
+                    Document.Model.DocCreator = owner;
+                    Document.Model.DocName = GetFileFolderName(Document.Model.DocURL);
+                    Document.Model.DocDescription = GetFileFolderName(Document.Model.DocURL);
+                    Selected.Document.Model.DocName = Selected.Document.Model.KDocID + GetFileExtension(Document.Model.DocDescription);
                     var path = Path.GetTempPath();
-                    var fileName = path + Document.DocName;
-                   Document.DocURL = fileName;
+                    var fileName = path + Document.Model. DocName;
+                   Document.Model.DocURL = fileName;
                     using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
                         using (var reader = new BinaryReader(stream))
                         {
-                            Document.DocImage = reader.ReadBytes((int)stream.Length);
+                            Document.Model.DocImage = reader.ReadBytes((int)stream.Length);
                         }
                     }
-                    Document.IsNew = true;
-                    Document.FFintranID = Selected.KFinTranID;
+                    Document.Model.IsNew = true;
+                    Document.Model.FFintranID = Selected.KFinTranID;
                     //Document = Selected.Document;
                     //fileName = Environment.GetFolderPath(Environment.SpecialFolder.Resources);
                     //try
@@ -3061,44 +3061,38 @@ namespace Fasetto.Word
         /// <param name="doccie"></param>
         public void OpenDocument(DocDataViewModel doccie)
         {
-            //ViewModelApplication.CurrentPopupViewModel = ViewModelApplication.CurrentPopupViewModel;
-            //Selected.Document.KDocID = Guid.NewGuid().ToString();
-            using (var openFileDialog = new OpenFileDialog())
+            try
             {
-                //Selected.Document.DocDescription = GetFileFolderName(Document.DocURL);
-                //Selected.Document.DocName = Selected.Document.KDocID + GetFileExtension( Selected.Document.DocDescription);
-                //Selected.Document.FFintranID = Selected.KFinTranID;
-                //Document.IsNew = true;
-                var path = Path.GetTempPath();
-                var fileName = path + doccie.DocName;
-                doccie.DocURL = fileName;
-                using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+
+                using (var openFileDialog = new OpenFileDialog())
                 {
-                    fs.Write(doccie.DocImage, 0,doccie.DocImage.Length);
-                    //return true;
+                    //Selected.Document.DocDescription = GetFileFolderName(Document.DocURL);
+                    //Selected.Document.DocName = Selected.Document.KDocID + GetFileExtension( Selected.Document.DocDescription);
+                    //Selected.Document.FFintranID = Selected.KFinTranID;
+                    //Document.IsNew = true;
+                    var path = Path.GetTempPath();
+                    var fileName = path + doccie.Model.DocName;
+                    doccie.Model.DocURL = fileName;
+                    using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                    {
+                        fs.Write(doccie.Model.DocImage, 0, doccie.Model.DocImage.Length);
+                        //return true;
+                    }
+                    Process.Start(new ProcessStartInfo(doccie.Model.DocURL) { UseShellExecute = true });
+
+
                 }
-                Process.Start(new ProcessStartInfo(doccie.DocURL) { UseShellExecute = true });
 
 
             }
-
-
-                //    MyImage.Source = new BitmapImage(new Uri(lImagePath.Text));
-
-                //    using (var fs = new FileStream(ImagePath.Text, FileMode.Open, FileAccess.Read))
-                //    {
-                //        _imageBytes = new byte[fs.Length];
-                //        fs.Read(imgBytes, 0, System.Convert.ToInt32(fs.Length));
-                //    }
-                //}
-
-
+            catch (IOException ex) when (ex.HResult == unchecked((int)0x800704C8))
+            {
+                // The file is currently open and mapped by another process (e.g., photo viewer).
+                // Safely ignore or log a debug message without crashing the app.
+                System.Diagnostics.Debug.WriteLine($"Ignored user-mapped section lock for: {ex.Message}");
             }
+        }
 
-        /// Open the selected document in the default application on the client machine
-        /// Document is temporarily converted from the bytestream into a physical file in the temp directory
-        /// </summary>
-        /// <param name="doccie"></param>
         public void RemoveDocument(DocDataViewModel doccie)
         {
 

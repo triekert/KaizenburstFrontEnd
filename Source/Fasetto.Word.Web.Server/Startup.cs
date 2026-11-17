@@ -53,6 +53,9 @@ namespace Fasetto.Word.Web.Server
             // Add general email template sender
             services.AddEmailTemplateSender();
 
+            // Register GoogleDriveService for dependency injection
+            services.AddScoped<GoogleDriveService>();
+
             // Add ApplicationDbContext to DI
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Framework.Construction.Configuration.GetConnectionString("DefaultConnection")));

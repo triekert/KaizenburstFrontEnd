@@ -1,17 +1,19 @@
 ﻿using Dna;
 using Fasetto.Word.Core;
 using Fasetto.Word.Core.ApiModels.Controls;
+using Google.Apis.Drive.v3.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using Microsoft.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using System.Web;
 using static Dna.FrameworkDI;
@@ -25,6 +27,9 @@ namespace Fasetto.Word.Web.Server
     [AuthorizeToken]
     public class ApiController : Controller
     {
+        #region Private Members
+        private readonly GoogleDriveService mGoogleDriveService;
+        #endregion Private Members
         #region Protected Members
 
         /// <summary>
@@ -85,14 +90,17 @@ namespace Fasetto.Word.Web.Server
         /// <param name="context">The injected context</param>
         /// <param name="signInManager">The Identity sign in manager</param>
         /// <param name="userManager">The Identity user manager</param>
+        /// <param name="googleDriveService">The </param>
         public ApiController(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            GoogleDriveService googleDriveService) // Ensure this parameter is present
         {
             mContext = context;
             mUserManager = userManager;
             mSignInManager = signInManager;
+            mGoogleDriveService = googleDriveService; // Ensure assignment here
         }
 
         #endregion
@@ -1449,10 +1457,175 @@ namespace Fasetto.Word.Web.Server
 
         #endregion
 
-        #region AddDocument
+        //#region AddDocument
 
+        //[Route(ApiRoutes.AddDocument)]
+        //public async Task<ApiResponse> AddDocumentAsync([FromBody] DocDataResultListApiModel model)
+
+        //{
+        //    #region Get User
+
+        //    // Get the current user
+        //    var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+        //    // If we have no user...
+        //    if (user == null)
+        //        return new ApiResponse
+        //        {
+        //            // TODO: Localization
+        //            ErrorMessage = "User not found"
+        //        };
+
+        //    #endregion
+
+        //    #region AddDocToFileShare
+
+
+
+        //    ;
+        //    try
+        //    {
+        //        var newdocs = model.Where(x => x.IsNew).ToList();
+        //        foreach (var doc in newdocs)
+        //        {
+        //            try
+        //            {
+        //                var path = Configuration["FileShare"];
+        //                var fileName = doc.DocName;
+        //                fileName = path + fileName;
+
+        //                using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+        //                {
+        //                    fs.Write(doc.DocImage, 0, doc.DocImage.Length);
+        //                                      //return true;
+        //                }
+        //                var SqlString = "INSERT INTO [Finance].[TransactionDocument]  (fTransactionID,fChangeID,kDocumentID,DocName,DocDescription,DateEffective)" +// ) " +
+
+        //                                "VALUES ('"+doc.FFintranID+"',NULL,'"+doc.KDocID+"','"+doc.DocName.Replace("'", "''") + "','"+doc.DocDescription.Replace("'", "''") + "',Getdate())";
+        //                _ = await ExecuteAsync(SqlString);
+        //            }
+        //            catch (Exception)
+        //            {
+
+        //                throw;
+        //            }
+
+        //        }
+        //        var remdocs = model.Where(x => x.IsRemove).ToList();
+        //        foreach (var doc in remdocs)
+        //        {
+        //            try
+        //            {
+
+        //                var SqlString = "UPDATE [Finance].[TransactionDocument]  SET fTransactionID = '00000000-0000-0000-0000-000000000000'  WHERE fTransactionID = '" + doc.FFintranID + "'AND kDocumentID = '" + doc.KDocID + "'" ;
+        //                _ = await ExecuteAsync(SqlString);
+        //            }
+        //            catch (Exception)
+        //            {
+
+        //                throw;
+        //            }
+
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log error
+        //        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+        //        // Throw it as normal
+        //        throw;
+        //    }
+        //    return new ApiResponse<DocDataResultApiModel>
+        //    {
+        //        //Response = results
+        //    };
+        //}
+
+        //    #endregion AddDocToFileShare
+        //    #endregion AddDocument
+        #region AddDocument_new
         [Route(ApiRoutes.AddDocument)]
         public async Task<ApiResponse> AddDocumentAsync([FromBody] DocDataResultListApiModel model)
+        {
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            if (user == null)
+                return new ApiResponse
+                {
+                    ErrorMessage = "User not found"
+                };
+
+            try
+            {
+                var newdocs = model.Where(x => x.Model.IsNew).ToList();
+                foreach (var doc in newdocs)
+                {
+                    try
+                    {
+                        // 1. Prepare metadata pointing to your shared folder ID with a unique filename (KDocID)
+                        var fileMetadata = new Google.Apis.Drive.v3.Data.File()
+                        {
+                            Name = doc.Model.KDocID, // Ensures a globally unique name in the folder
+                            Parents = new List<string> { "1-K2iH4jctLdAgnxENn7r385-NU3i4DlL" }
+                        };
+
+                        using (var memoryStream = new MemoryStream(doc.Model.DocImage))
+                        {
+                            // 2. Create the new file directly—quota is charged to your personal user account!
+                            var request = mGoogleDriveService.DriveClient.Files.Create(
+                                fileMetadata,
+                                memoryStream,
+                                "application/octet-stream"
+                            );
+                            request.Fields = "id";
+                            request.SupportsAllDrives = true;
+                            var uploadResult = await request.UploadAsync();
+
+                            if (uploadResult.Status == Google.Apis.Upload.UploadStatus.Failed)
+                            {
+                                throw new Exception($"Google Drive upload failed for {doc.Model.DocName}: {uploadResult.Exception?.Message}");
+                            }
+                        }
+
+                        // 3. Record entry in SQL database
+                        var SqlString = "INSERT INTO [Finance].[TransactionDocument] (fTransactionID, fChangeID, kDocumentID, DocName, DocDescription, DateEffective) " +
+                                        "VALUES ('" + doc.Model.FFintranID + "', NULL, '" + doc.Model.KDocID + "', '" + doc.Model.DocName.Replace("'", "''") + "', '" + doc.Model.DocDescription.Replace("'", "''") + "', GETDATE())";
+                        _ = await ExecuteAsync(SqlString);
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                }
+                var remdocs = model.Where(x => x.IsRemove).ToList();
+                foreach (var doc in remdocs)
+                {
+                    try
+                    {
+                        var SqlString = "UPDATE [Finance].[TransactionDocument] SET fTransactionID = '00000000-0000-0000-0000-000000000000' WHERE fTransactionID = '" + doc.Model.FFintranID + "' AND kDocumentID = '" + doc.Model.KDocID + "'";
+                        _ = await ExecuteAsync(SqlString);
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return new ApiResponse<DocDataResultApiModel>();
+        }
+        #endregion AddDocument_new
+
+        #region ReturnDocument
+
+        [Route(ApiRoutes.ReturnDocument)]
+        public async Task<ApiResponse> ReturnDocumentAsync([FromBody] string model)
 
         {
             #region Get User
@@ -1467,95 +1640,6 @@ namespace Fasetto.Word.Web.Server
                     // TODO: Localization
                     ErrorMessage = "User not found"
                 };
-
-            #endregion
-
-            #region AddDocToFileShare
-
-
-
-            ;
-            try
-            {
-                var newdocs = model.Where(x => x.IsNew).ToList();
-                foreach (var doc in newdocs)
-                {
-                    try
-                    {
-                        var path = Configuration["FileShare"];
-                        var fileName = doc.DocName;
-                        fileName = path + fileName;
-  
-                        using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
-                        {
-                            fs.Write(doc.DocImage, 0, doc.DocImage.Length);
-                                              //return true;
-                        }
-                        var SqlString = "INSERT INTO [Finance].[TransactionDocument]  (fTransactionID,fChangeID,kDocumentID,DocName,DocDescription,DateEffective)" +// ) " +
-
-                                        "VALUES ('"+doc.FFintranID+"',NULL,'"+doc.KDocID+"','"+doc.DocName.Replace("'", "''") + "','"+doc.DocDescription.Replace("'", "''") + "',Getdate())";
-                        _ = await ExecuteAsync(SqlString);
-                    }
-                    catch (Exception)
-                    {
-
-                        throw;
-                    }
-
-                }
-                var remdocs = model.Where(x => x.IsRemove).ToList();
-                foreach (var doc in remdocs)
-                {
-                    try
-                    {
-
-                        var SqlString = "UPDATE [Finance].[TransactionDocument]  SET fTransactionID = '00000000-0000-0000-0000-000000000000'  WHERE fTransactionID = '" + doc.FFintranID + "'AND kDocumentID = '" + doc.KDocID + "'" ;
-                        _ = await ExecuteAsync(SqlString);
-                    }
-                    catch (Exception)
-                    {
-
-                        throw;
-                    }
-
-                }
-
-            }
-            catch (Exception ex)
-            {
-                // Log error
-                //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
-
-                // Throw it as normal
-                throw;
-            }
-            return new ApiResponse<DocDataResultApiModel>
-            {
-                //Response = results
-            };
-        }
-
-            #endregion AddDocToFileShare
-            #endregion AddDocument
-
-        #region ReturnDocument
-
-            [Route(ApiRoutes.ReturnDocument)]
-            public async Task<ApiResponse> ReturnDocumentAsync([FromBody] string model)
-
-            {
-             #region Get User
-
-                // Get the current user
-                var user = await mUserManager.GetUserAsync(HttpContext.User);
-
-                // If we have no user...
-                if (user == null)
-                    return new ApiResponse
-                    {
-                        // TODO: Localization
-                        ErrorMessage = "User not found"
-                    };
 
             #endregion Get User
 
@@ -1578,29 +1662,69 @@ namespace Fasetto.Word.Web.Server
                 //var results = billingPeriodResultListApiModel;
 
 
+                //foreach (DataRow row in dt.Rows)
+                //{
+                //    var u = new DocDataResultApiModel(new DocDataModel
+                //    {
+                //        FFintranID = row[0].ToString(),
+                //        KDocID = row[1].ToString(),
+                //        DocName = row[2].ToString(),
+                //        DocDescription = row[3].ToString()
+                //    });
+
+                //    // Safely combine path and filename
+                //    fileName = Path.Combine(path ?? string.Empty, u.Model.DocName);
+
+                //    if (System.IO.File.Exists(fileName))
+                //    {
+                //        using (var stream = new System.IO.FileStream(fileName, FileMode.Open, FileAccess.Read))
+                //        {
+                //            using (var reader = new BinaryReader(stream))
+                //            {
+                //                u.Model.DocImage = reader.ReadBytes((int)stream.Length);
+                //            }
+                //        }
+                //    }
+
+                //    results.Add(u);
+                //}
+
+                //-------------------------------------------------------------------------------------------------------------
+
                 foreach (DataRow row in dt.Rows)
                 {
-                    var u = new DocDataResultApiModel
+                    var u = new DocDataResultApiModel(new DocDataModel
                     {
-
                         FFintranID = row[0].ToString(),
                         KDocID = row[1].ToString(),
                         DocName = row[2].ToString(),
-                        DocDescription = row[3].ToString(),
+                        DocDescription = row[3].ToString()
+                    });
 
-                    };
-                    //convert selected file to byte[]
-                    fileName = path + u.DocName;
-                    using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                    try
                     {
-                        using (var reader = new BinaryReader(stream))
+                        // Call your GoogleDriveService method
+                        var (fileStream, mimeType) = await mGoogleDriveService.DownloadFileByNameAsync(u.Model.DocName);
+                        //var (fileStream, mimeType) = await mGoogleDriveService.DownloadFileByNameAsync("67f3f577-1a9b-4fa2-a8a9-3921b24c9a98.jpg");
+
+                        using (fileStream)
                         {
-                            u.DocImage = reader.ReadBytes((int)stream.Length);
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                await fileStream.CopyToAsync(memoryStream);
+                                u.Model.DocImage = memoryStream.ToArray();
+                            }
                         }
                     }
-                    results.Add(u);
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Failed to download {u.Model.DocName} from Google Drive: {ex.Message}");
+                    }
 
+                    results.Add(u);
                 }
+
+                //---------------------------------------------------------
                 return new ApiResponse<DocDataResultListApiModel>
                 {
                     Response = results
@@ -1618,13 +1742,96 @@ namespace Fasetto.Word.Web.Server
             }
 
 
-             }
+        }
         #endregion sql query
         #endregion ReturnDocFromFileShare
 
-
-
         #endregion ReturnDocument
+
+        //#region ReturnDocument_new
+        //[Route(ApiRoutes.ReturnDocument)]
+        //public async Task<ApiResponse> ReturnDocumentAsync([FromBody] string model)
+        //{
+        //    #region Get User
+
+        //    // Get the current user
+        //    var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+        //    // If we have no user...
+        //    if (user == null)
+        //        return new ApiResponse
+        //        {
+        //            // TODO: Localization
+        //            ErrorMessage = "User not found"
+        //        };
+
+        //    #endregion Get User
+
+        //    #region ReturnDocFromGoogleDrive
+
+        //    var SqlString = "SELECT [fTransactionID],[kDocumentID],[DocName],[DocDescription] FROM [Finance].[TransactionDocument] (NOLOCK) WHERE [fTransactionID] = '" + model + "'";
+
+        //    try
+        //    {
+        //        // Run SQL query to get document metadata records
+        //        var dataset = await GetDataSetAsync(SqlString);
+        //        var dt = dataset.Tables[0];
+        //        var results = new DocDataResultListApiModel();
+
+        //        foreach (DataRow row in dt.Rows)
+        //        {
+        //            var u = new DocDataResultApiModel
+        //            {
+        //                FFintranID = row[0].ToString(),
+        //                KDocID = row[1].ToString(),
+        //                DocName = row[2].ToString(),
+        //                DocDescription = row[3].ToString(),
+        //            };
+
+        //            // Search Google Drive for the file matching the document name
+        //            var listRequest = mGoogleDriveService.DriveClient.Files.List();
+        //            listRequest.Q = $"name = '{u.DocName}' and trashed = false";
+        //            listRequest.Fields = "files(id, name)";
+        //            var listResult = await listRequest.ExecuteAsync();
+
+        //            var driveFile = listResult.Files.FirstOrDefault();
+
+        //            if (driveFile != null)
+        //            {
+        //                // Download file content directly into a MemoryStream byte array
+        //                using (var memoryStream = new MemoryStream())
+        //                {
+        //                    var getRequest = mGoogleDriveService.DriveClient.Files.Get(driveFile.Id);
+        //                    await getRequest.DownloadAsync(memoryStream);
+        //                    u.DocImage = memoryStream.ToArray();
+        //                }
+        //            }
+        //            else
+        //            {
+        //                // Handle case where file is missing from Google Drive
+        //                u.DocImage = new byte[0];
+        //            }
+
+        //            results.Add(u);
+        //        }
+
+        //        return new ApiResponse<DocDataResultListApiModel>
+        //        {
+        //            Response = results
+        //        };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log error
+        //        //Logger.LogErrorSource(ex.ToString(), origin: origin, filePath: filePath, lineNumber: lineNumber);
+
+        //        // Throw it as normal
+        //        throw;
+        //    }
+
+        //    #endregion ReturnDocFromGoogleDrive
+        //}
+        //#endregion ReturnDocument_new
 
         #region StockHolding
         #region ReturnSOH

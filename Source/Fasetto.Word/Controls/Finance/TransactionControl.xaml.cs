@@ -455,20 +455,22 @@ namespace Fasetto.Word
             }
             else
             if (Merge.Count == 1)
-            { 
-                ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec = Transaction.SelectedIndex;
-
-                 ViewModelApplication.PopupVisible = false;
-
-                ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(MKFinTranID);
-                ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Transaction Breakdown ";
-
-                //If only one allocation linked to the Transaction, bypass the 'detail' window...
-
-                if (((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).TransactionDetail.Count > 1)
-                {                 //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+            {
+                    ((TransactionTreeViewModel)ViewModelApplication.CurrentPopupViewModel).Trans_actionRec = Transaction.SelectedIndex;
                     ViewModelApplication.PopupVisible = false;
-                    //ViewModelApplication.CurrentPopupContent = Null;
+
+                    // Create the view model once and assign properties cleanly
+                    var detailVM = new TransactionDetailTreeViewModel(MKFinTranID)
+                    {
+                        ControlTitle = "Transaction Level Attributes",
+                        TableTitle = "Transaction Breakdown"
+                    };
+
+                    ViewModelApplication.CurrentPopupViewModel = detailVM;               //If only one allocation linked to the Transaction, bypass the 'detail' window...
+
+                    if (detailVM.TransactionDetail.Count > 1)
+                {                 //((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Bulk Meter Recon Detail: " + ShortName;
+
                     ViewModelApplication.CurrentPopupContent = PopupContent.TransactionDetail;
                     ViewModelApplication.PopupVisible = true;
                 }

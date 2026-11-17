@@ -1,10 +1,9 @@
 <#
 .SYNOPSIS
-    Finds and processes all Visual Studio solution files, cleaning, wiping bin/obj folders, and rebuilding each.
+    Finds and processes all Visual Studio solution files, wiping bin/obj folders and rebuilding each.
 .DESCRIPTION
-    This script shuts down lingering build servers, searches for all .sln files recursively, 
-    loops through each one, executes 'dotnet clean', forcefully removes local bin and obj folders, 
-    and runs a non-incremental 'dotnet build' for each solution found.
+    Terminates background compilers, safely removes bin and obj folders with graceful error handling 
+    for locked files, and runs a non-incremental 'dotnet build'.
 #>
 
 [CmdletBinding()]
@@ -14,13 +13,20 @@ param(
     [string]$Configuration = "Debug"
 )
 
-# Stop execution on errors
-$ErrorActionPreference = "Stop"
+# Keep error preference flexible for folder cleanups
+$ErrorActionPreference = "Continue"
 
-# Step 0: Clear any stuck build servers to prevent timeout warnings
-Write-Host "Step 0: Clearing lingering MSBuild/dotnet servers..." -ForegroundColor Yellow
-dotnet build-server shutdown
+# Step 0: Aggressively stop running apps, build servers, and background compilers
+Write-Host "Step 0: Stopping application instances, build servers, and compilers..." -ForegroundColor Yellow
+Stop-Process -Name "Fasetto.Word" -ErrorAction SilentlyContinue
+Stop-Process -Name "VBCSCompiler" -ErrorAction SilentlyContinue
 Stop-Process -Name "MSBuild" -ErrorAction SilentlyContinue
+Stop-Process -Name "dotnet" -ErrorAction SilentlyContinue
+dotnet build-server shutdown
+
+# Give Windows a pause to fully release file handles
+Write-Host "Waiting for Windows to release file system locks..." -ForegroundColor DarkYellow
+Start-Sleep -Seconds 3
 
 Write-Host "Searching for all Visual Studio solution (.sln) files..." -ForegroundColor Cyan
 $slnFiles = Get-ChildItem -Filter "*.sln" -Recurse
@@ -41,22 +47,41 @@ foreach ($slnFile in $slnFiles) {
     $solutionPath = $slnFile.FullName
     $solutionDir = $slnFile.DirectoryName
 
-    # Step 1: Run dotnet clean
-    Write-Host "Step 1: Running 'dotnet clean'..." -ForegroundColor Yellow
-    dotnet clean "$solutionPath" --configuration $Configuration
-
-    # Step 2: Wipe bin and obj folders for this solution's directory
-    Write-Host "Step 2: Wiping all 'bin' and 'obj' folders..." -ForegroundColor Yellow
+    # Step 1: Wipe bin and obj folders safely without aborting on file locks
+    Write-Host "Step 1: Wiping all 'bin' and 'obj' folders..." -ForegroundColor Yellow
     $foldersToWipe = Get-ChildItem -Path $solutionDir -Recurse -Directory -Include "bin", "obj"
-    if ($foldersToWipe) {
-        $foldersToWipe | Remove-Item -Recurse -Force
-        Write-Host "Successfully removed $($foldersToWipe.Count) build artifact directories." -ForegroundColor Green
+    
+    if ($foldersToWlp -ne $null -or $foldersToWipe.Count -gt 0) {
+        foreach ($folder in $foldersToWipe) {
+            $folderPath = $folder.FullName
+            if (Test-Path $folderPath) {
+                $maxRetries = 3
+                $deleted = $false
+
+                for ($i = 1; $i -le $maxRetries; $i++) {
+                    # Attempt removal using .NET IO instead of cmd.exe for cleaner error handling
+                    try {
+                        [System.IO.Directory]::Delete($folderPath, $true)
+                        $deleted = $true
+                        break
+                    } catch {
+                        Start-Sleep -Seconds 1
+                    }
+                }
+
+                if ($deleted) {
+                    Write-Host "  Successfully removed: $(Split-Path $folderPath -Leaf)" -ForegroundColor DarkGreen
+                } else {
+                    Write-Warning "  Could not fully remove locked folder: $folderPath (Proceeding with build anyway)"
+                }
+            }
+        }
     } else {
         Write-Host "No bin or obj folders found to remove." -ForegroundColor DarkYellow
     }
 
-    # Step 3: Rebuild the solution
-    Write-Host "Step 3: Rebuilding solution ($Configuration)..." -ForegroundColor Yellow
+    # Step 2: Rebuild the solution fresh
+    Write-Host "Step 2: Rebuilding solution ($Configuration)..." -ForegroundColor Yellow
     dotnet build "$solutionPath" --configuration $Configuration --no-incremental
 
     if ($LASTEXITCODE -eq 0) {
@@ -67,4 +92,4 @@ foreach ($slnFile in $slnFiles) {
     }
 }
 
-Write-Host "`nAll solutions successfully cleaned and rebuilt!" -ForegroundColor Green
+Write-Host "`nAll solutions successfully processed!" -ForegroundColor Green

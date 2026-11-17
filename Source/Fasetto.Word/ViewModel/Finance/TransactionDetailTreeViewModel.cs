@@ -86,6 +86,7 @@ namespace Fasetto.Word
         private object mStocksLock = new object();
         public string ControlTitle { get; set; }
 
+        public string TableTitle { get; set; }
 
 
         /// <summary>

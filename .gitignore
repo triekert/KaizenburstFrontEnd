@@ -176,3 +176,9 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+
+# Google Credentials & Tokens
+google-service-account.json
+client_secret.json
+TokenResponse-*
+**/App_Data/

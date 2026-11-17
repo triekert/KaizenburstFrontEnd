@@ -152,7 +152,7 @@
                                     <DataGridTemplateColumn.CellEditingTemplate>
                                         <DataTemplate>
                                             <TextBox Margin="5" Width="200" 
-                                                     Text="{Binding Path=DocDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                     Text="{Binding Path=Model.DocDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                                      FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Left"
                                                      Loaded="TextBox_Loaded"/>
                                         </DataTemplate>
@@ -162,7 +162,7 @@
                                 <DataGridTemplateColumn Header="Linked Document" HeaderStyle="{StaticResource ColumnHeaderStyle}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Image Source="{Binding DocImage}" MaxWidth="100" MaxHeight="130"/>
+                                            <Image Source="{Binding Model.DocImage}" MaxWidth="100" MaxHeight="130"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>

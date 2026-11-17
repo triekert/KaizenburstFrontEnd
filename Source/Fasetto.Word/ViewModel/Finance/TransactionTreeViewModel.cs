@@ -949,7 +949,7 @@ Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                 ViewModelApplication.PopupVisible = false;
 
                     ViewModelApplication.CurrentPopupViewModel = new TransactionDetailTreeViewModel(MKFinTranID);
-                ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Transaction Breakdown ";
+                ((TransactionDetailTreeViewModel)ViewModelApplication.CurrentPopupViewModel).ControlTitle = "Transaction Level Attributtes ";
 
 
                     //If only one allocation linked to the Transaction, bypass the 'detail' window...

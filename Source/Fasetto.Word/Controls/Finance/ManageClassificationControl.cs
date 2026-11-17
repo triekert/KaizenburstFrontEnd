@@ -102,7 +102,7 @@ namespace Fasetto.Word
 
         private void DataGridRow_KeyDown(object sender, KeyEventArgs e)
         {
-            if (Keyboard.IsKeyDown(Key.F2) && ((DocDataViewModel)Transaction.CurrentItem).DocURL != "\\somepath\\filename.jpg")
+            if (Keyboard.IsKeyDown(Key.F2) && ((DocDataViewModel)Transaction.CurrentItem).Model.DocURL != "\\somepath\\filename.jpg")
 
             {
                 ((ManageClassificationViewModel)DataContext).OpenDocument((DocDataViewModel)Transaction.CurrentItem);
@@ -122,7 +122,7 @@ namespace Fasetto.Word
                     //link a new document if the placeholder is still not used, otherwise, create a new placeholder and fill
                     //((ManageClassificationViewModel)DataContext).RemoveImage((DocDataViewModel)Transaction.SelectedItem);
                     {
-                        ((ManageClassificationViewModel)DataContext).RemoveDocument((DocDataViewModel)Transaction.SelectedItem);
+                        ((ManageClassificationViewModel)DataContext).RemoveDocument((DocDataViewModel)Transaction.CurrentItem);
                         e.Handled = true;
                     }
 
@@ -135,7 +135,7 @@ namespace Fasetto.Word
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             //if no document has been linked to the dummy placeholder yet, adda document into the placeholder...
-            if (((DocDataViewModel)Transaction.CurrentItem).DocURL != "\\somepath\\filename.jpg")
+            if (((DocDataViewModel)Transaction.CurrentItem).Model.DocURL != "\\somepath\\filename.jpg")
                 ((ManageClassificationViewModel)DataContext).OpenDocument((DocDataViewModel)Transaction.CurrentItem);
             else
                 ((ManageClassificationViewModel)DataContext).BrowseImage();
